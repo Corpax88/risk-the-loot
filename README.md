@@ -1,4 +1,4 @@
-# RISK THE LOOT! v0.2.0
+# RISK THE LOOT! v0.3.0
 
 A framework-free HTML5 extraction roguelite about pushing deeper, building a field loadout, and deciding when to escape.
 
@@ -9,7 +9,7 @@ A framework-free HTML5 extraction roguelite about pushing deeper, building a fie
 3. Move, dodge, and collect scrap while the rig fires automatically.
 4. Open salvage caches and shape a run with up to three field modules.
 5. At depth milestones, extract or risk the cargo for stronger rewards and an elite encounter.
-6. Defeat the Scrap Warden at Depth 5 for guaranteed rare salvage.
+6. Defeat the three-phase Scrap Warden at Depth 5 for guaranteed rare salvage and a Warden Core.
 7. Survive extraction to bank scrap and recovered module blueprints. Dying loses everything carried on that expedition.
 
 ## Field modules
@@ -22,6 +22,18 @@ A framework-free HTML5 extraction roguelite about pushing deeper, building a fie
 
 Rare modules provide double power. The workshop gains new visual machinery as permanent upgrades and blueprints accumulate.
 
+## Build synergies
+
+Two compatible field modules activate a named build during an expedition:
+
+- Shrapnel Array: every third Burst Capacitor and Volatile Reactor volley explodes
+- Flux Drive: Magnetic Core and Overdrive Coil improve dash recharge
+- Kinetic Guard: Reactive Plating and Overdrive Coil turn dashes into ramming attacks
+- Counter Battery: Reactive Plating blocks answer with a defensive Burst Capacitor volley
+- Singularity Reactor: Magnetic Core and Volatile Reactor increase recovered scrap
+
+Compatible cache choices are marked before installation, and the active build remains visible in the expedition HUD.
+
 ## Blueprint workshop
 
 - Extracted modules become permanent blueprints.
@@ -32,6 +44,10 @@ Rare modules provide double power. The workshop gains new visual machinery as pe
 
 ## Release features
 
+- Five visually distinct tower zones with their own enemy mix and environmental hazards
+- Scrap Hounds, Rivet Sentries, Steam Vents, Arc Lancers, elites, and a multi-phase Warden
+- Generated adaptive ambience, layered combat audio, recoil, telegraphs, and impact feedback
+- A long-term recovery contract requiring three Warden Cores and twelve recovered blueprints
 - First-run visual briefing
 - Pause and persistent sound, screen shake, and particle settings
 - Career records and expedition reports
@@ -58,9 +74,9 @@ Open `http://127.0.0.1:4175` on the computer, or use the computer's local IP add
 ## Verify the release loop
 
 ```powershell
-node tests/release-smoke.js
+npm test
 ```
 
-The smoke test covers save migration, the blueprint bench, first-run briefing, module choices, both risk milestones, the Scrap Warden, extraction, career progression, and persistent settings.
+The release tests cover static DOM and CSS integrity, JavaScript syntax, a fresh rig's safe extraction, a mid-level Warden run, save migration, the blueprint bench, first-run briefing, module choices, all five zones, both risk milestones, all Warden phases, extraction, the recovery contract, career progression, and persistent settings.
 
 Built with plain HTML, CSS, JavaScript, and Canvas.

@@ -2,23 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
   <meta name="theme-color" content="#101417">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="Risk everything, recover field modules, and rebuild your workshop in this compact extraction roguelite.">
   <title>RISK THE LOOT!</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=0.2.0">
 </head>
 <body>
-  <main id="game" aria-live="polite">
+  <main id="game">
     <header class="topbar">
       <div class="brand">
-        <span class="brandMark">S</span>
-        <div><strong>RISK THE LOOT!</strong><small>WORKSHOP 07</small></div>
+        <span class="brandMark">R</span>
+        <div><strong>RISK THE LOOT!</strong><small>RECOVERY UNIT 07</small></div>
       </div>
       <div class="resources">
-        <div class="resource scrap"><i>⬡</i><div><b id="bankScrap">0</b><span>SCRAP</span></div></div>
-        <div class="resource record"><i>▲</i><div><b id="bestDepth">0</b><span>BEST DEPTH</span></div></div>
+        <div class="resource scrap"><i>&#x2B22;</i><div><b id="bankScrap">0</b><span>SCRAP</span></div></div>
+        <div class="resource record"><i>&#x25B2;</i><div><b id="bestDepth">0</b><span>BEST DEPTH</span></div></div>
       </div>
-      <button id="soundButton" class="iconButton" aria-label="Toggle sound" title="Sound">♪</button>
+      <button id="settingsButton" class="iconButton" aria-label="Open settings" title="Settings">&#9881;</button>
     </header>
 
     <section id="baseView" class="view baseView active">
@@ -41,30 +44,61 @@
 
       <div class="baseActions">
         <div class="upgradeDeck">
-          <button id="upgradeChassis" class="upgradeCard chassisUpgrade">
-            <span class="upgradeGlyph">♥</span><small>CHASSIS <b id="chassisLevel">0</b></small>
-            <strong><b id="maxHpStat">100</b> HP</strong><em>⬡ <b id="chassisCost">30</b></em>
+          <button id="upgradeChassis" class="upgradeCard chassisUpgrade" title="Increase maximum health for every expedition.">
+            <span class="upgradeGlyph">&#9829;</span><small>CHASSIS <b id="chassisLevel">0</b></small>
+            <strong><b id="maxHpStat">100</b> HP</strong><em>&#x2B22; <b id="chassisCost">45</b></em>
           </button>
-          <button id="upgradeWeapon" class="upgradeCard weaponUpgrade">
-            <span class="upgradeGlyph">✦</span><small>ARC CANNON <b id="weaponLevel">0</b></small>
-            <strong><b id="damageStat">8</b> DMG</strong><em>⬡ <b id="weaponCost">35</b></em>
+          <button id="upgradeWeapon" class="upgradeCard weaponUpgrade" title="Increase the damage of every cannon shot.">
+            <span class="upgradeGlyph">&#10022;</span><small>ARC CANNON <b id="weaponLevel">0</b></small>
+            <strong><b id="damageStat">8</b> DMG</strong><em>&#x2B22; <b id="weaponCost">55</b></em>
           </button>
-          <button id="upgradeSalvage" class="upgradeCard salvageUpgrade">
-            <span class="upgradeGlyph">◎</span><small>MAGNET <b id="salvageLevel">0</b></small>
-            <strong><b id="magnetStat">85</b> RANGE</strong><em>⬡ <b id="salvageCost">40</b></em>
+          <button id="upgradeSalvage" class="upgradeCard salvageUpgrade" title="Increase pickup range and scrap yield.">
+            <span class="upgradeGlyph">&#9678;</span><small>MAGNET <b id="salvageLevel">0</b></small>
+            <strong><b id="magnetStat">85</b> RANGE</strong><em>&#x2B22; <b id="salvageCost">50</b></em>
           </button>
         </div>
-        <button id="startButton" class="primaryButton"><span>START EXPEDITION</span><i>›</i></button>
+        <div class="actionRail">
+          <button id="blueprintButton" class="blueprintButton" title="Choose and tune a recovered starter module.">
+            <i id="starterIcon">+</i><span><small>STARTER MODULE</small><b id="starterName">NONE EQUIPPED</b></span><em>BENCH</em>
+          </button>
+          <button id="startButton" class="primaryButton"><span>START EXPEDITION</span><i>&#8250;</i></button>
+        </div>
       </div>
 
       <div id="baseNotice" class="baseNotice" role="status"></div>
+
+      <div id="blueprintOverlay" class="menuOverlay" role="dialog" aria-modal="true" aria-labelledby="blueprintTitle">
+        <div class="menuPanel blueprintPanel">
+          <button id="closeBlueprints" class="panelClose" aria-label="Close blueprint bench">&#215;</button>
+          <small>PERMANENT RECOVERY</small>
+          <h2 id="blueprintTitle">BLUEPRINT BENCH</h2>
+          <div class="starterReadout"><span>EXPEDITION STARTER</span><b id="starterReadout">No module equipped</b></div>
+          <div id="blueprintGrid" class="blueprintGrid"></div>
+          <div id="careerStats" class="careerStats"></div>
+        </div>
+      </div>
+
+      <div id="briefingOverlay" class="menuOverlay" role="dialog" aria-modal="true" aria-labelledby="briefingTitle">
+        <div class="menuPanel briefingPanel">
+          <small>RECOVERY PROTOCOL</small>
+          <h2 id="briefingTitle">GET IN. GET RICH. GET OUT.</h2>
+          <div class="briefingSteps">
+            <div><i>&#10132;</i><b>MOVE</b><span>Steer the rig. The cannon fires automatically.</span></div>
+            <div><i>&#x2B22;</i><b>BUILD</b><span>Open caches and shape a three-module build.</span></div>
+            <div><i>&#8617;</i><b>EXTRACT</b><span>Leave alive to secure everything you carry.</span></div>
+          </div>
+          <button id="briefingStart" class="primaryButton"><span>DEPLOY</span><i>&#8250;</i></button>
+        </div>
+      </div>
+
       <div id="resultOverlay" class="resultOverlay" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
         <div class="resultPanel">
           <small>EXPEDITION REPORT</small>
           <h2 id="resultTitle">CARGO SECURED</h2>
           <div class="resultStats"><div><span>SCRAP</span><b id="resultScrap">0</b></div><div><span>DEPTH</span><b id="resultDepth">1</b></div></div>
+          <div id="resultRecord" class="resultRecord"></div>
           <div id="resultModules" class="resultModules"></div>
-          <button id="closeResult" class="primaryButton resultContinue"><span>BACK TO WORKSHOP</span><i>›</i></button>
+          <button id="closeResult" class="primaryButton resultContinue"><span>BACK TO WORKSHOP</span><i>&#8250;</i></button>
         </div>
       </div>
     </section>
@@ -77,22 +111,24 @@
           <div class="healthTrack"><i id="healthFill"></i></div>
         </div>
         <div class="runMetrics">
-          <div><span>⬡</span><b id="runScrap">0</b></div>
+          <div><span>&#x2B22;</span><b id="runScrap">0</b></div>
           <div><span>DEPTH</span><b id="depthText">1</b></div>
           <div class="riskMetric"><span>RISK</span><b id="riskText">LOW</b></div>
         </div>
-        <button id="extractButton" class="extractButton"><span>↩</span><b>EXTRACT</b></button>
+        <button id="extractButton" class="extractButton" title="Begin extraction. You can keep moving during the countdown."><span>&#8617;</span><b>EXTRACT</b></button>
       </div>
-      <div id="cargoHud" class="cargoHud">
-        <span>CARGO</span>
-        <div id="cargoSlots" class="cargoSlots"></div>
+
+      <div id="depthRoute" class="depthRoute" aria-label="Route to the Scrap Warden">
+        <span>WARDEN</span><div id="routeTicks"><i></i><i></i><i></i><i></i><i></i></div>
       </div>
+      <div id="cargoHud" class="cargoHud"><span>CARGO</span><div id="cargoSlots" class="cargoSlots"></div></div>
       <div id="bossHud" class="bossHud"><span>SCRAP WARDEN</span><div><i id="bossHealthFill"></i></div></div>
+      <div id="runNotice" class="runNotice" role="status"></div>
 
       <div id="extractOverlay" class="extractOverlay">
         <div class="extractRing"><span id="extractCount">3</span></div>
         <b>EXTRACTION</b>
-        <button id="cancelExtract" class="iconButton" aria-label="Cancel extraction" title="Cancel">×</button>
+        <button id="cancelExtract" class="iconButton" aria-label="Cancel extraction" title="Cancel extraction">&#215;</button>
       </div>
 
       <div id="riskOverlay" class="riskOverlay" role="dialog" aria-modal="true" aria-labelledby="riskTitle">
@@ -102,7 +138,7 @@
           <div class="riskReadout"><span>Carrying <b id="riskScrap">0</b> scrap</span><span>Next multiplier <b id="nextMultiplier">x1.35</b></span></div>
           <div class="riskChoices">
             <button id="riskExtract" class="riskChoice extractChoice"><b>EXTRACT</b><span>Survive the countdown</span></button>
-            <button id="riskPush" class="riskChoice pushChoice"><b>RISK IT</b><span>Elite incoming · better loot</span></button>
+            <button id="riskPush" class="riskChoice pushChoice"><b>RISK IT</b><span>Elite incoming &middot; better loot</span></button>
           </div>
         </div>
       </div>
@@ -116,12 +152,24 @@
         </div>
       </div>
 
-      <div id="touchControls" class="touchControls" aria-hidden="true">
-        <div id="joystick" class="joystick"><i id="joystickKnob"></i></div>
-      </div>
-      <button id="dashButton" class="dashButton" aria-label="Dash" title="Dash (Space)"><b>»</b><span>DASH</span></button>
+      <div id="touchControls" class="touchControls" aria-hidden="true"><div id="joystick" class="joystick"><i id="joystickKnob"></i></div></div>
+      <button id="dashButton" class="dashButton" aria-label="Dash" title="Dash (Space)"><b>&#187;</b><span>DASH</span></button>
     </section>
+
+    <div id="settingsOverlay" class="settingsOverlay" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <div class="menuPanel settingsPanel">
+        <button id="closeSettings" class="panelClose" aria-label="Close settings">&#215;</button>
+        <small>SYSTEM</small><h2 id="settingsTitle">SETTINGS</h2>
+        <div class="settingRows">
+          <button id="soundToggle" role="switch"><span>SOUND</span><b>ON</b></button>
+          <button id="shakeToggle" role="switch"><span>SCREEN SHAKE</span><b>ON</b></button>
+          <button id="particlesToggle" role="switch"><span>PARTICLES</span><b>ON</b></button>
+        </div>
+        <button id="resumeButton" class="primaryButton settingsResume"><span>RESUME</span><i>&#8250;</i></button>
+        <button id="abandonButton" class="dangerButton">ABANDON EXPEDITION</button>
+      </div>
+    </div>
   </main>
-  <script src="script.js"></script>
+  <script src="script.js?v=0.2.0"></script>
 </body>
 </html>

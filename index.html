@@ -34,6 +34,8 @@
           <div class="rigLeg left"></div><div class="rigLeg right"></div>
         </div>
         <div class="scrapHeap"><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="workshopEvolution evolutionA"></div>
+        <div class="workshopEvolution evolutionB"></div>
         <div class="floorLine"></div>
       </div>
 
@@ -56,6 +58,15 @@
       </div>
 
       <div id="baseNotice" class="baseNotice" role="status"></div>
+      <div id="resultOverlay" class="resultOverlay" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+        <div class="resultPanel">
+          <small>EXPEDITION REPORT</small>
+          <h2 id="resultTitle">CARGO SECURED</h2>
+          <div class="resultStats"><div><span>SCRAP</span><b id="resultScrap">0</b></div><div><span>DEPTH</span><b id="resultDepth">1</b></div></div>
+          <div id="resultModules" class="resultModules"></div>
+          <button id="closeResult" class="primaryButton resultContinue"><span>BACK TO WORKSHOP</span><i>›</i></button>
+        </div>
+      </div>
     </section>
 
     <section id="expeditionView" class="view expeditionView">
@@ -72,6 +83,11 @@
         </div>
         <button id="extractButton" class="extractButton"><span>↩</span><b>EXTRACT</b></button>
       </div>
+      <div id="cargoHud" class="cargoHud">
+        <span>CARGO</span>
+        <div id="cargoSlots" class="cargoSlots"></div>
+      </div>
+      <div id="bossHud" class="bossHud"><span>SCRAP WARDEN</span><div><i id="bossHealthFill"></i></div></div>
 
       <div id="extractOverlay" class="extractOverlay">
         <div class="extractRing"><span id="extractCount">3</span></div>
@@ -88,6 +104,15 @@
             <button id="riskExtract" class="riskChoice extractChoice"><b>EXTRACT</b><span>Survive the countdown</span></button>
             <button id="riskPush" class="riskChoice pushChoice"><b>RISK IT</b><span>Elite incoming · better loot</span></button>
           </div>
+        </div>
+      </div>
+
+      <div id="moduleOverlay" class="moduleOverlay" role="dialog" aria-modal="true" aria-labelledby="moduleTitle">
+        <div class="modulePanel">
+          <small id="moduleEyebrow">SALVAGE CACHE</small>
+          <h2 id="moduleTitle">CHOOSE A MODULE</h2>
+          <div id="moduleChoices" class="moduleChoices"></div>
+          <button id="moduleSkip" class="moduleSkip">LEAVE IT</button>
         </div>
       </div>
 

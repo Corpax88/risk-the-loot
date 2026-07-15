@@ -1,4 +1,4 @@
-# RISK THE LOOT! v0.5.1
+# RISK THE LOOT! v0.5.2
 
 A framework-free HTML5 extraction roguelite about pushing deeper, building a field loadout, and deciding when to escape.
 
@@ -37,8 +37,9 @@ Compatible cache choices are marked before installation, and the active build re
 ## Blueprint workshop
 
 - Extracted modules become permanent blueprints.
-- Duplicate recoveries increase blueprint mastery at 1, 3, and 7 copies.
-- Scrap can tune an unlocked blueprint twice.
+- Duplicate recoveries increase starter output at 1, 3, and 7 recovered copies: MK I 100%, MK II 115%, and MK III 130%.
+- Scrap can calibrate an unlocked blueprint twice for another 10% starter output each time.
+- The Blueprint Bench shows the exact current and next effect. Fractional Burst output creates guaranteed echo shots over time, while fractional Plating output grants armor.
 - One blueprint can be equipped as the starter module for future expeditions.
 - Starter modules occupy one cargo slot and cannot be recovered again for free.
 

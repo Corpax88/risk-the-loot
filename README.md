@@ -1,4 +1,4 @@
-# RISK THE LOOT! v0.3.0
+# RISK THE LOOT! v0.4.0
 
 A framework-free HTML5 extraction roguelite about pushing deeper, building a field loadout, and deciding when to escape.
 
@@ -8,7 +8,7 @@ A framework-free HTML5 extraction roguelite about pushing deeper, building a fie
 2. Start an expedition.
 3. Move, dodge, and collect scrap while the rig fires automatically.
 4. Open salvage caches and shape a run with up to three field modules.
-5. At depth milestones, extract or risk the cargo for stronger rewards and an elite encounter.
+5. At depth milestones, extract or risk the cargo for stronger rewards and a priority salvage encounter.
 6. Defeat the three-phase Scrap Warden at Depth 5 for guaranteed rare salvage and a Warden Core.
 7. Survive extraction to bank scrap and recovered module blueprints. Dying loses everything carried on that expedition.
 
@@ -44,6 +44,8 @@ Compatible cache choices are marked before installation, and the active build re
 
 ## Release features
 
+- A paced five-minute Warden route with an early one-minute extraction option
+- Escalating zone pressure, priority salvage encounters, and field repairs between floors
 - Five visually distinct tower zones with their own enemy mix and environmental hazards
 - Scrap Hounds, Rivet Sentries, Steam Vents, Arc Lancers, elites, and a multi-phase Warden
 - Generated adaptive ambience, layered combat audio, recoil, telegraphs, and impact feedback
@@ -54,6 +56,10 @@ Compatible cache choices are marked before installation, and the active build re
 - Versioned migration for existing local saves
 - Keyboard, pointer, multitouch, and iPhone safe-area support
 - Entity limits and delta-time simulation for consistent mobile performance
+
+## Playtest build
+
+Version 0.4 keeps all balance data on the device. Expedition reports show run time, kills, damage taken, and risks accepted. The blueprint bench tracks extraction rate, average run length, Warden victories, and how often each module is installed. The latest twelve run summaries are retained in the local save for tuning and are never uploaded.
 
 ## Controls
 

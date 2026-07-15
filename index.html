@@ -8,14 +8,14 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="description" content="Risk everything, recover field modules, and rebuild your workshop in this compact extraction roguelite.">
   <title>RISK THE LOOT!</title>
-  <link rel="stylesheet" href="style.css?v=0.3.0">
+  <link rel="stylesheet" href="style.css?v=0.4.0">
 </head>
 <body>
   <main id="game">
     <header class="topbar">
       <div class="brand">
         <span class="brandMark">R</span>
-        <div><strong>RISK THE LOOT!</strong><small>RECOVERY UNIT 07</small></div>
+        <div><strong>RISK THE LOOT!</strong><small>PLAYTEST BUILD v0.4</small></div>
       </div>
       <div class="resources">
         <div class="resource scrap"><i>&#x2B22;</i><div><b id="bankScrap">0</b><span>SCRAP</span></div></div>
@@ -102,7 +102,13 @@
         <div class="resultPanel">
           <small>EXPEDITION REPORT</small>
           <h2 id="resultTitle">CARGO SECURED</h2>
-          <div class="resultStats"><div><span>SCRAP</span><b id="resultScrap">0</b></div><div><span>DEPTH</span><b id="resultDepth">1</b></div></div>
+          <div class="resultStats">
+            <div><span>SCRAP</span><b id="resultScrap">0</b></div>
+            <div><span>DEPTH</span><b id="resultDepth">1</b></div>
+            <div><span>TIME</span><b id="resultTime">0:00</b></div>
+            <div><span>KILLS</span><b id="resultKills">0</b></div>
+          </div>
+          <div class="resultFieldData"><span><b id="resultDamage">0</b> DAMAGE TAKEN</span><span><b id="resultRisk">0</b> RISKS TAKEN</span></div>
           <div id="resultRecord" class="resultRecord"></div>
           <div id="resultModules" class="resultModules"></div>
           <button id="closeResult" class="primaryButton resultContinue"><span>BACK TO WORKSHOP</span><i>&#8250;</i></button>
@@ -136,7 +142,7 @@
       </div>
 
       <div id="depthRoute" class="depthRoute" aria-label="Route to the Scrap Warden">
-        <span>WARDEN</span><div id="routeTicks"><i></i><i></i><i></i><i></i><i></i></div>
+        <span>WARDEN</span><div id="routeTicks"><i></i><i></i><i></i><i></i><i></i></div><em class="routeProgress"><i id="routeProgressFill"></i></em>
       </div>
       <div id="cargoHud" class="cargoHud"><span>CARGO</span><div id="cargoSlots" class="cargoSlots"></div></div>
       <div id="zoneHud" class="zoneHud"><small id="zoneDepth">DEPTH 1</small><b id="zoneName">FOUNDRY APPROACH</b></div>
@@ -186,9 +192,10 @@
         </div>
         <button id="resumeButton" class="primaryButton settingsResume"><span>RESUME</span><i>&#8250;</i></button>
         <button id="abandonButton" class="dangerButton">ABANDON EXPEDITION</button>
+        <p class="buildStamp">v0.4.0 PLAYTEST BUILD</p>
       </div>
     </div>
   </main>
-  <script src="script.js?v=0.3.0"></script>
+  <script src="script.js?v=0.4.0"></script>
 </body>
 </html>

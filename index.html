@@ -6,20 +6,20 @@
   <meta name="theme-color" content="#101417">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="description" content="Risk everything, recover field modules, and rebuild your workshop in this compact extraction roguelite.">
+  <meta name="description" content="Risk everything, recover valuable loot and fuse combat relics in this compact extraction roguelite.">
   <title>RISK THE LOOT!</title>
-  <link rel="stylesheet" href="style.css?v=0.5.2">
+  <link rel="stylesheet" href="style.css?v=0.7.0">
 </head>
 <body>
   <main id="game">
     <header class="topbar">
       <div class="brand">
         <span class="brandMark">R</span>
-        <div><strong>RISK THE LOOT!</strong><small>BLUEPRINT MASTERY v0.5.2</small></div>
+        <div><strong>RISK THE LOOT!</strong><small>THE LOOT HUNT v0.7.0</small></div>
       </div>
       <div class="resources">
         <div class="resource scrap"><i>&#x2B22;</i><div><b id="bankScrap">0</b><span>SCRAP</span></div></div>
-        <div class="resource cores"><i>&#9670;</i><div><b id="coreCount">0</b><span>WARDEN CORES</span></div></div>
+        <div class="resource cores"><i>&#9670;</i><div><b id="coreCount">0</b><span>BOSS CORES</span></div></div>
         <div class="resource record"><i>&#x25B2;</i><div><b id="bestDepth">0</b><span>BEST DEPTH</span></div></div>
       </div>
       <button id="settingsButton" class="iconButton" aria-label="Open settings" title="Settings">&#9881;</button>
@@ -53,14 +53,14 @@
             <span class="upgradeGlyph">&#10022;</span><small>ARC CANNON <b id="weaponLevel">0</b></small>
             <strong><b id="damageStat">8</b> DMG</strong><em>&#x2B22; <b id="weaponCost">55</b></em>
           </button>
-          <button id="upgradeSalvage" class="upgradeCard salvageUpgrade" title="Increase pickup range and scrap yield.">
+          <button id="upgradeSalvage" class="upgradeCard salvageUpgrade" title="Increase pickup range and recovered loot value.">
             <span class="upgradeGlyph">&#9678;</span><small>MAGNET <b id="salvageLevel">0</b></small>
             <strong><b id="magnetStat">85</b> RANGE</strong><em>&#x2B22; <b id="salvageCost">50</b></em>
           </button>
         </div>
         <div class="actionRail">
-          <button id="blueprintButton" class="blueprintButton" title="Choose and tune a recovered starter module.">
-            <i id="starterIcon">+</i><span><small>STARTER MODULE</small><b id="starterName">NONE EQUIPPED</b></span><em>BENCH</em>
+          <button id="blueprintButton" class="blueprintButton" title="Choose and tune a recovered starter relic.">
+            <i id="starterIcon">+</i><span><small>STARTER RELIC</small><b id="starterName">NONE EQUIPPED</b></span><em>BENCH</em>
           </button>
           <button id="startButton" class="primaryButton"><span>START EXPEDITION</span><i>&#8250;</i></button>
         </div>
@@ -79,9 +79,9 @@
           <button id="closeBlueprints" class="panelClose" aria-label="Close blueprint bench">&#215;</button>
           <small>RECOVER COPIES &middot; UPGRADE STARTER OUTPUT</small>
           <h2 id="blueprintTitle">BLUEPRINT BENCH</h2>
-          <div class="starterReadout"><span>EXPEDITION STARTER</span><b id="starterReadout">No module equipped</b></div>
+          <div class="starterReadout"><span>EXPEDITION STARTER</span><b id="starterReadout">No relic equipped</b></div>
           <section class="wardenBench">
-            <div><small>WARDEN SCHEMATICS</small><span>Permanent systems recovered from defeated Wardens</span></div>
+            <div><small>BOSS SCHEMATICS</small><span>Permanent systems recovered from tower guardians</span></div>
             <div id="wardenTechGrid" class="wardenTechGrid"></div>
           </section>
           <div id="blueprintGrid" class="blueprintGrid"></div>
@@ -95,7 +95,7 @@
           <h2 id="briefingTitle">GET IN. GET RICH. GET OUT.</h2>
           <div class="briefingSteps">
             <div><i>&#10132;</i><b>MOVE</b><span>Steer the rig. The cannon fires automatically.</span></div>
-            <div><i>&#x2B22;</i><b>BUILD</b><span>Open caches and shape a three-module build.</span></div>
+            <div><i>&#x2B22;</i><b>BUILD</b><span>Find relics. Fuse matching powers. Create a three-relic build.</span></div>
             <div><i>&#8617;</i><b>EXTRACT</b><span>Leave alive to secure everything you carry.</span></div>
           </div>
           <button id="briefingStart" class="primaryButton"><span>DEPLOY</span><i>&#8250;</i></button>
@@ -107,13 +107,14 @@
           <small>EXPEDITION REPORT</small>
           <h2 id="resultTitle">CARGO SECURED</h2>
           <div class="resultStats">
-            <div><span>SCRAP</span><b id="resultScrap">0</b></div>
+            <div><span>LOOT VALUE</span><b id="resultScrap">0</b></div>
             <div><span>DEPTH</span><b id="resultDepth">1</b></div>
             <div><span>TIME</span><b id="resultTime">0:00</b></div>
             <div><span>KILLS</span><b id="resultKills">0</b></div>
           </div>
-          <div class="resultFieldData"><span><b id="resultDamage">0</b> DAMAGE TAKEN</span><span><b id="resultRisk">0</b> RISKS TAKEN</span></div>
+          <div class="resultFieldData"><span><b id="resultDamage">0</b> DAMAGE TAKEN</span><span><b id="resultRisk">0</b> RISKS TAKEN</span><span><b id="resultItems">0</b> ITEMS</span></div>
           <div id="resultRecord" class="resultRecord"></div>
+          <div id="resultLoot" class="resultLoot"></div>
           <div id="resultModules" class="resultModules"></div>
           <button id="closeResult" class="primaryButton resultContinue"><span>BACK TO WORKSHOP</span><i>&#8250;</i></button>
         </div>
@@ -138,21 +139,22 @@
           <div class="healthTrack"><i id="healthFill"></i></div>
         </div>
         <div class="runMetrics">
-          <div><span>&#x2B22;</span><b id="runScrap">0</b></div>
+          <div id="lootMetric" class="lootMetric"><span>LOOT</span><b id="runScrap">0</b><em id="lootBest">EMPTY</em></div>
           <div><span>DEPTH</span><b id="depthText">1</b></div>
           <div class="riskMetric"><span>RISK</span><b id="riskText">LOW</b></div>
         </div>
         <button id="extractButton" class="extractButton" title="Begin extraction. You can keep moving during the countdown."><span>&#8617;</span><b>EXTRACT</b></button>
       </div>
 
-      <div id="depthRoute" class="depthRoute" aria-label="Route to the Scrap Warden">
-        <span>WARDEN</span><div id="routeTicks"><i></i><i></i><i></i><i></i><i></i></div><em class="routeProgress"><i id="routeProgressFill"></i></em>
+      <div id="depthRoute" class="depthRoute" aria-label="Expedition route">
+        <span id="routeLabel">TOWER</span><div id="routeTicks"><i></i><i></i><i></i><i></i><i></i></div><em class="routeProgress"><i id="routeProgressFill"></i></em>
       </div>
-      <div id="cargoHud" class="cargoHud"><span>CARGO</span><div id="cargoSlots" class="cargoSlots"></div></div>
+      <div id="cargoHud" class="cargoHud"><span>RELICS</span><div id="cargoSlots" class="cargoSlots"></div></div>
       <div id="zoneHud" class="zoneHud"><small id="zoneDepth">DEPTH 1</small><b id="zoneName">FOUNDRY APPROACH</b></div>
       <div id="buildHud" class="buildHud"><small>BUILD</small><b id="buildName">FIELD RIG</b></div>
-      <div id="bossHud" class="bossHud"><span><b>SCRAP WARDEN</b><em id="bossPhaseText">PHASE I &middot; ACQUISITION</em></span><div><i id="bossHealthFill"></i></div></div>
+      <div id="bossHud" class="bossHud"><span><b id="bossName">SCRAP WARDEN</b><em id="bossPhaseText">PHASE I &middot; ACQUISITION</em></span><div><i id="bossHealthFill"></i></div></div>
       <div id="runNotice" class="runNotice" role="status"></div>
+      <div id="lootToast" class="lootToast" role="status"><i id="lootToastIcon"></i><span><small id="lootToastRarity"></small><b id="lootToastName"></b><em id="lootToastValue"></em></span></div>
 
       <div id="extractOverlay" class="extractOverlay">
         <div class="extractRing"><span id="extractCount">3</span></div>
@@ -164,7 +166,7 @@
         <div class="riskPanel">
           <small>DEPTH MILESTONE</small>
           <h2 id="riskTitle">BANK IT OR RISK IT?</h2>
-          <div class="riskReadout"><span>Carrying <b id="riskScrap">0</b> scrap</span><span>Next multiplier <b id="nextMultiplier">x1.35</b></span></div>
+          <div class="riskReadout"><span>Carrying <b id="riskScrap">0</b> value</span><span>Best item <b id="riskBest">None</b></span><span>Next multiplier <b id="nextMultiplier">x1.35</b></span></div>
           <div class="riskChoices">
             <button id="riskExtract" class="riskChoice extractChoice"><b>EXTRACT</b><span>Survive the countdown</span></button>
             <button id="riskPush" class="riskChoice pushChoice"><b>RISK IT</b><span>Elite incoming &middot; better loot</span></button>
@@ -172,10 +174,25 @@
         </div>
       </div>
 
+      <div id="routeOverlay" class="routeOverlay" role="dialog" aria-modal="true" aria-labelledby="routeTitle">
+        <div class="routePanel">
+          <small>TOWER JUNCTION</small>
+          <h2 id="routeTitle">CHOOSE YOUR BREACH</h2>
+          <div class="routeChoices">
+            <button id="routeFurnace" class="routeChoice furnaceRoute">
+              <i>&#9832;</i><span><small>HEAVY SALVAGE</small><b>FURNACE ROUTE</b><em>Brutes, steam vents and fire zones</em><strong>+16% LOOT VALUE &middot; FURNACE TYRANT</strong></span>
+            </button>
+            <button id="routeDynamo" class="routeChoice dynamoRoute">
+              <i>&#9889;</i><span><small>PRECISION TECH</small><b>DYNAMO ROUTE</b><em>Sentries, arc lancers and power surges</em><strong>+8% HIGH-GRADE LOOT CHANCE &middot; SCRAP WARDEN</strong></span>
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div id="moduleOverlay" class="moduleOverlay" role="dialog" aria-modal="true" aria-labelledby="moduleTitle">
         <div class="modulePanel">
-          <small id="moduleEyebrow">SALVAGE CACHE</small>
-          <h2 id="moduleTitle">CHOOSE A MODULE</h2>
+          <small id="moduleEyebrow">RELIC CACHE</small>
+          <h2 id="moduleTitle">CHOOSE A RELIC</h2>
           <div id="moduleChoices" class="moduleChoices"></div>
           <button id="moduleSkip" class="moduleSkip">LEAVE IT</button>
         </div>
@@ -201,17 +218,19 @@
             <button id="devRig">+1 ALL RIG</button>
             <button id="devHeal">FULL REPAIR</button>
             <button id="devCache">RARE CACHE</button>
+            <button id="devLoot">LEGENDARY LOOT</button>
             <button id="devWarden">FIGHT WARDEN</button>
+            <button id="devTyrant">FIGHT TYRANT</button>
             <button id="devSchematic">NEXT SCHEMATIC</button>
           </div>
           <button id="devReset" class="devReset">HARD RESET SAVE</button>
         </div>
         <button id="resumeButton" class="primaryButton settingsResume"><span>RESUME</span><i>&#8250;</i></button>
         <button id="abandonButton" class="dangerButton">ABANDON EXPEDITION</button>
-        <p class="buildStamp">v0.5.2 BLUEPRINT MASTERY</p>
+        <p class="buildStamp">v0.7.0 THE LOOT HUNT</p>
       </div>
     </div>
   </main>
-  <script src="script.js?v=0.5.2"></script>
+  <script src="script.js?v=0.7.0"></script>
 </body>
 </html>

@@ -8,14 +8,14 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="description" content="Risk everything, recover field modules, and rebuild your workshop in this compact extraction roguelite.">
   <title>RISK THE LOOT!</title>
-  <link rel="stylesheet" href="style.css?v=0.4.0">
+  <link rel="stylesheet" href="style.css?v=0.5.1">
 </head>
 <body>
   <main id="game">
     <header class="topbar">
       <div class="brand">
         <span class="brandMark">R</span>
-        <div><strong>RISK THE LOOT!</strong><small>PLAYTEST BUILD v0.4</small></div>
+        <div><strong>RISK THE LOOT!</strong><small>WARDEN SCHEMATICS v0.5</small></div>
       </div>
       <div class="resources">
         <div class="resource scrap"><i>&#x2B22;</i><div><b id="bankScrap">0</b><span>SCRAP</span></div></div>
@@ -80,6 +80,10 @@
           <small>PERMANENT RECOVERY</small>
           <h2 id="blueprintTitle">BLUEPRINT BENCH</h2>
           <div class="starterReadout"><span>EXPEDITION STARTER</span><b id="starterReadout">No module equipped</b></div>
+          <section class="wardenBench">
+            <div><small>WARDEN SCHEMATICS</small><span>Permanent systems recovered from defeated Wardens</span></div>
+            <div id="wardenTechGrid" class="wardenTechGrid"></div>
+          </section>
           <div id="blueprintGrid" class="blueprintGrid"></div>
           <div id="careerStats" class="careerStats"></div>
         </div>
@@ -190,12 +194,24 @@
           <button id="shakeToggle" role="switch"><span>SCREEN SHAKE</span><b>ON</b></button>
           <button id="particlesToggle" role="switch"><span>PARTICLES</span><b>ON</b></button>
         </div>
+        <button id="devButton" class="devButton" aria-expanded="false" aria-controls="devPanel"><span>PLAYTEST TOOLS</span><b>DEV</b></button>
+        <div id="devPanel" class="devPanel">
+          <div class="devGrid">
+            <button id="devScrap">+500 SCRAP</button>
+            <button id="devRig">+1 ALL RIG</button>
+            <button id="devHeal">FULL REPAIR</button>
+            <button id="devCache">RARE CACHE</button>
+            <button id="devWarden">FIGHT WARDEN</button>
+            <button id="devSchematic">NEXT SCHEMATIC</button>
+          </div>
+          <button id="devReset" class="devReset">HARD RESET SAVE</button>
+        </div>
         <button id="resumeButton" class="primaryButton settingsResume"><span>RESUME</span><i>&#8250;</i></button>
         <button id="abandonButton" class="dangerButton">ABANDON EXPEDITION</button>
-        <p class="buildStamp">v0.4.0 PLAYTEST BUILD</p>
+        <p class="buildStamp">v0.5.1 PLAYTEST TOOLS</p>
       </div>
     </div>
   </main>
-  <script src="script.js?v=0.4.0"></script>
+  <script src="script.js?v=0.5.1"></script>
 </body>
 </html>

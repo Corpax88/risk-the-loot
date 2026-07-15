@@ -1,4 +1,4 @@
-# RISK THE LOOT! v0.5.0
+# RISK THE LOOT! v0.5.1
 
 A framework-free HTML5 extraction roguelite about pushing deeper, building a field loadout, and deciding when to escape.
 
@@ -64,6 +64,7 @@ Schematics only become permanent after a successful extraction. Once every schem
 - First-run visual briefing
 - Pause and persistent sound, screen shake, and particle settings
 - Career records and expedition reports
+- Collapsible playtest tools in Settings for scrap, rig, cache, repair, Warden, schematic, and save testing
 - Versioned migration for existing local saves
 - Keyboard, pointer, multitouch, and iPhone safe-area support
 - Entity limits and delta-time simulation for consistent mobile performance

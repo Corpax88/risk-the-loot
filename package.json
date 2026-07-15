@@ -1,6 +1,6 @@
 {
   "name": "risk-the-loot",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "private": true,
   "description": "A framework-free HTML5 extraction roguelite.",
   "scripts": {

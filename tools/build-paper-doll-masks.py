@@ -1,8 +1,8 @@
 """Build animation-aligned equipment masks for Pappa Hammer.
 
-The source sprite sheets are 4x2 atlases with 512px cells. Each generated mask
-keeps that exact layout so the browser can recolor the equipped silhouette once
-per loadout, then render a small cached atlas during gameplay.
+The source sprite sheets are 4x2 atlases with 512px cells. Runtime masks use
+256px cells to reduce decoded image memory on mobile, while the browser keeps
+the final composed hero at the original 512px-per-frame resolution.
 """
 
 from collections import deque
@@ -16,6 +16,7 @@ ASSETS = ROOT / "assets"
 OUTPUT = ASSETS / "paper-doll"
 DEBUG = ROOT / "tmp" / "paper-doll"
 CELL = 512
+OUTPUT_CELL = 256
 POSES = ("idle", "run", "attack")
 SLOTS = ("coat", "boots", "scarf", "hat", "hammer")
 
@@ -180,7 +181,8 @@ def main():
     for pose in POSES:
         source_path = ASSETS / f"pappa-hammer-{pose}-v2.png"
         source = Image.open(source_path).convert("RGBA")
-        atlases = {slot: Image.new("L", source.size, 0) for slot in SLOTS}
+        output_size = (OUTPUT_CELL * 4, OUTPUT_CELL * 2)
+        atlases = {slot: Image.new("L", output_size, 0) for slot in SLOTS}
         debug = source.copy()
         for frame_index in range(8):
             x = frame_index % 4 * CELL
@@ -188,7 +190,10 @@ def main():
             frame = source.crop((x, y, x + CELL, y + CELL))
             masks = build_frame_masks(frame, pose, frame_index)
             for slot, mask in masks.items():
-                atlases[slot].paste(mask, (x, y))
+                output_x = frame_index % 4 * OUTPUT_CELL
+                output_y = frame_index // 4 * OUTPUT_CELL
+                runtime_mask = mask.resize((OUTPUT_CELL, OUTPUT_CELL), Image.Resampling.LANCZOS)
+                atlases[slot].paste(runtime_mask, (output_x, output_y))
                 tint = Image.new("RGBA", (CELL, CELL), DEBUG_COLORS[slot])
                 tint.putalpha(mask.point(lambda value: value * DEBUG_COLORS[slot][3] // 255))
                 debug.alpha_composite(tint, (x, y))

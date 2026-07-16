@@ -1,4 +1,4 @@
-# RISK THE LOOT! v0.14.0
+# RISK THE LOOT! v0.15.0
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
 
@@ -7,35 +7,39 @@ A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adv
 1. Equip Pappa Hammer in the guild workshop.
 2. Choose one recovered Lucky Relic and begin an expedition.
 3. Move and dodge while Pappa attacks automatically.
-4. Recover physical gear from enemies and treasure chests.
-5. At floor milestones, extract safely or push deeper for better rarity odds and value.
+4. Defeat enemies for coins and challenge a floor champion for equipment.
+5. At floor milestones, extract safely or push deeper for stronger boss rewards.
 6. Survive extraction to secure every carried item. Dying loses the expedition bag.
 7. Equip upgrades in the Gear Locker or sell spare copies for coins.
 8. Return stronger and challenge either tower path and its three-phase champion.
 
 There are no direct damage, health, or pickup-range purchases for new saves. Character progression now comes from equipment the player actually risks in the field.
 
-## Equipment
+## Pappa levels and equipment
 
-The catalog has exactly 40 equippable items:
+Pappa Hammer earns boss XP and levels up whenever a champion falls. Every level adds a little base health and damage, but the champions also gain health and damage. Higher levels open stronger equipment pools:
 
-- 20 Common
-- 10 Rare
-- 5 Epic
-- 3 Mythic
-- 2 Legendary
+- Rare set gear can drop immediately.
+- Mythic set gear begins at Pappa level 7.
+- Legendary set gear begins at Pappa level 16.
 
-Pappa has five equipment slots: Hat, Scarf, Coat, Hammer, and Boots. Gear can change health, hammer damage, pickup reach, movement speed, strike rate, armor, loot value, dash recharge, and critical chance.
+The boss catalog contains exactly 100 set items: 20 named sets with a Hat, Scarf, Coat, Hammer, and Boots in each set. Ten sets are Rare, six are Mythic, and four are Legendary. Ordinary enemies only drop coins; equipment is reserved for boss victories.
 
-Every catalog item now has dedicated anime item art in a fixed 10 by 5 atlas plus a separate high-contrast mini atlas for field drops. Inventory cards, equipped slots, recovery results, pickup notices, and physical enemy drops all use the same item identity. Empty slots automatically equip the strongest matching item after the first successful recovery.
+Every recovered piece is a unique item instance with its own item level, quality roll, randomized stats, and sale value. Finding the same named piece again can therefore still produce a meaningful upgrade. Gear can change health, hammer damage, pickup reach, movement speed, strike rate, armor, loot value, dash recharge, and critical chance.
 
-The Gear Locker has a live Pappa Hammer preview, five dedicated worn slots, combined equipment stats, slot filters, and rarity filters. `Sell Filtered` sells every matching unequipped copy after confirmation. The copy currently worn by Pappa is always reserved and can never be sold, even when selling an entire rarity.
+Each set has fixed 2-piece, 3-piece, and 5-piece bonuses designed around its rarity and theme. The individual piece rolls vary, while the set milestones always remain predictable.
+
+Equipment uses a fixed anime gear atlas for readable slot silhouettes, while set colors, marks, names, and paper-doll treatments distinguish the 100 boss pieces. Locker cards, equipped slots, recovery reports, pickup notices, and boss drops keep the same item identity. Empty slots automatically equip the strongest matching item after the first successful recovery.
+
+The Gear Locker has a live Pappa Hammer preview with a draggable 360-degree turntable, Pappa level and boss XP, five dedicated worn slots, active set milestones, combined equipment stats, slot filters, and rarity filters. `Sell Filtered` sells every matching unequipped item after confirmation. Gear currently worn by Pappa is always reserved and can never be sold.
 
 Pappa Hammer uses dedicated eight-frame idle, run, and attack animation sheets. Every equipped slot now recolors and details the correct moving part through 15 frame-matched paper-doll masks, so hats, scarves, coats, hammers, and boots remain attached throughout all three animations. The same composed loadout appears in the living Gear Locker preview and during expeditions.
 
-Legendary equipment creates a distinct HUD state and extraction signal. The intended reaction is simple: when one drops, leaving alive should suddenly matter more than finishing the floor.
+The composed hero keeps the original 512px frame resolution for crisp Retina rendering. Equipment colors are applied as restrained material accents rather than a heavy full-body tint, and the runtime masks are memory-optimized for iPhone Safari.
 
-Existing v0.9 saves migrate automatically. Previously collected loot becomes owned gear, the best recovered item in every slot is equipped, and old workshop upgrade levels remain as hidden legacy bonuses so progression is not erased.
+The post-run report groups equipment by rarity and shows each piece's level, slot, set, stat roll, quality, and value. Legendary equipment creates a distinct HUD state and extraction signal. The intended reaction is simple: when one drops, leaving alive should suddenly matter more than finishing the floor.
+
+Existing saves migrate automatically. Old stacked inventory copies become separate protected gear instances, equipped pieces remain equipped, and old workshop upgrade levels remain as hidden legacy bonuses so progression is not erased.
 
 ## Lucky Relics
 
@@ -78,7 +82,7 @@ Open `http://127.0.0.1:4175` on the computer, or use the computer's local IP add
 npm test
 ```
 
-The automated release suite covers DOM/CSS integrity, JavaScript syntax, all rarity counts, five gear slots, old-save migration, real gear stats, the Gear Locker, relic fusion, safe extraction, both full boss paths, permanent trophies, career progression, settings, and developer tools.
+The automated release suite covers DOM/CSS integrity, JavaScript syntax, all 20 sets and 100 set pieces, five gear slots, unique-item migration, RNG item rolls, fixed set bonuses, boss-only equipment, Pappa levels, the rotating Gear Locker, relic fusion, safe extraction, both full boss paths, permanent trophies, career progression, settings, and developer tools.
 
 Built with plain HTML, CSS, JavaScript, Canvas, and PNG assets.
 

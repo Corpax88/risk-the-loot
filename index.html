@@ -3,67 +3,62 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-  <meta name="theme-color" content="#101417">
+  <meta name="theme-color" content="#101a2b">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="description" content="Risk everything, recover valuable loot and fuse combat relics in this compact extraction roguelite.">
   <title>RISK THE LOOT!</title>
-  <link rel="stylesheet" href="style.css?v=0.8.0">
+  <link rel="stylesheet" href="style.css?v=0.9.0">
 </head>
 <body>
   <main id="game">
     <header class="topbar">
       <div class="brand">
         <span class="brandMark">R</span>
-        <div><strong>RISK THE LOOT!</strong><small>PAPPA HAMMER v0.8.0</small></div>
+        <div><strong>RISK THE LOOT!</strong><small>PAPPA HAMMER WORLD v0.9.0</small></div>
       </div>
       <div class="resources">
-        <div class="resource scrap"><i>&#x2B22;</i><div><b id="bankScrap">0</b><span>SCRAP</span></div></div>
-        <div class="resource cores"><i>&#9670;</i><div><b id="coreCount">0</b><span>BOSS CORES</span></div></div>
-        <div class="resource record"><i>&#x25B2;</i><div><b id="bestDepth">0</b><span>BEST DEPTH</span></div></div>
+        <div class="resource scrap"><i>$</i><div><b id="bankScrap">0</b><span>COINS</span></div></div>
+        <div class="resource cores"><i>&#9733;</i><div><b id="coreCount">0</b><span>BOSS SEALS</span></div></div>
+        <div class="resource record"><i>&#x25B2;</i><div><b id="bestDepth">0</b><span>BEST FLOOR</span></div></div>
       </div>
       <button id="settingsButton" class="iconButton" aria-label="Open settings" title="Settings">&#9881;</button>
     </header>
 
     <section id="baseView" class="view baseView active">
       <div class="workshopScene" aria-hidden="true">
-        <div class="windowGlow"></div>
-        <div class="pipe pipeA"></div>
-        <div class="pipe pipeB"></div>
-        <div class="forge"><span></span><i></i></div>
-        <div class="rig pappaHammerBase"></div>
-        <div class="scrapHeap"><i></i><i></i><i></i><i></i><i></i></div>
-        <div class="workshopEvolution evolutionA"></div>
-        <div class="workshopEvolution evolutionB"></div>
-        <div class="floorLine"></div>
+        <div class="workshopSunlight"></div>
+        <div class="workshopMilestone milestoneA">&#9733;</div>
+        <div class="workshopMilestone milestoneB">&#9670;</div>
+        <div class="pappaHammerBase"></div>
       </div>
 
       <div class="baseActions">
         <div class="upgradeDeck">
           <button id="upgradeChassis" class="upgradeCard chassisUpgrade" title="Increase Pappa Hammer's maximum health for every expedition.">
             <span class="upgradeGlyph">&#9829;</span><small>ENDURANCE <b id="chassisLevel">0</b></small>
-            <strong><b id="maxHpStat">100</b> HP</strong><em>&#x2B22; <b id="chassisCost">45</b></em>
+            <strong><b id="maxHpStat">100</b> HP</strong><em>$ <b id="chassisCost">45</b></em>
           </button>
           <button id="upgradeWeapon" class="upgradeCard weaponUpgrade" title="Increase the damage of every hammer strike.">
             <span class="upgradeGlyph">&#10022;</span><small>HAMMER FORCE <b id="weaponLevel">0</b></small>
-            <strong><b id="damageStat">8</b> DMG</strong><em>&#x2B22; <b id="weaponCost">55</b></em>
+            <strong><b id="damageStat">8</b> DMG</strong><em>$ <b id="weaponCost">55</b></em>
           </button>
-          <button id="upgradeSalvage" class="upgradeCard salvageUpgrade" title="Increase pickup range and recovered loot value.">
-            <span class="upgradeGlyph">&#9678;</span><small>MAGNET <b id="salvageLevel">0</b></small>
-            <strong><b id="magnetStat">85</b> RANGE</strong><em>&#x2B22; <b id="salvageCost">50</b></em>
+          <button id="upgradeSalvage" class="upgradeCard salvageUpgrade" title="Increase pickup range and the coin value of recovered loot.">
+            <span class="upgradeGlyph">&#9678;</span><small>LOOT SENSE <b id="salvageLevel">0</b></small>
+            <strong><b id="magnetStat">85</b> REACH</strong><em>$ <b id="salvageCost">50</b></em>
           </button>
         </div>
         <div class="actionRail">
           <button id="blueprintButton" class="blueprintButton" title="Choose and tune a recovered starter relic.">
-            <i id="starterIcon">+</i><span><small>STARTER RELIC</small><b id="starterName">NONE EQUIPPED</b></span><em>BENCH</em>
+            <i id="starterIcon">+</i><span><small>LUCKY RELIC</small><b id="starterName">NONE EQUIPPED</b></span><em>RACK</em>
           </button>
           <button id="startButton" class="primaryButton"><span>START EXPEDITION</span><i>&#8250;</i></button>
         </div>
       </div>
 
       <div id="contractTracker" class="contractTracker">
-        <div><small>RECOVERY CONTRACT</small><b id="contractTitle">BREACH THE LOWER VAULT</b></div>
-        <span id="contractReadout">0/3 CORES &middot; 0/12 BLUEPRINTS</span>
+        <div><small>ADVENTURE CONTRACT</small><b id="contractTitle">OPEN THE GRAND VAULT</b></div>
+        <span id="contractReadout">0/3 SEALS &middot; 0/12 RELICS</span>
         <div class="contractTrack"><i id="contractFill"></i></div>
       </div>
 
@@ -72,11 +67,11 @@
       <div id="blueprintOverlay" class="menuOverlay" role="dialog" aria-modal="true" aria-labelledby="blueprintTitle">
         <div class="menuPanel blueprintPanel">
           <button id="closeBlueprints" class="panelClose" aria-label="Close blueprint bench">&#215;</button>
-          <small>RECOVER COPIES &middot; UPGRADE STARTER OUTPUT</small>
-          <h2 id="blueprintTitle">BLUEPRINT BENCH</h2>
-          <div class="starterReadout"><span>EXPEDITION STARTER</span><b id="starterReadout">No relic equipped</b></div>
+          <small>RECOVER COPIES &middot; MASTER YOUR FAVORITES</small>
+          <h2 id="blueprintTitle">RELIC RACK</h2>
+          <div class="starterReadout"><span>LUCKY RELIC</span><b id="starterReadout">No relic equipped</b></div>
           <section class="wardenBench">
-            <div><small>BOSS SCHEMATICS</small><span>Permanent systems recovered from tower guardians</span></div>
+            <div><small>BOSS TROPHIES</small><span>Permanent lessons claimed from tower champions</span></div>
             <div id="wardenTechGrid" class="wardenTechGrid"></div>
           </section>
           <div id="blueprintGrid" class="blueprintGrid"></div>
@@ -86,24 +81,24 @@
 
       <div id="briefingOverlay" class="menuOverlay" role="dialog" aria-modal="true" aria-labelledby="briefingTitle">
         <div class="menuPanel briefingPanel">
-          <small>RECOVERY PROTOCOL</small>
+          <small>ADVENTURE RULES</small>
           <h2 id="briefingTitle">GET IN. GET RICH. GET OUT.</h2>
           <div class="briefingSteps">
             <div><i>&#10132;</i><b>MOVE</b><span>Guide Pappa Hammer. He strikes automatically.</span></div>
             <div><i>&#x2B22;</i><b>BUILD</b><span>Find relics. Fuse matching powers. Create a three-relic build.</span></div>
             <div><i>&#8617;</i><b>EXTRACT</b><span>Leave alive to secure everything you carry.</span></div>
           </div>
-          <button id="briefingStart" class="primaryButton"><span>DEPLOY</span><i>&#8250;</i></button>
+          <button id="briefingStart" class="primaryButton"><span>SET OUT</span><i>&#8250;</i></button>
         </div>
       </div>
 
       <div id="resultOverlay" class="resultOverlay" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
         <div class="resultPanel">
-          <small>EXPEDITION REPORT</small>
-          <h2 id="resultTitle">CARGO SECURED</h2>
+          <small>ADVENTURE REPORT</small>
+          <h2 id="resultTitle">LOOT SECURED</h2>
           <div class="resultStats">
             <div><span>LOOT VALUE</span><b id="resultScrap">0</b></div>
-            <div><span>DEPTH</span><b id="resultDepth">1</b></div>
+            <div><span>FLOOR</span><b id="resultDepth">1</b></div>
             <div><span>TIME</span><b id="resultTime">0:00</b></div>
             <div><span>KILLS</span><b id="resultKills">0</b></div>
           </div>
@@ -117,11 +112,11 @@
 
       <div id="contractOverlay" class="resultOverlay" role="dialog" aria-modal="true" aria-labelledby="contractCompleteTitle">
         <div class="resultPanel contractCompletePanel">
-          <small>RECOVERY CONTRACT COMPLETE</small>
+          <small>ADVENTURE CONTRACT COMPLETE</small>
           <div class="vaultSeal" aria-hidden="true"><i></i><b>07</b></div>
-          <h2 id="contractCompleteTitle">THE LOWER VAULT IS OPEN</h2>
-          <p>Your workshop has recovered enough Warden technology to breach the sealed levels below.</p>
-          <button id="closeContract" class="primaryButton resultContinue"><span>CLAIM THE SEAL</span><i>&#8250;</i></button>
+          <h2 id="contractCompleteTitle">THE GRAND VAULT IS OPEN</h2>
+          <p>Pappa Hammer has gathered enough boss seals and mastered enough relics to open the way forward.</p>
+          <button id="closeContract" class="primaryButton resultContinue"><span>CLAIM THE CREST</span><i>&#8250;</i></button>
         </div>
       </div>
     </section>
@@ -135,19 +130,19 @@
         </div>
         <div class="runMetrics">
           <div id="lootMetric" class="lootMetric"><span>LOOT</span><b id="runScrap">0</b><em id="lootBest">EMPTY</em></div>
-          <div><span>DEPTH</span><b id="depthText">1</b></div>
+            <div><span>FLOOR</span><b id="depthText">1</b></div>
           <div class="riskMetric"><span>RISK</span><b id="riskText">LOW</b></div>
         </div>
         <button id="extractButton" class="extractButton" title="Begin extraction. You can keep moving during the countdown."><span>&#8617;</span><b>EXTRACT</b></button>
       </div>
 
       <div id="depthRoute" class="depthRoute" aria-label="Expedition route">
-        <span id="routeLabel">TOWER</span><div id="routeTicks"><i></i><i></i><i></i><i></i><i></i></div><em class="routeProgress"><i id="routeProgressFill"></i></em>
+        <span id="routeLabel">ASCENT</span><div id="routeTicks"><i></i><i></i><i></i><i></i><i></i></div><em class="routeProgress"><i id="routeProgressFill"></i></em>
       </div>
       <div id="cargoHud" class="cargoHud"><span>RELICS</span><div id="cargoSlots" class="cargoSlots"></div></div>
-      <div id="zoneHud" class="zoneHud"><small id="zoneDepth">DEPTH 1</small><b id="zoneName">FOUNDRY APPROACH</b></div>
+      <div id="zoneHud" class="zoneHud"><small id="zoneDepth">FLOOR 1</small><b id="zoneName">GUILD OUTSKIRTS</b></div>
       <div id="buildHud" class="buildHud"><small>BUILD</small><b id="buildName">HAMMER BUILD</b></div>
-      <div id="bossHud" class="bossHud"><span><b id="bossName">SCRAP WARDEN</b><em id="bossPhaseText">PHASE I &middot; ACQUISITION</em></span><div><i id="bossHealthFill"></i></div></div>
+      <div id="bossHud" class="bossHud"><span><b id="bossName">VAULT WARDEN</b><em id="bossPhaseText">PHASE I &middot; STAND GUARD</em></span><div><i id="bossHealthFill"></i></div></div>
       <div id="runNotice" class="runNotice" role="status"></div>
       <div id="lootToast" class="lootToast" role="status"><i id="lootToastIcon"></i><span><small id="lootToastRarity"></small><b id="lootToastName"></b><em id="lootToastValue"></em></span></div>
 
@@ -159,7 +154,7 @@
 
       <div id="riskOverlay" class="riskOverlay" role="dialog" aria-modal="true" aria-labelledby="riskTitle">
         <div class="riskPanel">
-          <small>DEPTH MILESTONE</small>
+          <small>FLOOR MILESTONE</small>
           <h2 id="riskTitle">BANK IT OR RISK IT?</h2>
           <div class="riskReadout"><span>Carrying <b id="riskScrap">0</b> value</span><span>Best item <b id="riskBest">None</b></span><span>Next multiplier <b id="nextMultiplier">x1.35</b></span></div>
           <div class="riskChoices">
@@ -171,14 +166,14 @@
 
       <div id="routeOverlay" class="routeOverlay" role="dialog" aria-modal="true" aria-labelledby="routeTitle">
         <div class="routePanel">
-          <small>TOWER JUNCTION</small>
-          <h2 id="routeTitle">CHOOSE YOUR BREACH</h2>
+          <small>ADVENTURE CROSSROADS</small>
+          <h2 id="routeTitle">CHOOSE YOUR PATH</h2>
           <div class="routeChoices">
             <button id="routeFurnace" class="routeChoice furnaceRoute">
-              <i>&#9832;</i><span><small>HEAVY SALVAGE</small><b>FURNACE ROUTE</b><em>Brutes, steam vents and fire zones</em><strong>+16% LOOT VALUE &middot; FURNACE TYRANT</strong></span>
+              <i>&#9876;</i><span><small>HEAVY PURSES</small><b>CRIMSON PATH</b><em>Shield guards, banner strikes and brawlers</em><strong>+16% LOOT VALUE &middot; CRIMSON CHAMPION</strong></span>
             </button>
             <button id="routeDynamo" class="routeChoice dynamoRoute">
-              <i>&#9889;</i><span><small>PRECISION TECH</small><b>DYNAMO ROUTE</b><em>Sentries, arc lancers and power surges</em><strong>+8% HIGH-GRADE LOOT CHANCE &middot; SCRAP WARDEN</strong></span>
+              <i>&#9790;</i><span><small>RARE FINDS</small><b>MOONLIT PATH</b><em>Crossbow scouts, lancers and moon seals</em><strong>+8% HIGH-GRADE LOOT CHANCE &middot; VAULT WARDEN</strong></span>
             </button>
           </div>
         </div>
@@ -200,7 +195,7 @@
     <div id="settingsOverlay" class="settingsOverlay" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
       <div class="menuPanel settingsPanel">
         <button id="closeSettings" class="panelClose" aria-label="Close settings">&#215;</button>
-        <small>SYSTEM</small><h2 id="settingsTitle">SETTINGS</h2>
+        <small>GAME</small><h2 id="settingsTitle">SETTINGS</h2>
         <div class="settingRows">
           <button id="soundToggle" role="switch"><span>SOUND</span><b>ON</b></button>
           <button id="shakeToggle" role="switch"><span>SCREEN SHAKE</span><b>ON</b></button>
@@ -209,23 +204,23 @@
         <button id="devButton" class="devButton" aria-expanded="false" aria-controls="devPanel"><span>PLAYTEST TOOLS</span><b>DEV</b></button>
         <div id="devPanel" class="devPanel">
           <div class="devGrid">
-            <button id="devScrap">+500 SCRAP</button>
+            <button id="devScrap">+500 COINS</button>
             <button id="devRig">+1 ALL STATS</button>
-            <button id="devHeal">FULL REPAIR</button>
+            <button id="devHeal">FULL HEAL</button>
             <button id="devCache">RARE CACHE</button>
             <button id="devLoot">LEGENDARY LOOT</button>
-            <button id="devWarden">FIGHT WARDEN</button>
-            <button id="devTyrant">FIGHT TYRANT</button>
-            <button id="devSchematic">NEXT SCHEMATIC</button>
+            <button id="devWarden">FIGHT VAULT WARDEN</button>
+            <button id="devTyrant">FIGHT CHAMPION</button>
+            <button id="devSchematic">NEXT TROPHY</button>
           </div>
           <button id="devReset" class="devReset">HARD RESET SAVE</button>
         </div>
         <button id="resumeButton" class="primaryButton settingsResume"><span>RESUME</span><i>&#8250;</i></button>
         <button id="abandonButton" class="dangerButton">ABANDON EXPEDITION</button>
-        <p class="buildStamp">v0.8.0 PAPPA HAMMER</p>
+        <p class="buildStamp">v0.9.0 PAPPA HAMMER WORLD</p>
       </div>
     </div>
   </main>
-  <script src="script.js?v=0.8.0"></script>
+  <script src="script.js?v=0.9.0"></script>
 </body>
 </html>

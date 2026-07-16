@@ -62,6 +62,220 @@ button:focus-visible{outline:2px solid #fff0a8;outline-offset:2px}
 @media(max-width:420px){.resultStats{grid-template-columns:repeat(2,minmax(0,1fr))}.resultStats div{padding:8px 5px}.resultFieldData{gap:10px;justify-content:space-between}.resultPanel h2{margin-bottom:11px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
+/* Pappa Hammer world: clean anime adventure UI */
+:root{
+  --ink:#090d15;
+  --panel:#121c2d;
+  --steel:#24344d;
+  --line:#56657b;
+  --paper:#f4ead6;
+  --muted:#adb4c0;
+  --copper:#b52f3a;
+  --gold:#d6aa58;
+  --teal:#79a67e;
+  --red:#c83f46;
+  --green:#79a67e;
+}
+html,body{background:#080c14;font-family:Trebuchet MS,Segoe UI,Arial,sans-serif}
+#game{background:#0b1220}
+.topbar{
+  background:linear-gradient(180deg,#17243a,#0e1727);
+  border-bottom:2px solid #ad8546;
+  box-shadow:0 5px 0 #070b12,0 9px 22px #0009;
+}
+.brandMark{
+  border-color:#d6aa58;
+  background:#b52f3a;
+  color:#f4ead6;
+  font-family:Georgia,serif;
+  box-shadow:inset 0 0 0 3px #17243a,0 3px 0 #070b12;
+}
+.brand strong,.menuPanel h2,.riskPanel h2,.routePanel h2,.modulePanel h2,.resultPanel h2{font-family:Georgia,serif}
+.brand small{color:#d6aa58}
+.resource{
+  background:#111b2d;
+  border-color:#485b77;
+  border-bottom-color:#090d15;
+  box-shadow:inset 0 1px #ffffff12,0 3px 0 #080c14;
+}
+.resource i,.resource.record i{color:#d6aa58;text-shadow:none}
+.resource.cores i{color:#c83f46;text-shadow:none}
+.resource span{color:#c4b99f}
+.iconButton,.panelClose{
+  background:#17243a;
+  border-color:#d6aa58;
+  color:#f4ead6;
+  box-shadow:inset 0 0 0 2px #0c1422,0 3px 0 #070b12;
+}
+.baseView{background:#0b1220}
+.workshopScene{
+  inset:0 0 148px;
+  background:#111a2a url('assets/pappa-hammer-workshop.png') center 46%/cover no-repeat;
+}
+.workshopScene:before{
+  background:linear-gradient(90deg,#080c14b8 0,#080c1422 24%,transparent 48%,#080c1494 100%),linear-gradient(180deg,#0a111d22 45%,#080c14d6 100%);
+}
+.workshopScene:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border:1px solid #d6aa5838;
+  pointer-events:none;
+}
+.workshopSunlight{
+  position:absolute;
+  left:8%;top:7%;width:28%;height:54%;
+  background:linear-gradient(122deg,#f7e5b21f,transparent 70%);
+  clip-path:polygon(13% 0,77% 0,100% 100%,0 100%);
+  opacity:.8;
+}
+.pappaHammerBase{
+  position:absolute;
+  left:50%;bottom:0;
+  width:min(360px,32vw);height:min(330px,45vh);
+  transform:translateX(-50%);
+  background:url('assets/pappa-hammer-player.png') center bottom/contain no-repeat;
+  filter:drop-shadow(0 14px 7px #04070dbd);
+  animation:pappaHammerIdle 2.8s ease-in-out infinite;
+}
+.workshopMilestone{
+  position:absolute;
+  top:16%;
+  width:44px;height:44px;
+  display:grid;place-items:center;
+  border:3px solid #d6aa58;
+  border-radius:50%;
+  background:#17243ae8;
+  color:#f4ead6;
+  box-shadow:0 5px 0 #090d15;
+  opacity:0;
+  transform:translateY(10px) scale(.8);
+  transition:.3s;
+}
+.milestoneA{left:27%}.milestoneB{right:25%}
+.workshopScene.evolved1 .milestoneA,.workshopScene.evolved2 .milestoneB{opacity:1;transform:none}
+.workshopScene.evolved3 .pappaHammerBase{filter:drop-shadow(0 14px 7px #04070dbd) drop-shadow(0 0 7px #d6aa5866)}
+.baseActions{width:min(980px,calc(100% - 24px));gap:9px}
+.upgradeCard,.blueprintButton{
+  background:#121c2df2;
+  border:1px solid #596a84;
+  border-bottom:4px solid #080c14;
+  border-radius:5px;
+  box-shadow:inset 0 1px #ffffff12,0 7px 18px #0009;
+}
+.upgradeCard .upgradeGlyph,.blueprintButton>i{
+  background:#0b1321;
+  border-color:#d6aa58;
+  color:#f4ead6;
+  border-radius:4px;
+}
+.upgradeCard small,.blueprintButton small{color:#b9ad92}
+.upgradeCard em,.blueprintButton em,.blueprintEntry.unlocked>i,.blueprintEntry.unlocked .blueprintHeading b{color:#d6aa58}
+.chassisUpgrade .upgradeGlyph{color:#c83f46}.weaponUpgrade .upgradeGlyph{color:#d6aa58}.salvageUpgrade .upgradeGlyph{color:#79a67e}
+.primaryButton{
+  border-radius:5px;
+  background:linear-gradient(180deg,#cf4249,#941f2a);
+  border:2px solid #ed7b76;
+  box-shadow:inset 0 -7px #67131c,0 7px 0 #080c14,0 12px 22px #0008;
+  color:#fff4df;
+}
+.primaryButton:active{box-shadow:inset 0 -3px #67131c,0 3px 0 #080c14}
+.contractTracker,.baseNotice{
+  background:#101a2dec;
+  border-color:#a77e40;
+  border-radius:4px;
+  box-shadow:0 5px 0 #070b12,0 9px 22px #0008;
+}
+.contractTracker small{color:#d6aa58}.contractTracker>span{color:#e0d2b5}
+.contractTrack{background:#090f1b;border-color:#4e5b6d}.contractTrack i{background:linear-gradient(90deg,#b52f3a,#d6aa58);box-shadow:none}
+.contractTracker.complete{border-color:#79a67e}.contractTracker.complete .contractTrack i{background:#79a67e}.contractTracker.complete b{color:#b5d4ad}
+.menuOverlay,.settingsOverlay,.moduleOverlay,.resultOverlay,.riskOverlay,.routeOverlay{background:#060a12df;backdrop-filter:blur(3px)}
+.menuPanel,.modulePanel,.resultPanel,.riskPanel,.routePanel{
+  background:#121c2df7;
+  border:1px solid #596a84;
+  border-top:4px solid #d6aa58;
+  border-radius:6px;
+  box-shadow:0 8px 0 #060a12,0 24px 56px #000c;
+}
+.menuPanel>small,.modulePanel>small,.resultPanel>small,.riskPanel>small,.routePanel>small{color:#d6aa58}
+.starterReadout,.blueprintOutput,.careerStats div,.resultStats div,.resultFieldData,.riskReadout,.briefingSteps div{
+  background:#0b1321;
+  border-color:#394b68;
+}
+.wardenBench{background:#171b26;border-color:#8c6d3d;border-radius:5px}
+.wardenTech,.blueprintEntry,.moduleCard{
+  background:#152137;
+  border-color:#4b5f7e;
+  border-radius:5px;
+}
+.wardenTech>i,.blueprintEntry>i,.moduleIcon{background:#0b1321;border-color:#d6aa58;color:#d6aa58}
+.wardenTech.tyrantTech,.moduleCard.wardenCard.tyrantCard{background:#28171e;border-color:#a33a42}
+.wardenTech.tyrantTech>i,.moduleCard.wardenCard.tyrantCard .moduleIcon{border-color:#c83f46;color:#ed8a8f}
+.blueprintEntry.equipped{border-color:#79a67e;box-shadow:inset 4px 0 #79a67e}
+.blueprintOutput span em,.blueprintMeta{color:#79a67e}
+.copyTrack{background:#080e19;border-color:#33445f}.copyTrack i{background:#d6aa58;box-shadow:none}
+.benchActions button,.moduleSkip,.settingRows button,.devGrid button,.devReset{
+  background:#1a2942;
+  border-color:#536887;
+  border-radius:4px;
+}
+.benchActions .equipButton{border-color:#79a67e;color:#d5ecd2}.benchActions .tuneButton{border-color:#b99351;color:#f0d99b}
+.expeditionView,#world{background:#10192a}
+.healthBlock,.runMetrics,.extractButton,.cargoHud,.depthRoute,.zoneHud,.buildHud,.bossHud,.runNotice,.lootToast{
+  background:#0d1728e8;
+  border-color:#536784;
+  border-radius:4px;
+  box-shadow:0 4px 0 #070b12,0 7px 14px #0007;
+}
+.healthTrack{background:#35131a;border-color:#6c2631}.healthTrack i{background:linear-gradient(90deg,#8e1f2b,#c83f46,#e16a70)}
+.runMetrics>div{border-color:#394b68}.runMetrics span{color:#b6ad9a}.riskMetric b{color:#79a67e}
+.extractButton{background:#243a35;border-color:#79a67e;color:#eff6e8}
+.extractRing{border-color:#79a67e;box-shadow:0 0 0 3px #17243a,0 0 22px #79a67e55}
+.cargoSlot{
+  background:#121e31;
+  border-color:#596a84;
+  color:#69778d;
+  border-radius:3px;
+}
+.cargoSlot.filled{background:#252036;border-color:#d6aa58;color:#f1dba8}.cargoSlot.rare{box-shadow:inset 0 0 0 2px #d6aa5833}
+.depthRoute>div i{background:#24334a;border-color:#52627b}.depthRoute>div i.done{background:#79a67e;border-color:#a9c9a6}.depthRoute>div i.current{background:#d6aa58;border-color:#f3dfac;box-shadow:none}.depthRoute>div i.boss{background:#c83f46;border-color:#eb9599;box-shadow:none}
+.routeProgress{background:#24334a}.routeProgress i{background:#d6aa58;box-shadow:none}
+.zoneHud small{color:#d6aa58}.buildHud{border-color:#79a67e}.buildHud small{color:#b5d4ad}
+.bossHud{background:#170f18ed;border-color:#b53d47}.bossHud span{color:#f1c4c2}.bossHud span em{color:#c8a9a3}.bossHud>div{background:#35131a;border-color:#6c2631}.bossHud i{background:linear-gradient(90deg,#7d1925,#c83f46,#e27578)}
+.bossHud.tyrant{border-color:#c83f46}.bossHud.tyrant span{color:#f3d9c2}.bossHud.tyrant>div{background:#35131a;border-color:#7e2834}.bossHud.tyrant i{background:linear-gradient(90deg,#741722,#c83f46,#d6aa58)}
+.joystick{background:#101a2da8;border-color:#d6aa5880}.joystick i{background:#253754;border-color:#f4ead6;box-shadow:0 4px 0 #080c14}
+.dashButton{background:conic-gradient(#d6aa58 var(--ready),#29384e 0);border-color:#d6aa58;box-shadow:0 5px 0 #070b12,0 8px 16px #0009}.dashButton:before{background:#17243a}
+.riskChoice,.routeChoice{border-radius:5px}.extractChoice{background:#21382f;border-color:#79a67e}.pushChoice{background:#4a1c26;border-color:#c83f46}
+.furnaceRoute{background:#351821;border-color:#aa3741;color:#f6dadd}.furnaceRoute>i{border-color:#c83f46;color:#ef9ba0;box-shadow:none}.furnaceRoute strong{color:#e67a80}
+.dynamoRoute{background:#17243a;border-color:#6f84a7;color:#edf0f5}.dynamoRoute>i{border-color:#d6aa58;color:#f0d99b;box-shadow:none}.dynamoRoute strong{color:#d6aa58}
+.depthRoute.furnace{border-color:#a33a42}.depthRoute.furnace>span{color:#e67a80}.depthRoute.dynamo{border-color:#6f84a7}.depthRoute.dynamo>span{color:#f0d99b}
+.moduleCard.rare,.moduleCard.wardenCard{background:#252036;border-color:#d6aa58;box-shadow:inset 4px 0 #d6aa58}.moduleCard.rare .moduleIcon,.moduleCard.wardenCard .moduleIcon{border-color:#d6aa58;color:#f0d99b}.moduleCard em{color:#79a67e}.moduleCard.rare em,.moduleCard.wardenCard em{color:#d6aa58}
+.moduleCard.synergy,.moduleCard.fusion{border-color:#c83f46;box-shadow:inset 4px 0 #c83f46}.moduleCard.synergy .moduleIcon{border-color:#c83f46;color:#ed9a9e}.moduleCard.synergy em,.moduleCard.fusion em{color:#ed9a9e}
+.lootToast{background:#101a2df5;box-shadow:0 5px 0 #070b12,0 10px 24px #000b}.lootToast>i{border-radius:4px}.lootToast.legendary{background:#292113f5;box-shadow:0 5px 0 #070b12,0 12px 28px #000c}
+.lootResult,.resultModule{background:#152137;border-radius:3px}.resultModule.wardenReward{background:#292113}.resultModule.routeReward{background:#17243a;color:#d8deea}
+.settingRows b{background:#233a34;color:#b9ddb5}.settingRows button.off b{background:#3d2027;color:#e79a9e}
+.devButton{background:#272114;border-color:#a98749;border-radius:4px}.devPanel{background:#0b1321;border-color:#665237;border-radius:4px}
+.dangerButton,.devReset{background:#351820;border-color:#8f3039;color:#ec9aa0}
+.buildStamp{color:#887b68}
+.expeditionView.legendaryCargo:after{border-color:#d6aa5875;box-shadow:inset 0 0 18px #d6aa5815}
+.extractButton.hotLoot{background:#49391c;border-color:#d6aa58;color:#fff0c6;box-shadow:0 4px 0 #070b12,0 0 12px #d6aa5844}
+button:focus-visible{outline-color:#f4ead6}
+@keyframes pappaHammerIdle{0%,100%{transform:translateX(-50%) translateY(0) rotate(-.5deg)}50%{transform:translateX(-50%) translateY(-4px) rotate(.5deg)}}
+@keyframes extractPulse{50%{transform:scale(1.04);box-shadow:0 0 0 5px #17243a,0 0 28px #79a67e77}}
+
+@media(max-width:720px){
+  .workshopScene{inset:0 0 214px;background-position:center 42%}
+  .pappaHammerBase{bottom:0;width:250px;height:225px}
+  .workshopMilestone{top:19%;width:34px;height:34px}.milestoneA{left:12%}.milestoneB{right:12%}
+  .upgradeCard{border-bottom-width:3px}.contractTracker{box-shadow:0 4px 0 #070b12,0 7px 14px #0007}
+  .resource{box-shadow:inset 0 1px #ffffff12,0 2px 0 #080c14}
+}
+@media(max-height:620px) and (orientation:landscape){
+  .workshopScene{inset:0 0 106px;background-position:center 52%}
+  .pappaHammerBase{width:205px;height:190px}
+  .workshopMilestone{top:9%;transform:scale(.8)}
+}
+
 .routeOverlay{position:absolute;inset:0;z-index:14;display:none;place-items:center;padding:16px;background:#05090bd9;backdrop-filter:blur(4px)}.routeOverlay.show{display:grid}.routePanel{width:min(680px,100%);padding:22px;background:#151b1e;border:1px solid #5a656a;border-top:3px solid var(--gold);border-radius:8px;box-shadow:0 20px 55px #000}.routePanel>small{display:block;color:var(--gold);font-size:9px;letter-spacing:2px}.routePanel h2{margin:5px 0 15px;font-size:25px;letter-spacing:1px}.routeChoices{display:grid;grid-template-columns:1fr 1fr;gap:10px}.routeChoice{min-width:0;min-height:142px;display:grid;grid-template-columns:52px minmax(0,1fr);align-items:center;gap:11px;padding:14px;border:1px solid;border-radius:7px;text-align:left;box-shadow:inset 0 1px #ffffff12}.routeChoice>i{width:50px;height:50px;display:grid;place-items:center;border:2px solid;border-radius:50%;font-style:normal;font-size:25px}.routeChoice span,.routeChoice small,.routeChoice b,.routeChoice em,.routeChoice strong{display:block}.routeChoice small{font-size:7px;letter-spacing:1.2px}.routeChoice b{margin-top:4px;font-size:15px;letter-spacing:.8px}.routeChoice em{min-height:27px;margin-top:6px;color:#c2cbce;font-style:normal;font-size:9px;line-height:1.4}.routeChoice strong{margin-top:8px;font-size:7px;letter-spacing:.65px}.routeChoice:active{transform:translateY(2px)}.furnaceRoute{background:#3a2118;border-color:#9d5435;color:#ffd0a4}.furnaceRoute>i{border-color:#ef8f3c;color:#ffba70;box-shadow:0 0 20px #ef8f3c24}.furnaceRoute strong{color:#ffb066}.dynamoRoute{background:#192239;border-color:#5767a3;color:#d8ddff}.dynamoRoute>i{border-color:#8f9dff;color:#c7ceff;box-shadow:0 0 20px #8f9dff24}.dynamoRoute strong{color:#aeb8ff}.depthRoute.furnace{border-color:#8f5136}.depthRoute.furnace>span{color:#ffb066}.depthRoute.dynamo{border-color:#5767a3}.depthRoute.dynamo>span{color:#aeb8ff}.bossHud.tyrant{border-color:#a75031}.bossHud.tyrant span{color:#ffbe83}.bossHud.tyrant>div{background:#2f170e;border-color:#77351e}.bossHud.tyrant i{background:linear-gradient(90deg,#8c281d,#ef6a34,#ffb45f)}
 
 @media(max-width:720px){.routeOverlay{padding:8px}.routePanel{padding:17px}.routePanel h2{font-size:21px}.routeChoices{grid-template-columns:1fr}.routeChoice{min-height:94px;grid-template-columns:43px minmax(0,1fr);padding:10px}.routeChoice>i{width:41px;height:41px;font-size:20px}.routeChoice em{min-height:0}.routeChoice strong{margin-top:5px}}

@@ -14,8 +14,9 @@ for(const match of script.matchAll(/\$\('([^']+)'\)/g)){
 const openBraces=(css.match(/{/g)||[]).length;
 const closeBraces=(css.match(/}/g)||[]).length;
 assert.equal(openBraces,closeBraces,'CSS braces are unbalanced');
-assert(html.includes('style.css?v=0.8.0')&&html.includes('script.js?v=0.8.0'),'release assets are not versioned');
-assert(fs.existsSync('assets/pappa-hammer-player.png')&&script.includes("assets/pappa-hammer-player.png"),'Pappa Hammer player asset is missing');
+assert(html.includes('style.css?v=0.9.0')&&html.includes('script.js?v=0.9.0'),'release assets are not versioned');
+for(const asset of ['pappa-hammer-player.png','pappa-hammer-workshop.png','pappa-hammer-enemies.png','pappa-hammer-bosses.png'])assert(fs.existsSync('assets/'+asset),'Pappa Hammer asset is missing: '+asset);
+assert(script.includes("assets/pappa-hammer-player.png")&&script.includes("assets/pappa-hammer-enemies.png")&&script.includes("assets/pappa-hammer-bosses.png"),'Pappa Hammer combat assets are not wired');
 assert(!/v0\.[23456]\.\d/.test(html+css+script),'stale release version found');
 assert(script.includes('DEPTH_THRESHOLDS=[0,55,120,195,280]'),'expedition pacing is missing');
 assert(script.includes('BOSS_SCHEMATICS')&&script.includes('pendingWardenReward'),'permanent boss rewards are missing');

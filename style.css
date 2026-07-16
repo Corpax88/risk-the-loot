@@ -288,3 +288,101 @@ button:focus-visible{outline-color:#f4ead6}
 @keyframes legendaryFrame{50%{opacity:.5;box-shadow:inset 0 0 42px #f2c14f26}}@keyframes legendaryExtract{50%{filter:brightness(1.22);transform:translateY(-1px)}}
 @media(max-width:720px){.runMetrics>div.lootMetric{min-width:0;padding:4px 5px}.runMetrics>div.lootMetric em{max-width:92px}.lootToast{right:7px;top:191px;max-width:calc(100% - 14px)}.riskReadout{grid-template-columns:1fr;gap:7px;text-align:left}.riskReadout b{display:inline;margin:0}.resultLoot{max-height:62px}}
 @media(max-height:620px) and (orientation:landscape){.lootToast{top:101px}}
+
+/* Gearbound: equippable loot and loadout management */
+.gearLoadoutDeck{
+  height:112px;
+  display:grid;
+  grid-template-rows:minmax(0,1fr) 30px;
+  overflow:hidden;
+  background:#101827ee;
+  border:1px solid #596a84;
+  border-top:3px solid #d6aa58;
+  border-radius:6px;
+  box-shadow:0 7px 0 #070b12,0 13px 26px #0009;
+}
+.gearLockerButton{
+  min-width:0;
+  display:grid;
+  grid-template-columns:48px minmax(125px,1fr) auto auto;
+  align-items:center;
+  gap:10px;
+  padding:8px 11px;
+  background:linear-gradient(100deg,#192842,#111a2b 58%,#261e15);
+  border-bottom:1px solid #495874;
+  text-align:left;
+}
+.gearLockerButton:active{filter:brightness(1.18)}
+.gearLockerBadge{
+  width:43px;height:43px;display:grid;place-items:center;
+  background:#0a111e;border:2px solid #d6aa58;border-radius:50%;
+  color:#f1d385;font-size:22px;box-shadow:inset 0 0 0 3px #1d2940;
+}
+.gearLockerHeading{min-width:0}.gearLockerHeading small,.gearLockerHeading strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gearLockerHeading small{color:#d6aa58;font-size:7px;letter-spacing:1.6px}.gearLockerHeading strong{margin-top:4px;font-size:12px;letter-spacing:.7px}
+.gearLockerButton>em{color:#d6aa58;font-style:normal;font-size:8px;letter-spacing:1px;white-space:nowrap}
+.baseLoadout{display:flex;gap:5px}
+.baseGearSlot{
+  --gear-color:#596a84;
+  width:32px;height:32px;display:grid;place-items:center;
+  border:1px dashed #52617a;border-radius:4px;background:#0a1220;color:#66758d;
+  font-style:normal;font-size:15px;
+}
+.baseGearSlot.filled{border-style:solid;border-color:var(--gear-color);color:var(--gear-color);box-shadow:inset 0 0 10px color-mix(in srgb,var(--gear-color) 20%,transparent)}
+.baseGearStats{display:grid;grid-template-columns:repeat(4,1fr);background:#0a111d}
+.baseGearStats span{display:flex;align-items:center;justify-content:center;gap:4px;border-right:1px solid #35435a;color:#9facbf;font-size:7px;letter-spacing:.5px}.baseGearStats span:last-child{border:0}.baseGearStats b{color:#f4ead6;font-size:10px}
+
+.baseGearPreview{position:absolute;inset:0;z-index:2;pointer-events:none}
+.previewGear{--gear-main:#17243a;--gear-accent:#d6aa58;position:absolute;display:block;filter:drop-shadow(0 2px 1px #000b)}
+.previewGear.hat{left:30.5%;top:13%;width:29%;height:5%;border:3px solid var(--gear-main);border-top-color:var(--gear-accent);border-radius:50%}
+.previewGear.hat:after{content:"";position:absolute;left:37%;top:-7px;width:24%;height:8px;background:var(--gear-accent);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}
+.previewGear.scarf{left:32%;top:32%;width:25%;height:10%;border:5px solid var(--gear-main);border-top-color:var(--gear-accent);border-radius:40% 25% 45% 30%;transform:rotate(8deg)}
+.previewGear.coat{left:24%;top:39%;width:34%;height:30%;border:4px solid var(--gear-main);border-left-color:var(--gear-accent);border-radius:42% 28% 30% 35%;opacity:.72}
+.previewGear.hammer{right:11%;top:35%;width:27%;height:22%;border:5px solid var(--gear-accent);border-radius:5px;background:color-mix(in srgb,var(--gear-main) 72%,transparent);transform:rotate(4deg)}
+.previewGear.hammer:after{content:"";position:absolute;left:-57%;top:46%;width:63%;height:5px;background:var(--gear-main);border:1px solid var(--gear-accent)}
+.previewGear.boots{left:27%;bottom:8%;width:43%;height:9%;border-bottom:6px solid var(--gear-main);border-left:4px solid var(--gear-accent);border-right:4px solid var(--gear-accent);border-radius:0 0 45% 45%}
+.previewGear.style4,.previewGear.style5{filter:drop-shadow(0 0 5px var(--gear-accent)) drop-shadow(0 2px 1px #000)}
+
+.gearPanel{width:min(880px,100%);border-top-color:#d6aa58}
+.gearPanel>small{color:#d6aa58}
+.gearStatsSummary{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;margin-bottom:10px;background:#35435a;border:1px solid #35435a}
+.gearStatsSummary span{min-width:0;padding:8px;background:#0a1322;text-align:center}.gearStatsSummary small,.gearStatsSummary b{display:block}.gearStatsSummary small{color:#91a0b5;font-size:6px;letter-spacing:1px}.gearStatsSummary b{margin-top:3px;color:#f1d385;font-size:15px}
+.gearLoadoutSlots{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-bottom:10px}
+.gearLoadoutSlot{--gear-color:#596a84;min-width:0;min-height:54px;display:grid;grid-template-columns:34px minmax(0,1fr);align-items:center;gap:7px;padding:7px;background:#101b2e;border:1px solid #42516a;border-radius:5px;text-align:left}
+.gearLoadoutSlot>i{width:32px;height:32px;display:grid;place-items:center;border:1px solid var(--gear-color);border-radius:50%;color:var(--gear-color);font-style:normal}.gearLoadoutSlot span{min-width:0}.gearLoadoutSlot small,.gearLoadoutSlot b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.gearLoadoutSlot small{color:#8491a4;font-size:6px;letter-spacing:1px}.gearLoadoutSlot b{margin-top:3px;font-size:8px}.gearLoadoutSlot.filled{border-color:var(--gear-color)}.gearLoadoutSlot.selected{box-shadow:inset 0 -3px var(--gear-color);filter:brightness(1.15)}
+.gearToolbar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;margin-bottom:9px}
+.gearFilters{display:flex;gap:4px;overflow-x:auto;touch-action:pan-x;overscroll-behavior-x:contain;padding:1px}
+.gearFilters button,.sellDuplicateGear{min-height:34px;padding:6px 11px;border:1px solid #4a5971;border-radius:4px;background:#17253c;color:#b9c3d1;font-size:7px;letter-spacing:.8px;white-space:nowrap}
+.gearFilters button.active{border-color:#d6aa58;background:#2a2419;color:#f4d98b;box-shadow:inset 0 -2px #d6aa58}.sellDuplicateGear{border-color:#8b713f;background:#282113;color:#f2d88f}.sellDuplicateGear:disabled{opacity:.35}
+.gearGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.gearCard{--gear-color:#9aa5aa;min-width:0;display:grid;grid-template-columns:45px minmax(0,1fr);grid-template-rows:auto auto auto auto;column-gap:9px;padding:9px;background:#101a2b;border:1px solid #44536c;border-left:4px solid var(--gear-color);border-radius:5px;box-shadow:inset 0 1px #ffffff0b}
+.gearCard.equipped{background:#17243a;border-color:var(--gear-color);box-shadow:inset 0 0 20px color-mix(in srgb,var(--gear-color) 12%,transparent)}
+.gearCardIcon{grid-row:1/4;width:42px;height:42px;display:grid;place-items:center;background:#090f1a;border:2px solid var(--gear-color);border-radius:50%;color:var(--gear-color);font-style:normal;font-size:20px}
+.gearCardTitle{min-width:0}.gearCardTitle small,.gearCardTitle strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.gearCardTitle small{color:var(--gear-color);font-size:6px;letter-spacing:1.1px}.gearCardTitle strong{margin-top:3px;font-size:11px;letter-spacing:.3px}
+.gearCard p{grid-column:2;margin:5px 0;color:#b8c1ce;font-size:7px;line-height:1.35}
+.gearCardMeta{grid-column:2;display:flex;justify-content:space-between;gap:7px;color:#7f8ca0;font-size:6px;letter-spacing:.6px}.gearCardMeta b{color:#d6aa58}
+.gearCardActions{grid-column:1/3;display:grid;grid-template-columns:1.15fr .85fr;gap:5px;margin-top:8px}
+.gearCardActions button{min-height:34px;border:1px solid #53637d;border-radius:4px;background:#1b2a43;color:#e6ebf2;font-size:7px;letter-spacing:.7px}.gearCardActions .equipGear{border-color:var(--gear-color);color:var(--gear-color)}.gearCardActions .sellGear{border-color:#7b663c;background:#282113;color:#dec47e}.gearCardActions button:disabled{opacity:.3}
+.gearEmpty{display:none;padding:28px;border:1px dashed #45536a;color:#7e8a9c;text-align:center;font-size:8px;letter-spacing:1.2px}.gearEmpty.show{display:block}
+
+@media(max-width:720px){
+  .gearLoadoutDeck{height:104px;grid-template-rows:minmax(0,1fr) 27px}
+  .gearLockerButton{grid-template-columns:39px minmax(0,1fr) auto;padding:6px 8px;gap:7px}
+  .gearLockerBadge{width:36px;height:36px;font-size:18px}.gearLockerHeading strong{font-size:10px}.gearLockerButton>em{display:none}
+  .baseLoadout{gap:3px}.baseGearSlot{width:27px;height:27px;font-size:12px}.baseGearStats span{font-size:6px}.baseGearStats b{font-size:8px}
+  .baseActions{grid-template-rows:104px 76px}.workshopScene{inset:0 0 198px}
+  .gearPanel{padding:14px}.gearPanel h2{margin-bottom:10px}
+  .gearStatsSummary{grid-template-columns:repeat(5,minmax(47px,1fr));overflow-x:auto}.gearStatsSummary span{padding:6px 4px}.gearStatsSummary b{font-size:12px}
+  .gearLoadoutSlots{display:flex;overflow-x:auto;touch-action:pan-x}.gearLoadoutSlot{flex:0 0 132px;min-height:49px}
+  .gearToolbar{grid-template-columns:1fr}.gearFilters{order:2}.sellDuplicateGear{width:100%;order:1}
+  .gearGrid{grid-template-columns:1fr}.gearCard{padding:8px}.gearCardActions button{min-height:38px}
+  .baseGearPreview{transform:scale(.9);transform-origin:center bottom}
+}
+@media(max-width:390px){
+  .gearLockerButton{grid-template-columns:34px minmax(0,1fr) auto}.gearLockerBadge{width:32px;height:32px}.baseGearSlot{width:24px;height:24px}.baseGearStats span:nth-child(3){display:none}.baseGearStats{grid-template-columns:repeat(3,1fr)}
+  .gearLoadoutSlots{gap:5px}.gearCardTitle strong{font-size:10px}
+}
+@media(max-height:620px) and (orientation:landscape){
+  .gearLoadoutDeck{height:88px;grid-template-rows:minmax(0,1fr) 25px}.baseActions{grid-template-rows:none}.gearLockerBadge{width:34px;height:34px}.baseGearSlot{width:27px;height:27px}.workshopScene{inset:0 0 104px}
+  .gearPanel{max-height:calc(100vh - 10px)}
+}

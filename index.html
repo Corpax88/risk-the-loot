@@ -8,14 +8,14 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="description" content="Risk everything, recover equippable gear and build Pappa Hammer in this compact extraction roguelite.">
   <title>RISK THE LOOT!</title>
-  <link rel="stylesheet" href="style.css?v=0.10.0">
+  <link rel="stylesheet" href="style.css?v=0.11.0">
 </head>
 <body>
   <main id="game">
     <header class="topbar">
       <div class="brand">
         <span class="brandMark">R</span>
-        <div><strong>RISK THE LOOT!</strong><small>GEARBOUND v0.10.0</small></div>
+        <div><strong>RISK THE LOOT!</strong><small>LOADOUT v0.11.0</small></div>
       </div>
       <div class="resources">
         <div class="resource scrap"><i>$</i><div><b id="bankScrap">0</b><span>COINS</span></div></div>
@@ -64,14 +64,40 @@
           <button id="closeGear" class="panelClose" aria-label="Close Gear Locker">&#215;</button>
           <small>SECURED EQUIPMENT</small>
           <h2 id="gearTitle">GEAR LOCKER</h2>
-          <div id="gearStatsSummary" class="gearStatsSummary"></div>
-          <div id="gearLoadoutSlots" class="gearLoadoutSlots"></div>
-          <div class="gearToolbar">
-            <div id="gearFilters" class="gearFilters"></div>
-            <button id="sellDuplicateGear" class="sellDuplicateGear" title="Sell every duplicate while keeping one copy of each item.">SELL DUPLICATES</button>
+          <div class="gearWorkspace">
+            <aside class="gearCharacterPanel">
+              <div class="gearCharacterHeading"><span>WORN BY PAPPA</span><b id="gearEquippedCount">0 / 5</b></div>
+              <div class="gearCharacterStage" aria-label="Live equipped character preview">
+                <div class="gearCharacterHalo"></div>
+                <div class="gearCharacterHero"><div id="gearCharacterPreview" class="gearCharacterPreview"></div></div>
+                <span id="gearPreviewName" class="gearPreviewName">FIELD LOADOUT</span>
+              </div>
+              <div id="gearLoadoutSlots" class="gearLoadoutSlots"></div>
+              <div id="gearStatsSummary" class="gearStatsSummary"></div>
+            </aside>
+            <section class="gearInventoryPanel">
+              <header class="gearInventoryHeading">
+                <span><small>SECURED INVENTORY</small><b>CHOOSE WHAT PAPPA WEARS</b></span>
+                <em id="gearInventorySummary">0 ITEMS</em>
+              </header>
+              <div class="gearToolbar">
+                <div class="gearFilterGroup">
+                  <small>SLOT</small>
+                  <div id="gearFilters" class="gearFilters"></div>
+                </div>
+                <div class="gearFilterGroup rarityGroup">
+                  <small>RARITY</small>
+                  <div id="gearRarityFilters" class="gearFilters gearRarityFilters"></div>
+                </div>
+                <button id="sellFilteredGear" class="sellFilteredGear" title="Sell all items matching the active filters. Equipped copies are always protected.">
+                  <span id="sellFilteredLabel">SELL FILTERED</span><b id="sellFilteredSummary">0 ITEMS</b>
+                </button>
+              </div>
+              <div class="equippedProtection"><i>&#128274;</i><span>EQUIPPED GEAR IS ALWAYS PROTECTED</span></div>
+              <div id="gearGrid" class="gearGrid"></div>
+              <div id="gearEmpty" class="gearEmpty">NO SECURED GEAR MATCHES THESE FILTERS</div>
+            </section>
           </div>
-          <div id="gearGrid" class="gearGrid"></div>
-          <div id="gearEmpty" class="gearEmpty">NO SECURED GEAR IN THIS SLOT</div>
         </div>
       </div>
 
@@ -228,10 +254,10 @@
         </div>
         <button id="resumeButton" class="primaryButton settingsResume"><span>RESUME</span><i>&#8250;</i></button>
         <button id="abandonButton" class="dangerButton">ABANDON EXPEDITION</button>
-        <p class="buildStamp">v0.10.0 GEARBOUND</p>
+        <p class="buildStamp">v0.11.0 LOADOUT</p>
       </div>
     </div>
   </main>
-  <script src="script.js?v=0.10.0"></script>
+  <script src="script.js?v=0.11.0"></script>
 </body>
 </html>

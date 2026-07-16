@@ -1,8 +1,8 @@
-# RISK THE LOOT! v0.10.0
+# RISK THE LOOT! v0.11.0
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
 
-## The Gearbound loop
+## The Loadout loop
 
 1. Equip Pappa Hammer in the guild workshop.
 2. Choose one recovered Lucky Relic and begin an expedition.
@@ -27,7 +27,9 @@ The catalog has exactly 40 equippable items:
 
 Pappa has five equipment slots: Hat, Scarf, Coat, Hammer, and Boots. Gear can change health, hammer damage, pickup reach, movement speed, strike rate, armor, loot value, dash recharge, and critical chance.
 
-Equipped gear changes Pappa Hammer's silhouette and colors in combat. Empty slots automatically equip the strongest matching item after the first successful recovery. The Gear Locker supports slot filters, individual sales, and a safe `Sell Duplicates` action that always keeps one copy of every item.
+Every catalog item has its own silhouette, color treatment, emblem, and field pickup appearance. Equipped gear changes Pappa Hammer's silhouette and colors in combat. Empty slots automatically equip the strongest matching item after the first successful recovery.
+
+The Gear Locker has a live Pappa Hammer preview, five dedicated worn slots, combined equipment stats, slot filters, and rarity filters. `Sell Filtered` sells every matching unequipped copy after confirmation. The copy currently worn by Pappa is always reserved and can never be sold, even when selling an entire rarity.
 
 Legendary equipment creates a distinct HUD state and extraction signal. The intended reaction is simple: when one drops, leaving alive should suddenly matter more than finishing the floor.
 

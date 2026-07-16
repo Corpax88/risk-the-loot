@@ -1,12 +1,12 @@
-# RISK THE LOOT! v0.7.0
+# RISK THE LOOT! v0.8.0
 
 A framework-free HTML5 extraction roguelite about pushing deeper, building a field loadout, and deciding when to escape.
 
 ## Core loop
 
-1. Upgrade the rig in the workshop.
+1. Upgrade Pappa Hammer in the workshop.
 2. Start an expedition.
-3. Move, dodge, and collect physical loot items while the rig fires automatically.
+3. Move, dodge, and collect physical loot items while Pappa Hammer strikes automatically.
 4. Open relic caches, combine matching powers, and shape a run with up to three distinct relics.
 5. At depth milestones, extract or risk the cargo for stronger rewards and a priority salvage encounter.
 6. At Depth 3, choose the valuable Furnace Route or the high-grade-loot Dynamo Route.
@@ -65,7 +65,7 @@ Boss salvage does not occupy a field-module slot. Each victory offers permanent 
 - Aegis Lattice: adds a starting shield charge, up to three
 - Phase Bearings: reduces dash recharge by 6% per rank
 - Reclaimer Matrix: raises recovered loot value by 5% per rank
-- Thermal Capacitor: charges the cannon after a dash, then upgrades its damage and adds a second charge
+- Impact Temper: charges hammer waves after a dash, then upgrades their damage and adds a second charge
 
 Schematics only become permanent after a successful extraction. Once a boss's schematics are mastered, its data converts into a secured Core Dividend.
 
@@ -84,7 +84,7 @@ Schematics only become permanent after a successful extraction. Once a boss's sc
 - First-run visual briefing
 - Pause and persistent sound, screen shake, and particle settings
 - Career records and expedition reports
-- Collapsible playtest tools in Settings for scrap, rig, relic cache, legendary loot, repair, both bosses, schematics, and save testing
+- Collapsible playtest tools in Settings for scrap, Pappa Hammer stats, relic cache, legendary loot, repair, both bosses, schematics, and save testing
 - Versioned migration for existing local saves
 - Keyboard, pointer, multitouch, and iPhone safe-area support
 - Entity limits and delta-time simulation for consistent mobile performance
@@ -115,6 +115,6 @@ Open `http://127.0.0.1:4175` on the computer, or use the computer's local IP add
 npm test
 ```
 
-The release tests cover static DOM and CSS integrity, JavaScript syntax, all 40 item definitions, relic fusion and its power cap, a fresh rig's safe extraction, both full expedition routes, save migration, the blueprint bench, first-run briefing, route and relic choices, all route zones, both risk milestones, every boss phase, permanent schematic rewards, extraction, the recovery contract, career progression, and persistent settings.
+The release tests cover static DOM and CSS integrity, JavaScript syntax, all 40 item definitions, relic fusion and its power cap, Pappa Hammer's safe extraction, both full expedition routes, save migration, the blueprint bench, first-run briefing, route and relic choices, all route zones, both risk milestones, every boss phase, permanent schematic rewards, extraction, the recovery contract, career progression, and persistent settings.
 
 Built with plain HTML, CSS, JavaScript, and Canvas.

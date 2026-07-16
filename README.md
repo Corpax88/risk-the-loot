@@ -1,4 +1,4 @@
-# RISK THE LOOT! v0.12.0
+# RISK THE LOOT! v0.14.0
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
 
@@ -27,11 +27,11 @@ The catalog has exactly 40 equippable items:
 
 Pappa has five equipment slots: Hat, Scarf, Coat, Hammer, and Boots. Gear can change health, hammer damage, pickup reach, movement speed, strike rate, armor, loot value, dash recharge, and critical chance.
 
-Every catalog item has its own silhouette, color treatment, emblem, and field pickup appearance. Equipped gear changes Pappa Hammer's silhouette and colors in combat. Empty slots automatically equip the strongest matching item after the first successful recovery.
+Every catalog item now has dedicated anime item art in a fixed 10 by 5 atlas plus a separate high-contrast mini atlas for field drops. Inventory cards, equipped slots, recovery results, pickup notices, and physical enemy drops all use the same item identity. Empty slots automatically equip the strongest matching item after the first successful recovery.
 
 The Gear Locker has a live Pappa Hammer preview, five dedicated worn slots, combined equipment stats, slot filters, and rarity filters. `Sell Filtered` sells every matching unequipped copy after confirmation. The copy currently worn by Pappa is always reserved and can never be sold, even when selling an entire rarity.
 
-Pappa Hammer now uses dedicated eight-frame idle, run, and attack animation sheets. The Gear Locker preview keeps breathing and shifting while equipped item layers remain visible, so loadout changes can be judged on a living character rather than a still portrait.
+Pappa Hammer uses dedicated eight-frame idle, run, and attack animation sheets. Every equipped slot now recolors and details the correct moving part through 15 frame-matched paper-doll masks, so hats, scarves, coats, hammers, and boots remain attached throughout all three animations. The same composed loadout appears in the living Gear Locker preview and during expeditions.
 
 Legendary equipment creates a distinct HUD state and extraction signal. The intended reaction is simple: when one drops, leaving alive should suddenly matter more than finishing the floor.
 
@@ -81,3 +81,5 @@ npm test
 The automated release suite covers DOM/CSS integrity, JavaScript syntax, all rarity counts, five gear slots, old-save migration, real gear stats, the Gear Locker, relic fusion, safe extraction, both full boss paths, permanent trophies, career progression, settings, and developer tools.
 
 Built with plain HTML, CSS, JavaScript, Canvas, and PNG assets.
+
+The paper-doll masks can be rebuilt after editing the Pappa Hammer source sheets with `python tools/build-paper-doll-masks.py`.

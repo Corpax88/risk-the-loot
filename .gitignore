@@ -1,2 +1,4 @@
 test-*.png
 server.*.log
+tmp/
+__pycache__/

@@ -6,16 +6,16 @@
   <meta name="theme-color" content="#101a2b">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="description" content="Risk everything, recover valuable loot and fuse combat relics in this compact extraction roguelite.">
+  <meta name="description" content="Risk everything, recover equippable gear and build Pappa Hammer in this compact extraction roguelite.">
   <title>RISK THE LOOT!</title>
-  <link rel="stylesheet" href="style.css?v=0.9.0">
+  <link rel="stylesheet" href="style.css?v=0.10.0">
 </head>
 <body>
   <main id="game">
     <header class="topbar">
       <div class="brand">
         <span class="brandMark">R</span>
-        <div><strong>RISK THE LOOT!</strong><small>PAPPA HAMMER WORLD v0.9.0</small></div>
+        <div><strong>RISK THE LOOT!</strong><small>GEARBOUND v0.10.0</small></div>
       </div>
       <div class="resources">
         <div class="resource scrap"><i>$</i><div><b id="bankScrap">0</b><span>COINS</span></div></div>
@@ -30,23 +30,18 @@
         <div class="workshopSunlight"></div>
         <div class="workshopMilestone milestoneA">&#9733;</div>
         <div class="workshopMilestone milestoneB">&#9670;</div>
-        <div class="pappaHammerBase"></div>
+        <div class="pappaHammerBase"><div id="baseGearPreview" class="baseGearPreview"></div></div>
       </div>
 
       <div class="baseActions">
-        <div class="upgradeDeck">
-          <button id="upgradeChassis" class="upgradeCard chassisUpgrade" title="Increase Pappa Hammer's maximum health for every expedition.">
-            <span class="upgradeGlyph">&#9829;</span><small>ENDURANCE <b id="chassisLevel">0</b></small>
-            <strong><b id="maxHpStat">100</b> HP</strong><em>$ <b id="chassisCost">45</b></em>
+        <div class="gearLoadoutDeck">
+          <button id="gearLockerButton" class="gearLockerButton" title="Open the Gear Locker to equip secured expedition gear.">
+            <span class="gearLockerBadge">&#9874;</span>
+            <span class="gearLockerHeading"><small>GEAR LOCKER</small><strong id="gearLoadoutName">FIELD CLOTHES</strong></span>
+            <span id="baseLoadout" class="baseLoadout" aria-label="Equipped gear"></span>
+            <em>MANAGE &#8250;</em>
           </button>
-          <button id="upgradeWeapon" class="upgradeCard weaponUpgrade" title="Increase the damage of every hammer strike.">
-            <span class="upgradeGlyph">&#10022;</span><small>HAMMER FORCE <b id="weaponLevel">0</b></small>
-            <strong><b id="damageStat">8</b> DMG</strong><em>$ <b id="weaponCost">55</b></em>
-          </button>
-          <button id="upgradeSalvage" class="upgradeCard salvageUpgrade" title="Increase pickup range and the coin value of recovered loot.">
-            <span class="upgradeGlyph">&#9678;</span><small>LOOT SENSE <b id="salvageLevel">0</b></small>
-            <strong><b id="magnetStat">85</b> REACH</strong><em>$ <b id="salvageCost">50</b></em>
-          </button>
+          <div id="baseGearStats" class="baseGearStats" aria-label="Current gear stats"></div>
         </div>
         <div class="actionRail">
           <button id="blueprintButton" class="blueprintButton" title="Choose and tune a recovered starter relic.">
@@ -63,6 +58,22 @@
       </div>
 
       <div id="baseNotice" class="baseNotice" role="status"></div>
+
+      <div id="gearOverlay" class="menuOverlay" role="dialog" aria-modal="true" aria-labelledby="gearTitle">
+        <div class="menuPanel gearPanel">
+          <button id="closeGear" class="panelClose" aria-label="Close Gear Locker">&#215;</button>
+          <small>SECURED EQUIPMENT</small>
+          <h2 id="gearTitle">GEAR LOCKER</h2>
+          <div id="gearStatsSummary" class="gearStatsSummary"></div>
+          <div id="gearLoadoutSlots" class="gearLoadoutSlots"></div>
+          <div class="gearToolbar">
+            <div id="gearFilters" class="gearFilters"></div>
+            <button id="sellDuplicateGear" class="sellDuplicateGear" title="Sell every duplicate while keeping one copy of each item.">SELL DUPLICATES</button>
+          </div>
+          <div id="gearGrid" class="gearGrid"></div>
+          <div id="gearEmpty" class="gearEmpty">NO SECURED GEAR IN THIS SLOT</div>
+        </div>
+      </div>
 
       <div id="blueprintOverlay" class="menuOverlay" role="dialog" aria-modal="true" aria-labelledby="blueprintTitle">
         <div class="menuPanel blueprintPanel">
@@ -85,8 +96,8 @@
           <h2 id="briefingTitle">GET IN. GET RICH. GET OUT.</h2>
           <div class="briefingSteps">
             <div><i>&#10132;</i><b>MOVE</b><span>Guide Pappa Hammer. He strikes automatically.</span></div>
-            <div><i>&#x2B22;</i><b>BUILD</b><span>Find relics. Fuse matching powers. Create a three-relic build.</span></div>
-            <div><i>&#8617;</i><b>EXTRACT</b><span>Leave alive to secure everything you carry.</span></div>
+            <div><i>&#9874;</i><b>LOOT</b><span>Find real gear. Better gear makes Pappa stronger and changes his look.</span></div>
+            <div><i>&#8617;</i><b>EXTRACT</b><span>Leave alive to keep and equip everything you carry.</span></div>
           </div>
           <button id="briefingStart" class="primaryButton"><span>SET OUT</span><i>&#8250;</i></button>
         </div>
@@ -95,9 +106,9 @@
       <div id="resultOverlay" class="resultOverlay" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
         <div class="resultPanel">
           <small>ADVENTURE REPORT</small>
-          <h2 id="resultTitle">LOOT SECURED</h2>
+          <h2 id="resultTitle">GEAR SECURED</h2>
           <div class="resultStats">
-            <div><span>LOOT VALUE</span><b id="resultScrap">0</b></div>
+            <div><span>CARGO VALUE</span><b id="resultScrap">0</b></div>
             <div><span>FLOOR</span><b id="resultDepth">1</b></div>
             <div><span>TIME</span><b id="resultTime">0:00</b></div>
             <div><span>KILLS</span><b id="resultKills">0</b></div>
@@ -129,7 +140,7 @@
           <div class="healthTrack"><i id="healthFill"></i></div>
         </div>
         <div class="runMetrics">
-          <div id="lootMetric" class="lootMetric"><span>LOOT</span><b id="runScrap">0</b><em id="lootBest">EMPTY</em></div>
+          <div id="lootMetric" class="lootMetric"><span>GEAR VALUE</span><b id="runScrap">0</b><em id="lootBest">EMPTY</em></div>
             <div><span>FLOOR</span><b id="depthText">1</b></div>
           <div class="riskMetric"><span>RISK</span><b id="riskText">LOW</b></div>
         </div>
@@ -142,7 +153,7 @@
       <div id="cargoHud" class="cargoHud"><span>RELICS</span><div id="cargoSlots" class="cargoSlots"></div></div>
       <div id="zoneHud" class="zoneHud"><small id="zoneDepth">FLOOR 1</small><b id="zoneName">GUILD OUTSKIRTS</b></div>
       <div id="buildHud" class="buildHud"><small>BUILD</small><b id="buildName">HAMMER BUILD</b></div>
-      <div id="bossHud" class="bossHud"><span><b id="bossName">VAULT WARDEN</b><em id="bossPhaseText">PHASE I &middot; STAND GUARD</em></span><div><i id="bossHealthFill"></i></div></div>
+      <div id="bossHud" class="bossHud"><span><b id="bossName">VAULT WARDEN</b><em id="bossPhaseText">PHASE I &middot; THE FIRST LOCK</em></span><div><i id="bossHealthFill"></i></div></div>
       <div id="runNotice" class="runNotice" role="status"></div>
       <div id="lootToast" class="lootToast" role="status"><i id="lootToastIcon"></i><span><small id="lootToastRarity"></small><b id="lootToastName"></b><em id="lootToastValue"></em></span></div>
 
@@ -205,7 +216,7 @@
         <div id="devPanel" class="devPanel">
           <div class="devGrid">
             <button id="devScrap">+500 COINS</button>
-            <button id="devRig">+1 ALL STATS</button>
+            <button id="devRig">RARE GEAR SET</button>
             <button id="devHeal">FULL HEAL</button>
             <button id="devCache">RARE CACHE</button>
             <button id="devLoot">LEGENDARY LOOT</button>
@@ -217,10 +228,10 @@
         </div>
         <button id="resumeButton" class="primaryButton settingsResume"><span>RESUME</span><i>&#8250;</i></button>
         <button id="abandonButton" class="dangerButton">ABANDON EXPEDITION</button>
-        <p class="buildStamp">v0.9.0 PAPPA HAMMER WORLD</p>
+        <p class="buildStamp">v0.10.0 GEARBOUND</p>
       </div>
     </div>
   </main>
-  <script src="script.js?v=0.9.0"></script>
+  <script src="script.js?v=0.10.0"></script>
 </body>
 </html>

@@ -8,14 +8,14 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="description" content="Risk everything, recover valuable loot and fuse combat relics in this compact extraction roguelite.">
   <title>RISK THE LOOT!</title>
-  <link rel="stylesheet" href="style.css?v=0.7.0">
+  <link rel="stylesheet" href="style.css?v=0.8.0">
 </head>
 <body>
   <main id="game">
     <header class="topbar">
       <div class="brand">
         <span class="brandMark">R</span>
-        <div><strong>RISK THE LOOT!</strong><small>THE LOOT HUNT v0.7.0</small></div>
+        <div><strong>RISK THE LOOT!</strong><small>PAPPA HAMMER v0.8.0</small></div>
       </div>
       <div class="resources">
         <div class="resource scrap"><i>&#x2B22;</i><div><b id="bankScrap">0</b><span>SCRAP</span></div></div>
@@ -31,12 +31,7 @@
         <div class="pipe pipeA"></div>
         <div class="pipe pipeB"></div>
         <div class="forge"><span></span><i></i></div>
-        <div class="rig">
-          <div class="rigHead"><i></i></div>
-          <div class="rigBody"><span></span></div>
-          <div class="rigArm left"></div><div class="rigArm right"></div>
-          <div class="rigLeg left"></div><div class="rigLeg right"></div>
-        </div>
+        <div class="rig pappaHammerBase"></div>
         <div class="scrapHeap"><i></i><i></i><i></i><i></i><i></i></div>
         <div class="workshopEvolution evolutionA"></div>
         <div class="workshopEvolution evolutionB"></div>
@@ -45,12 +40,12 @@
 
       <div class="baseActions">
         <div class="upgradeDeck">
-          <button id="upgradeChassis" class="upgradeCard chassisUpgrade" title="Increase maximum health for every expedition.">
-            <span class="upgradeGlyph">&#9829;</span><small>CHASSIS <b id="chassisLevel">0</b></small>
+          <button id="upgradeChassis" class="upgradeCard chassisUpgrade" title="Increase Pappa Hammer's maximum health for every expedition.">
+            <span class="upgradeGlyph">&#9829;</span><small>ENDURANCE <b id="chassisLevel">0</b></small>
             <strong><b id="maxHpStat">100</b> HP</strong><em>&#x2B22; <b id="chassisCost">45</b></em>
           </button>
-          <button id="upgradeWeapon" class="upgradeCard weaponUpgrade" title="Increase the damage of every cannon shot.">
-            <span class="upgradeGlyph">&#10022;</span><small>ARC CANNON <b id="weaponLevel">0</b></small>
+          <button id="upgradeWeapon" class="upgradeCard weaponUpgrade" title="Increase the damage of every hammer strike.">
+            <span class="upgradeGlyph">&#10022;</span><small>HAMMER FORCE <b id="weaponLevel">0</b></small>
             <strong><b id="damageStat">8</b> DMG</strong><em>&#x2B22; <b id="weaponCost">55</b></em>
           </button>
           <button id="upgradeSalvage" class="upgradeCard salvageUpgrade" title="Increase pickup range and recovered loot value.">
@@ -94,7 +89,7 @@
           <small>RECOVERY PROTOCOL</small>
           <h2 id="briefingTitle">GET IN. GET RICH. GET OUT.</h2>
           <div class="briefingSteps">
-            <div><i>&#10132;</i><b>MOVE</b><span>Steer the rig. The cannon fires automatically.</span></div>
+            <div><i>&#10132;</i><b>MOVE</b><span>Guide Pappa Hammer. He strikes automatically.</span></div>
             <div><i>&#x2B22;</i><b>BUILD</b><span>Find relics. Fuse matching powers. Create a three-relic build.</span></div>
             <div><i>&#8617;</i><b>EXTRACT</b><span>Leave alive to secure everything you carry.</span></div>
           </div>
@@ -135,7 +130,7 @@
       <canvas id="world" aria-label="RISK THE LOOT expedition arena"></canvas>
       <div class="expeditionHud">
         <div class="healthBlock">
-          <div class="healthLabel"><span>RIG</span><b id="healthText">100 / 100</b></div>
+          <div class="healthLabel"><span>PAPPA</span><b id="healthText">100 / 100</b></div>
           <div class="healthTrack"><i id="healthFill"></i></div>
         </div>
         <div class="runMetrics">
@@ -151,7 +146,7 @@
       </div>
       <div id="cargoHud" class="cargoHud"><span>RELICS</span><div id="cargoSlots" class="cargoSlots"></div></div>
       <div id="zoneHud" class="zoneHud"><small id="zoneDepth">DEPTH 1</small><b id="zoneName">FOUNDRY APPROACH</b></div>
-      <div id="buildHud" class="buildHud"><small>BUILD</small><b id="buildName">FIELD RIG</b></div>
+      <div id="buildHud" class="buildHud"><small>BUILD</small><b id="buildName">HAMMER BUILD</b></div>
       <div id="bossHud" class="bossHud"><span><b id="bossName">SCRAP WARDEN</b><em id="bossPhaseText">PHASE I &middot; ACQUISITION</em></span><div><i id="bossHealthFill"></i></div></div>
       <div id="runNotice" class="runNotice" role="status"></div>
       <div id="lootToast" class="lootToast" role="status"><i id="lootToastIcon"></i><span><small id="lootToastRarity"></small><b id="lootToastName"></b><em id="lootToastValue"></em></span></div>
@@ -215,7 +210,7 @@
         <div id="devPanel" class="devPanel">
           <div class="devGrid">
             <button id="devScrap">+500 SCRAP</button>
-            <button id="devRig">+1 ALL RIG</button>
+            <button id="devRig">+1 ALL STATS</button>
             <button id="devHeal">FULL REPAIR</button>
             <button id="devCache">RARE CACHE</button>
             <button id="devLoot">LEGENDARY LOOT</button>
@@ -227,10 +222,10 @@
         </div>
         <button id="resumeButton" class="primaryButton settingsResume"><span>RESUME</span><i>&#8250;</i></button>
         <button id="abandonButton" class="dangerButton">ABANDON EXPEDITION</button>
-        <p class="buildStamp">v0.7.0 THE LOOT HUNT</p>
+        <p class="buildStamp">v0.8.0 PAPPA HAMMER</p>
       </div>
     </div>
   </main>
-  <script src="script.js?v=0.7.0"></script>
+  <script src="script.js?v=0.8.0"></script>
 </body>
 </html>

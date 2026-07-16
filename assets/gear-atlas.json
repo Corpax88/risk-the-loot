@@ -1,0 +1,336 @@
+{
+  "version": 1,
+  "columns": 10,
+  "rows": 5,
+  "cellSize": 256,
+  "dropCellSize": 80,
+  "slotOrder": [
+    "hat",
+    "scarf",
+    "coat",
+    "hammer",
+    "boots"
+  ],
+  "items": [
+    {
+      "id": "bentCog",
+      "name": "Guild Work Hat",
+      "slot": "hat",
+      "rarity": "common",
+      "column": 0,
+      "row": 0
+    },
+    {
+      "id": "copperWire",
+      "name": "Scout Brim",
+      "slot": "hat",
+      "rarity": "common",
+      "column": 1,
+      "row": 0
+    },
+    {
+      "id": "rustedBolt",
+      "name": "Iron-Band Fedora",
+      "slot": "hat",
+      "rarity": "common",
+      "column": 2,
+      "row": 0
+    },
+    {
+      "id": "brassWasher",
+      "name": "Compass Hat",
+      "slot": "hat",
+      "rarity": "common",
+      "column": 3,
+      "row": 0
+    },
+    {
+      "id": "pressureRegulator",
+      "name": "Lantern Captain Hat",
+      "slot": "hat",
+      "rarity": "rare",
+      "column": 4,
+      "row": 0
+    },
+    {
+      "id": "dynamoCoil",
+      "name": "Warden Lens Hat",
+      "slot": "hat",
+      "rarity": "rare",
+      "column": 5,
+      "row": 0
+    },
+    {
+      "id": "aetherCondenser",
+      "name": "Compass Crown",
+      "slot": "hat",
+      "rarity": "epic",
+      "column": 6,
+      "row": 0
+    },
+    {
+      "id": "crownGear",
+      "name": "Crown of the Lost Road",
+      "slot": "hat",
+      "rarity": "mythic",
+      "column": 7,
+      "row": 0
+    },
+    {
+      "id": "crackedGauge",
+      "name": "Red Work Scarf",
+      "slot": "scarf",
+      "rarity": "common",
+      "column": 0,
+      "row": 1
+    },
+    {
+      "id": "valveHandle",
+      "name": "Trail Wrap",
+      "slot": "scarf",
+      "rarity": "common",
+      "column": 1,
+      "row": 1
+    },
+    {
+      "id": "tinPlate",
+      "name": "Lucky Kerchief",
+      "slot": "scarf",
+      "rarity": "common",
+      "column": 2,
+      "row": 1
+    },
+    {
+      "id": "emptyCanister",
+      "name": "Duelist Ribbon",
+      "slot": "scarf",
+      "rarity": "common",
+      "column": 3,
+      "row": 1
+    },
+    {
+      "id": "brassGyroscope",
+      "name": "Crimson Banner Scarf",
+      "slot": "scarf",
+      "rarity": "rare",
+      "column": 4,
+      "row": 1
+    },
+    {
+      "id": "hardenedPiston",
+      "name": "Moonweave Scarf",
+      "slot": "scarf",
+      "rarity": "rare",
+      "column": 5,
+      "row": 1
+    },
+    {
+      "id": "voidCompass",
+      "name": "Unfading Crimson Scarf",
+      "slot": "scarf",
+      "rarity": "epic",
+      "column": 6,
+      "row": 1
+    },
+    {
+      "id": "wornSpring",
+      "name": "Padded Guild Coat",
+      "slot": "coat",
+      "rarity": "common",
+      "column": 0,
+      "row": 2
+    },
+    {
+      "id": "gearTooth",
+      "name": "Roadwarden Coat",
+      "slot": "coat",
+      "rarity": "common",
+      "column": 1,
+      "row": 2
+    },
+    {
+      "id": "rivetBundle",
+      "name": "Sailcloth Duster",
+      "slot": "coat",
+      "rarity": "common",
+      "column": 2,
+      "row": 2
+    },
+    {
+      "id": "frayedBelt",
+      "name": "Stitched Navy Coat",
+      "slot": "coat",
+      "rarity": "common",
+      "column": 3,
+      "row": 2
+    },
+    {
+      "id": "arcRelay",
+      "name": "Vanguard Longcoat",
+      "slot": "coat",
+      "rarity": "rare",
+      "column": 4,
+      "row": 2
+    },
+    {
+      "id": "steamInjector",
+      "name": "Merchant Prince's Coat",
+      "slot": "coat",
+      "rarity": "rare",
+      "column": 5,
+      "row": 2
+    },
+    {
+      "id": "royalFlywheel",
+      "name": "Midnight Captain's Coat",
+      "slot": "coat",
+      "rarity": "epic",
+      "column": 6,
+      "row": 2
+    },
+    {
+      "id": "phantomLantern",
+      "name": "King's Oathcoat",
+      "slot": "coat",
+      "rarity": "mythic",
+      "column": 7,
+      "row": 2
+    },
+    {
+      "id": "wardenSingularity",
+      "name": "Grand Vault Coat",
+      "slot": "coat",
+      "rarity": "legendary",
+      "column": 8,
+      "row": 2
+    },
+    {
+      "id": "sootFilter",
+      "name": "Oak Block Hammer",
+      "slot": "hammer",
+      "rarity": "common",
+      "column": 0,
+      "row": 3
+    },
+    {
+      "id": "ironBracket",
+      "name": "Brass-Capped Hammer",
+      "slot": "hammer",
+      "rarity": "common",
+      "column": 1,
+      "row": 3
+    },
+    {
+      "id": "pipeCoupling",
+      "name": "Quicksmith Mallet",
+      "slot": "hammer",
+      "rarity": "common",
+      "column": 2,
+      "row": 3
+    },
+    {
+      "id": "fuseShell",
+      "name": "Heavy Guild Hammer",
+      "slot": "hammer",
+      "rarity": "common",
+      "column": 3,
+      "row": 3
+    },
+    {
+      "id": "precisionBearing",
+      "name": "Starforged Maul",
+      "slot": "hammer",
+      "rarity": "rare",
+      "column": 4,
+      "row": 3
+    },
+    {
+      "id": "insulatedConduit",
+      "name": "Echoing Squarehammer",
+      "slot": "hammer",
+      "rarity": "rare",
+      "column": 5,
+      "row": 3
+    },
+    {
+      "id": "stormglassCell",
+      "name": "Champion's Sunhammer",
+      "slot": "hammer",
+      "rarity": "epic",
+      "column": 6,
+      "row": 3
+    },
+    {
+      "id": "chronoEscapement",
+      "name": "Moonbreaker Hammer",
+      "slot": "hammer",
+      "rarity": "mythic",
+      "column": 7,
+      "row": 3
+    },
+    {
+      "id": "tyrantEmbercore",
+      "name": "RISKREAVER",
+      "slot": "hammer",
+      "rarity": "legendary",
+      "column": 8,
+      "row": 3
+    },
+    {
+      "id": "boilerSeal",
+      "name": "Laced Work Boots",
+      "slot": "boots",
+      "rarity": "common",
+      "column": 0,
+      "row": 4
+    },
+    {
+      "id": "chainLink",
+      "name": "Tower-Grip Boots",
+      "slot": "boots",
+      "rarity": "common",
+      "column": 1,
+      "row": 4
+    },
+    {
+      "id": "scrapLens",
+      "name": "Scavenger Boots",
+      "slot": "boots",
+      "rarity": "common",
+      "column": 2,
+      "row": 4
+    },
+    {
+      "id": "motorBrush",
+      "name": "Iron-Toe Boots",
+      "slot": "boots",
+      "rarity": "common",
+      "column": 3,
+      "row": 4
+    },
+    {
+      "id": "wardenOptic",
+      "name": "Windstep Boots",
+      "slot": "boots",
+      "rarity": "rare",
+      "column": 4,
+      "row": 4
+    },
+    {
+      "id": "cinderCarburetor",
+      "name": "Vaultbreaker Boots",
+      "slot": "boots",
+      "rarity": "rare",
+      "column": 5,
+      "row": 4
+    },
+    {
+      "id": "furnaceHeart",
+      "name": "Horizon Strider Boots",
+      "slot": "boots",
+      "rarity": "epic",
+      "column": 6,
+      "row": 4
+    }
+  ]
+}

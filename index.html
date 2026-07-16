@@ -8,16 +8,17 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="description" content="Risk everything, recover equippable gear and build Pappa Hammer in this compact extraction roguelite.">
   <title>RISK THE LOOT!</title>
-  <link rel="stylesheet" href="style.css?v=0.14.0">
+  <link rel="stylesheet" href="style.css?v=0.15.0">
 </head>
 <body>
   <main id="game">
     <header class="topbar">
       <div class="brand">
         <span class="brandMark">R</span>
-        <div><strong>RISK THE LOOT!</strong><small>EQUIPPED HERO v0.14.0</small></div>
+        <div><strong>RISK THE LOOT!</strong><small>SET HUNTER v0.15.0</small></div>
       </div>
       <div class="resources">
+        <div class="resource level"><i>LV</i><div><b id="pappaLevel">1</b><span>PAPPA</span></div></div>
         <div class="resource scrap"><i>$</i><div><b id="bankScrap">0</b><span>COINS</span></div></div>
         <div class="resource cores"><i>&#9733;</i><div><b id="coreCount">0</b><span>BOSS SEALS</span></div></div>
         <div class="resource record"><i>&#x25B2;</i><div><b id="bestDepth">0</b><span>BEST FLOOR</span></div></div>
@@ -67,13 +68,20 @@
           <div class="gearWorkspace">
             <aside class="gearCharacterPanel">
               <div class="gearCharacterHeading"><span>WORN BY PAPPA</span><b id="gearEquippedCount">0 / 5</b></div>
-              <div class="gearCharacterStage" aria-label="Live equipped character preview">
+              <div id="gearCharacterStage" class="gearCharacterStage" aria-label="Drag left or right to rotate Pappa Hammer">
                 <div class="gearCharacterHalo"></div>
                 <div class="gearCharacterHero"><div id="gearCharacterPreview" class="gearCharacterPreview"></div></div>
                 <span id="gearPreviewName" class="gearPreviewName">FIELD LOADOUT</span>
               </div>
+              <div class="gearTurntable" aria-label="Character rotation controls">
+                <button id="gearTurnLeft" aria-label="Rotate Pappa Hammer left" title="Rotate left">&#8634;</button>
+                <span><small>360&deg; VIEW</small><b id="gearTurnReadout">FRONT &middot; 0&deg;</b></span>
+                <button id="gearTurnRight" aria-label="Rotate Pappa Hammer right" title="Rotate right">&#8635;</button>
+              </div>
+              <div class="pappaProgress"><span><small>PAPPA LEVEL</small><b id="gearPappaLevel">1</b></span><div><i id="gearXpFill"></i></div><em id="gearXpText">0 / 2 BOSS XP</em></div>
               <div id="gearLoadoutSlots" class="gearLoadoutSlots"></div>
               <div id="gearStatsSummary" class="gearStatsSummary"></div>
+              <div id="gearSetSummary" class="gearSetSummary"></div>
             </aside>
             <section class="gearInventoryPanel">
               <header class="gearInventoryHeading">
@@ -122,7 +130,7 @@
           <h2 id="briefingTitle">GET IN. GET RICH. GET OUT.</h2>
           <div class="briefingSteps">
             <div><i>&#10132;</i><b>MOVE</b><span>Guide Pappa Hammer. He strikes automatically.</span></div>
-            <div><i>&#9874;</i><b>LOOT</b><span>Find real gear. Better gear makes Pappa stronger and changes his look.</span></div>
+            <div><i>&#9874;</i><b>LOOT</b><span>Defeat champions for unique gear. Stronger Pappa levels unlock rarer sets.</span></div>
             <div><i>&#8617;</i><b>EXTRACT</b><span>Leave alive to keep and equip everything you carry.</span></div>
           </div>
           <button id="briefingStart" class="primaryButton"><span>SET OUT</span><i>&#8250;</i></button>
@@ -134,13 +142,14 @@
           <small>ADVENTURE REPORT</small>
           <h2 id="resultTitle">GEAR SECURED</h2>
           <div class="resultStats">
-            <div><span>CARGO VALUE</span><b id="resultScrap">0</b></div>
+            <div><span>COINS SECURED</span><b id="resultScrap">0</b></div>
             <div><span>FLOOR</span><b id="resultDepth">1</b></div>
             <div><span>TIME</span><b id="resultTime">0:00</b></div>
             <div><span>KILLS</span><b id="resultKills">0</b></div>
           </div>
           <div class="resultFieldData"><span><b id="resultDamage">0</b> DAMAGE TAKEN</span><span><b id="resultRisk">0</b> RISKS TAKEN</span><span><b id="resultItems">0</b> ITEMS</span></div>
           <div id="resultRecord" class="resultRecord"></div>
+          <div id="resultLootSummary" class="resultLootSummary"></div>
           <div id="resultLoot" class="resultLoot"></div>
           <div id="resultModules" class="resultModules"></div>
           <button id="closeResult" class="primaryButton resultContinue"><span>BACK TO WORKSHOP</span><i>&#8250;</i></button>
@@ -166,7 +175,7 @@
           <div class="healthTrack"><i id="healthFill"></i></div>
         </div>
         <div class="runMetrics">
-          <div id="lootMetric" class="lootMetric"><span>GEAR VALUE</span><b id="runScrap">0</b><em id="lootBest">EMPTY</em></div>
+          <div id="lootMetric" class="lootMetric"><span>COINS FOUND</span><b id="runScrap">0</b><em id="lootBest">NO BOSS GEAR</em></div>
             <div><span>FLOOR</span><b id="depthText">1</b></div>
           <div class="riskMetric"><span>RISK</span><b id="riskText">LOW</b></div>
         </div>
@@ -254,10 +263,10 @@
         </div>
         <button id="resumeButton" class="primaryButton settingsResume"><span>RESUME</span><i>&#8250;</i></button>
         <button id="abandonButton" class="dangerButton">ABANDON EXPEDITION</button>
-        <p class="buildStamp">v0.14.0 EQUIPPED HERO</p>
+        <p class="buildStamp">v0.15.0 SET HUNTER</p>
       </div>
     </div>
   </main>
-  <script src="script.js?v=0.14.0"></script>
+  <script src="script.js?v=0.15.0"></script>
 </body>
 </html>

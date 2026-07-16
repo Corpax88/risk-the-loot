@@ -1,4 +1,4 @@
-# RISK THE LOOT! v0.11.0
+# RISK THE LOOT! v0.12.0
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
 
@@ -31,6 +31,8 @@ Every catalog item has its own silhouette, color treatment, emblem, and field pi
 
 The Gear Locker has a live Pappa Hammer preview, five dedicated worn slots, combined equipment stats, slot filters, and rarity filters. `Sell Filtered` sells every matching unequipped copy after confirmation. The copy currently worn by Pappa is always reserved and can never be sold, even when selling an entire rarity.
 
+Pappa Hammer now uses dedicated eight-frame idle, run, and attack animation sheets. The Gear Locker preview keeps breathing and shifting while equipped item layers remain visible, so loadout changes can be judged on a living character rather than a still portrait.
+
 Legendary equipment creates a distinct HUD state and extraction signal. The intended reaction is simple: when one drops, leaving alive should suddenly matter more than finishing the floor.
 
 Existing v0.9 saves migrate automatically. Previously collected loot becomes owned gear, the best recovered item in every slot is equipped, and old workshop upgrade levels remain as hidden legacy bonuses so progression is not erased.
@@ -60,7 +62,7 @@ Both bosses have distinct movement, projectiles, hazards, phases, and permanent 
 - Dash: `Space` or the on-screen dash button
 - Extract: `E` or the on-screen extract button
 - Pause/settings: `Escape` or the top-right settings button
-- Combat: automatic targeting and hammer strikes
+- Combat: automatic targeting and ranged melee hammer arcs
 
 ## Run locally
 

@@ -8,14 +8,14 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="description" content="Risk everything, recover equippable gear and build Pappa Hammer in this compact extraction roguelite.">
   <title>RISK THE LOOT!</title>
-  <link rel="stylesheet" href="style.css?v=0.15.0">
+  <link rel="stylesheet" href="style.css?v=0.16.0">
 </head>
 <body>
   <main id="game">
     <header class="topbar">
       <div class="brand">
         <span class="brandMark">R</span>
-        <div><strong>RISK THE LOOT!</strong><small>SET HUNTER v0.15.0</small></div>
+        <div><strong>RISK THE LOOT!</strong><small>VAULT BAG v0.16.0</small></div>
       </div>
       <div class="resources">
         <div class="resource level"><i>LV</i><div><b id="pappaLevel">1</b><span>PAPPA</span></div></div>
@@ -86,8 +86,9 @@
             <section class="gearInventoryPanel">
               <header class="gearInventoryHeading">
                 <span><small>SECURED INVENTORY</small><b>CHOOSE WHAT PAPPA WEARS</b></span>
-                <em id="gearInventorySummary">0 ITEMS</em>
+                <div class="gearBagReadout"><i class="gearBagIcon" aria-hidden="true"></i><span><small>FIELD BAG</small><b id="gearBagCount">0 ITEMS</b></span></div>
               </header>
+              <div id="gearRaritySummary" class="gearRaritySummary" aria-label="Inventory rarity counts"></div>
               <div class="gearToolbar">
                 <div class="gearFilterGroup">
                   <small>SLOT</small>
@@ -97,13 +98,24 @@
                   <small>RARITY</small>
                   <div id="gearRarityFilters" class="gearFilters gearRarityFilters"></div>
                 </div>
-                <button id="sellFilteredGear" class="sellFilteredGear" title="Sell all items matching the active filters. Equipped copies are always protected.">
-                  <span id="sellFilteredLabel">SELL FILTERED</span><b id="sellFilteredSummary">0 ITEMS</b>
-                </button>
+                <div class="gearInventoryActions">
+                  <button id="gearSortButton" class="gearSortButton" title="Change inventory sorting">
+                    <i aria-hidden="true">&#8645;</i><span><small>SORTED BY</small><b id="gearSortLabel">POWER</b></span>
+                  </button>
+                  <button id="sellFilteredGear" class="sellFilteredGear" title="Sell all items matching the active filters. Equipped copies are always protected.">
+                    <span id="sellFilteredLabel">SELL FILTERED</span><b id="sellFilteredSummary">0 ITEMS</b>
+                  </button>
+                </div>
               </div>
               <div class="equippedProtection"><i>&#128274;</i><span>EQUIPPED GEAR IS ALWAYS PROTECTED</span></div>
-              <div id="gearGrid" class="gearGrid"></div>
-              <div id="gearEmpty" class="gearEmpty">NO SECURED GEAR MATCHES THESE FILTERS</div>
+              <div class="gearBagLayout">
+                <div class="gearBagBrowser">
+                  <div id="gearGrid" class="gearGrid" role="listbox" aria-label="Secured equipment"></div>
+                  <div id="gearEmpty" class="gearEmpty">NO SECURED GEAR MATCHES THESE FILTERS</div>
+                </div>
+                <aside id="gearDetail" class="gearDetail" aria-live="polite"></aside>
+              </div>
+              <div id="gearInventorySummary" class="gearInventoryFooter">0 ITEMS</div>
             </section>
           </div>
         </div>
@@ -263,10 +275,10 @@
         </div>
         <button id="resumeButton" class="primaryButton settingsResume"><span>RESUME</span><i>&#8250;</i></button>
         <button id="abandonButton" class="dangerButton">ABANDON EXPEDITION</button>
-        <p class="buildStamp">v0.15.0 SET HUNTER</p>
+        <p class="buildStamp">v0.16.0 VAULT BAG</p>
       </div>
     </div>
   </main>
-  <script src="script.js?v=0.15.0"></script>
+  <script src="script.js?v=0.16.0"></script>
 </body>
 </html>

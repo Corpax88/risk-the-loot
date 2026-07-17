@@ -1,4 +1,4 @@
-# RISK THE LOOT! v0.16.0
+# RISK THE LOOT! v0.17.0
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
 
@@ -32,7 +32,7 @@ Each set has fixed 2-piece, 3-piece, and 5-piece bonuses designed around its rar
 
 Equipment uses a fixed anime gear atlas for readable slot silhouettes, while set colors, marks, names, and paper-doll treatments distinguish the 100 boss pieces. Locker cards, equipped slots, recovery reports, pickup notices, and boss drops keep the same item identity. Empty slots automatically equip the strongest matching item after the first successful recovery.
 
-The Gear Locker has a live Pappa Hammer preview with a draggable 360-degree turntable, Pappa level and boss XP, five dedicated worn slots, active set milestones, and combined equipment stats. Its Vault Bag presents compact item slots, duplicate counts, rarity totals, slot and rarity filters, six sort modes, and a focused comparison panel for the selected item. `Sell Filtered` sells every matching unequipped item after confirmation. Gear currently worn by Pappa is always reserved and can never be sold.
+The Adventure Bag has a live Pappa Hammer preview with a draggable 360-degree turntable, Pappa level and boss XP, five dedicated worn slots, active set milestones, and combined equipment stats. The inventory is presented as a clean anime-style field bag: visual gear categories sit beside Pappa, recovered equipment fills the central bag, and the selected item receives a dedicated comparison panel. Duplicate counts, rarity totals, slot and rarity filters, six sort modes, and protected bulk selling remain available without crowding the item grid. `Sell Filtered` sells every matching unequipped item after confirmation. Gear currently worn by Pappa is always reserved and can never be sold.
 
 Pappa Hammer uses dedicated eight-frame idle, run, and attack animation sheets. Every equipped slot now recolors and details the correct moving part through 15 frame-matched paper-doll masks, so hats, scarves, coats, hammers, and boots remain attached throughout all three animations. The same composed loadout appears in the living Gear Locker preview and during expeditions.
 

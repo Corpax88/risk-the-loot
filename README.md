@@ -1,4 +1,4 @@
-# RISK THE LOOT! v0.18.0
+# RISK THE LOOT! v0.19.0
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
 
@@ -31,6 +31,8 @@ Every recovered piece is a unique item instance with its own item level, quality
 Each set has fixed 2-piece, 3-piece, and 5-piece bonuses designed around its rarity and theme. The individual piece rolls vary, while the set milestones always remain predictable.
 
 Equipment uses a fixed anime gear atlas for readable slot silhouettes, while set colors, marks, names, and paper-doll treatments distinguish the 100 boss pieces. Locker cards, equipped slots, recovery reports, pickup notices, and boss drops keep the same item identity. Empty slots automatically equip the strongest matching item after the first successful recovery.
+
+All 20 Legendary set pieces now use dedicated hand-authored sprite art instead of shared silhouettes. Riskreaver, Grand Vault, Crownless King, and Fatebound each have a complete Crown, Oathwrap, Longcoat, Great Hammer, and Striders family with a distinct set identity. The same transparent art appears in the Adventure Bag, equipped slots, item comparison, world drops, pickup reveal, and post-run report. A deterministic atlas builder keeps the full-size and mobile drop sheets aligned.
 
 The Adventure Bag now separates loot management from the character loadout. The **Bag** view uses a dedicated illustrated anime field bag with readable category filters, a compact item grid, rarity totals, sorting, protected bulk selling, and a focused comparison panel. The **Pappa** view gives the live character preview room to breathe with a draggable 360-degree turntable, Pappa level and boss XP, five dedicated worn slots, active set milestones, and combined equipment stats. Selecting a worn slot returns directly to the matching bag category. `Sell Filtered` sells every matching unequipped item after confirmation. Gear currently worn by Pappa is always reserved and can never be sold.
 
@@ -88,3 +90,5 @@ The automated release suite covers DOM/CSS integrity, JavaScript syntax, all 20 
 Built with plain HTML, CSS, JavaScript, Canvas, and PNG assets.
 
 The paper-doll masks can be rebuilt after editing the Pappa Hammer source sheets with `python tools/build-paper-doll-masks.py`.
+
+The Legendary inventory and drop atlases can be rebuilt from the transparent source strips in `tmp/legendary` with `python tools/build-legendary-gear-atlas.py`.

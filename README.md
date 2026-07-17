@@ -1,4 +1,4 @@
-# RISK THE LOOT! v0.15.0
+# RISK THE LOOT! v0.16.0
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
 
@@ -20,10 +20,11 @@ There are no direct damage, health, or pickup-range purchases for new saves. Cha
 Pappa Hammer earns boss XP and levels up whenever a champion falls. Every level adds a little base health and damage, but the champions also gain health and damage. Higher levels open stronger equipment pools:
 
 - Rare set gear can drop immediately.
-- Mythic set gear begins at Pappa level 7.
+- Epic set gear begins at Pappa level 4.
+- Mythic set gear begins at Pappa level 8.
 - Legendary set gear begins at Pappa level 16.
 
-The boss catalog contains exactly 100 set items: 20 named sets with a Hat, Scarf, Coat, Hammer, and Boots in each set. Ten sets are Rare, six are Mythic, and four are Legendary. Ordinary enemies only drop coins; equipment is reserved for boss victories.
+The boss catalog contains exactly 100 set items: 20 named sets with a Hat, Scarf, Coat, Hammer, and Boots in each set. Five sets are Rare, five are Epic, six are Mythic, and four are Legendary. Ordinary enemies only drop coins; equipment is reserved for boss victories.
 
 Every recovered piece is a unique item instance with its own item level, quality roll, randomized stats, and sale value. Finding the same named piece again can therefore still produce a meaningful upgrade. Gear can change health, hammer damage, pickup reach, movement speed, strike rate, armor, loot value, dash recharge, and critical chance.
 
@@ -31,11 +32,11 @@ Each set has fixed 2-piece, 3-piece, and 5-piece bonuses designed around its rar
 
 Equipment uses a fixed anime gear atlas for readable slot silhouettes, while set colors, marks, names, and paper-doll treatments distinguish the 100 boss pieces. Locker cards, equipped slots, recovery reports, pickup notices, and boss drops keep the same item identity. Empty slots automatically equip the strongest matching item after the first successful recovery.
 
-The Gear Locker has a live Pappa Hammer preview with a draggable 360-degree turntable, Pappa level and boss XP, five dedicated worn slots, active set milestones, combined equipment stats, slot filters, and rarity filters. `Sell Filtered` sells every matching unequipped item after confirmation. Gear currently worn by Pappa is always reserved and can never be sold.
+The Gear Locker has a live Pappa Hammer preview with a draggable 360-degree turntable, Pappa level and boss XP, five dedicated worn slots, active set milestones, and combined equipment stats. Its Vault Bag presents compact item slots, duplicate counts, rarity totals, slot and rarity filters, six sort modes, and a focused comparison panel for the selected item. `Sell Filtered` sells every matching unequipped item after confirmation. Gear currently worn by Pappa is always reserved and can never be sold.
 
 Pappa Hammer uses dedicated eight-frame idle, run, and attack animation sheets. Every equipped slot now recolors and details the correct moving part through 15 frame-matched paper-doll masks, so hats, scarves, coats, hammers, and boots remain attached throughout all three animations. The same composed loadout appears in the living Gear Locker preview and during expeditions.
 
-The composed hero keeps the original 512px frame resolution for crisp Retina rendering. Equipment colors are applied as restrained material accents rather than a heavy full-body tint, and the runtime masks are memory-optimized for iPhone Safari.
+The composed hero keeps the original 512px frame resolution for crisp Retina rendering. Equipment colors are applied as material accents rather than a heavy full-body tint, while Epic, Mythic, and Legendary loadouts add increasingly distinct patterns, trim, inventory presentation, and restrained in-game auras. The runtime masks remain memory-optimized for iPhone Safari.
 
 The post-run report groups equipment by rarity and shows each piece's level, slot, set, stat roll, quality, and value. Legendary equipment creates a distinct HUD state and extraction signal. The intended reaction is simple: when one drops, leaving alive should suddenly matter more than finishing the floor.
 

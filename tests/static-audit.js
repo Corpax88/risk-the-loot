@@ -14,7 +14,7 @@ for(const match of script.matchAll(/\$\('([^']+)'\)/g)){
 const openBraces=(css.match(/{/g)||[]).length;
 const closeBraces=(css.match(/}/g)||[]).length;
 assert.equal(openBraces,closeBraces,'CSS braces are unbalanced');
-assert(html.includes('style.css?v=0.15.0')&&html.includes('script.js?v=0.15.0'),'release assets are not versioned');
+assert(html.includes('style.css?v=0.16.0')&&html.includes('script.js?v=0.16.0'),'release assets are not versioned');
 for(const asset of ['pappa-hammer-player.png','pappa-hammer-idle-v2.png','pappa-hammer-run-v2.png','pappa-hammer-attack-v2.png','pappa-hammer-workshop.png','pappa-hammer-enemies.png','pappa-hammer-bosses.png','gear-items-atlas.png','gear-drops-atlas.png','gear-atlas.json'])assert(fs.existsSync('assets/'+asset),'Pappa Hammer asset is missing: '+asset);
 const gearAtlas=JSON.parse(fs.readFileSync('assets/gear-atlas.json','utf8'));
 assert.equal(gearAtlas.items.length,40,'gear atlas must map all 40 items');
@@ -41,7 +41,7 @@ assert(script.includes('LOOT_ITEMS')&&script.includes('lootDrops')&&script.inclu
 assert(script.includes("SAVE_VERSION=9")&&script.includes('gear:[]')&&script.includes('level:1,xp:0')&&script.includes('equipped:{hat:null,scarf:null,coat:null,hammer:null,boots:null}'),'unique gear save, Pappa level, or migration model is missing');
 assert(script.includes('const SET_DEFINITIONS=[')&&script.includes('const SET_ITEMS=SET_DEFINITIONS.flatMap')&&script.includes('activeSetBonuses'),'set item catalog or fixed set bonuses are missing');
 assert(script.includes('function rollBossGear')&&script.includes('function grantBossXp')&&script.includes("spawnLoot(player.x+(i-(drops-1)/2)*28,player.y,rollBossGear(save.level),true)"),'boss-only equipment or Pappa XP is missing');
-assert(script.includes('routeRare*.25')&&script.includes('routeRare*.75'),'Moonlit Path does not improve boss set rarity');
+assert(script.includes('routeRare*.2')&&script.includes('routeRare*.55')&&script.includes('routeRare*.45'),'Moonlit Path does not improve boss set rarity');
 assert(script.includes("(save.level-1)*.11")&&script.includes("(save.level-1)*.035"),'boss health and damage do not scale with Pappa level');
 assert(/function destroyEnemy\(e\)[\s\S]*?runScrap\+=coins;/.test(script)&&!/function destroyEnemy\(e\)[^}]*spawnLoot\(/.test(script),'ordinary enemies must award coins instead of gear');
 assert(script.includes("const GEAR_SLOTS=['hat','scarf','coat','hammer','boots']")&&script.includes('gearStats')&&script.includes('gearArtMarkup'),'gear slots, stats, or visual equipment are missing');
@@ -51,6 +51,8 @@ assert(/\.pappaHammerBase\{[\s\S]*?image-rendering:auto;[\s\S]*?filter:none;[\s\
 assert(html.includes('id="gearLockerButton"')&&html.includes('id="gearGrid"')&&html.includes('id="gearCharacterPreview"'),'Gear Locker or live character preview is missing');
 assert(html.includes('id="gearTurnLeft"')&&html.includes('id="gearTurnRight"')&&html.includes('id="gearSetSummary"')&&script.includes('updateGearTurntable'),'rotating preview or set summary is missing');
 assert(html.includes('id="gearRarityFilters"')&&html.includes('id="sellFilteredGear"')&&script.includes('gearSellableCount')&&script.includes('sellFilteredGear'),'protected filtered gear sale is missing');
+assert(html.includes('id="gearBagCount"')&&html.includes('id="gearRaritySummary"')&&html.includes('id="gearSortButton"')&&html.includes('id="gearDetail"'),'Vault Bag count, rarity summary, sorting, or item details are missing');
+assert(script.includes('const GEAR_SORTS=')&&script.includes('function renderGearDetail')&&script.includes('function drawEquippedRarityAura'),'inventory sorting, item comparison, or high-rarity presentation is missing');
 assert(script.includes('gear-items-atlas.png')&&script.includes('gear-drops-atlas.png')&&script.includes('drawAdventureLootSprite')&&css.includes("background-image:url('assets/gear-items-atlas.png')"),'sprite-atlas item identities are missing');
 assert(!script.includes('createPreviewGear')&&!css.includes('.previewGear.hammer'),'obsolete geometric equipment overlays are still active');
 assert(!html.includes('id="upgradeChassis"')&&!html.includes('id="upgradeWeapon"')&&!html.includes('id="upgradeSalvage"'),'obsolete direct stat upgrades are still visible');

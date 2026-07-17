@@ -14,7 +14,7 @@ for(const match of script.matchAll(/\$\('([^']+)'\)/g)){
 const openBraces=(css.match(/{/g)||[]).length;
 const closeBraces=(css.match(/}/g)||[]).length;
 assert.equal(openBraces,closeBraces,'CSS braces are unbalanced');
-assert(html.includes('style.css?v=0.16.0')&&html.includes('script.js?v=0.16.0'),'release assets are not versioned');
+assert(html.includes('style.css?v=0.17.0')&&html.includes('script.js?v=0.17.0'),'release assets are not versioned');
 for(const asset of ['pappa-hammer-player.png','pappa-hammer-idle-v2.png','pappa-hammer-run-v2.png','pappa-hammer-attack-v2.png','pappa-hammer-workshop.png','pappa-hammer-enemies.png','pappa-hammer-bosses.png','gear-items-atlas.png','gear-drops-atlas.png','gear-atlas.json'])assert(fs.existsSync('assets/'+asset),'Pappa Hammer asset is missing: '+asset);
 const gearAtlas=JSON.parse(fs.readFileSync('assets/gear-atlas.json','utf8'));
 assert.equal(gearAtlas.items.length,40,'gear atlas must map all 40 items');
@@ -52,6 +52,7 @@ assert(html.includes('id="gearLockerButton"')&&html.includes('id="gearGrid"')&&h
 assert(html.includes('id="gearTurnLeft"')&&html.includes('id="gearTurnRight"')&&html.includes('id="gearSetSummary"')&&script.includes('updateGearTurntable'),'rotating preview or set summary is missing');
 assert(html.includes('id="gearRarityFilters"')&&html.includes('id="sellFilteredGear"')&&script.includes('gearSellableCount')&&script.includes('sellFilteredGear'),'protected filtered gear sale is missing');
 assert(html.includes('id="gearBagCount"')&&html.includes('id="gearRaritySummary"')&&html.includes('id="gearSortButton"')&&html.includes('id="gearDetail"'),'Vault Bag count, rarity summary, sorting, or item details are missing');
+assert(html.includes('ADVENTURE BAG')&&html.includes('animeBagShell')&&html.includes('gearCategoryRail')&&css.includes('v0.17 anime adventure bag'),'anime Adventure Bag presentation is missing');
 assert(script.includes('const GEAR_SORTS=')&&script.includes('function renderGearDetail')&&script.includes('function drawEquippedRarityAura'),'inventory sorting, item comparison, or high-rarity presentation is missing');
 assert(script.includes('gear-items-atlas.png')&&script.includes('gear-drops-atlas.png')&&script.includes('drawAdventureLootSprite')&&css.includes("background-image:url('assets/gear-items-atlas.png')"),'sprite-atlas item identities are missing');
 assert(!script.includes('createPreviewGear')&&!css.includes('.previewGear.hammer'),'obsolete geometric equipment overlays are still active');

@@ -8,14 +8,14 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="description" content="Risk everything, recover equippable gear and build Pappa Hammer in this compact extraction roguelite.">
   <title>RISK THE LOOT!</title>
-  <link rel="stylesheet" href="style.css?v=0.16.0">
+  <link rel="stylesheet" href="style.css?v=0.17.0">
 </head>
 <body>
   <main id="game">
     <header class="topbar">
       <div class="brand">
         <span class="brandMark">R</span>
-        <div><strong>RISK THE LOOT!</strong><small>VAULT BAG v0.16.0</small></div>
+        <div><strong>RISK THE LOOT!</strong><small>ADVENTURE BAG v0.17.0</small></div>
       </div>
       <div class="resources">
         <div class="resource level"><i>LV</i><div><b id="pappaLevel">1</b><span>PAPPA</span></div></div>
@@ -36,9 +36,9 @@
 
       <div class="baseActions">
         <div class="gearLoadoutDeck">
-          <button id="gearLockerButton" class="gearLockerButton" title="Open the Gear Locker to equip secured expedition gear.">
+          <button id="gearLockerButton" class="gearLockerButton" title="Open Pappa Hammer's Adventure Bag to inspect and equip secured gear.">
             <span class="gearLockerBadge">&#9874;</span>
-            <span class="gearLockerHeading"><small>GEAR LOCKER</small><strong id="gearLoadoutName">FIELD CLOTHES</strong></span>
+            <span class="gearLockerHeading"><small>ADVENTURE BAG</small><strong id="gearLoadoutName">FIELD CLOTHES</strong></span>
             <span id="baseLoadout" class="baseLoadout" aria-label="Equipped gear"></span>
             <em>MANAGE &#8250;</em>
           </button>
@@ -61,13 +61,20 @@
       <div id="baseNotice" class="baseNotice" role="status"></div>
 
       <div id="gearOverlay" class="menuOverlay" role="dialog" aria-modal="true" aria-labelledby="gearTitle">
-        <div class="menuPanel gearPanel">
-          <button id="closeGear" class="panelClose" aria-label="Close Gear Locker">&#215;</button>
-          <small>SECURED EQUIPMENT</small>
-          <h2 id="gearTitle">GEAR LOCKER</h2>
+        <div class="menuPanel gearPanel adventureBagPanel">
+          <button id="closeGear" class="panelClose" aria-label="Close Adventure Bag">&#215;</button>
+          <header class="adventureBagHeader">
+            <i class="adventureBagEmblem" aria-hidden="true"><span>PH</span></i>
+            <div>
+              <small>PAPPA HAMMER'S</small>
+              <h2 id="gearTitle">ADVENTURE BAG</h2>
+              <p>GEAR RECOVERED FROM THE TOWER</p>
+            </div>
+            <div class="gearBagReadout"><i class="gearBagIcon" aria-hidden="true"></i><span><small>SECURED LOOT</small><b id="gearBagCount">0 ITEMS</b></span></div>
+          </header>
           <div class="gearWorkspace">
             <aside class="gearCharacterPanel">
-              <div class="gearCharacterHeading"><span>WORN BY PAPPA</span><b id="gearEquippedCount">0 / 5</b></div>
+              <div class="gearCharacterHeading"><span>PAPPA LOADOUT</span><b id="gearEquippedCount">0 / 5</b></div>
               <div id="gearCharacterStage" class="gearCharacterStage" aria-label="Drag left or right to rotate Pappa Hammer">
                 <div class="gearCharacterHalo"></div>
                 <div class="gearCharacterHero"><div id="gearCharacterPreview" class="gearCharacterPreview"></div></div>
@@ -79,44 +86,49 @@
                 <button id="gearTurnRight" aria-label="Rotate Pappa Hammer right" title="Rotate right">&#8635;</button>
               </div>
               <div class="pappaProgress"><span><small>PAPPA LEVEL</small><b id="gearPappaLevel">1</b></span><div><i id="gearXpFill"></i></div><em id="gearXpText">0 / 2 BOSS XP</em></div>
+              <nav class="gearCategoryRail" aria-label="Gear categories">
+                <div><small>GEAR CATEGORY</small><b>FILTER THE BAG</b></div>
+                <div id="gearFilters" class="gearFilters gearSlotFilters"></div>
+              </nav>
               <div id="gearLoadoutSlots" class="gearLoadoutSlots"></div>
               <div id="gearStatsSummary" class="gearStatsSummary"></div>
               <div id="gearSetSummary" class="gearSetSummary"></div>
             </aside>
             <section class="gearInventoryPanel">
               <header class="gearInventoryHeading">
-                <span><small>SECURED INVENTORY</small><b>CHOOSE WHAT PAPPA WEARS</b></span>
-                <div class="gearBagReadout"><i class="gearBagIcon" aria-hidden="true"></i><span><small>FIELD BAG</small><b id="gearBagCount">0 ITEMS</b></span></div>
+                <span><small>OPEN FIELD BAG</small><b>RECOVERED EQUIPMENT</b></span>
+                <em id="gearInventorySummary">0 ITEMS</em>
               </header>
               <div id="gearRaritySummary" class="gearRaritySummary" aria-label="Inventory rarity counts"></div>
-              <div class="gearToolbar">
-                <div class="gearFilterGroup">
-                  <small>SLOT</small>
-                  <div id="gearFilters" class="gearFilters"></div>
-                </div>
-                <div class="gearFilterGroup rarityGroup">
-                  <small>RARITY</small>
-                  <div id="gearRarityFilters" class="gearFilters gearRarityFilters"></div>
-                </div>
-                <div class="gearInventoryActions">
-                  <button id="gearSortButton" class="gearSortButton" title="Change inventory sorting">
-                    <i aria-hidden="true">&#8645;</i><span><small>SORTED BY</small><b id="gearSortLabel">POWER</b></span>
-                  </button>
-                  <button id="sellFilteredGear" class="sellFilteredGear" title="Sell all items matching the active filters. Equipped copies are always protected.">
-                    <span id="sellFilteredLabel">SELL FILTERED</span><b id="sellFilteredSummary">0 ITEMS</b>
-                  </button>
-                </div>
-              </div>
-              <div class="equippedProtection"><i>&#128274;</i><span>EQUIPPED GEAR IS ALWAYS PROTECTED</span></div>
               <div class="gearBagLayout">
-                <div class="gearBagBrowser">
-                  <div id="gearGrid" class="gearGrid" role="listbox" aria-label="Secured equipment"></div>
-                  <div id="gearEmpty" class="gearEmpty">NO SECURED GEAR MATCHES THESE FILTERS</div>
+                <div class="animeBagShell">
+                  <div class="animeBagFlap" aria-hidden="true"><i></i><i></i><b>PH</b></div>
+                  <div class="animeBagInterior">
+                    <div class="gearToolbar">
+                      <div class="gearFilterGroup rarityGroup">
+                        <small>RARITY</small>
+                        <div id="gearRarityFilters" class="gearFilters gearRarityFilters"></div>
+                      </div>
+                      <div class="gearInventoryActions">
+                        <button id="gearSortButton" class="gearSortButton" title="Change inventory sorting">
+                          <i aria-hidden="true">&#8645;</i><span><small>SORTED BY</small><b id="gearSortLabel">POWER</b></span>
+                        </button>
+                        <button id="sellFilteredGear" class="sellFilteredGear" title="Sell all items matching the active filters. Equipped copies are always protected.">
+                          <span id="sellFilteredLabel">SELL FILTERED</span><b id="sellFilteredSummary">0 ITEMS</b>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="equippedProtection"><i>&#128274;</i><span>EQUIPPED GEAR IS ALWAYS PROTECTED</span></div>
+                    <div class="gearBagBrowser">
+                      <div id="gearGrid" class="gearGrid" role="listbox" aria-label="Secured equipment"></div>
+                      <div id="gearEmpty" class="gearEmpty">NO SECURED GEAR MATCHES THESE FILTERS</div>
+                    </div>
+                    <footer class="animeBagFooter"><i aria-hidden="true"></i><span>SELECT GEAR TO INSPECT OR EQUIP</span><i aria-hidden="true"></i></footer>
+                  </div>
                 </div>
-                <aside id="gearDetail" class="gearDetail" aria-live="polite"></aside>
               </div>
-              <div id="gearInventorySummary" class="gearInventoryFooter">0 ITEMS</div>
             </section>
+            <aside id="gearDetail" class="gearDetail" aria-live="polite"></aside>
           </div>
         </div>
       </div>
@@ -275,10 +287,10 @@
         </div>
         <button id="resumeButton" class="primaryButton settingsResume"><span>RESUME</span><i>&#8250;</i></button>
         <button id="abandonButton" class="dangerButton">ABANDON EXPEDITION</button>
-        <p class="buildStamp">v0.16.0 VAULT BAG</p>
+        <p class="buildStamp">v0.17.0 ADVENTURE BAG</p>
       </div>
     </div>
   </main>
-  <script src="script.js?v=0.16.0"></script>
+  <script src="script.js?v=0.17.0"></script>
 </body>
 </html>

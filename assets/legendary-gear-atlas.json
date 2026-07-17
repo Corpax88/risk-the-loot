@@ -1,0 +1,298 @@
+{
+  "version": 1,
+  "cellSize": 512,
+  "dropCellSize": 160,
+  "columns": 5,
+  "rows": 4,
+  "slotOrder": [
+    "hat",
+    "scarf",
+    "coat",
+    "hammer",
+    "boots"
+  ],
+  "sets": [
+    {
+      "id": "riskreaver",
+      "name": "RISKREAVER",
+      "row": 0
+    },
+    {
+      "id": "grandVault",
+      "name": "GRAND VAULT",
+      "row": 1
+    },
+    {
+      "id": "crownlessKing",
+      "name": "CROWNLESS KING",
+      "row": 2
+    },
+    {
+      "id": "fatebound",
+      "name": "FATEBOUND",
+      "row": 3
+    }
+  ],
+  "items": [
+    {
+      "id": "riskreaver-hat",
+      "setId": "riskreaver",
+      "slot": "hat",
+      "column": 0,
+      "row": 0,
+      "sourceBounds": [
+        32,
+        382,
+        349,
+        623
+      ]
+    },
+    {
+      "id": "riskreaver-scarf",
+      "setId": "riskreaver",
+      "slot": "scarf",
+      "column": 1,
+      "row": 0,
+      "sourceBounds": [
+        382,
+        363,
+        587,
+        691
+      ]
+    },
+    {
+      "id": "riskreaver-coat",
+      "setId": "riskreaver",
+      "slot": "coat",
+      "column": 2,
+      "row": 0,
+      "sourceBounds": [
+        632,
+        267,
+        934,
+        735
+      ]
+    },
+    {
+      "id": "riskreaver-hammer",
+      "setId": "riskreaver",
+      "slot": "hammer",
+      "column": 3,
+      "row": 0,
+      "sourceBounds": [
+        959,
+        234,
+        1243,
+        739
+      ]
+    },
+    {
+      "id": "riskreaver-boots",
+      "setId": "riskreaver",
+      "slot": "boots",
+      "column": 4,
+      "row": 0,
+      "sourceBounds": [
+        1216,
+        418,
+        1484,
+        709
+      ]
+    },
+    {
+      "id": "grandVault-hat",
+      "setId": "grandVault",
+      "slot": "hat",
+      "column": 0,
+      "row": 1,
+      "sourceBounds": [
+        20,
+        428,
+        311,
+        613
+      ]
+    },
+    {
+      "id": "grandVault-scarf",
+      "setId": "grandVault",
+      "slot": "scarf",
+      "column": 1,
+      "row": 1,
+      "sourceBounds": [
+        336,
+        385,
+        594,
+        677
+      ]
+    },
+    {
+      "id": "grandVault-coat",
+      "setId": "grandVault",
+      "slot": "coat",
+      "column": 2,
+      "row": 1,
+      "sourceBounds": [
+        616,
+        321,
+        909,
+        719
+      ]
+    },
+    {
+      "id": "grandVault-hammer",
+      "setId": "grandVault",
+      "slot": "hammer",
+      "column": 3,
+      "row": 1,
+      "sourceBounds": [
+        951,
+        288,
+        1219,
+        720
+      ]
+    },
+    {
+      "id": "grandVault-boots",
+      "setId": "grandVault",
+      "slot": "boots",
+      "column": 4,
+      "row": 1,
+      "sourceBounds": [
+        1213,
+        397,
+        1509,
+        682
+      ]
+    },
+    {
+      "id": "crownlessKing-hat",
+      "setId": "crownlessKing",
+      "slot": "hat",
+      "column": 0,
+      "row": 2,
+      "sourceBounds": [
+        12,
+        439,
+        332,
+        638
+      ]
+    },
+    {
+      "id": "crownlessKing-scarf",
+      "setId": "crownlessKing",
+      "slot": "scarf",
+      "column": 1,
+      "row": 2,
+      "sourceBounds": [
+        355,
+        352,
+        596,
+        698
+      ]
+    },
+    {
+      "id": "crownlessKing-coat",
+      "setId": "crownlessKing",
+      "slot": "coat",
+      "column": 2,
+      "row": 2,
+      "sourceBounds": [
+        627,
+        268,
+        924,
+        745
+      ]
+    },
+    {
+      "id": "crownlessKing-hammer",
+      "setId": "crownlessKing",
+      "slot": "hammer",
+      "column": 3,
+      "row": 2,
+      "sourceBounds": [
+        945,
+        246,
+        1242,
+        742
+      ]
+    },
+    {
+      "id": "crownlessKing-boots",
+      "setId": "crownlessKing",
+      "slot": "boots",
+      "column": 4,
+      "row": 2,
+      "sourceBounds": [
+        1202,
+        431,
+        1496,
+        735
+      ]
+    },
+    {
+      "id": "fatebound-hat",
+      "setId": "fatebound",
+      "slot": "hat",
+      "column": 0,
+      "row": 3,
+      "sourceBounds": [
+        39,
+        348,
+        377,
+        555
+      ]
+    },
+    {
+      "id": "fatebound-scarf",
+      "setId": "fatebound",
+      "slot": "scarf",
+      "column": 1,
+      "row": 3,
+      "sourceBounds": [
+        412,
+        264,
+        660,
+        666
+      ]
+    },
+    {
+      "id": "fatebound-coat",
+      "setId": "fatebound",
+      "slot": "coat",
+      "column": 2,
+      "row": 3,
+      "sourceBounds": [
+        686,
+        185,
+        1041,
+        707
+      ]
+    },
+    {
+      "id": "fatebound-hammer",
+      "setId": "fatebound",
+      "slot": "hammer",
+      "column": 3,
+      "row": 3,
+      "sourceBounds": [
+        1093,
+        150,
+        1443,
+        728
+      ]
+    },
+    {
+      "id": "fatebound-boots",
+      "setId": "fatebound",
+      "slot": "boots",
+      "column": 4,
+      "row": 3,
+      "sourceBounds": [
+        1373,
+        353,
+        1706,
+        670
+      ]
+    }
+  ]
+}

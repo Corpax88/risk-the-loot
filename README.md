@@ -1,8 +1,12 @@
-# RISK THE LOOT! v0.22.9
+# RISK THE LOOT! v0.25.0
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
 
-Pappa's original painted hammer animation is restored as the active version while the alternate head design remains an unused visual experiment.
+Pappa's original painted hammer animation remains the active version. Champion's Mark replaces the obsolete pickup-magnet relic with a boss-focused reward that supports the equipment loop.
+
+The Adventure Atlas turns Pappa Level into visible world progression. Guild Frontier is available immediately; Ashen Foundry, Moonfall Gardens and Crown Summit unlock at levels 4, 8 and 16. Every destination has its own five-zone visual identity, enemy mix, combat scaling, coin value and boss-gear luck profile.
+
+The expedition HUD now uses one compact status row on mobile and desktop. Health, floor, risk, cargo and boss phases remain visible without taking a second gameplay row, while the workshop header shrinks during expeditions. Every button and important status indicator has contextual help: hover or keyboard focus shows it on desktop, and a short touch reveals the same explanation on mobile without blocking the control.
 
 Enemy Awakening gives each raider a readable movement personality, keeps ranged attacks inside the visible combat area, and turns the Shield Guard's charge into a locked crimson danger lane instead of an ambiguous ring. Enemy animation accents are deterministic, so added life and polish do not disturb encounter or loot randomness.
 
@@ -55,12 +59,14 @@ Existing saves migrate automatically. Old stacked inventory copies become separa
 Gear is permanent loadout progression. Lucky Relics still shape the temporary build inside each expedition:
 
 - Hammer Echo adds another hammer wave to each strike.
-- Lucky Satchel increases pickup range.
+- Champion's Mark increases damage against elites and bosses and can add one extra boss drop.
 - Guard Charm blocks incoming hits.
 - Battle Rhythm increases movement and attack rate.
 - Reckless Swing increases damage at the cost of maximum health.
 
 Matching relics fuse in the same cargo slot up to Power 4. A common relic adds one power and a rare relic adds two. Recovered copies improve the Lucky Relic selected for later expeditions.
+
+Champion's Mark combines with Battle Rhythm for Relentless Pursuit, which recharges Dash after an elite takedown. Combined with Reckless Swing it becomes Final Verdict, adding a finishing damage bonus against wounded bosses. Existing Lucky Satchel unlocks migrate to Champion's Mark automatically.
 
 ## Adventure paths
 

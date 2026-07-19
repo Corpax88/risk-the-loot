@@ -8,20 +8,20 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="description" content="Risk everything, recover equippable gear and build Pappa Hammer in this compact extraction roguelite.">
   <title>RISK THE LOOT!</title>
-  <link rel="stylesheet" href="style.css?v=0.22.9">
+  <link rel="stylesheet" href="style.css?v=0.25.0">
 </head>
 <body>
   <main id="game">
     <header class="topbar">
       <div class="brand">
         <span class="brandMark">R</span>
-        <div><strong>RISK THE LOOT!</strong><small>ENEMY AWAKENING v0.22.9</small></div>
+        <div><strong>RISK THE LOOT!</strong><small>ADVENTURE ATLAS v0.25.0</small></div>
       </div>
       <div class="resources">
-        <div class="resource level"><i>LV</i><div><b id="pappaLevel">1</b><span>PAPPA</span></div></div>
-        <div class="resource scrap"><i>$</i><div><b id="bankScrap">0</b><span>COINS</span></div></div>
-        <div class="resource cores"><i>&#9733;</i><div><b id="coreCount">0</b><span>BOSS SEALS</span></div></div>
-        <div class="resource record"><i>&#x25B2;</i><div><b id="bestDepth">0</b><span>BEST FLOOR</span></div></div>
+        <div class="resource level" data-help-title="Pappa Level" data-help="Boss victories grant XP. Higher levels unlock stronger gear and tougher champions."><i>LV</i><div><b id="pappaLevel">1</b><span>PAPPA</span></div></div>
+        <div class="resource scrap" data-help-title="Coins" data-help="Safe coins banked in the workshop. Sell spare gear or extract alive to earn more."><i>$</i><div><b id="bankScrap">0</b><span>COINS</span></div></div>
+        <div class="resource cores" data-help-title="Boss Seals" data-help="Permanent trophies taken from defeated tower champions."><i>&#9733;</i><div><b id="coreCount">0</b><span>BOSS SEALS</span></div></div>
+        <div class="resource record" data-help-title="Best Floor" data-help="The highest tower floor reached across all expeditions."><i>&#x25B2;</i><div><b id="bestDepth">0</b><span>BEST FLOOR</span></div></div>
       </div>
       <button id="settingsButton" class="iconButton" aria-label="Open settings" title="Settings">&#9881;</button>
     </header>
@@ -42,17 +42,17 @@
             <span id="baseLoadout" class="baseLoadout" aria-label="Equipped gear"></span>
             <em>MANAGE &#8250;</em>
           </button>
-          <div id="baseGearStats" class="baseGearStats" aria-label="Current gear stats"></div>
+          <div id="baseGearStats" class="baseGearStats" aria-label="Current gear stats" data-help-title="Loadout Stats" data-help="Combined health, hammer damage, pickup reach and critical chance from equipped gear."></div>
         </div>
         <div class="actionRail">
           <button id="blueprintButton" class="blueprintButton" title="Choose and tune a recovered starter relic.">
             <i id="starterIcon">+</i><span><small>LUCKY RELIC</small><b id="starterName">NONE EQUIPPED</b></span><em>RACK</em>
           </button>
-          <button id="startButton" class="primaryButton"><span>START EXPEDITION</span><i>&#8250;</i></button>
+          <button id="startButton" class="primaryButton expeditionButton"><span><small id="selectedMapLabel">GUILD FRONTIER</small><b>CHOOSE EXPEDITION</b></span><i>&#8250;</i></button>
         </div>
       </div>
 
-      <div id="contractTracker" class="contractTracker">
+      <div id="contractTracker" class="contractTracker" data-help-title="Adventure Contract" data-help="Your long-term objective. Boss seals and recovered relics advance this contract.">
         <div><small>ADVENTURE CONTRACT</small><b id="contractTitle">OPEN THE GRAND VAULT</b></div>
         <span id="contractReadout">0/3 SEALS &middot; 0/12 RELICS</span>
         <div class="contractTrack"><i id="contractFill"></i></div>
@@ -160,6 +160,16 @@
         </div>
       </div>
 
+      <div id="mapOverlay" class="menuOverlay mapOverlay" role="dialog" aria-modal="true" aria-labelledby="mapTitle">
+        <div class="menuPanel mapPanel">
+          <button id="closeMaps" class="panelClose" aria-label="Close Adventure Atlas">&#215;</button>
+          <small>PAPPA HAMMER'S ADVENTURE ATLAS</small>
+          <h2 id="mapTitle">CHOOSE A DESTINATION</h2>
+          <div class="mapLevelReadout"><span>PAPPA LEVEL <b id="mapPappaLevel">1</b></span><em id="nextMapUnlock">NEXT MAP AT LEVEL 4</em></div>
+          <div id="mapGrid" class="mapGrid" aria-label="Expedition destinations"></div>
+        </div>
+      </div>
+
       <div id="briefingOverlay" class="menuOverlay" role="dialog" aria-modal="true" aria-labelledby="briefingTitle">
         <div class="menuPanel briefingPanel">
           <small>ADVENTURE RULES</small>
@@ -206,25 +216,25 @@
     <section id="expeditionView" class="view expeditionView">
       <canvas id="world" aria-label="RISK THE LOOT expedition arena"></canvas>
       <div class="expeditionHud">
-        <div class="healthBlock">
+        <div class="healthBlock" data-help-title="Pappa's Health" data-help="Reach zero and every unsecured coin, relic and boss drop from this expedition is lost.">
           <div class="healthLabel"><span>PAPPA</span><b id="healthText">100 / 100</b></div>
           <div class="healthTrack"><i id="healthFill"></i></div>
         </div>
         <div class="runMetrics">
-          <div id="lootMetric" class="lootMetric"><span>COINS FOUND</span><b id="runScrap">0</b><em id="lootBest">NO BOSS GEAR</em></div>
-            <div><span>FLOOR</span><b id="depthText">1</b></div>
-          <div class="riskMetric"><span>RISK</span><b id="riskText">LOW</b></div>
+          <div id="lootMetric" class="lootMetric" data-help-title="Expedition Loot" data-help="Coins and the highest-grade boss gear currently at risk. Extract alive to secure them."><span>COINS FOUND</span><b id="runScrap">0</b><em id="lootBest">NO BOSS GEAR</em></div>
+          <div data-help-title="Tower Floor" data-help="Your current floor. Deeper floors bring stronger enemies and better rewards."><span>FLOOR</span><b id="depthText">1</b></div>
+          <div class="riskMetric" data-help-title="Risk Multiplier" data-help="Shows current danger and the value multiplier applied to expedition rewards."><span>RISK</span><b id="riskText">LOW</b></div>
         </div>
         <button id="extractButton" class="extractButton" title="Begin extraction. You can keep moving during the countdown."><span>&#8617;</span><b>EXTRACT</b></button>
       </div>
 
-      <div id="depthRoute" class="depthRoute" aria-label="Expedition route">
+      <div id="depthRoute" class="depthRoute" aria-label="Expedition route" data-help-title="Tower Route" data-help="Tracks progress toward the champion waiting on floor five.">
         <span id="routeLabel">ASCENT</span><div id="routeTicks"><i></i><i></i><i></i><i></i><i></i></div><em class="routeProgress"><i id="routeProgressFill"></i></em>
       </div>
-      <div id="cargoHud" class="cargoHud"><span>RELICS</span><div id="cargoSlots" class="cargoSlots"></div></div>
-      <div id="zoneHud" class="zoneHud"><small id="zoneDepth">FLOOR 1</small><b id="zoneName">GUILD OUTSKIRTS</b></div>
-      <div id="buildHud" class="buildHud"><small>BUILD</small><b id="buildName">HAMMER BUILD</b></div>
-      <div id="bossHud" class="bossHud"><span><b id="bossName">VAULT WARDEN</b><em id="bossPhaseText">PHASE I &middot; THE FIRST LOCK</em></span><div><i id="bossHealthFill"></i></div></div>
+      <div id="cargoHud" class="cargoHud" data-help-title="Relic Cargo" data-help="Temporary relics carried during this expedition. Matching relics fuse into stronger powers."><span>RELICS</span><div id="cargoSlots" class="cargoSlots"></div></div>
+      <div id="zoneHud" class="zoneHud" data-help-title="Current Zone" data-help="The current tower district and the enemies controlling it."><small id="zoneDepth">FLOOR 1</small><b id="zoneName">GUILD OUTSKIRTS</b></div>
+      <div id="buildHud" class="buildHud" data-help-title="Active Build" data-help="A short summary of the strongest relic combination active this expedition."><small>BUILD</small><b id="buildName">HAMMER BUILD</b></div>
+      <div id="bossHud" class="bossHud" data-help-title="Champion Health" data-help="The champion changes attack pattern at each named phase. Empty this bar to earn boss gear."><span><b id="bossName">VAULT WARDEN</b><em id="bossPhaseText">PHASE I &middot; THE FIRST LOCK</em></span><div><i id="bossHealthFill"></i></div></div>
       <div id="runNotice" class="runNotice" role="status"></div>
       <div id="lootToast" class="lootToast" role="status"><i id="lootToastIcon"></i><span><small id="lootToastRarity"></small><b id="lootToastName"></b><em id="lootToastValue"></em></span></div>
 
@@ -270,7 +280,7 @@
         </div>
       </div>
 
-      <div id="touchControls" class="touchControls" aria-hidden="true"><div id="joystick" class="joystick"><i id="joystickKnob"></i></div></div>
+      <div id="touchControls" class="touchControls" aria-hidden="true"><div id="joystick" class="joystick" data-help-title="Movement" data-help="Drag in any direction to move. Pappa Hammer attacks nearby enemies automatically."><i id="joystickKnob"></i></div></div>
       <button id="dashButton" class="dashButton" aria-label="Dash" title="Dash (Space)"><b>&#187;</b><span>DASH</span></button>
     </section>
 
@@ -299,10 +309,11 @@
         </div>
         <button id="resumeButton" class="primaryButton settingsResume"><span>RESUME</span><i>&#8250;</i></button>
         <button id="abandonButton" class="dangerButton">ABANDON EXPEDITION</button>
-        <p class="buildStamp">v0.22.9 ENEMY AWAKENING</p>
+        <p class="buildStamp">v0.25.0 ADVENTURE ATLAS</p>
       </div>
     </div>
+    <aside id="helpTooltip" class="helpTooltip" role="tooltip" aria-hidden="true"><strong id="helpTooltipTitle"></strong><span id="helpTooltipText"></span></aside>
   </main>
-  <script src="script.js?v=0.22.9"></script>
+  <script src="script.js?v=0.25.0"></script>
 </body>
 </html>

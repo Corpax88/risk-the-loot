@@ -1,6 +1,10 @@
-# RISK THE LOOT! v0.19.0
+# RISK THE LOOT! v0.22.9
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
+
+Pappa's original painted hammer animation is restored as the active version while the alternate head design remains an unused visual experiment.
+
+Enemy Awakening gives each raider a readable movement personality, keeps ranged attacks inside the visible combat area, and turns the Shield Guard's charge into a locked crimson danger lane instead of an ambiguous ring. Enemy animation accents are deterministic, so added life and polish do not disturb encounter or loot randomness.
 
 ## The Loadout loop
 
@@ -14,6 +18,8 @@ A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adv
 8. Return stronger and challenge either tower path and its three-phase champion.
 
 There are no direct damage, health, or pickup-range purchases for new saves. Character progression now comes from equipment the player actually risks in the field.
+
+Every item now has its own inventory and field-drop asset. Mouse hover and keyboard focus reveal a compact comparison card with the exact item art, rarity, level, rolled stats, power and sale value; touch devices retain the full tap-to-inspect detail panel.
 
 ## Pappa levels and equipment
 

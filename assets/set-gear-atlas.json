@@ -1,0 +1,834 @@
+{
+  "version": 1,
+  "cellSize": 256,
+  "dropCellSize": 80,
+  "columns": 5,
+  "rows": 16,
+  "slotOrder": [
+    "hat",
+    "scarf",
+    "coat",
+    "hammer",
+    "boots"
+  ],
+  "sets": [
+    {
+      "id": "trailwarden",
+      "name": "TRAILWARDEN",
+      "rarity": "rare",
+      "row": 0
+    },
+    {
+      "id": "ironGuild",
+      "name": "IRON GUILD",
+      "rarity": "rare",
+      "row": 1
+    },
+    {
+      "id": "redBanner",
+      "name": "RED BANNER",
+      "rarity": "rare",
+      "row": 2
+    },
+    {
+      "id": "moonlitScout",
+      "name": "MOONLIT SCOUT",
+      "rarity": "rare",
+      "row": 3
+    },
+    {
+      "id": "coinseeker",
+      "name": "COINSEEKER",
+      "rarity": "rare",
+      "row": 4
+    },
+    {
+      "id": "towerBulwark",
+      "name": "TOWER BULWARK",
+      "rarity": "epic",
+      "row": 5
+    },
+    {
+      "id": "stormrunner",
+      "name": "STORMRUNNER",
+      "rarity": "epic",
+      "row": 6
+    },
+    {
+      "id": "hammerChoir",
+      "name": "HAMMER CHOIR",
+      "rarity": "epic",
+      "row": 7
+    },
+    {
+      "id": "lanternGuard",
+      "name": "LANTERN GUARD",
+      "rarity": "epic",
+      "row": 8
+    },
+    {
+      "id": "grandWayfarer",
+      "name": "GRAND WAYFARER",
+      "rarity": "epic",
+      "row": 9
+    },
+    {
+      "id": "crimsonOath",
+      "name": "CRIMSON OATH",
+      "rarity": "mythic",
+      "row": 10
+    },
+    {
+      "id": "moonbreaker",
+      "name": "MOONBREAKER",
+      "rarity": "mythic",
+      "row": 11
+    },
+    {
+      "id": "kingsRoad",
+      "name": "KING'S ROAD",
+      "rarity": "mythic",
+      "row": 12
+    },
+    {
+      "id": "phantomCourt",
+      "name": "PHANTOM COURT",
+      "rarity": "mythic",
+      "row": 13
+    },
+    {
+      "id": "starforge",
+      "name": "STARFORGE",
+      "rarity": "mythic",
+      "row": 14
+    },
+    {
+      "id": "grandVoyager",
+      "name": "GRAND VOYAGER",
+      "rarity": "mythic",
+      "row": 15
+    }
+  ],
+  "items": [
+    {
+      "id": "trailwarden-hat",
+      "setId": "trailwarden",
+      "slot": "hat",
+      "rarity": "rare",
+      "column": 0,
+      "row": 0,
+      "sourceId": "bentCog"
+    },
+    {
+      "id": "trailwarden-scarf",
+      "setId": "trailwarden",
+      "slot": "scarf",
+      "rarity": "rare",
+      "column": 1,
+      "row": 0,
+      "sourceId": "valveHandle"
+    },
+    {
+      "id": "trailwarden-coat",
+      "setId": "trailwarden",
+      "slot": "coat",
+      "rarity": "rare",
+      "column": 2,
+      "row": 0,
+      "sourceId": "rivetBundle"
+    },
+    {
+      "id": "trailwarden-hammer",
+      "setId": "trailwarden",
+      "slot": "hammer",
+      "rarity": "rare",
+      "column": 3,
+      "row": 0,
+      "sourceId": "fuseShell"
+    },
+    {
+      "id": "trailwarden-boots",
+      "setId": "trailwarden",
+      "slot": "boots",
+      "rarity": "rare",
+      "column": 4,
+      "row": 0,
+      "sourceId": "wardenOptic"
+    },
+    {
+      "id": "ironGuild-hat",
+      "setId": "ironGuild",
+      "slot": "hat",
+      "rarity": "rare",
+      "column": 0,
+      "row": 1,
+      "sourceId": "brassWasher"
+    },
+    {
+      "id": "ironGuild-scarf",
+      "setId": "ironGuild",
+      "slot": "scarf",
+      "rarity": "rare",
+      "column": 1,
+      "row": 1,
+      "sourceId": "brassGyroscope"
+    },
+    {
+      "id": "ironGuild-coat",
+      "setId": "ironGuild",
+      "slot": "coat",
+      "rarity": "rare",
+      "column": 2,
+      "row": 1,
+      "sourceId": "steamInjector"
+    },
+    {
+      "id": "ironGuild-hammer",
+      "setId": "ironGuild",
+      "slot": "hammer",
+      "rarity": "rare",
+      "column": 3,
+      "row": 1,
+      "sourceId": "stormglassCell"
+    },
+    {
+      "id": "ironGuild-boots",
+      "setId": "ironGuild",
+      "slot": "boots",
+      "rarity": "rare",
+      "column": 4,
+      "row": 1,
+      "sourceId": "boilerSeal"
+    },
+    {
+      "id": "redBanner-hat",
+      "setId": "redBanner",
+      "slot": "hat",
+      "rarity": "rare",
+      "column": 0,
+      "row": 2,
+      "sourceId": "aetherCondenser"
+    },
+    {
+      "id": "redBanner-scarf",
+      "setId": "redBanner",
+      "slot": "scarf",
+      "rarity": "rare",
+      "column": 1,
+      "row": 2,
+      "sourceId": "crackedGauge"
+    },
+    {
+      "id": "redBanner-coat",
+      "setId": "redBanner",
+      "slot": "coat",
+      "rarity": "rare",
+      "column": 2,
+      "row": 2,
+      "sourceId": "wardenSingularity"
+    },
+    {
+      "id": "redBanner-hammer",
+      "setId": "redBanner",
+      "slot": "hammer",
+      "rarity": "rare",
+      "column": 3,
+      "row": 2,
+      "sourceId": "sootFilter"
+    },
+    {
+      "id": "redBanner-boots",
+      "setId": "redBanner",
+      "slot": "boots",
+      "rarity": "rare",
+      "column": 4,
+      "row": 2,
+      "sourceId": "motorBrush"
+    },
+    {
+      "id": "moonlitScout-hat",
+      "setId": "moonlitScout",
+      "slot": "hat",
+      "rarity": "rare",
+      "column": 0,
+      "row": 3,
+      "sourceId": "copperWire"
+    },
+    {
+      "id": "moonlitScout-scarf",
+      "setId": "moonlitScout",
+      "slot": "scarf",
+      "rarity": "rare",
+      "column": 1,
+      "row": 3,
+      "sourceId": "emptyCanister"
+    },
+    {
+      "id": "moonlitScout-coat",
+      "setId": "moonlitScout",
+      "slot": "coat",
+      "rarity": "rare",
+      "column": 2,
+      "row": 3,
+      "sourceId": "rivetBundle"
+    },
+    {
+      "id": "moonlitScout-hammer",
+      "setId": "moonlitScout",
+      "slot": "hammer",
+      "rarity": "rare",
+      "column": 3,
+      "row": 3,
+      "sourceId": "fuseShell"
+    },
+    {
+      "id": "moonlitScout-boots",
+      "setId": "moonlitScout",
+      "slot": "boots",
+      "rarity": "rare",
+      "column": 4,
+      "row": 3,
+      "sourceId": "furnaceHeart"
+    },
+    {
+      "id": "coinseeker-hat",
+      "setId": "coinseeker",
+      "slot": "hat",
+      "rarity": "rare",
+      "column": 0,
+      "row": 4,
+      "sourceId": "pressureRegulator"
+    },
+    {
+      "id": "coinseeker-scarf",
+      "setId": "coinseeker",
+      "slot": "scarf",
+      "rarity": "rare",
+      "column": 1,
+      "row": 4,
+      "sourceId": "voidCompass"
+    },
+    {
+      "id": "coinseeker-coat",
+      "setId": "coinseeker",
+      "slot": "coat",
+      "rarity": "rare",
+      "column": 2,
+      "row": 4,
+      "sourceId": "steamInjector"
+    },
+    {
+      "id": "coinseeker-hammer",
+      "setId": "coinseeker",
+      "slot": "hammer",
+      "rarity": "rare",
+      "column": 3,
+      "row": 4,
+      "sourceId": "stormglassCell"
+    },
+    {
+      "id": "coinseeker-boots",
+      "setId": "coinseeker",
+      "slot": "boots",
+      "rarity": "rare",
+      "column": 4,
+      "row": 4,
+      "sourceId": "scrapLens"
+    },
+    {
+      "id": "towerBulwark-hat",
+      "setId": "towerBulwark",
+      "slot": "hat",
+      "rarity": "epic",
+      "column": 0,
+      "row": 5,
+      "sourceId": "crownGear"
+    },
+    {
+      "id": "towerBulwark-scarf",
+      "setId": "towerBulwark",
+      "slot": "scarf",
+      "rarity": "epic",
+      "column": 1,
+      "row": 5,
+      "sourceId": "tinPlate"
+    },
+    {
+      "id": "towerBulwark-coat",
+      "setId": "towerBulwark",
+      "slot": "coat",
+      "rarity": "epic",
+      "column": 2,
+      "row": 5,
+      "sourceId": "wardenSingularity"
+    },
+    {
+      "id": "towerBulwark-hammer",
+      "setId": "towerBulwark",
+      "slot": "hammer",
+      "rarity": "epic",
+      "column": 3,
+      "row": 5,
+      "sourceId": "sootFilter"
+    },
+    {
+      "id": "towerBulwark-boots",
+      "setId": "towerBulwark",
+      "slot": "boots",
+      "rarity": "epic",
+      "column": 4,
+      "row": 5,
+      "sourceId": "cinderCarburetor"
+    },
+    {
+      "id": "stormrunner-hat",
+      "setId": "stormrunner",
+      "slot": "hat",
+      "rarity": "epic",
+      "column": 0,
+      "row": 6,
+      "sourceId": "rustedBolt"
+    },
+    {
+      "id": "stormrunner-scarf",
+      "setId": "stormrunner",
+      "slot": "scarf",
+      "rarity": "epic",
+      "column": 1,
+      "row": 6,
+      "sourceId": "hardenedPiston"
+    },
+    {
+      "id": "stormrunner-coat",
+      "setId": "stormrunner",
+      "slot": "coat",
+      "rarity": "epic",
+      "column": 2,
+      "row": 6,
+      "sourceId": "rivetBundle"
+    },
+    {
+      "id": "stormrunner-hammer",
+      "setId": "stormrunner",
+      "slot": "hammer",
+      "rarity": "epic",
+      "column": 3,
+      "row": 6,
+      "sourceId": "fuseShell"
+    },
+    {
+      "id": "stormrunner-boots",
+      "setId": "stormrunner",
+      "slot": "boots",
+      "rarity": "epic",
+      "column": 4,
+      "row": 6,
+      "sourceId": "chainLink"
+    },
+    {
+      "id": "hammerChoir-hat",
+      "setId": "hammerChoir",
+      "slot": "hat",
+      "rarity": "epic",
+      "column": 0,
+      "row": 7,
+      "sourceId": "dynamoCoil"
+    },
+    {
+      "id": "hammerChoir-scarf",
+      "setId": "hammerChoir",
+      "slot": "scarf",
+      "rarity": "epic",
+      "column": 1,
+      "row": 7,
+      "sourceId": "valveHandle"
+    },
+    {
+      "id": "hammerChoir-coat",
+      "setId": "hammerChoir",
+      "slot": "coat",
+      "rarity": "epic",
+      "column": 2,
+      "row": 7,
+      "sourceId": "steamInjector"
+    },
+    {
+      "id": "hammerChoir-hammer",
+      "setId": "hammerChoir",
+      "slot": "hammer",
+      "rarity": "epic",
+      "column": 3,
+      "row": 7,
+      "sourceId": "stormglassCell"
+    },
+    {
+      "id": "hammerChoir-boots",
+      "setId": "hammerChoir",
+      "slot": "boots",
+      "rarity": "epic",
+      "column": 4,
+      "row": 7,
+      "sourceId": "wardenOptic"
+    },
+    {
+      "id": "lanternGuard-hat",
+      "setId": "lanternGuard",
+      "slot": "hat",
+      "rarity": "epic",
+      "column": 0,
+      "row": 8,
+      "sourceId": "bentCog"
+    },
+    {
+      "id": "lanternGuard-scarf",
+      "setId": "lanternGuard",
+      "slot": "scarf",
+      "rarity": "epic",
+      "column": 1,
+      "row": 8,
+      "sourceId": "brassGyroscope"
+    },
+    {
+      "id": "lanternGuard-coat",
+      "setId": "lanternGuard",
+      "slot": "coat",
+      "rarity": "epic",
+      "column": 2,
+      "row": 8,
+      "sourceId": "wardenSingularity"
+    },
+    {
+      "id": "lanternGuard-hammer",
+      "setId": "lanternGuard",
+      "slot": "hammer",
+      "rarity": "epic",
+      "column": 3,
+      "row": 8,
+      "sourceId": "sootFilter"
+    },
+    {
+      "id": "lanternGuard-boots",
+      "setId": "lanternGuard",
+      "slot": "boots",
+      "rarity": "epic",
+      "column": 4,
+      "row": 8,
+      "sourceId": "boilerSeal"
+    },
+    {
+      "id": "grandWayfarer-hat",
+      "setId": "grandWayfarer",
+      "slot": "hat",
+      "rarity": "epic",
+      "column": 0,
+      "row": 9,
+      "sourceId": "brassWasher"
+    },
+    {
+      "id": "grandWayfarer-scarf",
+      "setId": "grandWayfarer",
+      "slot": "scarf",
+      "rarity": "epic",
+      "column": 1,
+      "row": 9,
+      "sourceId": "crackedGauge"
+    },
+    {
+      "id": "grandWayfarer-coat",
+      "setId": "grandWayfarer",
+      "slot": "coat",
+      "rarity": "epic",
+      "column": 2,
+      "row": 9,
+      "sourceId": "rivetBundle"
+    },
+    {
+      "id": "grandWayfarer-hammer",
+      "setId": "grandWayfarer",
+      "slot": "hammer",
+      "rarity": "epic",
+      "column": 3,
+      "row": 9,
+      "sourceId": "fuseShell"
+    },
+    {
+      "id": "grandWayfarer-boots",
+      "setId": "grandWayfarer",
+      "slot": "boots",
+      "rarity": "epic",
+      "column": 4,
+      "row": 9,
+      "sourceId": "motorBrush"
+    },
+    {
+      "id": "crimsonOath-hat",
+      "setId": "crimsonOath",
+      "slot": "hat",
+      "rarity": "mythic",
+      "column": 0,
+      "row": 10,
+      "sourceId": "aetherCondenser"
+    },
+    {
+      "id": "crimsonOath-scarf",
+      "setId": "crimsonOath",
+      "slot": "scarf",
+      "rarity": "mythic",
+      "column": 1,
+      "row": 10,
+      "sourceId": "emptyCanister"
+    },
+    {
+      "id": "crimsonOath-coat",
+      "setId": "crimsonOath",
+      "slot": "coat",
+      "rarity": "mythic",
+      "column": 2,
+      "row": 10,
+      "sourceId": "steamInjector"
+    },
+    {
+      "id": "crimsonOath-hammer",
+      "setId": "crimsonOath",
+      "slot": "hammer",
+      "rarity": "mythic",
+      "column": 3,
+      "row": 10,
+      "sourceId": "stormglassCell"
+    },
+    {
+      "id": "crimsonOath-boots",
+      "setId": "crimsonOath",
+      "slot": "boots",
+      "rarity": "mythic",
+      "column": 4,
+      "row": 10,
+      "sourceId": "furnaceHeart"
+    },
+    {
+      "id": "moonbreaker-hat",
+      "setId": "moonbreaker",
+      "slot": "hat",
+      "rarity": "mythic",
+      "column": 0,
+      "row": 11,
+      "sourceId": "copperWire"
+    },
+    {
+      "id": "moonbreaker-scarf",
+      "setId": "moonbreaker",
+      "slot": "scarf",
+      "rarity": "mythic",
+      "column": 1,
+      "row": 11,
+      "sourceId": "voidCompass"
+    },
+    {
+      "id": "moonbreaker-coat",
+      "setId": "moonbreaker",
+      "slot": "coat",
+      "rarity": "mythic",
+      "column": 2,
+      "row": 11,
+      "sourceId": "wardenSingularity"
+    },
+    {
+      "id": "moonbreaker-hammer",
+      "setId": "moonbreaker",
+      "slot": "hammer",
+      "rarity": "mythic",
+      "column": 3,
+      "row": 11,
+      "sourceId": "sootFilter"
+    },
+    {
+      "id": "moonbreaker-boots",
+      "setId": "moonbreaker",
+      "slot": "boots",
+      "rarity": "mythic",
+      "column": 4,
+      "row": 11,
+      "sourceId": "scrapLens"
+    },
+    {
+      "id": "kingsRoad-hat",
+      "setId": "kingsRoad",
+      "slot": "hat",
+      "rarity": "mythic",
+      "column": 0,
+      "row": 12,
+      "sourceId": "pressureRegulator"
+    },
+    {
+      "id": "kingsRoad-scarf",
+      "setId": "kingsRoad",
+      "slot": "scarf",
+      "rarity": "mythic",
+      "column": 1,
+      "row": 12,
+      "sourceId": "tinPlate"
+    },
+    {
+      "id": "kingsRoad-coat",
+      "setId": "kingsRoad",
+      "slot": "coat",
+      "rarity": "mythic",
+      "column": 2,
+      "row": 12,
+      "sourceId": "rivetBundle"
+    },
+    {
+      "id": "kingsRoad-hammer",
+      "setId": "kingsRoad",
+      "slot": "hammer",
+      "rarity": "mythic",
+      "column": 3,
+      "row": 12,
+      "sourceId": "fuseShell"
+    },
+    {
+      "id": "kingsRoad-boots",
+      "setId": "kingsRoad",
+      "slot": "boots",
+      "rarity": "mythic",
+      "column": 4,
+      "row": 12,
+      "sourceId": "cinderCarburetor"
+    },
+    {
+      "id": "phantomCourt-hat",
+      "setId": "phantomCourt",
+      "slot": "hat",
+      "rarity": "mythic",
+      "column": 0,
+      "row": 13,
+      "sourceId": "crownGear"
+    },
+    {
+      "id": "phantomCourt-scarf",
+      "setId": "phantomCourt",
+      "slot": "scarf",
+      "rarity": "mythic",
+      "column": 1,
+      "row": 13,
+      "sourceId": "hardenedPiston"
+    },
+    {
+      "id": "phantomCourt-coat",
+      "setId": "phantomCourt",
+      "slot": "coat",
+      "rarity": "mythic",
+      "column": 2,
+      "row": 13,
+      "sourceId": "steamInjector"
+    },
+    {
+      "id": "phantomCourt-hammer",
+      "setId": "phantomCourt",
+      "slot": "hammer",
+      "rarity": "mythic",
+      "column": 3,
+      "row": 13,
+      "sourceId": "stormglassCell"
+    },
+    {
+      "id": "phantomCourt-boots",
+      "setId": "phantomCourt",
+      "slot": "boots",
+      "rarity": "mythic",
+      "column": 4,
+      "row": 13,
+      "sourceId": "chainLink"
+    },
+    {
+      "id": "starforge-hat",
+      "setId": "starforge",
+      "slot": "hat",
+      "rarity": "mythic",
+      "column": 0,
+      "row": 14,
+      "sourceId": "rustedBolt"
+    },
+    {
+      "id": "starforge-scarf",
+      "setId": "starforge",
+      "slot": "scarf",
+      "rarity": "mythic",
+      "column": 1,
+      "row": 14,
+      "sourceId": "valveHandle"
+    },
+    {
+      "id": "starforge-coat",
+      "setId": "starforge",
+      "slot": "coat",
+      "rarity": "mythic",
+      "column": 2,
+      "row": 14,
+      "sourceId": "wardenSingularity"
+    },
+    {
+      "id": "starforge-hammer",
+      "setId": "starforge",
+      "slot": "hammer",
+      "rarity": "mythic",
+      "column": 3,
+      "row": 14,
+      "sourceId": "sootFilter"
+    },
+    {
+      "id": "starforge-boots",
+      "setId": "starforge",
+      "slot": "boots",
+      "rarity": "mythic",
+      "column": 4,
+      "row": 14,
+      "sourceId": "wardenOptic"
+    },
+    {
+      "id": "grandVoyager-hat",
+      "setId": "grandVoyager",
+      "slot": "hat",
+      "rarity": "mythic",
+      "column": 0,
+      "row": 15,
+      "sourceId": "dynamoCoil"
+    },
+    {
+      "id": "grandVoyager-scarf",
+      "setId": "grandVoyager",
+      "slot": "scarf",
+      "rarity": "mythic",
+      "column": 1,
+      "row": 15,
+      "sourceId": "brassGyroscope"
+    },
+    {
+      "id": "grandVoyager-coat",
+      "setId": "grandVoyager",
+      "slot": "coat",
+      "rarity": "mythic",
+      "column": 2,
+      "row": 15,
+      "sourceId": "rivetBundle"
+    },
+    {
+      "id": "grandVoyager-hammer",
+      "setId": "grandVoyager",
+      "slot": "hammer",
+      "rarity": "mythic",
+      "column": 3,
+      "row": 15,
+      "sourceId": "fuseShell"
+    },
+    {
+      "id": "grandVoyager-boots",
+      "setId": "grandVoyager",
+      "slot": "boots",
+      "rarity": "mythic",
+      "column": 4,
+      "row": 15,
+      "sourceId": "boilerSeal"
+    }
+  ]
+}

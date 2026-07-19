@@ -14,8 +14,8 @@ for(const match of script.matchAll(/\$\('([^']+)'\)/g)){
 const openBraces=(css.match(/{/g)||[]).length;
 const closeBraces=(css.match(/}/g)||[]).length;
 assert.equal(openBraces,closeBraces,'CSS braces are unbalanced');
-assert(html.includes('style.css?v=0.19.0')&&html.includes('script.js?v=0.19.0'),'release assets are not versioned');
-for(const asset of ['pappa-hammer-player.png','pappa-hammer-idle-v2.png','pappa-hammer-run-v2.png','pappa-hammer-attack-v2.png','pappa-hammer-workshop.png','pappa-hammer-enemies.png','pappa-hammer-bosses.png','gear-items-atlas.png','gear-drops-atlas.png','gear-atlas.json','legendary-gear-atlas.png','legendary-gear-drops.png','legendary-gear-atlas.json','anime-adventure-bag-v2.webp'])assert(fs.existsSync('assets/'+asset),'Pappa Hammer asset is missing: '+asset);
+assert(html.includes('style.css?v=0.22.9')&&html.includes('script.js?v=0.22.9'),'release assets are not versioned');
+for(const asset of ['pappa-hammer-player.png','pappa-hammer-idle-v2.png','pappa-hammer-run-v2.png','pappa-hammer-attack-v2.png','pappa-hammer-workshop.png','pappa-hammer-enemies.png','pappa-hammer-bosses.png','gear-items-atlas.png','gear-drops-atlas.png','gear-atlas.json','set-gear-atlas.png','set-gear-drops.png','set-gear-atlas.json','legendary-gear-atlas.png','legendary-gear-drops.png','legendary-gear-atlas.json','anime-adventure-bag-v2.webp'])assert(fs.existsSync('assets/'+asset),'Pappa Hammer asset is missing: '+asset);
 const gearAtlas=JSON.parse(fs.readFileSync('assets/gear-atlas.json','utf8'));
 assert.equal(gearAtlas.items.length,40,'gear atlas must map all 40 items');
 assert.equal(new Set(gearAtlas.items.map(item=>item.id)).size,40,'gear atlas item ids must be unique');
@@ -24,17 +24,27 @@ for(const item of gearAtlas.items)assert(script.includes("gearDef('"+item.id+"'"
 function pngSize(path){const data=fs.readFileSync(path);return [data.readUInt32BE(16),data.readUInt32BE(20)]}
 assert.deepEqual(pngSize('assets/gear-items-atlas.png'),[2560,1280],'full gear atlas dimensions are wrong');
 assert.deepEqual(pngSize('assets/gear-drops-atlas.png'),[800,400],'drop gear atlas dimensions are wrong');
+const setGearAtlas=JSON.parse(fs.readFileSync('assets/set-gear-atlas.json','utf8'));
+assert.equal(setGearAtlas.items.length,80,'set gear atlas must map all 80 non-legendary set pieces');
+assert.equal(new Set(setGearAtlas.items.map(item=>item.id)).size,80,'set gear atlas item ids must be unique');
+assert.deepEqual(setGearAtlas.slotOrder,['hat','scarf','coat','hammer','boots'],'set gear atlas slot columns are out of order');
+assert.deepEqual(pngSize('assets/set-gear-atlas.png'),[1280,4096],'set gear atlas dimensions are wrong');
+assert.deepEqual(pngSize('assets/set-gear-drops.png'),[400,1280],'set gear drop atlas dimensions are wrong');
 const legendaryAtlas=JSON.parse(fs.readFileSync('assets/legendary-gear-atlas.json','utf8'));
-assert.equal(legendaryAtlas.items.length,20,'legendary atlas must map all 20 set pieces');
-assert.equal(new Set(legendaryAtlas.items.map(item=>item.id)).size,20,'legendary atlas item ids must be unique');
+assert.equal(legendaryAtlas.items.length,22,'legendary atlas must map all 20 set pieces and 2 legacy rewards');
+assert.equal(new Set(legendaryAtlas.items.map(item=>item.id)).size,22,'legendary atlas item ids must be unique');
 assert.deepEqual(legendaryAtlas.slotOrder,['hat','scarf','coat','hammer','boots'],'legendary atlas slot columns are out of order');
-assert.deepEqual(pngSize('assets/legendary-gear-atlas.png'),[2560,2048],'legendary gear atlas dimensions are wrong');
-assert.deepEqual(pngSize('assets/legendary-gear-drops.png'),[800,640],'legendary drop atlas dimensions are wrong');
+assert.deepEqual(pngSize('assets/legendary-gear-atlas.png'),[2560,2560],'legendary gear atlas dimensions are wrong');
+assert.deepEqual(pngSize('assets/legendary-gear-drops.png'),[800,800],'legendary drop atlas dimensions are wrong');
 for(const pose of ['idle','run','attack'])for(const slot of ['hat','scarf','coat','hammer','boots']){const path='assets/paper-doll/'+pose+'-'+slot+'.png';assert(fs.existsSync(path),'paper-doll mask is missing: '+path);assert.deepEqual(pngSize(path),[1024,512],'paper-doll mask dimensions are wrong: '+path)}
+for(const pose of ['idle','run','attack'])assert.deepEqual(pngSize('assets/pappa-hammer-'+pose+'-v2.png'),[2048,1024],'restored original hammer '+pose+' sheet dimensions are wrong');
 assert(script.includes("assets/pappa-hammer-idle-v2.png")&&script.includes("assets/pappa-hammer-run-v2.png")&&script.includes("assets/pappa-hammer-attack-v2.png")&&script.includes("assets/pappa-hammer-enemies.png")&&script.includes("assets/pappa-hammer-bosses.png"),'Pappa Hammer animation or combat assets are not wired');
 assert(script.includes('pendingStrikes')&&script.includes('releaseHammerStrike')&&script.includes("kind:'hammerSwing'"),'ranged melee hammer timing or impact arc is missing');
 assert(css.includes('@keyframes pappaHammerFrames')&&css.includes("background-image:url('assets/pappa-hammer-idle-v2.png')"),'live Gear Locker animation is missing');
 assert(script.includes('THE FIRST LOCK')&&script.includes('A FORMAL BOW')&&script.includes('source:e.bossKind||e.type'),'distinct boss personalities are not wired');
+assert(script.includes('function combatViewContains')&&script.includes('function enemyCanAttack')&&script.includes('combatViewContains(b.x,b.y,b.r,0,bulletCam)'),'offscreen enemy projectile safety is missing');
+assert(script.includes('function updateEnemyEntity')&&script.includes('spawnGrace:spawnDuration')&&script.includes('e.stepFx<=0'),'living enemy movement or deterministic arrival animation is missing');
+assert(script.includes('TANK_RUSH_WINDUP')&&script.includes('function drawTankTelegraph')&&script.includes("kind:'tankImpact'"),'Shield Guard rush or danger-lane feedback is missing');
 assert(!/v0\.[23456]\.\d/.test(html+css+script),'stale release version found');
 assert(script.includes('DEPTH_THRESHOLDS=[0,55,120,195,280]'),'expedition pacing is missing');
 assert(script.includes('BOSS_SCHEMATICS')&&script.includes('pendingWardenReward'),'permanent boss rewards are missing');
@@ -58,10 +68,11 @@ assert(html.includes('id="gearLockerButton"')&&html.includes('id="gearGrid"')&&h
 assert(html.includes('id="gearTurnLeft"')&&html.includes('id="gearTurnRight"')&&html.includes('id="gearSetSummary"')&&script.includes('updateGearTurntable'),'rotating preview or set summary is missing');
 assert(html.includes('id="gearRarityFilters"')&&html.includes('id="sellFilteredGear"')&&script.includes('gearSellableCount')&&script.includes('sellFilteredGear'),'protected filtered gear sale is missing');
 assert(html.includes('id="gearBagCount"')&&html.includes('id="gearRaritySummary"')&&html.includes('id="gearSortButton"')&&html.includes('id="gearDetail"'),'Vault Bag count, rarity summary, sorting, or item details are missing');
+assert(html.includes('id="gearHoverPreview"')&&script.includes('function showGearHover')&&script.includes('function bindGearHover')&&css.includes('.gearHoverPreview.show'),'per-item hover and focus preview is missing');
 assert(html.includes('ADVENTURE BAG')&&html.includes('animeBagShell')&&html.includes('gearCategoryRail')&&html.includes('id="gearBagTab"')&&html.includes('id="gearLoadoutTab"')&&css.includes('v0.19 release Adventure Bag and Legendary Forge'),'release Adventure Bag presentation is missing');
 assert(css.includes("assets/anime-adventure-bag-v2.webp")&&script.includes('function setGearView')&&script.includes("setGearView('loadout')"),'illustrated bag or separate Pappa loadout view is missing');
 assert(script.includes('const GEAR_SORTS=')&&script.includes('function renderGearDetail')&&script.includes('function drawEquippedRarityAura'),'inventory sorting, item comparison, or high-rarity presentation is missing');
-assert(script.includes('gear-items-atlas.png')&&script.includes('gear-drops-atlas.png')&&script.includes('legendary-gear-atlas.png')&&script.includes('legendary-gear-drops.png')&&script.includes('LEGENDARY_SET_ROW')&&script.includes('drawAdventureLootSprite')&&css.includes("background-image:url('assets/gear-items-atlas.png')")&&css.includes("background-image:url('assets/legendary-gear-atlas.png')"),'sprite-atlas item identities are missing');
+assert(script.includes('gear-items-atlas.png')&&script.includes('gear-drops-atlas.png')&&script.includes('set-gear-atlas.png')&&script.includes('set-gear-drops.png')&&script.includes('legendary-gear-atlas.png')&&script.includes('legendary-gear-drops.png')&&script.includes('SET_GEAR_ROW')&&script.includes('LEGENDARY_SET_ROW')&&script.includes('drawAdventureLootSprite')&&css.includes("background-image:url('assets/gear-items-atlas.png')")&&css.includes("background-image:url('assets/set-gear-atlas.png')")&&css.includes("background-image:url('assets/legendary-gear-atlas.png')"),'sprite-atlas item identities are missing');
 assert(!script.includes('createPreviewGear')&&!css.includes('.previewGear.hammer'),'obsolete geometric equipment overlays are still active');
 assert(!html.includes('id="upgradeChassis"')&&!html.includes('id="upgradeWeapon"')&&!html.includes('id="upgradeSalvage"'),'obsolete direct stat upgrades are still visible');
 assert(script.includes('RELIC_POWER_CAP')&&script.includes('prepareRelic')&&script.includes('FUSED'),'relic fusion system is missing');

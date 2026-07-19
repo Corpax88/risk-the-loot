@@ -3,7 +3,7 @@
   "cellSize": 512,
   "dropCellSize": 160,
   "columns": 5,
-  "rows": 4,
+  "rows": 5,
   "slotOrder": [
     "hat",
     "scarf",
@@ -31,6 +31,11 @@
       "id": "fatebound",
       "name": "FATEBOUND",
       "row": 3
+    },
+    {
+      "id": "legacy",
+      "name": "LEGACY LEGENDARIES",
+      "row": 4
     }
   ],
   "items": [
@@ -292,6 +297,34 @@
         353,
         1706,
         670
+      ]
+    },
+    {
+      "id": "wardenSingularity",
+      "name": "Grand Vault Coat",
+      "slot": "coat",
+      "column": 2,
+      "row": 4,
+      "legacy": true,
+      "sourceBounds": [
+        39,
+        16,
+        216,
+        240
+      ]
+    },
+    {
+      "id": "tyrantEmbercore",
+      "name": "RISKREAVER",
+      "slot": "hammer",
+      "column": 3,
+      "row": 4,
+      "legacy": true,
+      "sourceBounds": [
+        46,
+        10,
+        209,
+        246
       ]
     }
   ]

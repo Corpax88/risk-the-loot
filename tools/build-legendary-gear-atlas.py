@@ -19,6 +19,10 @@ SETS = [
     ("fatebound", "FATEBOUND", "fatebound-alpha.png"),
 ]
 SLOTS = ["hat", "scarf", "coat", "hammer", "boots"]
+LEGACY_ITEMS = [
+    ("wardenSingularity", "Grand Vault Coat", "coat"),
+    ("tyrantEmbercore", "RISKREAVER", "hammer"),
+]
 CELL = 512
 DROP_CELL = 160
 ALPHA_THRESHOLD = 18
@@ -116,14 +120,15 @@ def normalized_cell(crop: Image.Image) -> Image.Image:
 
 
 def main() -> None:
-    atlas = Image.new("RGBA", (CELL * len(SLOTS), CELL * len(SETS)), (0, 0, 0, 0))
-    drops = Image.new("RGBA", (DROP_CELL * len(SLOTS), DROP_CELL * len(SETS)), (0, 0, 0, 0))
+    rows = len(SETS) + 1
+    atlas = Image.new("RGBA", (CELL * len(SLOTS), CELL * rows), (0, 0, 0, 0))
+    drops = Image.new("RGBA", (DROP_CELL * len(SLOTS), DROP_CELL * rows), (0, 0, 0, 0))
     manifest = {
         "version": 1,
         "cellSize": CELL,
         "dropCellSize": DROP_CELL,
         "columns": len(SLOTS),
-        "rows": len(SETS),
+        "rows": rows,
         "slotOrder": SLOTS,
         "sets": [],
         "items": [],
@@ -149,6 +154,42 @@ def main() -> None:
                     "sourceBounds": list(source_bbox),
                 }
             )
+
+    # The two legacy legendary rewards used to borrow cells from newer sets.
+    # Promote their original painted silhouettes into a dedicated premium row
+    # so every catalog entry keeps a distinct identity.
+    base_atlas = Image.open(ASSET_DIR / "gear-items-atlas.png").convert("RGBA")
+    base_manifest = json.loads((ASSET_DIR / "gear-atlas.json").read_text(encoding="utf-8"))
+    base_by_id = {item["id"]: item for item in base_manifest["items"]}
+    legacy_row = len(SETS)
+    manifest["sets"].append({"id": "legacy", "name": "LEGACY LEGENDARIES", "row": legacy_row})
+    for item_id, item_name, slot in LEGACY_ITEMS:
+        source_entry = base_by_id[item_id]
+        box = (
+            source_entry["column"] * 256,
+            source_entry["row"] * 256,
+            (source_entry["column"] + 1) * 256,
+            (source_entry["row"] + 1) * 256,
+        )
+        source = base_atlas.crop(box)
+        bounds = source.getchannel("A").getbbox()
+        if bounds is None:
+            raise RuntimeError(f"Legacy legendary source is empty: {item_id}")
+        cell = normalized_cell(source.crop(bounds))
+        column = SLOTS.index(slot)
+        atlas.alpha_composite(cell, (column * CELL, legacy_row * CELL))
+        drops.alpha_composite(cell.resize((DROP_CELL, DROP_CELL), Image.Resampling.LANCZOS), (column * DROP_CELL, legacy_row * DROP_CELL))
+        manifest["items"].append(
+            {
+                "id": item_id,
+                "name": item_name,
+                "slot": slot,
+                "column": column,
+                "row": legacy_row,
+                "legacy": True,
+                "sourceBounds": list(bounds),
+            }
+        )
 
     ASSET_DIR.mkdir(parents=True, exist_ok=True)
     atlas.save(ASSET_DIR / "legendary-gear-atlas.png", optimize=True)

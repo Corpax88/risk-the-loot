@@ -14,7 +14,7 @@ for(const match of script.matchAll(/\$\('([^']+)'\)/g)){
 const openBraces=(css.match(/{/g)||[]).length;
 const closeBraces=(css.match(/}/g)||[]).length;
 assert.equal(openBraces,closeBraces,'CSS braces are unbalanced');
-assert(html.includes('style.css?v=0.22.9')&&html.includes('script.js?v=0.22.9'),'release assets are not versioned');
+assert(html.includes('style.css?v=0.25.0')&&html.includes('script.js?v=0.25.0'),'release assets are not versioned');
 for(const asset of ['pappa-hammer-player.png','pappa-hammer-idle-v2.png','pappa-hammer-run-v2.png','pappa-hammer-attack-v2.png','pappa-hammer-workshop.png','pappa-hammer-enemies.png','pappa-hammer-bosses.png','gear-items-atlas.png','gear-drops-atlas.png','gear-atlas.json','set-gear-atlas.png','set-gear-drops.png','set-gear-atlas.json','legendary-gear-atlas.png','legendary-gear-drops.png','legendary-gear-atlas.json','anime-adventure-bag-v2.webp'])assert(fs.existsSync('assets/'+asset),'Pappa Hammer asset is missing: '+asset);
 const gearAtlas=JSON.parse(fs.readFileSync('assets/gear-atlas.json','utf8'));
 assert.equal(gearAtlas.items.length,40,'gear atlas must map all 40 items');
@@ -54,7 +54,9 @@ assert(html.includes('id="routeOverlay"')&&html.includes('id="routeFurnace"')&&h
 assert(script.includes('ROUTES')&&script.includes('routeDecision')&&script.includes('chooseRoute'),'branching route logic is missing');
 assert(script.includes('tyrantVolley')&&script.includes('thermalBlast'),'Furnace boss or Thermal Capacitor is missing');
 assert(script.includes('LOOT_ITEMS')&&script.includes('lootDrops')&&script.includes('collectLoot')&&script.includes('drawAdventureItemShape'),'physical loot item system is missing');
-assert(script.includes("SAVE_VERSION=9")&&script.includes('gear:[]')&&script.includes('level:1,xp:0')&&script.includes('equipped:{hat:null,scarf:null,coat:null,hammer:null,boots:null}'),'unique gear save, Pappa level, or migration model is missing');
+assert(script.includes("SAVE_VERSION=10")&&script.includes('gear:[]')&&script.includes('level:1,xp:0')&&script.includes('equipped:{hat:null,scarf:null,coat:null,hammer:null,boots:null}'),'unique gear save, Pappa level, or migration model is missing');
+assert(html.includes('id="mapOverlay"')&&html.includes('id="mapGrid"')&&script.includes('const EXPEDITION_MAPS=')&&script.includes("minLevel:16")&&script.includes('function renderMapAtlas'),'level-gated Adventure Atlas is missing');
+assert(script.includes('activeMap().spawnRate')&&script.includes('map.enemyHp')&&script.includes('map.bossHp')&&script.includes('map.rarityBonus'),'map-specific combat and reward profiles are missing');
 assert(script.includes('const SET_DEFINITIONS=[')&&script.includes('const SET_ITEMS=SET_DEFINITIONS.flatMap')&&script.includes('activeSetBonuses'),'set item catalog or fixed set bonuses are missing');
 assert(script.includes('function rollBossGear')&&script.includes('function grantBossXp')&&script.includes("spawnLoot(player.x+(i-(drops-1)/2)*28,player.y,rollBossGear(save.level),true)"),'boss-only equipment or Pappa XP is missing');
 assert(script.includes('routeRare*.2')&&script.includes('routeRare*.55')&&script.includes('routeRare*.45'),'Moonlit Path does not improve boss set rarity');
@@ -69,6 +71,8 @@ assert(html.includes('id="gearTurnLeft"')&&html.includes('id="gearTurnRight"')&&
 assert(html.includes('id="gearRarityFilters"')&&html.includes('id="sellFilteredGear"')&&script.includes('gearSellableCount')&&script.includes('sellFilteredGear'),'protected filtered gear sale is missing');
 assert(html.includes('id="gearBagCount"')&&html.includes('id="gearRaritySummary"')&&html.includes('id="gearSortButton"')&&html.includes('id="gearDetail"'),'Vault Bag count, rarity summary, sorting, or item details are missing');
 assert(html.includes('id="gearHoverPreview"')&&script.includes('function showGearHover')&&script.includes('function bindGearHover')&&css.includes('.gearHoverPreview.show'),'per-item hover and focus preview is missing');
+assert(html.includes('id="helpTooltip"')&&script.includes('function bindContextHelp')&&script.includes('HELP_COPY')&&css.includes('.helpTooltip.show'),'universal contextual help is missing');
+assert(script.includes("ui.game.classList.toggle('runMode'")&&css.includes('#game.runMode .topbar')&&css.includes('grid-template-rows:36px'),'compact expedition HUD is missing');
 assert(html.includes('ADVENTURE BAG')&&html.includes('animeBagShell')&&html.includes('gearCategoryRail')&&html.includes('id="gearBagTab"')&&html.includes('id="gearLoadoutTab"')&&css.includes('v0.19 release Adventure Bag and Legendary Forge'),'release Adventure Bag presentation is missing');
 assert(css.includes("assets/anime-adventure-bag-v2.webp")&&script.includes('function setGearView')&&script.includes("setGearView('loadout')"),'illustrated bag or separate Pappa loadout view is missing');
 assert(script.includes('const GEAR_SORTS=')&&script.includes('function renderGearDetail')&&script.includes('function drawEquippedRarityAura'),'inventory sorting, item comparison, or high-rarity presentation is missing');

@@ -556,3 +556,104 @@ button:focus-visible{outline-color:#f4ead6}
 @media(max-width:760px){.gearHoverPreview{width:246px}.gearHoverBody{grid-template-columns:86px minmax(0,1fr)}.gearHoverArt .gearArt.hover{width:78px;height:78px}.gearHoverCopy h3{font-size:13px}}
 @media(hover:none),(pointer:coarse){.gearHoverPreview{display:none!important}}
 @media(prefers-reduced-motion:reduce){.gearHoverPreview{transition:none}}
+
+/* v0.24 compact expedition HUD and contextual help */
+#game.runMode .topbar{height:calc(50px + env(safe-area-inset-top));gap:9px;padding-top:calc(4px + env(safe-area-inset-top));padding-bottom:4px}
+#game.runMode .brand{min-width:174px;gap:7px}
+#game.runMode .brandMark{width:34px;height:34px;font-size:20px}
+#game.runMode .brand strong{font-size:13px;letter-spacing:1.4px}
+#game.runMode .brand small{font-size:6px;letter-spacing:1px}
+#game.runMode .resources{gap:5px}
+#game.runMode .resource{height:36px;min-width:78px;gap:6px;padding:4px 8px}
+#game.runMode .resource i{font-size:16px}
+#game.runMode .resource b{font-size:13px}
+#game.runMode .resource span{font-size:5px}
+#game.runMode .iconButton{width:34px;height:34px;font-size:17px}
+.expeditionHud{left:8px;right:8px;top:6px;grid-template-columns:minmax(128px,220px) minmax(0,1fr) auto;gap:6px;align-items:stretch}
+.healthBlock{height:40px;padding:5px 8px}
+.healthLabel{font-size:8px;letter-spacing:.7px}
+.healthTrack{height:6px;margin-top:4px}
+.runMetrics{width:100%;height:40px;justify-self:stretch}
+.runMetrics>div{min-width:0;flex:1;padding:4px 8px}
+.runMetrics span{font-size:6px;letter-spacing:.7px}
+.runMetrics b{margin-top:2px;font-size:12px;white-space:nowrap}
+.runMetrics>div.lootMetric{min-width:0;grid-template-columns:auto auto;padding:3px 7px;column-gap:4px}
+.runMetrics>div.lootMetric span{font-size:6px;letter-spacing:.7px}
+.runMetrics>div.lootMetric b{font-size:13px}
+.runMetrics>div.lootMetric em{max-width:100px;margin-top:1px;font-size:5px}
+.extractButton{height:40px;min-width:88px;gap:5px}
+.extractButton span{font-size:17px}.extractButton b{font-size:9px}
+.cargoHud{left:8px;top:52px;padding:4px 6px;gap:5px}
+.cargoSlot{width:30px;height:30px;font-size:14px}
+.depthRoute{right:8px;top:52px;padding:4px 6px;gap:3px 6px}
+.zoneHud{top:52px;min-width:150px;padding:4px 8px}
+.bossHud{top:52px;width:min(460px,62vw);padding:4px 7px}
+.bossHud span{margin-bottom:3px;font-size:7px;letter-spacing:1px}
+.bossHud span b{font-size:8px}.bossHud span em{font-size:6px}.bossHud>div{height:6px}
+.runNotice{top:91px;padding:6px 9px;font-size:7px}
+.lootToast{top:91px}
+.helpTooltip{position:fixed;z-index:200;width:min(270px,calc(100vw - 16px));padding:8px 10px;border:1px solid #d6aa58;border-left:3px solid #c83f46;border-radius:4px;background:#0c1524f5;color:#f4ead6;box-shadow:0 10px 28px #000d,inset 0 0 0 1px #31415c;opacity:0;visibility:hidden;transform:translateY(4px);transition:opacity .12s ease,transform .12s ease;pointer-events:none}
+.helpTooltip.show{opacity:1;visibility:visible;transform:translateY(0)}
+.helpTooltip strong,.helpTooltip span{display:block}
+.helpTooltip strong{color:#f0d99b;font:700 11px Georgia,serif;letter-spacing:.5px}
+.helpTooltip span{margin-top:3px;color:#c7d0dc;font-size:8px;line-height:1.4;letter-spacing:.2px}
+.helpTooltip.touchTip{border-left-color:#d6aa58}
+.expeditionView [data-help]{pointer-events:auto}
+
+@media(max-width:720px){
+  #game.runMode .topbar{height:calc(43px + env(safe-area-inset-top));gap:4px;padding:3px max(6px,env(safe-area-inset-right)) 3px max(6px,env(safe-area-inset-left));padding-top:calc(3px + env(safe-area-inset-top))}
+  #game.runMode .brand{flex:0 0 30px;min-width:30px;width:30px;overflow:visible}
+  #game.runMode .brandMark{flex:0 0 30px;width:30px;height:30px;font-size:17px}
+  #game.runMode .brand>div{display:none}
+  #game.runMode .resources{flex:1;justify-content:flex-end;gap:3px}
+  #game.runMode .resource{height:31px;min-width:43px;gap:3px;padding:2px 5px}
+  #game.runMode .resource i{font-size:11px}
+  #game.runMode .resource b{font-size:10px}
+  #game.runMode .resource span{display:none}
+  #game.runMode .resource.record{display:none}
+  #game.runMode .iconButton{flex:0 0 31px;width:31px;height:31px;min-height:31px;font-size:15px}
+  .expeditionHud{left:5px;right:5px;top:5px;grid-template-columns:minmax(96px,1.05fr) minmax(114px,1.2fr) 68px;grid-template-rows:36px;gap:4px}
+  .healthBlock{grid-column:1;grid-row:1;height:36px;padding:4px 6px}
+  .healthLabel{font-size:7px;letter-spacing:.3px}.healthTrack{height:5px;margin-top:4px}
+  .runMetrics{grid-column:2;grid-row:1;height:36px}
+  .runMetrics>div{padding:3px 3px}
+  .runMetrics span{overflow:hidden;font-size:5px;letter-spacing:.2px;text-overflow:ellipsis;white-space:nowrap}
+  .runMetrics b{font-size:9px;letter-spacing:0}
+  .runMetrics>div.lootMetric{display:block;padding:3px 2px}
+  .runMetrics>div.lootMetric span{font-size:0}
+  .runMetrics>div.lootMetric span:after{content:'COINS';font-size:5px}
+  .runMetrics>div.lootMetric b{font-size:10px}
+  .runMetrics>div.lootMetric em{display:none}
+  .extractButton{grid-column:3;grid-row:1;height:36px;min-width:0;gap:2px;padding:2px}
+  .extractButton span{font-size:14px}.extractButton b{font-size:7px;letter-spacing:.4px}
+  .zoneHud{top:47px;min-width:128px;padding:3px 6px}
+  .zoneHud b{font-size:7px}.zoneHud small{font-size:5px}
+  .cargoHud{left:5px;top:47px;padding:3px 4px}
+  .cargoHud>span{font-size:5px}.cargoSlots{gap:3px}.cargoSlot{width:25px;height:25px;font-size:12px}
+  .depthRoute{right:5px;top:47px;padding:3px 4px}
+  .depthRoute>div{gap:2px}.depthRoute>div i{width:8px;height:4px}
+  .bossHud{top:47px;width:calc(100% - 10px);padding:3px 5px}
+  .bossHud span{margin-bottom:2px}.bossHud span b{font-size:7px}.bossHud span em{font-size:5px}.bossHud>div{height:5px}
+  .runNotice{top:78px;max-width:72%;padding:5px 7px;font-size:6px}
+  .lootToast{right:5px;top:78px;max-width:calc(100% - 10px)}
+  .helpTooltip{width:min(240px,calc(100vw - 12px));padding:7px 9px}
+  .helpTooltip strong{font-size:10px}.helpTooltip span{font-size:8px}
+}
+
+@media(max-height:620px) and (orientation:landscape){
+  #game.runMode .topbar{height:39px;padding-top:2px;padding-bottom:2px}
+  .expeditionHud{top:4px}.cargoHud,.depthRoute,.zoneHud,.bossHud{top:46px}.runNotice,.lootToast{top:77px}
+}
+@media(prefers-reduced-motion:reduce){.helpTooltip{transition:none}}
+
+/* v0.25 Adventure Atlas */
+.expeditionButton{padding:5px 10px}.expeditionButton>span{display:grid;min-width:0;gap:3px;text-align:center}.expeditionButton small,.expeditionButton b{display:block}.expeditionButton small{max-width:190px;overflow:hidden;color:#f0d99b;font-size:6px;letter-spacing:1.1px;text-overflow:ellipsis;white-space:nowrap}.expeditionButton b{font-size:10px;letter-spacing:1.2px}
+.mapPanel{width:min(920px,100%);border-top-color:#d6aa58;background:#0d1728}.mapPanel>small{color:#d6aa58}.mapPanel h2{margin-bottom:8px;color:#fff0d7;font-family:Georgia,serif}.mapLevelReadout{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;padding:7px 9px;border:1px solid #43516a;background:#111f34;color:#aeb9c9;font-size:7px;letter-spacing:1px}.mapLevelReadout b{color:#f2c14f;font-size:11px}.mapLevelReadout em{color:#d6aa58;font-style:normal}
+.mapGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.mapCard{--map-accent:#d6aa58;position:relative;min-height:178px;display:grid;grid-template-columns:126px minmax(0,1fr);grid-template-rows:1fr auto;gap:0;overflow:hidden;padding:0;border:1px solid #4d5e78;border-bottom:3px solid var(--map-accent);border-radius:6px;background:#101d31;text-align:left;box-shadow:inset 0 0 0 2px #172943,0 8px 18px #0008}.mapCard:hover:not(:disabled),.mapCard:focus-visible{border-color:var(--map-accent);transform:translateY(-2px);box-shadow:inset 0 0 0 2px #172943,0 10px 23px #000b,0 0 12px color-mix(in srgb,var(--map-accent) 24%,transparent)}.mapCard.selected{border-color:var(--map-accent);box-shadow:inset 0 0 0 2px #172943,0 0 0 1px var(--map-accent),0 9px 22px #000a}.mapCard.locked{filter:saturate(.25);opacity:.62;cursor:not-allowed}.mapCard.locked:after{content:'\1F512';position:absolute;left:48px;top:58px;display:grid;width:31px;height:31px;place-items:center;border:1px solid #8290a3;border-radius:50%;background:#08111fe8;color:#f4ead6;font-size:13px}
+.mapVista{position:relative;grid-row:1/3;display:grid;place-items:center;overflow:hidden;border-right:1px solid #53627a;background:#1c2e47}.mapVista:before,.mapVista:after{content:"";position:absolute}.mapVista:before{inset:0;background:linear-gradient(150deg,#ffffff13,transparent 36%),repeating-linear-gradient(90deg,transparent 0 24px,#ffffff09 25px),linear-gradient(180deg,color-mix(in srgb,var(--map-accent) 38%,#14233b),#07101d)}.mapVista:after{left:12px;right:12px;bottom:34px;height:54px;border:2px solid color-mix(in srgb,var(--map-accent) 75%,#101827);border-bottom-width:8px;background:repeating-linear-gradient(90deg,#0d1929 0 13px,color-mix(in srgb,var(--map-accent) 38%,#162337) 14px 21px);clip-path:polygon(0 30%,12% 30%,12% 10%,23% 10%,23% 26%,42% 26%,42% 0,58% 0,58% 23%,76% 23%,76% 8%,88% 8%,88% 30%,100% 30%,100% 100%,0 100%)}.mapVista>i{position:relative;z-index:2;display:grid;width:48px;height:48px;place-items:center;border:2px solid var(--map-accent);border-radius:50%;background:#091322d9;color:var(--map-accent);font-style:normal;font-size:24px;box-shadow:0 0 18px color-mix(in srgb,var(--map-accent) 30%,transparent)}.mapVista>em{position:absolute;z-index:3;left:6px;right:6px;bottom:7px;color:#f3e8d2;font-style:normal;font-size:5px;letter-spacing:1px;text-align:center}
+.map-foundry .mapVista:after{clip-path:polygon(0 24%,14% 24%,14% 0,28% 0,28% 36%,45% 36%,45% 12%,62% 12%,62% 31%,79% 31%,79% 4%,92% 4%,92% 26%,100% 26%,100% 100%,0 100%)}.map-moonfall .mapVista:after{border-radius:44% 44% 0 0;clip-path:none;background:repeating-radial-gradient(circle at 50% 100%,#0d1929 0 10px,color-mix(in srgb,var(--map-accent) 30%,#162337) 11px 18px)}.map-summit .mapVista:after{height:70px;clip-path:polygon(0 100%,9% 57%,20% 70%,34% 25%,45% 49%,56% 0,68% 44%,79% 21%,91% 62%,100% 48%,100% 100%);background:color-mix(in srgb,var(--map-accent) 35%,#101728)}
+.mapCardCopy{min-width:0;padding:10px 10px 5px}.mapCardCopy small,.mapCardCopy b,.mapCardCopy em{display:block}.mapCardCopy small{color:var(--map-accent);font-size:5px;letter-spacing:1.1px}.mapCardCopy b{margin-top:4px;color:#fff0d7;font:700 15px/1 Georgia,serif;letter-spacing:.4px}.mapCardCopy em{margin-top:7px;color:#b8c3d2;font-style:normal;font-size:7px;line-height:1.35;letter-spacing:.15px}.mapRewards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;padding:0 9px 8px}.mapRewards>i{padding:5px;border:1px solid #3d4d65;background:#0b1627;font-style:normal;text-align:center}.mapRewards small,.mapRewards b{display:block}.mapRewards small{color:#8190a4;font-size:4px;letter-spacing:.5px}.mapRewards b{margin-top:2px;color:#e8d8b5;font-size:8px}.mapCard>strong{grid-column:2;padding:7px 10px;border-top:1px solid #40516b;background:#152640;color:var(--map-accent);font-size:6px;letter-spacing:1px;text-align:center}
+.resultModule.mapReward{border-color:#d6aa58;color:#f0d99b;background:#1e1a22}
+@media(max-width:720px){.expeditionButton small{max-width:120px;font-size:5px}.expeditionButton b{font-size:8px}.mapPanel{padding:14px}.mapPanel h2{font-size:19px}.mapLevelReadout{margin-bottom:7px}.mapGrid{grid-template-columns:1fr;gap:6px}.mapCard{min-height:103px;grid-template-columns:82px minmax(0,1fr)}.mapVista>i{width:37px;height:37px;font-size:18px}.mapVista:after{left:7px;right:7px;bottom:26px;height:38px}.mapVista>em{bottom:5px;font-size:4px}.mapCard.locked:after{left:25px;top:32px}.mapCardCopy{padding:7px 8px 3px}.mapCardCopy b{font-size:12px}.mapCardCopy em{margin-top:4px;font-size:6px}.mapRewards{padding:0 7px 5px}.mapRewards>i{padding:3px}.mapCard>strong{padding:5px 7px}.map-foundry .mapVista:after,.map-summit .mapVista:after{height:45px}}
+@media(max-height:650px) and (orientation:landscape){.mapPanel{max-width:900px;padding:12px}.mapPanel h2{margin:3px 42px 5px;font-size:18px}.mapLevelReadout{margin-bottom:6px;padding:4px 7px}.mapCard{min-height:119px;grid-template-columns:92px minmax(0,1fr)}.mapCardCopy{padding:7px}.mapCardCopy em{font-size:6px}.mapRewards{padding-bottom:5px}}
+@media(prefers-reduced-motion:reduce){.mapCard{transition:none}}

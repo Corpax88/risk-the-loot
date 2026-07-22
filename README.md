@@ -1,4 +1,4 @@
-# RISK THE LOOT! v0.26.0
+# RISK THE LOOT! v0.27.0
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
 
@@ -9,6 +9,8 @@ The Adventure Atlas turns Pappa Level into visible world progression. Guild Fron
 The expedition HUD now uses one compact status row on mobile and desktop. Health, floor, risk, cargo and boss phases remain visible without taking a second gameplay row, while the workshop header shrinks during expeditions. Every button and important status indicator has contextual help: hover or keyboard focus shows it on desktop, and a short touch reveals the same explanation on mobile without blocking the control.
 
 Enemy Awakening gives each raider a readable movement personality, keeps ranged attacks inside the visible combat area, and turns the Shield Guard's charge into a locked crimson danger lane instead of an ambiguous ring. Enemy animation accents are deterministic, so added life and polish do not disturb encounter or loot randomness.
+
+Cover & Spoils opens the combat camera and adds solid guild barricades throughout each destination. Pappa, enemies, dashes, and projectiles all collide with them, while line-of-sight targeting lets either side use cover tactically. The old pre-boss Risk It interruption is gone; danger now rises automatically with the tower floors. Destination cards show exact Epic-or-better odds and extra-drop chances, and boss gear erupts from the champion's fall position into a high-contrast rarity reveal before the extraction decision.
 
 ## The Loadout loop
 

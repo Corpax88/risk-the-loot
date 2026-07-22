@@ -8,14 +8,14 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="description" content="Risk everything, recover equippable gear and build Pappa Hammer in this compact extraction roguelite.">
   <title>RISK THE LOOT!</title>
-  <link rel="stylesheet" href="style.css?v=0.26.0">
+  <link rel="stylesheet" href="style.css?v=0.27.0">
 </head>
 <body>
   <main id="game">
     <header class="topbar">
       <div class="brand">
         <span class="brandMark">R</span>
-        <div><strong>RISK THE LOOT!</strong><small>GREED &amp; GLORY v0.26.0</small></div>
+        <div><strong>RISK THE LOOT!</strong><small>COVER &amp; SPOILS v0.27.0</small></div>
       </div>
       <div class="resources">
         <div class="resource level" data-help-title="Pappa Level" data-help="Boss victories grant XP. Higher levels unlock stronger gear and tougher champions."><i>LV</i><div><b id="pappaLevel">1</b><span>PAPPA</span></div></div>
@@ -244,20 +244,9 @@
         <button id="cancelExtract" class="iconButton" aria-label="Cancel extraction" title="Cancel extraction">&#215;</button>
       </div>
 
-      <div id="riskOverlay" class="riskOverlay" role="dialog" aria-modal="true" aria-labelledby="riskTitle">
-        <div class="riskPanel">
-          <small>FLOOR MILESTONE</small>
-          <h2 id="riskTitle">BANK IT OR RISK IT?</h2>
-          <div class="riskReadout"><span>Carrying <b id="riskScrap">0</b> value</span><span>Best item <b id="riskBest">None</b></span><span>Next multiplier <b id="nextMultiplier">x1.35</b></span></div>
-          <div class="riskChoices">
-            <button id="riskExtract" class="riskChoice extractChoice"><b>EXTRACT</b><span>Survive the countdown</span></button>
-            <button id="riskPush" class="riskChoice pushChoice"><b>RISK IT</b><span>Elite incoming &middot; better loot</span></button>
-          </div>
-        </div>
-      </div>
-
       <div id="bossLootOverlay" class="bossLootOverlay" role="dialog" aria-modal="true" aria-labelledby="bossLootTitle">
         <div id="bossLootPanel" class="bossLootPanel">
+          <div class="bossLootDeathMark" aria-hidden="true"><i></i><i></i><i></i></div>
           <div class="bossLootHalo" aria-hidden="true"><i></i><i></i><i></i></div>
           <small id="bossLootEyebrow">CHAMPION FALLEN</small>
           <h2 id="bossLootTitle">BOSS LOOT FOUND</h2>
@@ -269,7 +258,7 @@
               <em id="bossLootStats">Unsecured until extraction</em>
             </div>
           </div>
-          <div class="bossLootManifestHeading"><span>UNSECURED EXPEDITION BAG</span><b id="bossLootCount">0 ITEMS</b></div>
+          <div class="bossLootManifestHeading"><span>LOOT TORN FROM THE CHAMPION</span><b id="bossLootCount">0 ITEMS</b></div>
           <div id="bossLootGrid" class="bossLootGrid"></div>
           <div class="bossLootGamble">
             <span><small>CURRENT HAUL</small><b id="bossLootValue">0 COINS</b></span>
@@ -289,10 +278,10 @@
           <h2 id="routeTitle">CHOOSE YOUR PATH</h2>
           <div class="routeChoices">
             <button id="routeFurnace" class="routeChoice furnaceRoute">
-              <i>&#9876;</i><span><small>HEAVY PURSES</small><b>CRIMSON PATH</b><em>Shield guards, banner strikes and brawlers</em><strong>+16% LOOT VALUE &middot; CRIMSON CHAMPION</strong></span>
+              <i>&#9876;</i><span><small>HEAVY PURSES</small><b>CRIMSON PATH</b><em>Shield guards, banner strikes and brawlers</em><strong>+16% COIN VALUE &middot; CRIMSON CHAMPION</strong></span>
             </button>
             <button id="routeDynamo" class="routeChoice dynamoRoute">
-              <i>&#9790;</i><span><small>RARE FINDS</small><b>MOONLIT PATH</b><em>Crossbow scouts, lancers and moon seals</em><strong>+8% HIGH-GRADE LOOT CHANCE &middot; VAULT WARDEN</strong></span>
+              <i>&#9790;</i><span><small>BETTER GEAR</small><b>MOONLIT PATH</b><em>Crossbow scouts, lancers and moon seals</em><strong>+8 POINTS TO EPIC+ ODDS &middot; VAULT WARDEN</strong></span>
             </button>
           </div>
         </div>
@@ -336,11 +325,11 @@
         </div>
         <button id="resumeButton" class="primaryButton settingsResume"><span>RESUME</span><i>&#8250;</i></button>
         <button id="abandonButton" class="dangerButton">ABANDON EXPEDITION</button>
-        <p class="buildStamp">v0.26.0 GREED &amp; GLORY</p>
+        <p class="buildStamp">v0.27.0 COVER &amp; SPOILS</p>
       </div>
     </div>
     <aside id="helpTooltip" class="helpTooltip" role="tooltip" aria-hidden="true"><strong id="helpTooltipTitle"></strong><span id="helpTooltipText"></span></aside>
   </main>
-  <script src="script.js?v=0.26.0"></script>
+  <script src="script.js?v=0.27.0"></script>
 </body>
 </html>

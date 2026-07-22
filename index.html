@@ -8,14 +8,14 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="description" content="Risk everything, recover equippable gear and build Pappa Hammer in this compact extraction roguelite.">
   <title>RISK THE LOOT!</title>
-  <link rel="stylesheet" href="style.css?v=0.25.0">
+  <link rel="stylesheet" href="style.css?v=0.26.0">
 </head>
 <body>
   <main id="game">
     <header class="topbar">
       <div class="brand">
         <span class="brandMark">R</span>
-        <div><strong>RISK THE LOOT!</strong><small>ADVENTURE ATLAS v0.25.0</small></div>
+        <div><strong>RISK THE LOOT!</strong><small>GREED &amp; GLORY v0.26.0</small></div>
       </div>
       <div class="resources">
         <div class="resource level" data-help-title="Pappa Level" data-help="Boss victories grant XP. Higher levels unlock stronger gear and tougher champions."><i>LV</i><div><b id="pappaLevel">1</b><span>PAPPA</span></div></div>
@@ -256,6 +256,33 @@
         </div>
       </div>
 
+      <div id="bossLootOverlay" class="bossLootOverlay" role="dialog" aria-modal="true" aria-labelledby="bossLootTitle">
+        <div id="bossLootPanel" class="bossLootPanel">
+          <div class="bossLootHalo" aria-hidden="true"><i></i><i></i><i></i></div>
+          <small id="bossLootEyebrow">CHAMPION FALLEN</small>
+          <h2 id="bossLootTitle">BOSS LOOT FOUND</h2>
+          <div class="bossLootShowcase">
+            <div id="bossLootArt" class="bossLootArt"></div>
+            <div class="bossLootIdentity">
+              <span id="bossLootRarity">RARE BOSS GEAR</span>
+              <b id="bossLootName">Recovered Gear</b>
+              <em id="bossLootStats">Unsecured until extraction</em>
+            </div>
+          </div>
+          <div class="bossLootManifestHeading"><span>UNSECURED EXPEDITION BAG</span><b id="bossLootCount">0 ITEMS</b></div>
+          <div id="bossLootGrid" class="bossLootGrid"></div>
+          <div class="bossLootGamble">
+            <span><small>CURRENT HAUL</small><b id="bossLootValue">0 COINS</b></span>
+            <i aria-hidden="true">&#8250;</i>
+            <span><small>NEXT CHAMPION</small><b id="bossLootMultiplier">x1.00 LOOT</b></span>
+          </div>
+          <div class="bossLootChoices">
+            <button id="bossLootExtract" class="bossLootChoice bossLootSecure"><i>&#x26EF;</i><span><b>EXTRACT NOW</b><em>Survive the final ambush</em></span></button>
+            <button id="bossLootPush" class="bossLootChoice bossLootGreed"><i>&#x2694;</i><span><b>GO DEEPER</b><em>Keep it all at risk</em></span></button>
+          </div>
+        </div>
+      </div>
+
       <div id="routeOverlay" class="routeOverlay" role="dialog" aria-modal="true" aria-labelledby="routeTitle">
         <div class="routePanel">
           <small>ADVENTURE CROSSROADS</small>
@@ -309,11 +336,11 @@
         </div>
         <button id="resumeButton" class="primaryButton settingsResume"><span>RESUME</span><i>&#8250;</i></button>
         <button id="abandonButton" class="dangerButton">ABANDON EXPEDITION</button>
-        <p class="buildStamp">v0.25.0 ADVENTURE ATLAS</p>
+        <p class="buildStamp">v0.26.0 GREED &amp; GLORY</p>
       </div>
     </div>
     <aside id="helpTooltip" class="helpTooltip" role="tooltip" aria-hidden="true"><strong id="helpTooltipTitle"></strong><span id="helpTooltipText"></span></aside>
   </main>
-  <script src="script.js?v=0.25.0"></script>
+  <script src="script.js?v=0.26.0"></script>
 </body>
 </html>

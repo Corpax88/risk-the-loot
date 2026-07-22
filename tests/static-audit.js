@@ -14,7 +14,7 @@ for(const match of script.matchAll(/\$\('([^']+)'\)/g)){
 const openBraces=(css.match(/{/g)||[]).length;
 const closeBraces=(css.match(/}/g)||[]).length;
 assert.equal(openBraces,closeBraces,'CSS braces are unbalanced');
-assert(html.includes('style.css?v=0.25.0')&&html.includes('script.js?v=0.25.0'),'release assets are not versioned');
+assert(html.includes('style.css?v=0.26.0')&&html.includes('script.js?v=0.26.0'),'release assets are not versioned');
 for(const asset of ['pappa-hammer-player.png','pappa-hammer-idle-v2.png','pappa-hammer-run-v2.png','pappa-hammer-attack-v2.png','pappa-hammer-workshop.png','pappa-hammer-enemies.png','pappa-hammer-bosses.png','gear-items-atlas.png','gear-drops-atlas.png','gear-atlas.json','set-gear-atlas.png','set-gear-drops.png','set-gear-atlas.json','legendary-gear-atlas.png','legendary-gear-drops.png','legendary-gear-atlas.json','anime-adventure-bag-v2.webp'])assert(fs.existsSync('assets/'+asset),'Pappa Hammer asset is missing: '+asset);
 const gearAtlas=JSON.parse(fs.readFileSync('assets/gear-atlas.json','utf8'));
 assert.equal(gearAtlas.items.length,40,'gear atlas must map all 40 items');
@@ -58,7 +58,7 @@ assert(script.includes("SAVE_VERSION=10")&&script.includes('gear:[]')&&script.in
 assert(html.includes('id="mapOverlay"')&&html.includes('id="mapGrid"')&&script.includes('const EXPEDITION_MAPS=')&&script.includes("minLevel:16")&&script.includes('function renderMapAtlas'),'level-gated Adventure Atlas is missing');
 assert(script.includes('activeMap().spawnRate')&&script.includes('map.enemyHp')&&script.includes('map.bossHp')&&script.includes('map.rarityBonus'),'map-specific combat and reward profiles are missing');
 assert(script.includes('const SET_DEFINITIONS=[')&&script.includes('const SET_ITEMS=SET_DEFINITIONS.flatMap')&&script.includes('activeSetBonuses'),'set item catalog or fixed set bonuses are missing');
-assert(script.includes('function rollBossGear')&&script.includes('function grantBossXp')&&script.includes("spawnLoot(player.x+(i-(drops-1)/2)*28,player.y,rollBossGear(save.level),true)"),'boss-only equipment or Pappa XP is missing');
+assert(script.includes('function rollBossGear')&&script.includes('function grantBossXp')&&script.includes('function showBossLootRitual')&&script.includes('registerRunGear(gear,false,e.x,e.y)'),'boss-only equipment, loot ritual, or Pappa XP is missing');
 assert(script.includes('routeRare*.2')&&script.includes('routeRare*.55')&&script.includes('routeRare*.45'),'Moonlit Path does not improve boss set rarity');
 assert(script.includes("(save.level-1)*.11")&&script.includes("(save.level-1)*.035"),'boss health and damage do not scale with Pappa level');
 assert(/function destroyEnemy\(e\)[\s\S]*?runScrap\+=coins;/.test(script)&&!/function destroyEnemy\(e\)[^}]*spawnLoot\(/.test(script),'ordinary enemies must award coins instead of gear');
@@ -81,6 +81,7 @@ assert(!script.includes('createPreviewGear')&&!css.includes('.previewGear.hammer
 assert(!html.includes('id="upgradeChassis"')&&!html.includes('id="upgradeWeapon"')&&!html.includes('id="upgradeSalvage"'),'obsolete direct stat upgrades are still visible');
 assert(script.includes('RELIC_POWER_CAP')&&script.includes('prepareRelic')&&script.includes('FUSED'),'relic fusion system is missing');
 assert(html.includes('id="resultLoot"')&&html.includes('id="lootToast"')&&html.includes('id="lootBest"'),'loot feedback UI is missing');
+assert(html.includes('id="bossLootOverlay"')&&html.includes('id="bossLootExtract"')&&html.includes('id="bossLootPush"')&&script.includes('function continueAfterBoss')&&script.includes('function spawnExtractionAmbush'),'post-boss loot risk loop is missing');
 assert(html.includes('id="resultLootSummary"')&&script.includes('resultLootGroup')&&script.includes('gearQualityLabel(drop)'),'sorted post-run gear report is missing');
 assert(html.includes('id="devLoot"')&&script.includes('devDropLegendary'),'legendary loot test tool is missing');
 assert(html.includes('id="devButton"')&&html.includes('id="devWarden"')&&html.includes('id="devTyrant"')&&script.includes('devFightWarden')&&script.includes('devFightTyrant'),'playtest dev tools are missing');

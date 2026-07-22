@@ -1,6 +1,6 @@
 {
   "name": "risk-the-loot",
-  "version": "0.26.0",
+  "version": "0.27.0",
   "private": true,
   "description": "A framework-free HTML5 gear extraction roguelite starring Pappa Hammer.",
   "scripts": {

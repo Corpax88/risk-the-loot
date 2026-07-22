@@ -14,7 +14,7 @@ for(const match of script.matchAll(/\$\('([^']+)'\)/g)){
 const openBraces=(css.match(/{/g)||[]).length;
 const closeBraces=(css.match(/}/g)||[]).length;
 assert.equal(openBraces,closeBraces,'CSS braces are unbalanced');
-assert(html.includes('style.css?v=0.26.0')&&html.includes('script.js?v=0.26.0'),'release assets are not versioned');
+assert(html.includes('style.css?v=0.27.0')&&html.includes('script.js?v=0.27.0'),'release assets are not versioned');
 for(const asset of ['pappa-hammer-player.png','pappa-hammer-idle-v2.png','pappa-hammer-run-v2.png','pappa-hammer-attack-v2.png','pappa-hammer-workshop.png','pappa-hammer-enemies.png','pappa-hammer-bosses.png','gear-items-atlas.png','gear-drops-atlas.png','gear-atlas.json','set-gear-atlas.png','set-gear-drops.png','set-gear-atlas.json','legendary-gear-atlas.png','legendary-gear-drops.png','legendary-gear-atlas.json','anime-adventure-bag-v2.webp'])assert(fs.existsSync('assets/'+asset),'Pappa Hammer asset is missing: '+asset);
 const gearAtlas=JSON.parse(fs.readFileSync('assets/gear-atlas.json','utf8'));
 assert.equal(gearAtlas.items.length,40,'gear atlas must map all 40 items');
@@ -43,6 +43,8 @@ assert(script.includes('pendingStrikes')&&script.includes('releaseHammerStrike')
 assert(css.includes('@keyframes pappaHammerFrames')&&css.includes("background-image:url('assets/pappa-hammer-idle-v2.png')"),'live Gear Locker animation is missing');
 assert(script.includes('THE FIRST LOCK')&&script.includes('A FORMAL BOW')&&script.includes('source:e.bossKind||e.type'),'distinct boss personalities are not wired');
 assert(script.includes('function combatViewContains')&&script.includes('function enemyCanAttack')&&script.includes('combatViewContains(b.x,b.y,b.r,0,bulletCam)'),'offscreen enemy projectile safety is missing');
+assert(script.includes('ARENA_OBSTACLE_LAYOUT')&&script.includes('function moveAroundCover')&&script.includes('projectileHitsCover(b.x,b.y,b.r)')&&script.includes('lineBlockedByCover'),'physical arena cover is missing');
+assert(script.includes('CAMERA_ZOOM={mobile:.72,desktop:.8}')&&script.includes('ctx.scale(cam.zoom,cam.zoom)'),'zoomed-out combat camera is missing');
 assert(script.includes('function updateEnemyEntity')&&script.includes('spawnGrace:spawnDuration')&&script.includes('e.stepFx<=0'),'living enemy movement or deterministic arrival animation is missing');
 assert(script.includes('TANK_RUSH_WINDUP')&&script.includes('function drawTankTelegraph')&&script.includes("kind:'tankImpact'"),'Shield Guard rush or danger-lane feedback is missing');
 assert(!/v0\.[23456]\.\d/.test(html+css+script),'stale release version found');
@@ -82,6 +84,8 @@ assert(!html.includes('id="upgradeChassis"')&&!html.includes('id="upgradeWeapon"
 assert(script.includes('RELIC_POWER_CAP')&&script.includes('prepareRelic')&&script.includes('FUSED'),'relic fusion system is missing');
 assert(html.includes('id="resultLoot"')&&html.includes('id="lootToast"')&&html.includes('id="lootBest"'),'loot feedback UI is missing');
 assert(html.includes('id="bossLootOverlay"')&&html.includes('id="bossLootExtract"')&&html.includes('id="bossLootPush"')&&script.includes('function continueAfterBoss')&&script.includes('function spawnExtractionAmbush'),'post-boss loot risk loop is missing');
+assert(!html.includes('id="riskOverlay"')&&!script.includes('showRiskDecision'),'obsolete pre-boss Risk It interruption is still present');
+assert(script.includes('bossGearOdds(nextLevel,riskTier+2)')&&html.includes('EPIC+ ODDS'),'loot odds are not explained with concrete values');
 assert(html.includes('id="resultLootSummary"')&&script.includes('resultLootGroup')&&script.includes('gearQualityLabel(drop)'),'sorted post-run gear report is missing');
 assert(html.includes('id="devLoot"')&&script.includes('devDropLegendary'),'legendary loot test tool is missing');
 assert(html.includes('id="devButton"')&&html.includes('id="devWarden"')&&html.includes('id="devTyrant"')&&script.includes('devFightWarden')&&script.includes('devFightTyrant'),'playtest dev tools are missing');

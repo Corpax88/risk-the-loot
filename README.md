@@ -1,4 +1,4 @@
-# RISK THE LOOT! v0.25.0
+# RISK THE LOOT! v0.26.0
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
 
@@ -16,10 +16,11 @@ Enemy Awakening gives each raider a readable movement personality, keeps ranged 
 2. Choose one recovered Lucky Relic and begin an expedition.
 3. Move and dodge while Pappa attacks automatically.
 4. Defeat enemies for coins and challenge a floor champion for equipment.
-5. At floor milestones, extract safely or push deeper for stronger boss rewards.
-6. Survive extraction to secure every carried item. Dying loses the expedition bag.
-7. Equip upgrades in the Gear Locker or sell spare copies for coins.
-8. Return stronger and challenge either tower path and its three-phase champion.
+5. Watch the champion's equipment drop into the unsecured expedition bag, then choose **Extract Now** or **Go Deeper**.
+6. Going deeper starts a faster, harder ascent with stronger gear rolls, more drops, and every previous reward still at risk.
+7. Survive the final extraction ambush to secure carried gear, trophies, and Boss Seals. Dying loses the entire expedition haul.
+8. Equip upgrades in the Gear Locker or sell spare copies for coins.
+9. Return stronger and challenge either tower path and its three-phase champion.
 
 There are no direct damage, health, or pickup-range purchases for new saves. Character progression now comes from equipment the player actually risks in the field.
 
@@ -50,7 +51,9 @@ Pappa Hammer uses dedicated eight-frame idle, run, and attack animation sheets. 
 
 The composed hero keeps the original 512px frame resolution for crisp Retina rendering. Equipment colors are applied as material accents rather than a heavy full-body tint, while Epic, Mythic, and Legendary loadouts add increasingly distinct patterns, trim, inventory presentation, and restrained in-game auras. The runtime masks remain memory-optimized for iPhone Safari.
 
-The post-run report groups equipment by rarity and shows each piece's level, slot, set, stat roll, quality, and value. Legendary equipment creates a distinct HUD state and extraction signal. The intended reaction is simple: when one drops, leaving alive should suddenly matter more than finishing the floor.
+Boss victories now use a staged loot ritual instead of immediately ending the expedition. Each recovered piece is shown with its real art, rarity, stats, sale value, and current unsecured haul before the player makes the central decision: bank it or risk it. Legendary equipment creates a distinct reveal and HUD state so finding one changes the emotional temperature of the run immediately.
+
+Choosing **Go Deeper** preserves the complete unsecured bag and starts another five-floor ascent with increased risk, stronger gear levels, improved rarity odds, and additional boss drops. Multiple champion victories stack Boss Seals, but neither seals nor the selected Boss Trophy are banked until extraction succeeds. The post-run report then groups secured equipment by rarity and shows each piece's level, slot, set, stat roll, quality, and value.
 
 Existing saves migrate automatically. Old stacked inventory copies become separate protected gear instances, equipped pieces remain equipped, and old workshop upgrade levels remain as hidden legacy bonuses so progression is not erased.
 
@@ -97,7 +100,7 @@ Open `http://127.0.0.1:4175` on the computer, or use the computer's local IP add
 npm test
 ```
 
-The automated release suite covers DOM/CSS integrity, JavaScript syntax, all 20 sets and 100 set pieces, five gear slots, unique-item migration, RNG item rolls, fixed set bonuses, boss-only equipment, Pappa levels, the rotating Gear Locker, relic fusion, safe extraction, both full boss paths, permanent trophies, career progression, settings, and developer tools.
+The automated release suite covers DOM/CSS integrity, JavaScript syntax, all 20 sets and 100 set pieces, five gear slots, unique-item migration, RNG item rolls, fixed set bonuses, boss-only equipment, Pappa levels, the rotating Gear Locker, relic fusion, safe extraction, the boss-loot ritual, a two-champion Go Deeper chain, extraction ambushes, both full boss paths, permanent trophies, career progression, settings, and developer tools.
 
 Built with plain HTML, CSS, JavaScript, Canvas, and PNG assets.
 

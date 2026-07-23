@@ -1,0 +1,113 @@
+{
+  "name": "Risk the Loot - Skyglass Lagoon",
+  "version": 1,
+  "recommendedMapId": "skyglass",
+  "recommendedMinLevel": 12,
+  "camera": {
+    "view": "top-down-three-quarter",
+    "angleDegrees": 65,
+    "anchor": "bottom-center"
+  },
+  "ground": {
+    "recommended": "skyglass-ground-tile.png",
+    "exactSeamAlternative": "skyglass-ground-tile-exact.png",
+    "source": "skyglass-ground-source.png",
+    "nativeSize": [1254, 1254],
+    "recommendedWorldTileSize": [720, 720]
+  },
+  "props": [
+    {
+      "id": "pearlShellShrine",
+      "file": "props/pearl-shell-shrine.png",
+      "nativeSize": [292, 384],
+      "recommendedDrawWidth": 135,
+      "collision": "optional-small-base"
+    },
+    {
+      "id": "jellyfishLantern",
+      "file": "props/jellyfish-lantern.png",
+      "nativeSize": [220, 394],
+      "recommendedDrawWidth": 85,
+      "collision": "none"
+    },
+    {
+      "id": "coralGarden",
+      "file": "props/coral-garden.png",
+      "nativeSize": [333, 341],
+      "recommendedDrawWidth": 110,
+      "collision": "none"
+    },
+    {
+      "id": "seaGlassArch",
+      "file": "props/sea-glass-arch.png",
+      "nativeSize": [327, 391],
+      "recommendedDrawWidth": 130,
+      "collision": "optional-small-base"
+    },
+    {
+      "id": "tideCompassPedestal",
+      "file": "props/tide-compass-pedestal.png",
+      "nativeSize": [297, 363],
+      "recommendedDrawWidth": 120,
+      "collision": "optional-small-base"
+    },
+    {
+      "id": "celestialKoiStatue",
+      "file": "props/celestial-koi-statue.png",
+      "nativeSize": [282, 391],
+      "recommendedDrawWidth": 130,
+      "collision": "optional-small-base"
+    },
+    {
+      "id": "floatingReefPillar",
+      "file": "props/floating-reef-pillar.png",
+      "nativeSize": [293, 369],
+      "recommendedDrawWidth": 90,
+      "collision": "none"
+    },
+    {
+      "id": "spiralShellPortal",
+      "file": "props/spiral-shell-portal.png",
+      "nativeSize": [315, 368],
+      "recommendedDrawWidth": 140,
+      "collision": "optional-small-base"
+    }
+  ],
+  "cover": [
+    {
+      "id": "intactGlassBalustrade",
+      "file": "cover/intact-glass-balustrade.png",
+      "nativeSize": [581, 223]
+    },
+    {
+      "id": "brokenGlassBalustrade",
+      "file": "cover/broken-glass-balustrade.png",
+      "nativeSize": [562, 220]
+    },
+    {
+      "id": "coralReefHedge",
+      "file": "cover/coral-reef-hedge.png",
+      "nativeSize": [573, 228]
+    },
+    {
+      "id": "seaGlassShardWall",
+      "file": "cover/sea-glass-shard-wall.png",
+      "nativeSize": [576, 215]
+    },
+    {
+      "id": "pearlShellWall",
+      "file": "cover/pearl-shell-wall.png",
+      "nativeSize": [564, 243]
+    },
+    {
+      "id": "floatingReefBlocks",
+      "file": "cover/floating-reef-blocks.png",
+      "nativeSize": [558, 182]
+    }
+  ],
+  "coverRendering": {
+    "recommendedDrawWidthMultiplier": 1.15,
+    "collisionSource": "existing-obstacle-rectangles",
+    "allowQuarterTurn": true
+  }
+}

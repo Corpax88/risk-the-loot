@@ -1,10 +1,14 @@
-# RISK THE LOOT! v0.27.0
+# RISK THE LOOT! v0.29.0
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
 
 Pappa's original painted hammer animation remains the active version. Champion's Mark replaces the obsolete pickup-magnet relic with a boss-focused reward that supports the equipment loop.
 
-The Adventure Atlas turns Pappa Level into visible world progression. Guild Frontier is available immediately; Ashen Foundry, Moonfall Gardens and Crown Summit unlock at levels 4, 8 and 16. Every destination has its own five-zone visual identity, enemy mix, combat scaling, coin value and boss-gear luck profile.
+The Adventure Atlas turns Pappa Level into visible world progression. Guild Frontier is available immediately; Ashen Foundry, Moonfall Gardens, Skyglass Lagoon and Crown Summit unlock at levels 4, 8, 12 and 16. Every destination has its own five-zone visual identity, enemy mix, combat scaling, coin value and boss-gear luck profile.
+
+Dreamworld Expedition gives Moonfall Gardens a complete illustrated environment identity. A seamless indigo arena floor, moonlit ruins, dream trees, lanterns, shrines, crystal growths and physical cover now replace its generic procedural scenery. Assets use bottom-center world anchors, camera culling, restrained glow and front-layer occlusion so Pappa can move behind tall ruins while all existing collision and line-of-sight rules remain intact.
+
+Skyglass Lagoon opens at Pappa Level 12 as the bridge between Moonfall Gardens and Crown Summit. Its seamless star-water floor, floating reef landmarks, jellyfish lanterns, coral gardens, pearl shrines and glass cover establish a brighter celestial-lagoon identity without changing combat rules. Large landmarks remain near the world perimeter, mobile rendering is camera-culled, and every illustrated wall continues to use the existing obstacle rectangle for collision and line of sight.
 
 The expedition HUD now uses one compact status row on mobile and desktop. Health, floor, risk, cargo and boss phases remain visible without taking a second gameplay row, while the workshop header shrinks during expeditions. Every button and important status indicator has contextual help: hover or keyboard focus shows it on desktop, and a short touch reveals the same explanation on mobile without blocking the control.
 

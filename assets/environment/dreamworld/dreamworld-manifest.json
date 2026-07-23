@@ -1,0 +1,112 @@
+{
+  "name": "Risk the Loot Dreamworld Environment",
+  "version": 1,
+  "recommendedMapId": "moonfall",
+  "camera": {
+    "view": "top-down-three-quarter",
+    "angleDegrees": 65,
+    "anchor": "bottom-center"
+  },
+  "ground": {
+    "recommended": "dreamworld-ground-tile.png",
+    "exactSeamAlternative": "dreamworld-ground-tile-exact.png",
+    "source": "dreamworld-ground-source.png",
+    "nativeSize": [1254, 1254],
+    "recommendedWorldTileSize": [720, 720]
+  },
+  "props": [
+    {
+      "id": "crescentArch",
+      "file": "props/crescent-arch.png",
+      "nativeSize": [378, 416],
+      "recommendedDrawWidth": 210,
+      "collision": "optional-small-base"
+    },
+    {
+      "id": "violetCrystals",
+      "file": "props/violet-crystals.png",
+      "nativeSize": [264, 389],
+      "recommendedDrawWidth": 110,
+      "collision": "none"
+    },
+    {
+      "id": "dreamLotus",
+      "file": "props/dream-lotus.png",
+      "nativeSize": [307, 403],
+      "recommendedDrawWidth": 120,
+      "collision": "none"
+    },
+    {
+      "id": "starMapObelisk",
+      "file": "props/star-map-obelisk.png",
+      "nativeSize": [303, 486],
+      "recommendedDrawWidth": 95,
+      "collision": "optional-small-base"
+    },
+    {
+      "id": "floatingRuinPillar",
+      "file": "props/floating-ruin-pillar.png",
+      "nativeSize": [222, 397],
+      "recommendedDrawWidth": 85,
+      "collision": "none"
+    },
+    {
+      "id": "moonLantern",
+      "file": "props/moon-lantern.png",
+      "nativeSize": [270, 358],
+      "recommendedDrawWidth": 80,
+      "collision": "none"
+    },
+    {
+      "id": "dreamTree",
+      "file": "props/dream-tree.png",
+      "nativeSize": [369, 425],
+      "recommendedDrawWidth": 150,
+      "collision": "optional-small-base"
+    },
+    {
+      "id": "brokenCrescentShrine",
+      "file": "props/broken-crescent-shrine.png",
+      "nativeSize": [338, 358],
+      "recommendedDrawWidth": 150,
+      "collision": "optional-small-base"
+    }
+  ],
+  "cover": [
+    {
+      "id": "intactRuinWall",
+      "file": "cover/intact-ruin-wall.png",
+      "nativeSize": [528, 287]
+    },
+    {
+      "id": "brokenRuinWall",
+      "file": "cover/broken-ruin-wall.png",
+      "nativeSize": [537, 240]
+    },
+    {
+      "id": "violetCrystalHedge",
+      "file": "cover/violet-crystal-hedge.png",
+      "nativeSize": [527, 261]
+    },
+    {
+      "id": "crescentBalustrade",
+      "file": "cover/crescent-balustrade.png",
+      "nativeSize": [535, 280]
+    },
+    {
+      "id": "floatingStoneBlocks",
+      "file": "cover/floating-stone-blocks.png",
+      "nativeSize": [503, 233]
+    },
+    {
+      "id": "cloudstoneWall",
+      "file": "cover/cloudstone-wall.png",
+      "nativeSize": [557, 231]
+    }
+  ],
+  "coverRendering": {
+    "recommendedDrawWidthMultiplier": 1.15,
+    "collisionSource": "existing-obstacle-rectangles",
+    "allowQuarterTurn": true
+  }
+}

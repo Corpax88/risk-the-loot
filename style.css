@@ -598,6 +598,25 @@ button:focus-visible{outline-color:#f4ead6}
 .helpTooltip span{margin-top:3px;color:#c7d0dc;font-size:8px;line-height:1.4;letter-spacing:.2px}
 .helpTooltip.touchTip{border-left-color:#d6aa58}
 .expeditionView [data-help]{pointer-events:auto}
+.miniMap{position:absolute;right:16px;bottom:118px;z-index:6;width:132px;height:92px;overflow:hidden;padding:4px;border:1px solid #a8874e;border-radius:6px;background:#07101be8;box-shadow:0 5px 0 #04070c,0 10px 24px #000b,inset 0 0 0 1px #30415a;pointer-events:auto}
+.miniMap:before,.miniMap:after{content:"";position:absolute;z-index:2;width:17px;height:17px;pointer-events:none}
+.miniMap:before{left:3px;top:3px;border-left:2px solid #e6c476;border-top:2px solid #e6c476}
+.miniMap:after{right:3px;bottom:3px;border-right:2px solid #e6c476;border-bottom:2px solid #e6c476}
+.miniMap canvas{display:block;width:100%;height:100%}
+.miniMapLabel{position:absolute;z-index:3;left:8px;top:7px;color:#f0d99b;font:700 6px Georgia,serif;letter-spacing:0;text-shadow:0 1px 2px #000}
+.miniMapCacheCount{position:absolute;z-index:3;right:7px;top:6px;display:none;min-width:19px;height:15px;align-items:center;justify-content:center;border:1px solid #d6aa58;border-radius:3px;background:#15131be8;color:#ffe3a0;font:700 7px Georgia,serif;letter-spacing:0;box-shadow:0 0 9px #d6aa5866}
+.miniMapCacheCount.show{display:flex}
+.xpHud{position:absolute;left:50%;bottom:10px;z-index:6;width:min(520px,calc(100% - 300px));height:30px;display:grid;grid-template-columns:46px minmax(70px,1fr) 68px;align-items:center;gap:6px;padding:4px 7px;transform:translateX(-50%);border:1px solid #8d7044;border-radius:5px;background:linear-gradient(180deg,#18243aee,#080f1bee);box-shadow:0 4px 0 #04070c,0 9px 20px #000a,inset 0 0 0 1px #31415c;pointer-events:auto}
+.xpLevel{height:20px;display:flex;align-items:center;justify-content:center;gap:3px;border:1px solid #705b3b;border-radius:3px;background:#0c1422;color:#c5af7d;font:700 7px Georgia,serif;letter-spacing:0}
+.xpLevel b{color:#ffe6a8;font-size:11px}
+.xpTrack{position:relative;height:9px;overflow:hidden;border:1px solid #6e5734;border-radius:2px;background:#080c14;box-shadow:inset 0 2px 4px #000}
+.xpTrack:before{content:"";position:absolute;z-index:2;inset:1px;background:repeating-linear-gradient(90deg,transparent 0 9.5%,#e7cf9622 10% 10.4%);pointer-events:none}
+.xpTrack i{display:block;width:0;height:100%;background:linear-gradient(90deg,#8e232d,#d44246 58%,#f0b85d);box-shadow:0 0 8px #d44246aa;transition:width .45s cubic-bezier(.2,.7,.2,1)}
+.xpTrack em{position:absolute;z-index:3;top:-3px;left:0;width:5px;height:13px;transform:translateX(-50%);border-radius:50%;background:#fff1bd;box-shadow:0 0 10px #f2c14f;opacity:.85;transition:left .45s cubic-bezier(.2,.7,.2,1)}
+.xpText{overflow:hidden;color:#c7d0dc;font-size:6px;font-weight:800;letter-spacing:0;text-align:right;white-space:nowrap}
+.xpHud.levelUp{animation:xpLevelUp 1.1s ease-out}
+.xpHud.levelUp .xpLevel{border-color:#f2c14f;box-shadow:0 0 16px #f2c14f99}
+@keyframes xpLevelUp{0%{filter:brightness(1);transform:translateX(-50%) scale(1)}28%{filter:brightness(1.8);transform:translateX(-50%) scale(1.035)}100%{filter:brightness(1);transform:translateX(-50%) scale(1)}}
 
 @media(max-width:720px){
   #game.runMode .topbar{height:calc(43px + env(safe-area-inset-top));gap:4px;padding:3px max(6px,env(safe-area-inset-right)) 3px max(6px,env(safe-area-inset-left));padding-top:calc(3px + env(safe-area-inset-top))}
@@ -637,13 +656,22 @@ button:focus-visible{outline-color:#f4ead6}
   .lootToast{right:5px;top:78px;max-width:calc(100% - 10px)}
   .helpTooltip{width:min(240px,calc(100vw - 12px));padding:7px 9px}
   .helpTooltip strong{font-size:10px}.helpTooltip span{font-size:8px}
+  .miniMap{right:max(9px,env(safe-area-inset-right));bottom:calc(max(28px,env(safe-area-inset-bottom)) + 86px);width:108px;height:76px;padding:3px}
+  .miniMapLabel{left:6px;top:5px;font-size:5px}.miniMapCacheCount{right:5px;top:4px;height:14px}
+  .xpHud{left:max(158px,calc(env(safe-area-inset-left) + 152px));right:max(100px,calc(env(safe-area-inset-right) + 94px));bottom:max(10px,env(safe-area-inset-bottom));width:auto;min-width:0;height:26px;grid-template-columns:32px minmax(28px,1fr) 42px;gap:3px;padding:3px;transform:none}
+  .xpLevel{height:18px;font-size:6px}.xpLevel b{font-size:9px}.xpTrack{height:8px}.xpText{font-size:5px}
+  .xpHud.levelUp{animation-name:xpLevelUpMobile}
 }
+@media(max-width:374px){.xpHud{left:max(10px,env(safe-area-inset-left));right:max(10px,env(safe-area-inset-right));bottom:calc(max(24px,env(safe-area-inset-bottom)) + 138px);grid-template-columns:38px minmax(70px,1fr) 52px}}
+@keyframes xpLevelUpMobile{0%{filter:brightness(1);transform:scale(1)}28%{filter:brightness(1.8);transform:scale(1.035)}100%{filter:brightness(1);transform:scale(1)}}
 
 @media(max-height:620px) and (orientation:landscape){
   #game.runMode .topbar{height:39px;padding-top:2px;padding-bottom:2px}
   .expeditionHud{top:4px}.cargoHud,.depthRoute,.zoneHud,.bossHud{top:46px}.runNotice,.lootToast{top:77px}
+  .miniMap{bottom:82px;width:102px;height:70px}
+  .xpHud{height:24px}
 }
-@media(prefers-reduced-motion:reduce){.helpTooltip{transition:none}}
+@media(prefers-reduced-motion:reduce){.helpTooltip,.xpTrack i,.xpTrack em{transition:none}.xpHud.levelUp{animation:none}}
 
 /* v0.25 Adventure Atlas */
 .expeditionButton{padding:5px 10px}.expeditionButton>span{display:grid;min-width:0;gap:3px;text-align:center}.expeditionButton small,.expeditionButton b{display:block}.expeditionButton small{max-width:190px;overflow:hidden;color:#f0d99b;font-size:6px;letter-spacing:1.1px;text-overflow:ellipsis;white-space:nowrap}.expeditionButton b{font-size:10px;letter-spacing:1.2px}
@@ -693,3 +721,6 @@ button:focus-visible{outline-color:#f4ead6}
 @media(max-width:620px){.bossLootPanel{display:flex;padding:10px 8px 8px}.bossLootPanel>h2{margin-bottom:4px}.bossLootShowcase{grid-template-columns:108px minmax(0,1fr);min-height:104px}.bossLootArt{width:98px;height:98px}.bossLootArt .gearArt{width:90px;height:90px}.bossLootIdentity{padding:6px}.bossLootIdentity b{font-size:17px}.bossLootIdentity em{font-size:6px}.bossLootGrid{min-height:50px;gap:4px}.bossLootItem{min-height:48px;padding:2px}.bossLootItem .gearArt{width:min(44px,100%);height:min(44px,100%)}.bossLootItem small{display:block;font-size:4px}.bossLootGamble{margin-top:5px}.bossLootChoices{margin-top:5px}.bossLootChoice{min-height:52px}.bossLootHalo{top:34%;width:160px;height:160px}}
 @media(max-height:620px) and (orientation:landscape){.bossLootPanel{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto 1fr auto;gap:5px 12px;padding:8px 14px}.bossLootPanel>small,.bossLootPanel>h2{grid-column:1/3}.bossLootShowcase{grid-column:1;grid-row:3/5;grid-template-columns:110px 1fr;min-height:112px}.bossLootArt{width:100px;height:100px}.bossLootArt .gearArt{width:92px;height:92px}.bossLootManifestHeading,.bossLootGrid,.bossLootGamble,.bossLootChoices{grid-column:2;width:100%}.bossLootManifestHeading{margin:0}.bossLootGrid{grid-template-columns:repeat(3,1fr);grid-auto-rows:48px}.bossLootGamble,.bossLootChoices{margin-top:3px}.bossLootHalo{display:none}}
 @media(prefers-reduced-motion:reduce){.bossLootDeathMark:before,.bossLootDeathMark:after,.bossLootDeathMark i{animation:none!important;opacity:0}}
+
+/* v0.30 Skyglass Leviathan boss identity */
+.bossHud.lagoon{border-color:#79e7f2;background:#071a26ed}.bossHud.lagoon span{color:#d9fbff}.bossHud.lagoon span em{color:#9bdde5}.bossHud.lagoon>div{background:#0a2634;border-color:#2f8390}.bossHud.lagoon i{background:linear-gradient(90deg,#174f70,#39bfd2,#e8fbff,#f29ab8)}

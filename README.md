@@ -1,10 +1,14 @@
-# RISK THE LOOT! v0.29.0
+# RISK THE LOOT! v0.31.0
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
 
 Pappa's original painted hammer animation remains the active version. Champion's Mark replaces the obsolete pickup-magnet relic with a boss-focused reward that supports the equipment loop.
 
 The Adventure Atlas turns Pappa Level into visible world progression. Guild Frontier is available immediately; Ashen Foundry, Moonfall Gardens, Skyglass Lagoon and Crown Summit unlock at levels 4, 8, 12 and 16. Every destination has its own five-zone visual identity, enemy mix, combat scaling, coin value and boss-gear luck profile.
+
+Skyglass Lagoon now ends with the animated Skyglass Leviathan. Its three bespoke phases combine readable crystal fans, rotating tide shards and clearly telegraphed undertow pools.
+
+The expedition view now has a compact world minimap with Pappa's facing, the visible camera area, solid cover, active champion and pulsing rare-cache markers. A low-profile ARPG-style experience rail tracks real boss XP and celebrates Pappa level-ups without covering combat.
 
 Dreamworld Expedition gives Moonfall Gardens a complete illustrated environment identity. A seamless indigo arena floor, moonlit ruins, dream trees, lanterns, shrines, crystal growths and physical cover now replace its generic procedural scenery. Assets use bottom-center world anchors, camera culling, restrained glow and front-layer occlusion so Pappa can move behind tall ruins while all existing collision and line-of-sight rules remain intact.
 

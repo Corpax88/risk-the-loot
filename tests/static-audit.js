@@ -14,7 +14,7 @@ for(const match of script.matchAll(/\$\('([^']+)'\)/g)){
 const openBraces=(css.match(/{/g)||[]).length;
 const closeBraces=(css.match(/}/g)||[]).length;
 assert.equal(openBraces,closeBraces,'CSS braces are unbalanced');
-assert(html.includes('style.css?v=0.31.0')&&html.includes('script.js?v=0.31.0'),'release assets are not versioned');
+assert(html.includes('style.css?v=0.32.0')&&html.includes('script.js?v=0.32.0'),'release assets are not versioned');
 for(const asset of ['pappa-hammer-player.png','pappa-hammer-idle-v2.png','pappa-hammer-run-v2.png','pappa-hammer-attack-v2.png','pappa-hammer-workshop.png','pappa-hammer-enemies.png','pappa-hammer-bosses.png','gear-items-atlas.png','gear-drops-atlas.png','gear-atlas.json','set-gear-atlas.png','set-gear-drops.png','set-gear-atlas.json','legendary-gear-atlas.png','legendary-gear-drops.png','legendary-gear-atlas.json','anime-adventure-bag-v2.webp'])assert(fs.existsSync('assets/'+asset),'Pappa Hammer asset is missing: '+asset);
 assert(fs.existsSync('assets/bosses/skyglass-leviathan.png'),'Skyglass Leviathan boss asset is missing');
 for(const asset of ['dreamworld-ground-tile.png','dreamworld-manifest.json','props/crescent-arch.png','props/violet-crystals.png','props/dream-lotus.png','props/star-map-obelisk.png','props/floating-ruin-pillar.png','props/moon-lantern.png','props/dream-tree.png','props/broken-crescent-shrine.png','cover/intact-ruin-wall.png','cover/broken-ruin-wall.png','cover/violet-crystal-hedge.png','cover/crescent-balustrade.png','cover/floating-stone-blocks.png','cover/cloudstone-wall.png'])assert(fs.existsSync('assets/environment/dreamworld/'+asset),'Dreamworld environment asset is missing: '+asset);
@@ -70,7 +70,7 @@ assert(css.includes("assets/environment/dreamworld/dreamworld-ground-tile.png")&
 assert(script.includes('SKYGLASS_DECOR_LAYOUT')&&script.includes('function drawSkyglassGround')&&script.includes('function drawSkyglassDecor')&&script.includes('function drawSkyglassCover'),'Skyglass environment rendering is missing');
 assert(css.includes("assets/environment/skyglass/skyglass-ground-tile.png")&&css.includes("assets/environment/skyglass/props/celestial-koi-statue.png"),'Skyglass map preview is not using the imported assets');
 assert(script.includes('const SET_DEFINITIONS=[')&&script.includes('const SET_ITEMS=SET_DEFINITIONS.flatMap')&&script.includes('activeSetBonuses'),'set item catalog or fixed set bonuses are missing');
-assert(script.includes('function rollBossGear')&&script.includes('function grantBossXp')&&script.includes('function showBossLootRitual')&&script.includes('registerRunGear(gear,false,e.x,e.y)'),'boss-only equipment, loot ritual, or Pappa XP is missing');
+assert(script.includes('function rollBossGear')&&script.includes('function grantBossXp')&&script.includes('function showBossLootRitual')&&script.includes('function drawBossLootChest')&&script.includes('function openBossLootChest')&&script.includes('registerRunGear(gear,false,x,y)'),'boss-only equipment, physical champion cache, loot ritual, or Pappa XP is missing');
 assert(script.includes('routeRare*.2')&&script.includes('routeRare*.55')&&script.includes('routeRare*.45'),'Moonlit Path does not improve boss set rarity');
 assert(script.includes("(save.level-1)*.11")&&script.includes("(save.level-1)*.035"),'boss health and damage do not scale with Pappa level');
 assert(/function destroyEnemy\(e\)[\s\S]*?runScrap\+=coins;/.test(script)&&!/function destroyEnemy\(e\)[^}]*spawnLoot\(/.test(script),'ordinary enemies must award coins instead of gear');

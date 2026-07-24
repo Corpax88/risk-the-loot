@@ -1,8 +1,10 @@
-# RISK THE LOOT! v0.31.0
+# RISK THE LOOT! v0.32.0
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
 
 Pappa's original painted hammer animation remains the active version. Champion's Mark replaces the obsolete pickup-magnet relic with a boss-focused reward that supports the equipment loop.
+
+Champion Cache makes boss rewards physical: champions now leave a rarity-colored cache in the arena that must be tapped before the loot reveal begins. The reveal supports touch selection, larger mobile text, and a direct comparison against the item currently equipped in that slot.
 
 The Adventure Atlas turns Pappa Level into visible world progression. Guild Frontier is available immediately; Ashen Foundry, Moonfall Gardens, Skyglass Lagoon and Crown Summit unlock at levels 4, 8, 12 and 16. Every destination has its own five-zone visual identity, enemy mix, combat scaling, coin value and boss-gear luck profile.
 

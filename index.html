@@ -8,14 +8,14 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="description" content="Risk everything, recover equippable gear and build Pappa Hammer in this compact extraction roguelite.">
   <title>RISK THE LOOT!</title>
-  <link rel="stylesheet" href="style.css?v=0.31.0">
+  <link rel="stylesheet" href="style.css?v=0.32.0">
 </head>
 <body>
   <main id="game">
     <header class="topbar">
       <div class="brand">
         <span class="brandMark">R</span>
-        <div><strong>RISK THE LOOT!</strong><small>ADVENTURE HUD v0.31.0</small></div>
+        <div><strong>RISK THE LOOT!</strong><small>CHAMPION CACHE v0.32.0</small></div>
       </div>
       <div class="resources">
         <div class="resource level" data-help-title="Pappa Level" data-help="Boss victories grant XP. Higher levels unlock stronger gear and tougher champions."><i>LV</i><div><b id="pappaLevel">1</b><span>PAPPA</span></div></div>
@@ -233,7 +233,6 @@
       </div>
       <div id="cargoHud" class="cargoHud" data-help-title="Relic Cargo" data-help="Temporary relics carried during this expedition. Matching relics fuse into stronger powers."><span>RELICS</span><div id="cargoSlots" class="cargoSlots"></div></div>
       <div id="zoneHud" class="zoneHud" data-help-title="Current Zone" data-help="The current tower district and the enemies controlling it."><small id="zoneDepth">FLOOR 1</small><b id="zoneName">GUILD OUTSKIRTS</b></div>
-      <div id="buildHud" class="buildHud" data-help-title="Active Build" data-help="A short summary of the strongest relic combination active this expedition."><small>BUILD</small><b id="buildName">HAMMER BUILD</b></div>
       <div id="bossHud" class="bossHud" data-help-title="Champion Health" data-help="The champion changes attack pattern at each named phase. Empty this bar to earn boss gear."><span><b id="bossName">VAULT WARDEN</b><em id="bossPhaseText">PHASE I &middot; THE FIRST LOCK</em></span><div><i id="bossHealthFill"></i></div></div>
       <div id="runNotice" class="runNotice" role="status"></div>
       <div id="lootToast" class="lootToast" role="status"><i id="lootToastIcon"></i><span><small id="lootToastRarity"></small><b id="lootToastName"></b><em id="lootToastValue"></em></span></div>
@@ -256,9 +255,14 @@
               <span id="bossLootRarity">RARE BOSS GEAR</span>
               <b id="bossLootName">Recovered Gear</b>
               <em id="bossLootStats">Unsecured until extraction</em>
+              <div id="bossLootCompare" class="bossLootCompare">
+                <div class="bossLootEquippedArt" id="bossLootEquippedArt"></div>
+                <span><small>EQUIPPED</small><b id="bossLootEquippedName">OPEN SLOT</b><em id="bossLootEquippedPower">0 POWER</em></span>
+                <strong id="bossLootVerdict">UPGRADE</strong>
+              </div>
             </div>
           </div>
-          <div class="bossLootManifestHeading"><span>LOOT TORN FROM THE CHAMPION</span><b id="bossLootCount">0 ITEMS</b></div>
+          <div class="bossLootManifestHeading"><span>TAP LOOT TO COMPARE</span><b id="bossLootCount">0 ITEMS</b></div>
           <div id="bossLootGrid" class="bossLootGrid"></div>
           <div class="bossLootGamble">
             <span><small>CURRENT HAUL</small><b id="bossLootValue">0 COINS</b></span>
@@ -336,11 +340,11 @@
         </div>
         <button id="resumeButton" class="primaryButton settingsResume"><span>RESUME</span><i>&#8250;</i></button>
         <button id="abandonButton" class="dangerButton">ABANDON EXPEDITION</button>
-        <p class="buildStamp">v0.31.0 ADVENTURE HUD</p>
+        <p class="buildStamp">v0.32.0 CHAMPION CACHE</p>
       </div>
     </div>
     <aside id="helpTooltip" class="helpTooltip" role="tooltip" aria-hidden="true"><strong id="helpTooltipTitle"></strong><span id="helpTooltipText"></span></aside>
   </main>
-  <script src="script.js?v=0.31.0"></script>
+  <script src="script.js?v=0.32.0"></script>
 </body>
 </html>

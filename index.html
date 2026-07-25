@@ -8,14 +8,14 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="description" content="Risk everything, recover equippable gear and build Pappa Hammer in this compact extraction roguelite.">
   <title>RISK THE LOOT!</title>
-  <link rel="stylesheet" href="style.css?v=0.32.0">
+  <link rel="stylesheet" href="style.css?v=0.34.0">
 </head>
 <body>
   <main id="game">
     <header class="topbar">
-      <div class="brand">
+      <div class="brand" tabindex="0" data-help-title="Risk the Loot" data-help="Enter the tower, defeat champions and decide when the gear you carry is valuable enough to extract.">
         <span class="brandMark">R</span>
-        <div><strong>RISK THE LOOT!</strong><small>CHAMPION CACHE v0.32.0</small></div>
+        <div><strong>RISK THE LOOT!</strong><small>THE GRAND VAULT v0.34.0</small></div>
       </div>
       <div class="resources">
         <div class="resource level" data-help-title="Pappa Level" data-help="Boss victories grant XP. Higher levels unlock stronger gear and tougher champions."><i>LV</i><div><b id="pappaLevel">1</b><span>PAPPA</span></div></div>
@@ -52,11 +52,13 @@
         </div>
       </div>
 
-      <div id="contractTracker" class="contractTracker" data-help-title="Adventure Contract" data-help="Your long-term objective. Boss seals and recovered relics advance this contract.">
-        <div><small>ADVENTURE CONTRACT</small><b id="contractTitle">OPEN THE GRAND VAULT</b></div>
+      <button id="contractTracker" class="contractTracker" type="button" data-help-title="The Grand Vault" data-help="Secure 3 new Boss Seals and recover 12 new relic copies to charge the vault. A full vault contains guaranteed gear and may hold a second item.">
+        <i class="contractVaultIcon" aria-hidden="true">&#9670;</i>
+        <span class="contractCopy"><small>ADVENTURE CONTRACT</small><b id="contractTitle">CHARGE THE GRAND VAULT</b></span>
         <span id="contractReadout">0/3 SEALS &middot; 0/12 RELICS</span>
-        <div class="contractTrack"><i id="contractFill"></i></div>
-      </div>
+        <span class="contractTrack"><i id="contractFill"></i></span>
+        <em id="contractPrompt">VAULT DORMANT</em>
+      </button>
 
       <div id="baseNotice" class="baseNotice" role="status"></div>
 
@@ -74,7 +76,7 @@
               <button id="gearBagTab" class="active" role="tab" aria-selected="true"><i aria-hidden="true">&#9638;</i><span>BAG</span></button>
               <button id="gearLoadoutTab" role="tab" aria-selected="false"><i aria-hidden="true">&#9874;</i><span>PAPPA</span></button>
             </div>
-            <div class="gearBagReadout"><i class="gearBagIcon" aria-hidden="true"></i><span><small>SECURED LOOT</small><b id="gearBagCount">0 ITEMS</b></span></div>
+            <div class="gearBagReadout" tabindex="0" data-help-title="Secured Loot" data-help="Gear in this bag is permanently safe. Only gear still carried inside an expedition can be lost."><i class="gearBagIcon" aria-hidden="true"></i><span><small>SECURED LOOT</small><b id="gearBagCount">0 ITEMS</b></span></div>
           </header>
           <div class="gearWorkspace">
             <aside class="gearCategoryPanel bagViewPanel">
@@ -120,7 +122,7 @@
               <div class="gearCharacterHeading"><span>PAPPA HAMMER LOADOUT</span><b id="gearEquippedCount">0 / 5 EQUIPPED</b></div>
               <div class="gearLoadoutWorkspace">
                 <div class="gearLoadoutHeroColumn">
-                  <div id="gearCharacterStage" class="gearCharacterStage" aria-label="Drag left or right to rotate Pappa Hammer">
+                  <div id="gearCharacterStage" class="gearCharacterStage" aria-label="Drag left or right to rotate Pappa Hammer" data-help-title="Character Preview" data-help="Drag left or right to rotate Pappa Hammer and inspect how the equipped set changes his appearance.">
                     <div class="gearCharacterHalo"></div>
                     <div class="gearCharacterHero"><div id="gearCharacterPreview" class="gearCharacterPreview"></div></div>
                     <span id="gearPreviewName" class="gearPreviewName">FIELD LOADOUT</span>
@@ -132,7 +134,7 @@
                   </div>
                 </div>
                 <div class="gearLoadoutInfo">
-                  <div class="pappaProgress"><span><small>PAPPA LEVEL</small><b id="gearPappaLevel">1</b></span><div><i id="gearXpFill"></i></div><em id="gearXpText">0 / 2 BOSS XP</em></div>
+                  <div class="pappaProgress" tabindex="0" data-help-title="Pappa Experience" data-help="Champions grant XP. Higher Pappa levels unlock new destinations and allow stronger, rarer boss gear to drop."><span><small>PAPPA LEVEL</small><b id="gearPappaLevel">1</b></span><div><i id="gearXpFill"></i></div><em id="gearXpText">0 / 2 BOSS XP</em></div>
                   <div><small class="loadoutSectionLabel">EQUIPPED GEAR</small><div id="gearLoadoutSlots" class="gearLoadoutSlots"></div></div>
                   <div><small class="loadoutSectionLabel">COMBINED STATS</small><div id="gearStatsSummary" class="gearStatsSummary"></div></div>
                   <div><small class="loadoutSectionLabel">ACTIVE SETS</small><div id="gearSetSummary" class="gearSetSummary"></div></div>
@@ -150,13 +152,13 @@
           <button id="closeBlueprints" class="panelClose" aria-label="Close blueprint bench">&#215;</button>
           <small>RECOVER COPIES &middot; MASTER YOUR FAVORITES</small>
           <h2 id="blueprintTitle">RELIC RACK</h2>
-          <div class="starterReadout"><span>LUCKY RELIC</span><b id="starterReadout">No relic equipped</b></div>
+          <div class="starterReadout" tabindex="0" data-help-title="Lucky Relic" data-help="The equipped Lucky Relic begins in your cargo at the start of every expedition. It is never lost on death."><span>LUCKY RELIC</span><b id="starterReadout">No relic equipped</b></div>
           <section class="wardenBench">
             <div><small>BOSS TROPHIES</small><span>Permanent lessons claimed from tower champions</span></div>
             <div id="wardenTechGrid" class="wardenTechGrid"></div>
           </section>
           <div id="blueprintGrid" class="blueprintGrid"></div>
-          <div id="careerStats" class="careerStats"></div>
+          <div id="careerStats" class="careerStats" aria-label="Career statistics"></div>
         </div>
       </div>
 
@@ -165,7 +167,7 @@
           <button id="closeMaps" class="panelClose" aria-label="Close Adventure Atlas">&#215;</button>
           <small>PAPPA HAMMER'S ADVENTURE ATLAS</small>
           <h2 id="mapTitle">CHOOSE A DESTINATION</h2>
-          <div class="mapLevelReadout"><span>PAPPA LEVEL <b id="mapPappaLevel">1</b></span><em id="nextMapUnlock">NEXT MAP AT LEVEL 4</em></div>
+          <div class="mapLevelReadout" tabindex="0" data-help-title="Destination Progress" data-help="Raise Pappa's level by defeating champions. New maps contain tougher enemies, improved gear odds and larger rewards."><span>PAPPA LEVEL <b id="mapPappaLevel">1</b></span><em id="nextMapUnlock">NEXT MAP AT LEVEL 4</em></div>
           <div id="mapGrid" class="mapGrid" aria-label="Expedition destinations"></div>
         </div>
       </div>
@@ -188,10 +190,10 @@
           <small>ADVENTURE REPORT</small>
           <h2 id="resultTitle">GEAR SECURED</h2>
           <div class="resultStats">
-            <div><span>COINS SECURED</span><b id="resultScrap">0</b></div>
-            <div><span>FLOOR</span><b id="resultDepth">1</b></div>
-            <div><span>TIME</span><b id="resultTime">0:00</b></div>
-            <div><span>KILLS</span><b id="resultKills">0</b></div>
+            <div tabindex="0" data-help-title="Coins Secured" data-help="Coins carried safely out of the tower and added to the permanent workshop bank."><span>COINS SECURED</span><b id="resultScrap">0</b></div>
+            <div tabindex="0" data-help-title="Floor Reached" data-help="The deepest floor reached during this expedition."><span>FLOOR</span><b id="resultDepth">1</b></div>
+            <div tabindex="0" data-help-title="Expedition Time" data-help="Total time spent inside the tower during this expedition."><span>TIME</span><b id="resultTime">0:00</b></div>
+            <div tabindex="0" data-help-title="Enemies Defeated" data-help="All regular enemies and champions defeated during this expedition."><span>KILLS</span><b id="resultKills">0</b></div>
           </div>
           <div class="resultFieldData"><span><b id="resultDamage">0</b> DAMAGE TAKEN</span><span><b id="resultRisk">0</b> RISKS TAKEN</span><span><b id="resultItems">0</b> ITEMS</span></div>
           <div id="resultRecord" class="resultRecord"></div>
@@ -204,11 +206,15 @@
 
       <div id="contractOverlay" class="resultOverlay" role="dialog" aria-modal="true" aria-labelledby="contractCompleteTitle">
         <div class="resultPanel contractCompletePanel">
-          <small>ADVENTURE CONTRACT COMPLETE</small>
-          <div class="vaultSeal" aria-hidden="true"><i></i><b>07</b></div>
-          <h2 id="contractCompleteTitle">THE GRAND VAULT IS OPEN</h2>
-          <p>Pappa Hammer has gathered enough boss seals and mastered enough relics to open the way forward.</p>
-          <button id="closeContract" class="primaryButton resultContinue"><span>CLAIM THE CREST</span><i>&#8250;</i></button>
+          <small id="vaultEyebrow">ADVENTURE CONTRACT COMPLETE</small>
+          <div class="vaultCeremony">
+            <div class="vaultSeal" aria-hidden="true"><i></i><b id="vaultCycle">01</b></div>
+            <div id="vaultReward" class="vaultReward" aria-live="polite"><span>UNLOCKING THE VAULT</span></div>
+          </div>
+          <h2 id="contractCompleteTitle">THE GRAND VAULT AWAKENS</h2>
+          <p id="vaultDescription">The seals are turning. Something valuable is waiting inside.</p>
+          <div id="vaultOdds" class="vaultOdds"></div>
+          <button id="closeContract" class="primaryButton resultContinue" disabled><span id="vaultClaimLabel">OPENING...</span><i>&#8250;</i></button>
         </div>
       </div>
     </section>
@@ -255,7 +261,7 @@
               <span id="bossLootRarity">RARE BOSS GEAR</span>
               <b id="bossLootName">Recovered Gear</b>
               <em id="bossLootStats">Unsecured until extraction</em>
-              <div id="bossLootCompare" class="bossLootCompare">
+              <div id="bossLootCompare" class="bossLootCompare" tabindex="0" data-help-title="Gear Comparison" data-help="Compares the selected boss drop with the item currently worn in the same slot. Green means stronger overall power.">
                 <div class="bossLootEquippedArt" id="bossLootEquippedArt"></div>
                 <span><small>EQUIPPED</small><b id="bossLootEquippedName">OPEN SLOT</b><em id="bossLootEquippedPower">0 POWER</em></span>
                 <strong id="bossLootVerdict">UPGRADE</strong>
@@ -264,7 +270,7 @@
           </div>
           <div class="bossLootManifestHeading"><span>TAP LOOT TO COMPARE</span><b id="bossLootCount">0 ITEMS</b></div>
           <div id="bossLootGrid" class="bossLootGrid"></div>
-          <div class="bossLootGamble">
+          <div class="bossLootGamble" tabindex="0" data-help-title="Risk or Extract" data-help="The left side is everything currently unsecured. The right side previews the improved gear odds offered by the next champion.">
             <span><small>CURRENT HAUL</small><b id="bossLootValue">0 COINS</b></span>
             <i aria-hidden="true">&#8250;</i>
             <span><small>NEXT CHAMPION</small><b id="bossLootMultiplier">x1.00 LOOT</b></span>
@@ -340,11 +346,11 @@
         </div>
         <button id="resumeButton" class="primaryButton settingsResume"><span>RESUME</span><i>&#8250;</i></button>
         <button id="abandonButton" class="dangerButton">ABANDON EXPEDITION</button>
-        <p class="buildStamp">v0.32.0 CHAMPION CACHE</p>
+        <p class="buildStamp">v0.34.0 THE GRAND VAULT</p>
       </div>
     </div>
     <aside id="helpTooltip" class="helpTooltip" role="tooltip" aria-hidden="true"><strong id="helpTooltipTitle"></strong><span id="helpTooltipText"></span></aside>
   </main>
-  <script src="script.js?v=0.32.0"></script>
+  <script src="script.js?v=0.34.0"></script>
 </body>
 </html>

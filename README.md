@@ -1,10 +1,14 @@
-# RISK THE LOOT! v0.32.0
+# RISK THE LOOT! v0.34.0
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
 
 Pappa's original painted hammer animation remains the active version. Champion's Mark replaces the obsolete pickup-magnet relic with a boss-focused reward that supports the equipment loop.
 
+The Grand Vault is now a repeatable long-term reward. Every cycle charges from three newly secured Boss Seals and twelve newly recovered relic copies. Its workshop tracker warms up near completion, becomes interactive when full, and opens with a dedicated reveal ceremony. Each opening guarantees level-appropriate set gear, can contain a bonus item, deposits rewards directly into the Adventure Bag, and then begins the next vault cycle without removing permanent progression.
+
 Champion Cache makes boss rewards physical: champions now leave a rarity-colored cache in the arena that must be tapped before the loot reveal begins. The reveal supports touch selection, larger mobile text, and a direct comparison against the item currently equipped in that slot.
+
+Hold for Info gives the full interface one consistent help language. Hover or keyboard focus reveals contextual details on desktop; a deliberate hold does the same on mobile without firing click-based controls. Resources, loadout stats, progression, route choices, results, settings and every action use authored explanations instead of generic browser labels. Equipment uses a richer rarity, stat and current-loadout comparison preview.
 
 The Adventure Atlas turns Pappa Level into visible world progression. Guild Frontier is available immediately; Ashen Foundry, Moonfall Gardens, Skyglass Lagoon and Crown Summit unlock at levels 4, 8, 12 and 16. Every destination has its own five-zone visual identity, enemy mix, combat scaling, coin value and boss-gear luck profile.
 
@@ -16,7 +20,7 @@ Dreamworld Expedition gives Moonfall Gardens a complete illustrated environment 
 
 Skyglass Lagoon opens at Pappa Level 12 as the bridge between Moonfall Gardens and Crown Summit. Its seamless star-water floor, floating reef landmarks, jellyfish lanterns, coral gardens, pearl shrines and glass cover establish a brighter celestial-lagoon identity without changing combat rules. Large landmarks remain near the world perimeter, mobile rendering is camera-culled, and every illustrated wall continues to use the existing obstacle rectangle for collision and line of sight.
 
-The expedition HUD now uses one compact status row on mobile and desktop. Health, floor, risk, cargo and boss phases remain visible without taking a second gameplay row, while the workshop header shrinks during expeditions. Every button and important status indicator has contextual help: hover or keyboard focus shows it on desktop, and a short touch reveals the same explanation on mobile without blocking the control.
+The expedition HUD now uses one compact status row on mobile and desktop. Health, floor, risk, cargo and boss phases remain visible without taking a second gameplay row, while the workshop header shrinks during expeditions. Every button and important status indicator has contextual help: hover or keyboard focus shows it on desktop, and holding reveals the same explanation on mobile without accidentally firing the control.
 
 Enemy Awakening gives each raider a readable movement personality, keeps ranged attacks inside the visible combat area, and turns the Shield Guard's charge into a locked crimson danger lane instead of an ambiguous ring. Enemy animation accents are deterministic, so added life and polish do not disturb encounter or loot randomness.
 
@@ -36,7 +40,7 @@ Cover & Spoils opens the combat camera and adds solid guild barricades throughou
 
 There are no direct damage, health, or pickup-range purchases for new saves. Character progression now comes from equipment the player actually risks in the field.
 
-Every item now has its own inventory and field-drop asset. Mouse hover and keyboard focus reveal a compact comparison card with the exact item art, rarity, level, rolled stats, power and sale value; touch devices retain the full tap-to-inspect detail panel.
+Every item now has its own inventory and field-drop asset. Mouse hover and keyboard focus reveal a compact comparison card with the exact item art, rarity, level, rolled stats, power and sale value; holding on touch devices opens the same comparison without equipping, selling or selecting the item.
 
 ## Pappa levels and equipment
 

@@ -90,9 +90,14 @@ if(safeExtract){
   }
   assert(elements.bossPhaseText.history.some(v=>v.includes('PHASE II'))&&elements.bossPhaseText.history.some(v=>v.includes('PHASE III')),'boss phases did not trigger');
   elements.closeResult.click();
-  assert(elements.contractOverlay.classList.contains('show'),'contract completion was not presented');
+  elements.contractTracker.click();
+  assert(elements.contractOverlay.classList.contains('show'),'ready Grand Vault did not open when selected');
+  assert(elements.vaultReward.innerHTML.includes('vaultRewardMain'),'Grand Vault did not reveal gear');
+  let gearBeforeVault=JSON.parse(saved).gear.length;
   elements.closeContract.click();
-  assert.equal(JSON.parse(saved).contractSeen,true,'contract reward was not claimed');
+  assert.equal(JSON.parse(saved).contractSeen,true,'Grand Vault reward was not claimed');
+  assert.equal(JSON.parse(saved).vaultCycle,1,'Grand Vault did not start its next cycle');
+  assert(JSON.parse(saved).gear.length>gearBeforeVault,'Grand Vault gear did not enter the Adventure Bag');
   elements.blueprintButton.click();
   assert(elements.wardenTechGrid.children[furnaceRoute?3:0].className.includes('recovered'),'secured trophy was not visible on the rack');
   elements.closeBlueprints.click();

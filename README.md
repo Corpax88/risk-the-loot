@@ -1,12 +1,16 @@
-# RISK THE LOOT! v0.34.0
+# RISK THE LOOT! v0.36.0
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
+
+Gear 2.0 begins with five playstyle-defining hero sets. Three matching pieces awaken a combat signature and five pieces master it: Tower Bulwark periodically blocks a hit, Stormrunner turns Dash into a wind-blade attack, Hammer Choir adds repeating shockwaves, Crimson Oath makes critical hits echo, and Riskreaver converts unsecured loot and deeper floors into dangerous offensive power. Inventory details and hold previews now show direct stat gains and losses alongside each signature, while newly awakened builds receive a dedicated equip celebration.
+
+This project is in active playtest development. Better gameplay and cleaner systems take priority over preserving old save formats; save resets are acceptable when a feature needs a better data model.
 
 Pappa's original painted hammer animation remains the active version. Champion's Mark replaces the obsolete pickup-magnet relic with a boss-focused reward that supports the equipment loop.
 
 The Grand Vault is now a repeatable long-term reward. Every cycle charges from three newly secured Boss Seals and twelve newly recovered relic copies. Its workshop tracker warms up near completion, becomes interactive when full, and opens with a dedicated reveal ceremony. Each opening guarantees level-appropriate set gear, can contain a bonus item, deposits rewards directly into the Adventure Bag, and then begins the next vault cycle without removing permanent progression.
 
-Champion Cache makes boss rewards physical: champions now leave a rarity-colored cache in the arena that must be tapped before the loot reveal begins. The reveal supports touch selection, larger mobile text, and a direct comparison against the item currently equipped in that slot.
+Champion Loot Orbs make boss rewards physical. A defeated champion is erased by an anime-style pillar of light and screen flash; as it fades, a rarity-colored shell materializes, floats above the arena and waits to be tapped. The orb fractures into luminous pieces before the loot reveal begins. The reveal supports touch selection, larger mobile text, and a direct comparison against the item currently equipped in that slot.
 
 Hold for Info gives the full interface one consistent help language. Hover or keyboard focus reveals contextual details on desktop; a deliberate hold does the same on mobile without firing click-based controls. Resources, loadout stats, progression, route choices, results, settings and every action use authored explanations instead of generic browser labels. Equipment uses a richer rarity, stat and current-loadout comparison preview.
 
@@ -63,7 +67,7 @@ All 20 Legendary set pieces now use dedicated hand-authored sprite art instead o
 
 The Adventure Bag now separates loot management from the character loadout. The **Bag** view uses a dedicated illustrated anime field bag with readable category filters, a compact item grid, rarity totals, sorting, protected bulk selling, and a focused comparison panel. The **Pappa** view gives the live character preview room to breathe with a draggable 360-degree turntable, Pappa level and boss XP, five dedicated worn slots, active set milestones, and combined equipment stats. Selecting a worn slot returns directly to the matching bag category. `Sell Filtered` sells every matching unequipped item after confirmation. Gear currently worn by Pappa is always reserved and can never be sold.
 
-Pappa Hammer uses dedicated eight-frame idle, run, and attack animation sheets. Every equipped slot now recolors and details the correct moving part through 15 frame-matched paper-doll masks, so hats, scarves, coats, hammers, and boots remain attached throughout all three animations. The same composed loadout appears in the living Gear Locker preview and during expeditions.
+Pappa Hammer uses dedicated eight-frame idle, run, and attack animation sheets. Every equipped slot recolors and details the correct moving part through 15 frame-matched paper-doll masks, so hats, scarves, coats, hammers, and boots remain attached throughout all three animations. The complete five-piece Hammer Choir set now upgrades into three dedicated production spritesheets with a genuinely new violet longcoat, shoulder armor, hat, scarf, reinforced boots, musical insignia, and square great hammer. The same animated full-set identity appears in the living Gear Locker preview and during expeditions.
 
 The composed hero keeps the original 512px frame resolution for crisp Retina rendering. Equipment colors are applied as material accents rather than a heavy full-body tint, while Epic, Mythic, and Legendary loadouts add increasingly distinct patterns, trim, inventory presentation, and restrained in-game auras. The runtime masks remain memory-optimized for iPhone Safari.
 
@@ -117,6 +121,14 @@ npm test
 ```
 
 The automated release suite covers DOM/CSS integrity, JavaScript syntax, all 20 sets and 100 set pieces, five gear slots, unique-item migration, RNG item rolls, fixed set bonuses, boss-only equipment, Pappa levels, the rotating Gear Locker, relic fusion, safe extraction, the boss-loot ritual, a two-champion Go Deeper chain, extraction ambushes, both full boss paths, permanent trophies, career progression, settings, and developer tools.
+
+Run the Chromium browser test with:
+
+```powershell
+npm run test:browser
+```
+
+For Playwright's interactive test runner, use `npm run test:browser:ui`.
 
 Built with plain HTML, CSS, JavaScript, Canvas, and PNG assets.
 

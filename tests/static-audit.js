@@ -14,7 +14,7 @@ for(const match of script.matchAll(/\$\('([^']+)'\)/g)){
 const openBraces=(css.match(/{/g)||[]).length;
 const closeBraces=(css.match(/}/g)||[]).length;
 assert.equal(openBraces,closeBraces,'CSS braces are unbalanced');
-assert(html.includes('style.css?v=0.34.0')&&html.includes('script.js?v=0.34.0'),'release assets are not versioned');
+assert(html.includes('style.css?v=0.36.0')&&html.includes('script.js?v=0.36.0'),'release assets are not versioned');
 assert(script.includes('function beginTouchHelp')&&script.includes('function gearHelpFromNode'),'unified mobile hold-help system is missing');
 assert(css.includes('.gearHoverPreview.touchPreview'),'mobile gear comparison preview is missing');
 assert(html.includes('id="contractPrompt"')&&html.includes('id="vaultReward"')&&script.includes('function vaultProgress')&&script.includes('function openGrandVault')&&script.includes('function rollVaultGear')&&css.includes('.contractTracker.imminent')&&css.includes('.vaultReward.revealed'),'repeatable Grand Vault reward or anticipation presentation is missing');
@@ -44,7 +44,9 @@ assert.deepEqual(pngSize('assets/legendary-gear-atlas.png'),[2560,2560],'legenda
 assert.deepEqual(pngSize('assets/legendary-gear-drops.png'),[800,800],'legendary drop atlas dimensions are wrong');
 for(const pose of ['idle','run','attack'])for(const slot of ['hat','scarf','coat','hammer','boots']){const path='assets/paper-doll/'+pose+'-'+slot+'.png';assert(fs.existsSync(path),'paper-doll mask is missing: '+path);assert.deepEqual(pngSize(path),[1024,512],'paper-doll mask dimensions are wrong: '+path)}
 for(const pose of ['idle','run','attack'])assert.deepEqual(pngSize('assets/pappa-hammer-'+pose+'-v2.png'),[2048,1024],'restored original hammer '+pose+' sheet dimensions are wrong');
+for(const pose of ['idle','run','attack'])assert.deepEqual(pngSize('assets/hammer-choir-'+pose+'-v1.png'),[2048,1024],'Hammer Choir '+pose+' sheet dimensions are wrong');
 assert(script.includes("assets/pappa-hammer-idle-v2.png")&&script.includes("assets/pappa-hammer-run-v2.png")&&script.includes("assets/pappa-hammer-attack-v2.png")&&script.includes("assets/pappa-hammer-enemies.png")&&script.includes("assets/pappa-hammer-bosses.png"),'Pappa Hammer animation or combat assets are not wired');
+assert(script.includes('paperDollSetSprites')&&script.includes('equippedFullSetId')&&script.includes('paperDollSetReady')&&script.includes("assets/hammer-choir-idle-v1.png")&&script.includes("assets/hammer-choir-run-v1.png")&&script.includes("assets/hammer-choir-attack-v1.png"),'production Hammer Choir skin is not wired');
 assert(script.includes('pendingStrikes')&&script.includes('releaseHammerStrike')&&script.includes("kind:'hammerSwing'"),'ranged melee hammer timing or impact arc is missing');
 assert(css.includes('@keyframes pappaHammerFrames')&&css.includes("background-image:url('assets/pappa-hammer-idle-v2.png')"),'live Gear Locker animation is missing');
 assert(script.includes('THE FIRST LOCK')&&script.includes('A FORMAL BOW')&&script.includes('source:e.bossKind||e.type'),'distinct boss personalities are not wired');
@@ -73,6 +75,10 @@ assert(css.includes("assets/environment/dreamworld/dreamworld-ground-tile.png")&
 assert(script.includes('SKYGLASS_DECOR_LAYOUT')&&script.includes('function drawSkyglassGround')&&script.includes('function drawSkyglassDecor')&&script.includes('function drawSkyglassCover'),'Skyglass environment rendering is missing');
 assert(css.includes("assets/environment/skyglass/skyglass-ground-tile.png")&&css.includes("assets/environment/skyglass/props/celestial-koi-statue.png"),'Skyglass map preview is not using the imported assets');
 assert(script.includes('const SET_DEFINITIONS=[')&&script.includes('const SET_ITEMS=SET_DEFINITIONS.flatMap')&&script.includes('activeSetBonuses'),'set item catalog or fixed set bonuses are missing');
+assert(script.includes('const GEAR_SIGNATURES=')&&script.includes('function activeGearSignatures')&&script.includes('function gearSignatureProfile'),'Gear 2.0 signature registry is missing');
+for(const signature of ['towerBulwark','stormrunner','hammerChoir','crimsonOath','riskreaver'])assert(script.includes(signature+':{role:'),'featured Gear 2.0 signature is missing: '+signature);
+assert(script.includes('function releaseStormDash')&&script.includes('function triggerCritEcho')&&script.includes('function triggerHammerWave')&&script.includes('player.guardCd'),'Gear 2.0 combat effects are incomplete');
+assert(css.includes('.gearSignature')&&css.includes('.gearDeltaGrid')&&css.includes('.signatureAwaken'),'Gear 2.0 inventory or equip feedback is missing');
 assert(script.includes('function rollBossGear')&&script.includes('function grantBossXp')&&script.includes('function showBossLootRitual')&&script.includes('function drawBossLootChest')&&script.includes('function openBossLootChest')&&script.includes('registerRunGear(gear,false,x,y)'),'boss-only equipment, physical champion cache, loot ritual, or Pappa XP is missing');
 assert(script.includes('routeRare*.2')&&script.includes('routeRare*.55')&&script.includes('routeRare*.45'),'Moonlit Path does not improve boss set rarity');
 assert(script.includes("(save.level-1)*.11")&&script.includes("(save.level-1)*.035"),'boss health and damage do not scale with Pappa level');

@@ -1,4 +1,4 @@
-# RISK THE LOOT! v0.38.0
+# RISK THE LOOT! v0.39.0
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
 
@@ -6,7 +6,7 @@ Raider Tactics gives regular enemies distinct combat jobs. Rushers weave into ra
 
 Champion Rituals gives every boss a more readable three-act fight. Phase changes now clear old projectiles and briefly stagger the champion, creating a deliberate breath before the next pattern. Vault Warden seals parts of the arena and closes a visible lock corridor, Crimson Champion telegraphs sweeping cleaves between its projectile salvos, and Skyglass Leviathan crosses the lagoon with tidal lanes alongside its undertow pools. Physical cover blocks the new lane attacks, preserving the arena's positional strategy.
 
-Gear 2.0 begins with five playstyle-defining hero sets. Three matching pieces awaken a combat signature and five pieces master it: Tower Bulwark periodically blocks a hit, Stormrunner turns Dash into a wind-blade attack, Hammer Choir adds repeating shockwaves, Crimson Oath makes critical hits echo, and Riskreaver converts unsecured loot and deeper floors into dangerous offensive power. Inventory details and hold previews now show direct stat gains and losses alongside each signature, while newly awakened builds receive a dedicated equip celebration.
+Gear 2.0 now gives all 20 hero sets a playstyle-defining signature. Three matching pieces awaken the signature and five pieces master it. The complete catalog covers hunting, comeback defense, explosive volleys, dash ambushes, coin hunting, floor sustain, movement momentum, critical chains, elite recovery, evasion, star impacts, exploration rewards, treasure wards, execution damage, fated strikes, and the original five signature builds. Inventory details and hold previews show direct stat gains and losses alongside every signature, while newly awakened builds receive a dedicated equip celebration.
 
 This project is in active playtest development. Better gameplay and cleaner systems take priority over preserving old save formats; save resets are acceptable when a feature needs a better data model.
 

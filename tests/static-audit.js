@@ -14,7 +14,7 @@ for(const match of script.matchAll(/\$\('([^']+)'\)/g)){
 const openBraces=(css.match(/{/g)||[]).length;
 const closeBraces=(css.match(/}/g)||[]).length;
 assert.equal(openBraces,closeBraces,'CSS braces are unbalanced');
-assert(html.includes('style.css?v=0.38.0')&&html.includes('script.js?v=0.38.0'),'release assets are not versioned');
+assert(html.includes('style.css?v=0.39.0')&&html.includes('script.js?v=0.39.0'),'release assets are not versioned');
 assert(script.includes('function beginTouchHelp')&&script.includes('function gearHelpFromNode'),'unified mobile hold-help system is missing');
 assert(css.includes('.gearHoverPreview.touchPreview'),'mobile gear comparison preview is missing');
 assert(html.includes('id="contractPrompt"')&&html.includes('id="vaultReward"')&&script.includes('function vaultProgress')&&script.includes('function openGrandVault')&&script.includes('function rollVaultGear')&&css.includes('.contractTracker.imminent')&&css.includes('.vaultReward.revealed'),'repeatable Grand Vault reward or anticipation presentation is missing');
@@ -82,8 +82,8 @@ assert(script.includes('SKYGLASS_DECOR_LAYOUT')&&script.includes('function drawS
 assert(css.includes("assets/environment/skyglass/skyglass-ground-tile.png")&&css.includes("assets/environment/skyglass/props/celestial-koi-statue.png"),'Skyglass map preview is not using the imported assets');
 assert(script.includes('const SET_DEFINITIONS=[')&&script.includes('const SET_ITEMS=SET_DEFINITIONS.flatMap')&&script.includes('activeSetBonuses'),'set item catalog or fixed set bonuses are missing');
 assert(script.includes('const GEAR_SIGNATURES=')&&script.includes('function activeGearSignatures')&&script.includes('function gearSignatureProfile'),'Gear 2.0 signature registry is missing');
-for(const signature of ['towerBulwark','stormrunner','hammerChoir','crimsonOath','riskreaver'])assert(script.includes(signature+':{role:'),'featured Gear 2.0 signature is missing: '+signature);
-assert(script.includes('function releaseStormDash')&&script.includes('function triggerCritEcho')&&script.includes('function triggerHammerWave')&&script.includes('player.guardCd'),'Gear 2.0 combat effects are incomplete');
+for(const signature of ['trailwarden','ironGuild','redBanner','moonlitScout','coinseeker','towerBulwark','stormrunner','hammerChoir','lanternGuard','grandWayfarer','crimsonOath','moonbreaker','kingsRoad','phantomCourt','starforge','grandVoyager','riskreaver','grandVault','crownlessKing','fatebound'])assert(script.includes(signature+':{role:'),'Gear 2.0 signature is missing: '+signature);
+assert(script.includes('function releaseStormDash')&&script.includes('function triggerCritEcho')&&script.includes('function triggerMoonArc')&&script.includes('function triggerFloorSignatures')&&script.includes('player.guardCd')&&script.includes('player.fateSaved'),'Gear 2.0 combat effects are incomplete');
 assert(css.includes('.gearSignature')&&css.includes('.gearDeltaGrid')&&css.includes('.signatureAwaken'),'Gear 2.0 inventory or equip feedback is missing');
 assert(script.includes('function rollBossGear')&&script.includes('function grantBossXp')&&script.includes('function showBossLootRitual')&&script.includes('function drawBossLootChest')&&script.includes('function openBossLootChest')&&script.includes('registerRunGear(gear,false,x,y)'),'boss-only equipment, physical champion cache, loot ritual, or Pappa XP is missing');
 assert(script.includes('routeRare*.2')&&script.includes('routeRare*.55')&&script.includes('routeRare*.45'),'Moonlit Path does not improve boss set rarity');

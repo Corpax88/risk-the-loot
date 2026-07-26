@@ -3,7 +3,7 @@ const fs=require('fs'),assert=require('assert'),child=require('child_process');
 const html=fs.readFileSync('index.html','utf8');
 const css=fs.readFileSync('style.css','utf8');
 const script=fs.readFileSync('script.js','utf8');
-const pkg=JSON.parse(fs.readFileSync('package.json','utf8'));
+const packageJson=JSON.parse(fs.readFileSync('package.json','utf8'));
 const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(match=>match[1]);
 const unique=new Set(ids);
 
@@ -15,7 +15,7 @@ for(const match of script.matchAll(/\$\('([^']+)'\)/g)){
 const openBraces=(css.match(/{/g)||[]).length;
 const closeBraces=(css.match(/}/g)||[]).length;
 assert.equal(openBraces,closeBraces,'CSS braces are unbalanced');
-assert(html.includes('style.css?v='+pkg.version)&&html.includes('script.js?v='+pkg.version),'release assets are not versioned');
+assert(html.includes('style.css?v='+packageJson.version)&&html.includes('script.js?v='+packageJson.version),'release assets do not match package version '+packageJson.version);
 assert(script.includes('function beginTouchHelp')&&script.includes('function gearHelpFromNode'),'unified mobile hold-help system is missing');
 assert(css.includes('.gearHoverPreview.touchPreview'),'mobile gear comparison preview is missing');
 assert(html.includes('id="contractPrompt"')&&html.includes('id="vaultReward"')&&script.includes('function vaultProgress')&&script.includes('function openGrandVault')&&script.includes('function rollVaultGear')&&css.includes('.contractTracker.imminent')&&css.includes('.vaultReward.revealed'),'repeatable Grand Vault reward or anticipation presentation is missing');

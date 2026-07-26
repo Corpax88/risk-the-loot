@@ -1,6 +1,8 @@
-# RISK THE LOOT! v0.40.1
+# RISK THE LOOT! v0.41.0
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
+
+Gear Wardrobe replaces the old diagonal paper-doll stripes across every current item. All 20 sets now use authored material, trim, silhouette and emblem profiles across idle, run and attack animations, while all 40 legacy items share the same clean layered renderer. Hammer Choir keeps its bespoke production sprite sheets. Riskreaver, Grand Vault, Crownless King and Fatebound use separate legendary palettes, motifs and animated complete-set presentation so top-tier equipment reads immediately on Pappa Hammer.
 
 Raider Tactics gives regular enemies distinct combat jobs. Rushers weave into range before a short pounce, Gunners alternate precise shots with late-floor fan volleys, Lancers threaten a long narrow thrust, and Shield Guards lock a broad charge lane that reaches past Pappa Hammer instead of stopping short. Dashes crash into physical cover, successful attacks enter visible recovery windows, and authored telegraphs keep every threat readable on mobile and desktop.
 

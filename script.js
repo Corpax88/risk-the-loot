@@ -294,6 +294,36 @@
     {id:'crownlessKing',name:'CROWNLESS KING',rarity:'legendary',minLevel:20,color:'#151d33',accent:'#f0c66a',mark:'\u2654',focus:['damage','hp'],bonus:{2:{damage:5,hp:28},3:{crit:.07,armor:.05},5:{speed:.08,fire:.08,loot:.1}}},
     {id:'fatebound',name:'FATEBOUND',rarity:'legendary',minLevel:24,color:'#20203c',accent:'#e65a62',mark:'\u221E',focus:['crit','speed'],bonus:{2:{crit:.07,speed:.05},3:{fire:.085,dash:.09},5:{damage:9,crit:.06,loot:.08}}}
   ];
+  const SET_VISUAL_PROFILES={
+    trailwarden:{finish:'leather',hat:'ranger',scarf:'trail',coat:'ranger',hammer:'compass',boots:'trail',secondary:'#172a36',metal:'#d6aa58'},
+    ironGuild:{finish:'iron',hat:'helm',scarf:'guard',coat:'plate',hammer:'anvil',boots:'plate',secondary:'#1b2229',metal:'#c2b9a5'},
+    redBanner:{finish:'cloth',hat:'plume',scarf:'banner',coat:'tabard',hammer:'banner',boots:'guard',secondary:'#31151b',metal:'#f0c66a'},
+    moonlitScout:{finish:'moon',hat:'crescent',scarf:'veil',coat:'scout',hammer:'moon',boots:'swift',secondary:'#111a34',metal:'#d9e0f0'},
+    coinseeker:{finish:'gilded',hat:'goggles',scarf:'purse',coat:'seeker',hammer:'coin',boots:'trail',secondary:'#243125',metal:'#e1b34c'},
+    towerBulwark:{finish:'iron',hat:'battlement',scarf:'guard',coat:'fortress',hammer:'tower',boots:'plate',secondary:'#151d31',metal:'#aebff0'},
+    stormrunner:{finish:'storm',hat:'fins',scarf:'wind',coat:'runner',hammer:'turbine',boots:'swift',secondary:'#102a34',metal:'#9ed9e5'},
+    hammerChoir:{finish:'velvet',hat:'choir',scarf:'choir',coat:'choir',hammer:'choir',boots:'choir',secondary:'#251e38',metal:'#d7c1ff'},
+    lanternGuard:{finish:'lantern',hat:'lantern',scarf:'guard',coat:'lantern',hammer:'lantern',boots:'guard',secondary:'#2b2418',metal:'#ffe09a'},
+    grandWayfarer:{finish:'canvas',hat:'wayfarer',scarf:'trail',coat:'wayfarer',hammer:'compass',boots:'trail',secondary:'#17263d',metal:'#e4d9c3'},
+    crimsonOath:{finish:'blood',hat:'oath',scarf:'banner',coat:'oath',hammer:'oath',boots:'guard',secondary:'#270b13',metal:'#ec9295'},
+    moonbreaker:{finish:'moon',hat:'crescent',scarf:'veil',coat:'lunar',hammer:'moonblade',boots:'swift',secondary:'#11132d',metal:'#aebcf0'},
+    kingsRoad:{finish:'royal',hat:'crown',scarf:'mantle',coat:'royal',hammer:'scepter',boots:'royal',secondary:'#09162b',metal:'#d6aa58'},
+    phantomCourt:{finish:'spectral',hat:'veil',scarf:'veil',coat:'phantom',hammer:'phantom',boots:'phantom',secondary:'#171522',metal:'#b7c7d9'},
+    starforge:{finish:'forge',hat:'star',scarf:'mantle',coat:'forge',hammer:'starforge',boots:'forge',secondary:'#180f1e',metal:'#f0b83e'},
+    grandVoyager:{finish:'voyager',hat:'wayfarer',scarf:'trail',coat:'voyager',hammer:'compass',boots:'swift',secondary:'#10252f',metal:'#d6c58f'},
+    riskreaver:{finish:'infernal',hat:'reaver',scarf:'banner',coat:'reaver',hammer:'reaver',boots:'reaver',secondary:'#09070b',metal:'#f2c14f',legendary:'reaver',slotColors:{hat:'#0d1422',scarf:'#8d1f2a',coat:'#111a2b',hammer:'#171a24',boots:'#151923'}},
+    grandVault:{finish:'ivory',hat:'vault',scarf:'mantle',coat:'vault',hammer:'vault',boots:'vault',secondary:'#15213a',metal:'#d6aa58',legendary:'vault',slotColors:{hat:'#eee5d2',scarf:'#e8ddc7',coat:'#eee5d2',hammer:'#142340',boots:'#172746'}},
+    crownlessKing:{finish:'regal',hat:'brokenCrown',scarf:'mantle',coat:'crownless',hammer:'crown',boots:'royal',secondary:'#070b15',metal:'#f0c66a',legendary:'crown',slotColors:{hat:'#111a30',scarf:'#7f1826',coat:'#101a30',hammer:'#121a2c',boots:'#121a2d'}},
+    fatebound:{finish:'fate',hat:'fate',scarf:'veil',coat:'fate',hammer:'fate',boots:'fate',secondary:'#0b0b1c',metal:'#e65a62',legendary:'fate',slotColors:{hat:'#21152e',scarf:'#8d1d35',coat:'#21162c',hammer:'#231329',boots:'#20152b'}}
+  };
+  const FIELD_VISUAL_PROFILES=[
+    {finish:'canvas',hat:'ranger',scarf:'trail',coat:'ranger',hammer:'compass',boots:'trail',secondary:'#192334'},
+    {finish:'iron',hat:'helm',scarf:'guard',coat:'plate',hammer:'anvil',boots:'plate',secondary:'#181e28'},
+    {finish:'cloth',hat:'plume',scarf:'banner',coat:'tabard',hammer:'banner',boots:'guard',secondary:'#29171d'},
+    {finish:'moon',hat:'crescent',scarf:'veil',coat:'scout',hammer:'moon',boots:'swift',secondary:'#10182c'},
+    {finish:'gilded',hat:'goggles',scarf:'purse',coat:'seeker',hammer:'coin',boots:'trail',secondary:'#25271b'},
+    {finish:'forge',hat:'star',scarf:'mantle',coat:'forge',hammer:'starforge',boots:'forge',secondary:'#190f19'}
+  ];
   const GEAR_SIGNATURES={
     trailwarden:{role:'HUNTER',name:'TRAIL MOMENTUM',unlock:'Defeating foes shaves time from Dash recovery.',mastery:'Every takedown restores more Dash, with a powerful elite reset.',color:'#d6aa58'},
     ironGuild:{role:'COMEBACK',name:'IRON WILL',unlock:'Below 40% health, gain 12% damage and 6% armor.',mastery:'Below 40% health, gain 20% damage and 10% armor.',color:'#c2b9a5'},
@@ -377,19 +407,78 @@
   function equippedFullSetId(){let items=GEAR_SLOTS.map(equippedItem);if(items.some(item=>!item||!item.setId))return null;let setId=items[0].setId;return items.every(item=>item.setId===setId)?setId:null}
   function paperDollAssetsReady(){return PAPER_DOLL_POSES.every(pose=>imageReady(pappaHammerSprites[pose])&&GEAR_SLOTS.every(slot=>imageReady(paperDollMasks[pose][slot])))}
   function paperDollSetReady(setId){let sprites=paperDollSetSprites[setId];return !!sprites&&PAPER_DOLL_POSES.every(pose=>imageReady(sprites[pose]))}
-  function drawPaperDollPattern(layer,item){
-    let style=item.visual.style%6,rarity=LOOT_RARITIES[item.rarity],cell=PAPER_DOLL_CELL,scale=cell/128,step=(18-style)*scale;layer.save();layer.globalCompositeOperation='source-atop';layer.strokeStyle=item.visual.accent;layer.fillStyle=item.visual.accent;layer.globalAlpha=.1+rarity.rank*.035;layer.lineWidth=(1.15+rarity.rank*.22)*scale;
-    if(style===0){layer.beginPath();layer.moveTo(0,cell*.64);layer.lineTo(cell,cell*.64);layer.stroke()}
-    else if(style===1||style===5){for(let x=-cell;x<cell*2;x+=step){layer.beginPath();layer.moveTo(x,cell);layer.lineTo(x+cell,0);layer.stroke()}if(style===5){layer.globalAlpha*=.55;for(let x=0;x<cell*2;x+=step*2){layer.beginPath();layer.moveTo(x,0);layer.lineTo(x-cell,cell);layer.stroke()}}}
-    else if(style===2){for(let x=9*scale;x<cell;x+=step){layer.beginPath();layer.moveTo(x,0);layer.lineTo(x,cell);layer.stroke()}}
-    else if(style===3){for(let y=10*scale;y<cell;y+=step){layer.beginPath();layer.moveTo(0,y);layer.lineTo(cell,y);layer.stroke()}}
-    else{for(let y=10*scale;y<cell;y+=step)for(let x=10*scale;x<cell;x+=step){layer.beginPath();layer.arc(x,y,(rarity.rank>=3?2.1:1.45)*scale,0,Math.PI*2);layer.fill()}}
-    if(rarity.rank>=2){layer.globalAlpha=.12+rarity.rank*.035;layer.lineWidth=(1.4+rarity.rank*.25)*scale;for(let x=-cell*.5;x<cell*1.5;x+=cell*.22){layer.beginPath();layer.moveTo(x,cell);layer.lineTo(x+cell*.28,0);layer.stroke()}}
-    if(rarity.rank>=3){layer.globalAlpha=.16;for(let y=cell*.16;y<cell;y+=cell*.22)for(let x=cell*.12;x<cell;x+=cell*.24){layer.save();layer.translate(x,y);layer.rotate(Math.PI/4);layer.strokeRect(-2.2*scale,-2.2*scale,4.4*scale,4.4*scale);layer.restore()}}
-    if(rarity.rank===4){layer.globalAlpha=.26;layer.strokeStyle='#fff1bf';layer.lineWidth=1.7*scale;layer.beginPath();layer.moveTo(0,cell*.08);layer.lineTo(cell,cell*.08);layer.moveTo(0,cell*.92);layer.lineTo(cell,cell*.92);layer.stroke()}
+  function paperDollRgb(value){
+    let hex=String(value||'#596a84').replace('#','');if(hex.length===3)hex=hex.split('').map(part=>part+part).join('');
+    let number=parseInt(hex.slice(0,6),16);return Number.isFinite(number)?[(number>>16)&255,(number>>8)&255,number&255]:[89,106,132]
+  }
+  function paperDollMix(a,b,amount){
+    let from=paperDollRgb(a),to=paperDollRgb(b),t=Math.max(0,Math.min(1,amount)),parts=from.map((value,index)=>Math.round(value+(to[index]-value)*t));
+    return '#'+parts.map(value=>value.toString(16).padStart(2,'0')).join('')
+  }
+  function paperDollRgba(value,alpha){let rgb=paperDollRgb(value);return 'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+alpha+')'}
+  function paperDollProfile(item){
+    let set=item.setId&&SET_BY_ID[item.setId],base=set&&SET_VISUAL_PROFILES[set.id]||FIELD_VISUAL_PROFILES[(item.visual.style||0)%FIELD_VISUAL_PROFILES.length],rarity=LOOT_RARITIES[item.rarity],primary=base.slotColors&&base.slotColors[item.slot]||set&&set.color||item.visual.color,accent=set?set.accent:item.visual.accent;
+    return Object.assign({},base,{id:set?set.id:'field-'+(item.visual.variant||0),primary,accent,light:paperDollMix(primary,accent,.34),shadow:paperDollMix(base.secondary||primary,'#030711',.42),metal:base.metal||accent,mark:set&&set.mark||item.visual.mark,rank:rarity.rank,rarity})
+  }
+  function paperDollRoundedPath(layer,x,y,w,h,r){
+    layer.beginPath();
+    if(typeof layer.roundRect==='function')layer.roundRect(x,y,w,h,Math.min(r,w/2,h/2));
+    else{let radius=Math.min(r,w/2,h/2);layer.moveTo(x+radius,y);layer.lineTo(x+w-radius,y);layer.quadraticCurveTo(x+w,y,x+w,y+radius);layer.lineTo(x+w,y+h-radius);layer.quadraticCurveTo(x+w,y+h,x+w-radius,y+h);layer.lineTo(x+radius,y+h);layer.quadraticCurveTo(x,y+h,x,y+h-radius);layer.lineTo(x,y+radius);layer.quadraticCurveTo(x,y,x+radius,y)}
+  }
+  function paperDollPlate(layer,x,y,w,h,r,fill,stroke,lineWidth){
+    paperDollRoundedPath(layer,x,y,w,h,r);layer.fillStyle=fill;layer.fill();layer.strokeStyle=stroke;layer.lineWidth=lineWidth||2;layer.stroke()
+  }
+  function paperDollRivet(layer,x,y,r,color){
+    layer.fillStyle='#080b11';layer.beginPath();layer.arc(x+1,y+1,r+1,0,Math.PI*2);layer.fill();layer.fillStyle=color;layer.beginPath();layer.arc(x,y,r,0,Math.PI*2);layer.fill();layer.fillStyle=paperDollMix(color,'#ffffff',.58);layer.beginPath();layer.arc(x-r*.28,y-r*.3,Math.max(1,r*.27),0,Math.PI*2);layer.fill()
+  }
+  function paperDollGem(layer,x,y,r,profile){
+    layer.save();layer.shadowColor=profile.accent;layer.shadowBlur=profile.rank===4?10:5;layer.fillStyle=paperDollMix(profile.accent,'#ffffff',.34);layer.strokeStyle=profile.shadow;layer.lineWidth=2;layer.beginPath();layer.moveTo(x,y-r);layer.lineTo(x+r*.78,y);layer.lineTo(x,y+r);layer.lineTo(x-r*.78,y);layer.closePath();layer.fill();layer.stroke();layer.restore()
+  }
+  function drawPaperDollMaterial(layer,item,slot,b,pose,frame){
+    if(!b)return;let profile=paperDollProfile(item),x=b.x,y=b.y,w=b.w,h=b.h,rank=profile.rank,finish=profile.finish;
+    layer.save();layer.globalCompositeOperation='source-atop';
+    let material=layer.createLinearGradient(x,y,x+w*.72,y+h);material.addColorStop(0,paperDollMix(profile.primary,'#ffffff',finish==='ivory'?.1:.045));material.addColorStop(.3,profile.primary);material.addColorStop(.74,paperDollMix(profile.primary,profile.shadow,.16));material.addColorStop(1,profile.shadow);
+    layer.globalAlpha=finish==='ivory'?.88:.76+rank*.025;layer.fillStyle=material;layer.fillRect(x-3,y-3,w+6,h+6);
+    let depth=layer.createRadialGradient(x+w*.3,y+h*.18,3,x+w*.52,y+h*.5,Math.max(w,h)*.76);depth.addColorStop(0,'rgba(255,255,255,.24)');depth.addColorStop(.42,'rgba(255,255,255,0)');depth.addColorStop(1,'rgba(0,0,0,.5)');layer.globalAlpha=.54;layer.fillStyle=depth;layer.fillRect(x-4,y-4,w+8,h+8);
+
+    layer.globalAlpha=.52;layer.fillStyle=paperDollRgba(profile.secondary,.9);layer.strokeStyle=paperDollRgba(profile.metal,.92);layer.lineWidth=rank===4?2.8:2;
+    if(slot==='hat'){
+      layer.fillRect(x+w*.08,y+h*.48,w*.84,h*.18);layer.globalAlpha=.88;layer.beginPath();layer.moveTo(x+w*.1,y+h*.48);layer.lineTo(x+w*.9,y+h*.48);layer.stroke()
+    }else if(slot==='scarf'){
+      layer.globalAlpha=.32;layer.beginPath();layer.moveTo(x+w*.03,y+h*.18);layer.lineTo(x+w*.55,y+h*.23);layer.lineTo(x+w*.39,y+h*.94);layer.lineTo(x+w*.08,y+h*.82);layer.closePath();layer.fill()
+    }else if(slot==='coat'){
+      layer.globalAlpha=.36;layer.beginPath();layer.moveTo(x+w*.02,y+h*.13);layer.lineTo(x+w*.28,y+h*.08);layer.lineTo(x+w*.38,y+h*.94);layer.lineTo(x+w*.03,y+h*.98);layer.closePath();layer.fill();layer.beginPath();layer.moveTo(x+w*.7,y+h*.09);layer.lineTo(x+w*.98,y+h*.16);layer.lineTo(x+w*.97,y+h*.96);layer.lineTo(x+w*.62,y+h*.94);layer.closePath();layer.fill();
+      layer.globalAlpha=.78;layer.beginPath();layer.moveTo(x+w*.38,y+h*.12);layer.lineTo(x+w*.49,y+h*.4);layer.lineTo(x+w*.6,y+h*.12);layer.stroke()
+    }else if(slot==='hammer'){
+      layer.globalAlpha=.55;paperDollRoundedPath(layer,x+w*.14,y+h*.15,w*.72,h*.7,Math.min(9,h*.12));layer.fill();layer.globalAlpha=.9;paperDollRoundedPath(layer,x+w*.17,y+h*.18,w*.66,h*.64,Math.min(7,h*.1));layer.stroke()
+    }else if(slot==='boots'){
+      layer.globalAlpha=.5;layer.fillRect(x,y+h*.58,w,h*.42);layer.globalAlpha=.82;layer.beginPath();layer.moveTo(x,y+h*.64);layer.lineTo(x+w,y+h*.64);layer.stroke()
+    }
+
+    layer.globalAlpha=rank===4?.78:rank===3?.62:.48;layer.strokeStyle=paperDollRgba(profile.metal,.95);layer.fillStyle=paperDollRgba(profile.accent,.72);layer.lineWidth=rank===4?2.5:1.8;
+    if(['iron','forge','ivory','regal'].includes(finish)){
+      layer.beginPath();layer.ellipse(x+w*.52,y+h*.47,w*.27,h*.22,-.08,Math.PI*.12,Math.PI*1.78);layer.stroke();
+      if(rank>=3){paperDollRivet(layer,x+w*.31,y+h*.31,1.8,profile.metal);paperDollRivet(layer,x+w*.7,y+h*.68,1.8,profile.metal)}
+    }else if(['moon','storm','spectral','fate'].includes(finish)){
+      layer.globalAlpha=rank===4?.46:.3;let glow=layer.createRadialGradient(x+w*.52,y+h*.44,1,x+w*.52,y+h*.44,Math.min(w,h)*.32);glow.addColorStop(0,paperDollRgba(profile.accent,.72));glow.addColorStop(1,paperDollRgba(profile.accent,0));layer.fillStyle=glow;layer.fillRect(x,y,w,h);
+      if(rank>=3)paperDollGem(layer,x+w*.6,y+h*.36,2.8+rank*.38,profile)
+    }else if(['leather','canvas','voyager'].includes(finish)){
+      layer.globalAlpha=.52;paperDollRoundedPath(layer,x+w*.22,y+h*.25,w*.4,h*.34,Math.min(w,h)*.07);layer.stroke();
+      paperDollRivet(layer,x+w*.25,y+h*.28,1.6,profile.metal);paperDollRivet(layer,x+w*.59,y+h*.55,1.6,profile.metal)
+    }else if(['gilded','royal','lantern'].includes(finish)){
+      layer.globalAlpha=.64;layer.beginPath();layer.arc(x+w*.5,y+h*.47,Math.min(w,h)*.2,0,Math.PI*2);layer.stroke();
+      if(rank>=2)paperDollGem(layer,x+w*.5,y+h*.47,2.7+rank*.42,profile)
+    }else if(['blood','infernal'].includes(finish)){
+      layer.globalAlpha=.42;layer.fillStyle=paperDollRgba(profile.accent,.72);layer.beginPath();layer.moveTo(x+w*.34,y+h*.2);layer.lineTo(x+w*.66,y+h*.2);layer.lineTo(x+w*.56,y+h*.77);layer.lineTo(x+w*.43,y+h*.77);layer.closePath();layer.fill()
+    }
     layer.restore()
   }
   const PAPER_DOLL_RENDER_ORDER=['scarf','coat','boots','hat','hammer'];
+  function cleanPaperDollMask(maskLayer){
+    let image=maskLayer.getImageData(0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL),pixels=image.data;
+    for(let index=3;index<pixels.length;index+=4){let alpha=pixels[index];pixels[index]=alpha<=18?0:Math.min(255,Math.round((alpha-18)*1.18))}
+    maskLayer.putImageData(image,0,0)
+  }
   function paperDollMaskBounds(maskLayer){
     let pixels=maskLayer.getImageData(0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL).data,minX=PAPER_DOLL_CELL,minY=PAPER_DOLL_CELL,maxX=-1,maxY=-1;
     for(let y=0;y<PAPER_DOLL_CELL;y+=2)for(let x=0;x<PAPER_DOLL_CELL;x+=2)if(pixels[(y*PAPER_DOLL_CELL+x)*4+3]>20){if(x<minX)minX=x;if(y<minY)minY=y;if(x>maxX)maxX=x;if(y>maxY)maxY=y}
@@ -399,27 +488,91 @@
     let set=item.setId&&SET_BY_ID[item.setId],mark=set&&set.mark||item.visual.mark||'\u2726';layer.save();layer.textAlign='center';layer.textBaseline='middle';layer.font='900 '+Math.max(10,size)+'px Georgia,serif';layer.lineWidth=Math.max(2,size*.16);layer.strokeStyle='#111827';layer.strokeText(mark,x,y);layer.fillStyle=item.visual.accent;layer.fillText(mark,x,y);layer.restore()
   }
   function drawPaperDollGeometry(layer,slot,item,b,pose,frame){
-    if(!b)return;let rarity=LOOT_RARITIES[item.rarity],rank=rarity.rank,x=b.x,y=b.y,w=b.w,h=b.h,accent=item.visual.accent;
-    layer.save();layer.lineJoin='round';layer.lineCap='round';
+    if(!b)return;let profile=paperDollProfile(item),rank=profile.rank,x=b.x,y=b.y,w=b.w,h=b.h,accent=profile.accent,metal=profile.metal,dark=profile.shadow,translucent=paperDollRgba(paperDollMix(profile.primary,profile.light,.2),.68);
+    layer.save();layer.lineJoin='round';layer.lineCap='round';layer.shadowColor=rank===4?accent:'transparent';layer.shadowBlur=rank===4?4:0;
     if(slot==='hat'){
-      layer.strokeStyle='#111827';layer.lineWidth=6;layer.beginPath();layer.moveTo(x+w*.27,y+h*.57);layer.quadraticCurveTo(x+w*.5,y+h*.64,x+w*.74,y+h*.57);layer.stroke();layer.strokeStyle=accent;layer.lineWidth=2.5;layer.stroke();drawPaperDollMark(layer,item,x+w*.5,y+h*.42,8+rank)
+      layer.strokeStyle=dark;layer.lineWidth=6;layer.beginPath();layer.moveTo(x+w*.18,y+h*.59);layer.quadraticCurveTo(x+w*.5,y+h*.67,x+w*.82,y+h*.58);layer.stroke();layer.strokeStyle=metal;layer.lineWidth=2.5;layer.stroke();
+      if(['helm','battlement','vault'].includes(profile.hat)){
+        layer.strokeStyle=metal;layer.lineWidth=3;layer.beginPath();layer.arc(x+w*.5,y+h*.35,w*.21,Math.PI,Math.PI*2);layer.stroke();
+        if(profile.hat==='battlement')for(let i=0;i<3;i++)paperDollPlate(layer,x+w*(.38+i*.1),y+h*.12,w*.07,h*.14,2,translucent,dark,2)
+      }else if(['crown','brokenCrown'].includes(profile.hat)){
+        layer.fillStyle=translucent;layer.strokeStyle=metal;layer.lineWidth=2.5;layer.beginPath();layer.moveTo(x+w*.35,y+h*.34);for(let i=0;i<4;i++){let px=x+w*(.38+i*.09),py=y+h*(i%2?.08:.22);if(profile.hat==='brokenCrown'&&i===2)py=y+h*.27;layer.lineTo(px,py)}layer.lineTo(x+w*.68,y+h*.35);layer.closePath();layer.fill();layer.stroke()
+      }else if(profile.hat==='reaver'){
+        layer.fillStyle=translucent;layer.strokeStyle=metal;layer.lineWidth=3;for(const side of [-1,1]){let cx=x+w*(side<0?.31:.69);layer.beginPath();layer.moveTo(cx,y+h*.29);layer.lineTo(cx+side*w*.09,y+h*.02);layer.lineTo(cx+side*w*.13,y+h*.32);layer.closePath();layer.fill();layer.stroke()}
+      }else if(['plume','oath'].includes(profile.hat)){
+        layer.fillStyle=paperDollRgba(accent,.78);layer.strokeStyle=dark;layer.lineWidth=2.5;layer.beginPath();layer.moveTo(x+w*.42,y+h*.3);layer.quadraticCurveTo(x+w*.25,y-h*.04,x+w*.12,y+h*.18);layer.quadraticCurveTo(x+w*.28,y+h*.15,x+w*.45,y+h*.42);layer.closePath();layer.fill();layer.stroke()
+      }else if(['crescent','fate'].includes(profile.hat)){
+        layer.strokeStyle=metal;layer.lineWidth=4;layer.beginPath();layer.arc(x+w*.52,y+h*.25,w*.13,Math.PI*.7,Math.PI*1.94);layer.stroke();
+        if(profile.hat==='fate'){layer.strokeStyle=accent;layer.lineWidth=1.8;layer.beginPath();layer.ellipse(x+w*.52,y+h*.28,w*.23,h*.17,-.15,0,Math.PI*2);layer.stroke()}
+      }else if(profile.hat==='goggles'){
+        for(const gx of [x+w*.43,x+w*.59]){layer.fillStyle=paperDollRgba(paperDollMix(profile.primary,'#bdefff',.62),.72);layer.strokeStyle=metal;layer.lineWidth=2.4;layer.beginPath();layer.arc(gx,y+h*.38,w*.065,0,Math.PI*2);layer.fill();layer.stroke()}
+      }else if(['fins','star','lantern'].includes(profile.hat)){
+        paperDollGem(layer,x+w*.5,y+h*.25,5+rank*.55,profile);layer.strokeStyle=metal;layer.lineWidth=2.5;layer.beginPath();layer.moveTo(x+w*.5,y+h*.06);layer.lineTo(x+w*.5,y+h*.2);layer.stroke()
+      }else if(profile.hat==='veil'){
+        layer.strokeStyle=paperDollRgba(profile.light,.8);layer.lineWidth=3;layer.beginPath();layer.moveTo(x+w*.3,y+h*.35);layer.quadraticCurveTo(x+w*.16,y+h*.76,x+w*.37,y+h*.68);layer.stroke()
+      }
+      drawPaperDollMark(layer,item,x+w*.52,y+h*.43,8+rank)
+    }else if(slot==='scarf'){
+      let claspX=x+w*.35,claspY=y+h*.35;layer.strokeStyle=dark;layer.lineWidth=4;layer.beginPath();layer.moveTo(x+w*.08,y+h*.57);layer.quadraticCurveTo(x+w*.23,y+h*.31,claspX,claspY);layer.stroke();layer.strokeStyle=metal;layer.lineWidth=2;layer.stroke();
+      if(['banner','wind'].includes(profile.scarf)){layer.strokeStyle=accent;layer.lineWidth=3;layer.beginPath();layer.moveTo(x+w*.1,y+h*.42);layer.quadraticCurveTo(x+w*.02,y+h*.74,x+w*.17,y+h*.65);layer.stroke()}
+      if(['veil','mantle'].includes(profile.scarf)){layer.strokeStyle=paperDollRgba(accent,.78);layer.lineWidth=2.5;layer.beginPath();layer.moveTo(x+w*.13,y+h*.51);layer.quadraticCurveTo(x+w*.06,y+h*.82,x+w*.27,y+h*.72);layer.stroke()}
+      if(profile.scarf==='trail'){layer.strokeStyle=metal;layer.lineWidth=2;for(let i=0;i<2;i++){layer.beginPath();layer.moveTo(x+w*.15,y+h*(.36+i*.09));layer.quadraticCurveTo(x+w*.3,y+h*(.3+i*.08),x+w*.45,y+h*(.36+i*.07));layer.stroke()}}
+      if(profile.scarf==='guard'){paperDollPlate(layer,x+w*.26,y+h*.25,w*.2,h*.22,4,paperDollRgba(profile.secondary,.82),metal,2);paperDollRivet(layer,x+w*.3,y+h*.31,1.5,metal);paperDollRivet(layer,x+w*.42,y+h*.31,1.5,metal)}
+      if(profile.scarf==='purse'){layer.strokeStyle=metal;layer.lineWidth=1.8;layer.beginPath();layer.arc(claspX,claspY,7,0,Math.PI*2);layer.stroke();layer.beginPath();layer.moveTo(claspX+5,claspY+5);layer.quadraticCurveTo(claspX+14,claspY+13,claspX+19,claspY+5);layer.stroke()}
+      paperDollGem(layer,claspX,claspY,3.3+rank*.45,profile)
     }else if(slot==='coat'){
-      if(rank>=2)drawPaperDollMark(layer,item,x+w*.39,y+h*.44,9+rank*1.15)
+      let shoulderY=y+h*.23,leftX=x+w*.2,rightX=x+w*.85,armored=['plate','fortress','forge','reaver','vault','crownless'].includes(profile.coat);
+      layer.strokeStyle=metal;layer.lineWidth=armored?4:3;layer.beginPath();layer.moveTo(leftX-w*.08,shoulderY+h*.02);layer.quadraticCurveTo(leftX,shoulderY-h*.055,leftX+w*.09,shoulderY+h*.02);layer.moveTo(rightX-w*.08,shoulderY+h*.02);layer.quadraticCurveTo(rightX,shoulderY-h*.055,rightX+w*.07,shoulderY+h*.025);layer.stroke();
+      if(armored){paperDollRivet(layer,leftX,shoulderY,2.1,metal);paperDollRivet(layer,rightX,shoulderY,2.1,metal)}
+      if(['reaver','forge'].includes(profile.coat)){layer.fillStyle=metal;layer.strokeStyle=dark;layer.lineWidth=2;for(const [sx,side] of [[leftX,-1],[rightX,1]]){layer.beginPath();layer.moveTo(sx-side*w*.02,shoulderY);layer.lineTo(sx+side*w*.06,shoulderY-h*.09);layer.lineTo(sx+side*w*.075,shoulderY+h*.015);layer.closePath();layer.fill();layer.stroke()}}
+      if(['royal','crownless','vault'].includes(profile.coat)){layer.strokeStyle=metal;layer.lineWidth=2.5;layer.beginPath();layer.moveTo(leftX+w*.02,shoulderY+h*.04);layer.quadraticCurveTo(x+w*.5,y+h*.41,rightX-w*.03,shoulderY+h*.04);layer.stroke()}
+      if(['phantom','fate','lunar'].includes(profile.coat)){layer.strokeStyle=paperDollRgba(accent,.82);layer.lineWidth=2.4;layer.beginPath();layer.arc(x+w*.49,y+h*.45,w*.13,Math.PI*.78,Math.PI*1.9);layer.stroke()}
+      if(['ranger','wayfarer','voyager'].includes(profile.coat)){layer.strokeStyle=metal;layer.lineWidth=1.6;for(const px of [x+w*.22,x+w*.72]){paperDollRivet(layer,px,y+h*.5,1.7,metal);layer.beginPath();layer.moveTo(px-w*.035,y+h*.56);layer.lineTo(px+w*.035,y+h*.56);layer.stroke()}}
+      if(['scout','runner'].includes(profile.coat)){layer.fillStyle=paperDollRgba(accent,.72);for(const side of [-1,1]){let sx=x+w*(side<0?.24:.75);layer.beginPath();layer.moveTo(sx,shoulderY+h*.02);layer.lineTo(sx+side*w*.08,shoulderY+h*.08);layer.lineTo(sx+side*w*.015,shoulderY+h*.11);layer.closePath();layer.fill()}}
+      if(['oath','tabard'].includes(profile.coat)){layer.strokeStyle=accent;layer.lineWidth=2.4;layer.beginPath();layer.moveTo(x+w*.4,y+h*.3);layer.lineTo(x+w*.5,y+h*.58);layer.lineTo(x+w*.6,y+h*.3);layer.stroke()}
+      if(profile.coat==='lantern'){paperDollGem(layer,x+w*.49,y+h*.44,5.2,profile);layer.strokeStyle=metal;layer.lineWidth=1.8;layer.beginPath();layer.arc(x+w*.49,y+h*.44,9,0,Math.PI*2);layer.stroke()}
+      drawPaperDollMark(layer,item,x+w*.49,y+h*.47,9+rank)
     }else if(slot==='hammer'){
-      drawPaperDollMark(layer,item,x+w*.79,y+h*.5,8+rank*1.1)
+      let px=x+w*.13,py=y+h*.13,pw=w*.74,ph=h*.72;layer.strokeStyle=dark;layer.lineWidth=5;paperDollRoundedPath(layer,px,py,pw,ph,Math.min(11,ph*.17));layer.stroke();layer.strokeStyle=metal;layer.lineWidth=2.8;paperDollRoundedPath(layer,px+w*.055,py+h*.055,pw-w*.11,ph-h*.11,Math.min(8,ph*.13));layer.stroke();
+      for(const [rx,ry] of [[px+pw*.1,py+ph*.15],[px+pw*.9,py+ph*.15],[px+pw*.1,py+ph*.85],[px+pw*.9,py+ph*.85]])paperDollRivet(layer,rx,ry,1.9,metal);
+      if(['moon','moonblade','phantom'].includes(profile.hammer)){layer.strokeStyle=accent;layer.lineWidth=4;layer.beginPath();layer.arc(px+pw*.52,py+ph*.5,ph*.22,Math.PI*.56,Math.PI*1.52);layer.stroke()}
+      if(['coin','turbine','starforge','compass'].includes(profile.hammer)){layer.strokeStyle=metal;layer.lineWidth=2.4;let cx=px+pw*.52,cy=py+ph*.5;layer.beginPath();layer.arc(cx,cy,ph*.22,0,Math.PI*2);layer.stroke();for(let i=0;i<4;i++){let a=i*Math.PI/2;layer.beginPath();layer.moveTo(cx+Math.cos(a)*ph*.07,cy+Math.sin(a)*ph*.07);layer.lineTo(cx+Math.cos(a)*ph*.21,cy+Math.sin(a)*ph*.21);layer.stroke()}}
+      if(['reaver','crown','fate'].includes(profile.hammer)){layer.fillStyle=metal;layer.strokeStyle=dark;layer.lineWidth=1.8;for(let i=0;i<3;i++){let sx=px+pw*(.24+i*.25);layer.beginPath();layer.moveTo(sx,py);layer.lineTo(sx+pw*.045,py-ph*.1);layer.lineTo(sx+pw*.085,py);layer.closePath();layer.fill();layer.stroke()}}
+      if(profile.hammer==='fate'){layer.strokeStyle=accent;layer.lineWidth=2.5;layer.beginPath();layer.ellipse(px+pw*.5,py+ph*.5,pw*.31,ph*.36,-.18,0,Math.PI*2);layer.stroke()}
+      if(profile.hammer==='anvil'){layer.fillStyle=paperDollRgba(metal,.38);layer.fillRect(px+pw*.08,py+ph*.18,pw*.84,ph*.2);layer.fillRect(px+pw*.15,py+ph*.62,pw*.7,ph*.18)}
+      if(['banner','oath'].includes(profile.hammer)){layer.strokeStyle=accent;layer.lineWidth=2.4;layer.beginPath();layer.moveTo(px+pw*.5,py+ph*.14);layer.lineTo(px+pw*.5,py+ph*.86);layer.moveTo(px+pw*.33,py+ph*.27);layer.lineTo(px+pw*.67,py+ph*.27);layer.stroke()}
+      if(['tower','vault'].includes(profile.hammer)){paperDollPlate(layer,px+pw*.31,py+ph*.25,pw*.38,ph*.5,5,paperDollRgba(profile.secondary,.76),metal,2);paperDollRivet(layer,px+pw*.38,py+ph*.34,1.5,metal);paperDollRivet(layer,px+pw*.62,py+ph*.66,1.5,metal)}
+      if(profile.hammer==='lantern'){paperDollGem(layer,px+pw*.51,py+ph*.5,7,profile);layer.strokeStyle=metal;layer.lineWidth=2;layer.beginPath();layer.arc(px+pw*.51,py+ph*.5,11,0,Math.PI*2);layer.stroke()}
+      drawPaperDollMark(layer,item,px+pw*.52,py+ph*.5,10+rank)
+    }else if(slot==='boots'){
+      for(const bx of [x+w*.18,x+w*.79]){
+        let bootW=w*.16,baseY=y+h*.72;layer.strokeStyle=dark;layer.lineWidth=4;layer.beginPath();layer.moveTo(bx-bootW*.55,baseY);layer.quadraticCurveTo(bx,baseY+h*.1,bx+bootW*.62,baseY-h*.01);layer.stroke();layer.strokeStyle=metal;layer.lineWidth=2.5;layer.stroke();
+        if(['plate','vault','reaver'].includes(profile.boots))paperDollRivet(layer,bx,baseY-h*.035,2.1,metal)
+      }
+      if(['trail','guard','forge','royal'].includes(profile.boots)){layer.strokeStyle=metal;layer.lineWidth=2;for(const bx of [x+w*.18,x+w*.79]){layer.beginPath();layer.moveTo(bx-w*.045,y+h*.58);layer.lineTo(bx+w*.04,y+h*.58);layer.moveTo(bx-w*.035,y+h*.63);layer.lineTo(bx+w*.05,y+h*.63);layer.stroke()}}
+      if(['swift','phantom','fate'].includes(profile.boots)){layer.strokeStyle=accent;layer.lineWidth=2.5;for(const bx of [x+w*.18,x+w*.79]){layer.beginPath();layer.moveTo(bx-w*.02,y+h*.67);layer.lineTo(bx-w*.07,y+h*.56);layer.moveTo(bx+w*.005,y+h*.68);layer.lineTo(bx-w*.045,y+h*.61);layer.stroke()}}
+      if(profile.boots==='reaver'){layer.fillStyle=metal;for(const bx of [x+w*.18,x+w*.79]){layer.beginPath();layer.moveTo(bx+w*.055,y+h*.7);layer.lineTo(bx+w*.1,y+h*.65);layer.lineTo(bx+w*.08,y+h*.75);layer.closePath();layer.fill()}}
     }
     layer.restore()
   }
   function composePaperDollPose(pose){
     let source=pappaHammerSprites[pose],out=document.createElement('canvas'),scratch=document.createElement('canvas'),maskScratch=document.createElement('canvas'),shapeScratch=document.createElement('canvas');out.width=PAPER_DOLL_CELL*4;out.height=PAPER_DOLL_CELL*2;scratch.width=scratch.height=maskScratch.width=maskScratch.height=shapeScratch.width=shapeScratch.height=PAPER_DOLL_CELL;let outCtx=out.getContext('2d'),layer=scratch.getContext('2d'),maskLayer=maskScratch.getContext('2d'),shapeLayer=shapeScratch.getContext('2d');if(!outCtx||!layer||!maskLayer||!shapeLayer)return source;outCtx.imageSmoothingEnabled=layer.imageSmoothingEnabled=maskLayer.imageSmoothingEnabled=shapeLayer.imageSmoothingEnabled=true;outCtx.imageSmoothingQuality=layer.imageSmoothingQuality=maskLayer.imageSmoothingQuality=shapeLayer.imageSmoothingQuality='high';
-    for(let frame=0;frame<8;frame++){let sx=frame%4*512,sy=Math.floor(frame/4)*512,mx=frame%4*PAPER_DOLL_MASK_CELL,my=Math.floor(frame/4)*PAPER_DOLL_MASK_CELL,dx=frame%4*PAPER_DOLL_CELL,dy=Math.floor(frame/4)*PAPER_DOLL_CELL;outCtx.drawImage(source,sx,sy,512,512,dx,dy,PAPER_DOLL_CELL,PAPER_DOLL_CELL);for(const slot of PAPER_DOLL_RENDER_ORDER){let item=equippedItem(slot);if(!item)continue;let mask=paperDollMasks[pose][slot],rarity=LOOT_RARITIES[item.rarity];maskLayer.clearRect(0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);maskLayer.globalCompositeOperation='source-over';maskLayer.globalAlpha=1;maskLayer.drawImage(mask,mx,my,PAPER_DOLL_MASK_CELL,PAPER_DOLL_MASK_CELL,0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);let bounds=paperDollMaskBounds(maskLayer);layer.clearRect(0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);layer.globalCompositeOperation='source-over';layer.globalAlpha=1;layer.drawImage(source,sx,sy,512,512,0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);layer.globalCompositeOperation='destination-in';layer.drawImage(maskScratch,0,0);layer.globalCompositeOperation='source-atop';layer.globalAlpha=.24+rarity.rank*.065;layer.fillStyle=item.visual.color;layer.fillRect(0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);layer.globalAlpha=1;drawPaperDollPattern(layer,item);layer.globalCompositeOperation='source-over';outCtx.drawImage(scratch,dx,dy);shapeLayer.clearRect(0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);drawPaperDollGeometry(shapeLayer,slot,item,bounds,pose,frame);outCtx.drawImage(shapeScratch,dx,dy)}}return out
+    for(let frame=0;frame<8;frame++){let sx=frame%4*512,sy=Math.floor(frame/4)*512,mx=frame%4*PAPER_DOLL_MASK_CELL,my=Math.floor(frame/4)*PAPER_DOLL_MASK_CELL,dx=frame%4*PAPER_DOLL_CELL,dy=Math.floor(frame/4)*PAPER_DOLL_CELL;outCtx.drawImage(source,sx,sy,512,512,dx,dy,PAPER_DOLL_CELL,PAPER_DOLL_CELL);for(const slot of PAPER_DOLL_RENDER_ORDER){let item=equippedItem(slot);if(!item)continue;let mask=paperDollMasks[pose][slot];maskLayer.clearRect(0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);maskLayer.globalCompositeOperation='source-over';maskLayer.globalAlpha=1;maskLayer.drawImage(mask,mx,my,PAPER_DOLL_MASK_CELL,PAPER_DOLL_MASK_CELL,0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);cleanPaperDollMask(maskLayer);let bounds=paperDollMaskBounds(maskLayer);layer.clearRect(0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);layer.globalCompositeOperation='source-over';layer.globalAlpha=1;layer.drawImage(source,sx,sy,512,512,0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);layer.globalCompositeOperation='destination-in';layer.drawImage(maskScratch,0,0);layer.globalCompositeOperation='source-over';drawPaperDollMaterial(layer,item,slot,bounds,pose,frame);outCtx.drawImage(scratch,dx,dy);shapeLayer.clearRect(0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);shapeLayer.globalCompositeOperation='source-over';drawPaperDollGeometry(shapeLayer,slot,item,bounds,pose,frame);shapeLayer.globalCompositeOperation='destination-in';shapeLayer.drawImage(maskScratch,0,0);shapeLayer.globalCompositeOperation='source-over';outCtx.drawImage(shapeScratch,dx,dy)}}return out
   }
   function refreshPaperDoll(){
     let fullSetId=equippedFullSetId(),setReady=paperDollSetReady(fullSetId),key=(setReady?'skin:'+fullSetId+':':'paper:')+paperDollLoadoutKey();if(key===paperDollKey&&paperDollAtlases.idle)return;if(!setReady&&!paperDollAssetsReady())return;let next={};for(const pose of PAPER_DOLL_POSES)next[pose]=setReady?paperDollSetSprites[fullSetId][pose]:composePaperDollPose(pose);paperDollAtlases=next;paperDollKey=key;let preview=next.idle&&typeof next.idle.toDataURL==='function'?'url("'+next.idle.toDataURL('image/png')+'")':'url("'+next.idle.src+'")';ui.pappaHammerBase.style.backgroundImage=preview;ui.gearCharacterHero.style.backgroundImage=preview
   }
+  function paperDollAtlasReport(pose,includePreview){
+    let atlas=paperDollAtlases[pose];if(!imageReady(atlas))return null;let width=atlas.naturalWidth||atlas.width,height=atlas.naturalHeight||atlas.height,probe=document.createElement('canvas'),probeCtx=probe.getContext('2d');probe.width=128;probe.height=64;probeCtx.drawImage(atlas,0,0,width,height,0,0,probe.width,probe.height);let pixels=probeCtx.getImageData(0,0,probe.width,probe.height).data,hash=2166136261,opaque=0;
+    for(let index=0;index<pixels.length;index+=4){let alpha=pixels[index+3];if(alpha>18)opaque++;hash^=pixels[index];hash=Math.imul(hash,16777619);hash^=pixels[index+1];hash=Math.imul(hash,16777619);hash^=pixels[index+2];hash=Math.imul(hash,16777619);hash^=alpha;hash=Math.imul(hash,16777619)}
+    let report={pose,width,height,hash:(hash>>>0).toString(16).padStart(8,'0'),opaque,corners:[pixels[3],pixels[(probe.width-1)*4+3],pixels[((probe.height-1)*probe.width)*4+3],pixels[(probe.width*probe.height-1)*4+3]]};
+    if(includePreview){let preview=document.createElement('canvas'),previewCtx=preview.getContext('2d');preview.width=preview.height=512;previewCtx.drawImage(atlas,0,0,width/4,height/2,0,0,512,512);report.preview=preview.toDataURL('image/png')}
+    return report
+  }
   function equippedSetCounts(){let counts={};for(const slot of GEAR_SLOTS){let def=equippedItem(slot);if(def&&def.setId)counts[def.setId]=(counts[def.setId]||0)+1}return counts}
-  function equippedRarityProfile(){let gear=GEAR_SLOTS.map(equippedGear).filter(Boolean).sort((a,b)=>LOOT_RARITIES[gearDefinition(b).rarity].rank-LOOT_RARITIES[gearDefinition(a).rarity].rank||gearScore(b)-gearScore(a))[0],item=gearDefinition(gear),rarity=item&&LOOT_RARITIES[item.rarity];return rarity?{rank:rarity.rank,color:rarity.color,glow:rarity.glow,name:rarity.name}:{rank:0,color:'#596a84',glow:'#596a84',name:'FIELD'}}
+  function equippedRarityProfile(){let gear=GEAR_SLOTS.map(equippedGear).filter(Boolean).sort((a,b)=>LOOT_RARITIES[gearDefinition(b).rarity].rank-LOOT_RARITIES[gearDefinition(a).rarity].rank||gearScore(b)-gearScore(a))[0],item=gearDefinition(gear),rarity=item&&LOOT_RARITIES[item.rarity],setId=equippedFullSetId(),set=setId&&SET_BY_ID[setId];return rarity?{rank:rarity.rank,color:set?set.accent:rarity.color,glow:set?paperDollMix(set.accent,'#ffffff',.16):rarity.glow,name:rarity.name,setId}:{rank:0,color:'#596a84',glow:'#596a84',name:'FIELD',setId:null}}
   function applyLoadoutRarity(element,profile){if(!element)return;for(let rank=0;rank<=4;rank++)element.classList.remove('loadoutRarity'+rank);element.classList.add('loadoutRarity'+profile.rank);element.style.setProperty('--loadout-color',profile.color);element.style.setProperty('--loadout-glow',profile.glow)}
+  function applyLoadoutSetVisual(element,setId){if(!element)return;element.classList.remove('loadoutCompleteSet','loadoutLegendarySet');if(element.removeAttribute)element.removeAttribute('data-set-mark');else if(element.dataset)delete element.dataset.setMark;let set=setId&&SET_BY_ID[setId];if(!set)return;element.classList.add('loadoutCompleteSet');if(set.rarity==='legendary')element.classList.add('loadoutLegendarySet');if(element.dataset)element.dataset.setMark=set.mark;element.style.setProperty('--set-color',set.color);element.style.setProperty('--set-accent',set.accent)}
   function activeSetBonuses(){let counts=equippedSetCounts(),active=[];for(const set of SET_DEFINITIONS){let count=counts[set.id]||0;for(const tier of [2,3,5])if(count>=tier&&set.bonus[tier])active.push({set,count,tier,stats:set.bonus[tier]})}return active}
   function gearSignatureTier(setId,counts){let count=(counts||equippedSetCounts())[setId]||0;return count>=5?2:count>=3?1:0}
   function activeGearSignatures(){let counts=equippedSetCounts(),active=[];for(const setId of Object.keys(GEAR_SIGNATURES)){let tier=gearSignatureTier(setId,counts);if(tier)active.push({set:SET_BY_ID[setId],signature:GEAR_SIGNATURES[setId],tier,count:counts[setId]})}return active}
@@ -659,7 +812,7 @@
   function renderGearLayers(container){container.innerHTML=''}
   function formatSetBonus(stats){return formatGearStats({stats}).join(' \u00B7 ')}
   function renderSetSummary(){let counts=equippedSetCounts(),sets=SET_DEFINITIONS.filter(set=>counts[set.id]);ui.gearSetSummary.innerHTML='';if(!sets.length){ui.gearSetSummary.innerHTML='<div class="setEmpty" data-help-title="Set Bonuses" data-help="Equip 2, 3 or 5 pieces carrying the same set name. Every set awakens a combat-changing signature at 3 pieces and masters it at 5."><b>SET BONUSES</b><span>Every named set awakens at 3 and masters at 5.</span></div>';return}for(const set of sets.sort((a,b)=>counts[b.id]-counts[a.id])){let count=counts[set.id],signature=GEAR_SIGNATURES[set.id],card=document.createElement('article');card.className='setProgress rarity'+LOOT_RARITIES[set.rarity].rank+(signature?' featured':'');card.style.setProperty('--set-color',signature?signature.color:set.accent);card.tabIndex=0;card.setAttribute('data-help-title',set.name+' Set');card.setAttribute('data-help','You wear '+count+' of 5 pieces. Bonuses awaken at 2, 3 and 5 equipped pieces.'+(signature?' '+signature.name+' awakens at 3 pieces and masters at 5.':''));let tiers=[2,3,5].map(tier=>'<span class="'+(count>=tier?'active':'locked')+'"><i>'+tier+'</i><b>'+formatSetBonus(set.bonus[tier])+'</b></span>').join('');card.innerHTML='<header><strong>'+set.mark+' '+set.name+'</strong><em>'+count+' / 5</em></header><div>'+tiers+'</div>'+(signature?gearSignatureMarkup(set,count):'');ui.gearSetSummary.appendChild(card)}}
-  function renderBaseGear(){let equipped=[];ui.baseLoadout.innerHTML='';for(const slot of GEAR_SLOTS){let gear=equippedGear(slot),item=gearDefinition(gear),meta=GEAR_SLOT_META[slot],rarity=item&&LOOT_RARITIES[item.rarity],cell=document.createElement('i');cell.className='baseGearSlot'+(item?' filled rarity'+rarity.rank:'');cell.title=item?meta.name+': '+item.name+' \u00B7 Level '+gear.level:meta.name+': Empty';if(item){equipped.push(gear);cell.style.setProperty('--gear-color',rarity.color);cell.innerHTML=gearArtMarkup(gear,'micro');cell.tabIndex=0;bindGearHover(cell,gear)}else cell.textContent='\u00B7';ui.baseLoadout.appendChild(cell)}renderGearLayers(ui.baseGearPreview);renderGearLayers(ui.gearCharacterPreview);let highest=equipped.slice().sort((a,b)=>{let ad=gearDefinition(a),bd=gearDefinition(b);return LOOT_RARITIES[bd.rarity].rank-LOOT_RARITIES[ad.rarity].rank||gearScore(b)-gearScore(a)})[0],highestDef=gearDefinition(highest),sets=equippedSetCounts(),bestSet=Object.keys(sets).sort((a,b)=>sets[b]-sets[a])[0],profile=equippedRarityProfile();applyLoadoutRarity(ui.gearCharacterStage,profile);applyLoadoutRarity(ui.pappaHammerBase,profile);ui.gearLoadoutName.textContent=equipped.length+'/5 EQUIPPED'+(bestSet&&sets[bestSet]>=2?' \u00B7 '+SET_BY_ID[bestSet].name:highestDef?' \u00B7 '+LOOT_RARITIES[highestDef.rarity].name:'');ui.gearEquippedCount.textContent=equipped.length+' / 5';ui.gearPreviewName.textContent=highestDef?highestDef.name.toUpperCase():'FIELD LOADOUT';ui.gearPreviewName.style.setProperty('--loadout-color',profile.color);let stats=gearStats();ui.baseGearStats.innerHTML='<span tabindex="0" data-help-title="Health" data-help="Maximum damage Pappa can survive before an expedition ends."><b>'+maxHp()+'</b> HP</span><span tabindex="0" data-help-title="Hammer Damage" data-help="Base damage dealt by each automatic hammer strike before critical hits and relic bonuses."><b>'+shotDamage()+'</b> DMG</span><span tabindex="0" data-help-title="Pickup Reach" data-help="Distance from which nearby coins, caches and pickups are drawn toward Pappa."><b>'+magnetRange()+'</b> REACH</span><span tabindex="0" data-help-title="Critical Chance" data-help="Chance for a hammer strike to deal amplified critical damage."><b>'+Math.round(stats.crit*100)+'%</b> CRIT</span>';refreshPaperDoll()}
+  function renderBaseGear(){let equipped=[];ui.baseLoadout.innerHTML='';for(const slot of GEAR_SLOTS){let gear=equippedGear(slot),item=gearDefinition(gear),meta=GEAR_SLOT_META[slot],rarity=item&&LOOT_RARITIES[item.rarity],cell=document.createElement('i');cell.className='baseGearSlot'+(item?' filled rarity'+rarity.rank:'');cell.title=item?meta.name+': '+item.name+' \u00B7 Level '+gear.level:meta.name+': Empty';if(item){equipped.push(gear);cell.style.setProperty('--gear-color',rarity.color);cell.innerHTML=gearArtMarkup(gear,'micro');cell.tabIndex=0;bindGearHover(cell,gear)}else cell.textContent='\u00B7';ui.baseLoadout.appendChild(cell)}renderGearLayers(ui.baseGearPreview);renderGearLayers(ui.gearCharacterPreview);let highest=equipped.slice().sort((a,b)=>{let ad=gearDefinition(a),bd=gearDefinition(b);return LOOT_RARITIES[bd.rarity].rank-LOOT_RARITIES[ad.rarity].rank||gearScore(b)-gearScore(a)})[0],highestDef=gearDefinition(highest),sets=equippedSetCounts(),bestSet=Object.keys(sets).sort((a,b)=>sets[b]-sets[a])[0],fullSetId=equippedFullSetId(),profile=equippedRarityProfile();applyLoadoutRarity(ui.gearCharacterStage,profile);applyLoadoutRarity(ui.pappaHammerBase,profile);applyLoadoutSetVisual(ui.gearCharacterStage,fullSetId);applyLoadoutSetVisual(ui.pappaHammerBase,fullSetId);ui.gearLoadoutName.textContent=equipped.length+'/5 EQUIPPED'+(bestSet&&sets[bestSet]>=2?' \u00B7 '+SET_BY_ID[bestSet].name:highestDef?' \u00B7 '+LOOT_RARITIES[highestDef.rarity].name:'');ui.gearEquippedCount.textContent=equipped.length+' / 5';ui.gearPreviewName.textContent=highestDef?highestDef.name.toUpperCase():'FIELD LOADOUT';ui.gearPreviewName.style.setProperty('--loadout-color',profile.color);let stats=gearStats();ui.baseGearStats.innerHTML='<span tabindex="0" data-help-title="Health" data-help="Maximum damage Pappa can survive before an expedition ends."><b>'+maxHp()+'</b> HP</span><span tabindex="0" data-help-title="Hammer Damage" data-help="Base damage dealt by each automatic hammer strike before critical hits and relic bonuses."><b>'+shotDamage()+'</b> DMG</span><span tabindex="0" data-help-title="Pickup Reach" data-help="Distance from which nearby coins, caches and pickups are drawn toward Pappa."><b>'+magnetRange()+'</b> REACH</span><span tabindex="0" data-help-title="Critical Chance" data-help="Chance for a hammer strike to deal amplified critical damage."><b>'+Math.round(stats.crit*100)+'%</b> CRIT</span>';refreshPaperDoll()}
   function renderGearFilters(){ui.gearFilters.innerHTML='';for(const slot of ['all',...GEAR_SLOTS]){let button=document.createElement('button'),meta=slot==='all'?{name:'ALL GEAR',icon:'\u2606'}:GEAR_SLOT_META[slot],count=slot==='all'?inventoryCount():save.gear.filter(gear=>gearDefinition(gear).slot===slot).length;button.className=gearFilter===slot?'active':'';button.setAttribute('aria-pressed',gearFilter===slot?'true':'false');button.setAttribute('data-help-title',meta.name);button.setAttribute('data-help','Show '+(slot==='all'?'every secured item':meta.name.toLowerCase()+' items')+' in the bag. '+count+' currently match.');button.innerHTML='<i>'+meta.icon+'</i><span>'+meta.name+'</span><small>'+count+'</small>';button.addEventListener('click',()=>setGearFilter(slot));ui.gearFilters.appendChild(button)}ui.gearRarityFilters.innerHTML='';for(const rarity of ['all',...Object.keys(LOOT_RARITIES)]){let button=document.createElement('button'),count=rarity==='all'?inventoryCount():save.gear.filter(gear=>gearDefinition(gear).rarity===rarity).length,label=rarity==='all'?'ALL':LOOT_RARITIES[rarity].name;button.className=gearRarityFilter===rarity?'active':'';button.textContent=label+'  '+count;button.setAttribute('aria-pressed',gearRarityFilter===rarity?'true':'false');button.setAttribute('data-help-title',label+' Rarity');button.setAttribute('data-help','Filter the bag to '+(rarity==='all'?'all rarity grades.':'only '+label+' gear. '+count+' secured item'+(count===1?' matches.':'s match.')));if(rarity!=='all')button.style.setProperty('--filter-color',LOOT_RARITIES[rarity].color);button.addEventListener('click',()=>setGearRarityFilter(rarity));ui.gearRarityFilters.appendChild(button)}}
   function renderGearRaritySummary(){ui.gearRaritySummary.innerHTML='';for(const id of Object.keys(LOOT_RARITIES)){let rarity=LOOT_RARITIES[id],count=save.gear.filter(gear=>gearDefinition(gear).rarity===id).length,button=document.createElement('button');button.className='rarityCount rarity'+rarity.rank+(gearRarityFilter===id?' active':'');button.style.setProperty('--rarity-color',rarity.color);button.innerHTML='<i></i><span><b>'+count+'</b><small>'+rarity.name+'</small></span>';button.setAttribute('data-help-title',rarity.name+' Gear');button.setAttribute('data-help',count+' '+rarity.name+' item'+(count===1?' is':'s are')+' secured. Select to toggle this rarity filter.');button.addEventListener('click',()=>setGearRarityFilter(gearRarityFilter===id?'all':id));ui.gearRaritySummary.appendChild(button)}}
   function renderGearDetail(gear,copies){
@@ -1545,6 +1698,37 @@
       },
       gearSignatureTier(setId,count){
         return gearSignatureProfileFromCounts({[setId]:count})[setId]||0
+      },
+      previewGearSet(setId){
+        let set=SET_BY_ID[setId];if(!set)return null;
+        for(const slot of GEAR_SLOTS){
+          let item=SET_ITEMS.find(entry=>entry.setId===setId&&entry.slot===slot),gear=rollGearInstance(item,Math.max(set.minLevel,save.level),1.08);
+          save.gear.push(gear);save.equipped[slot]=gear.uid
+        }
+        paperDollKey='';refreshPaperDoll();refreshBase();openGearLocker();setGearView('loadout');renderGearLocker();
+        return this.gearVisualState()
+      },
+      gearVisualState(includePreview){
+        let setId=equippedFullSetId(),set=setId&&SET_BY_ID[setId],profile=equippedRarityProfile();
+        return{setId,rarity:set&&set.rarity||profile.name.toLowerCase(),paperDollKey,usesProductionSkin:paperDollSetReady(setId),visualProfile:setId&&SET_VISUAL_PROFILES[setId]?setId:null,atlases:Object.fromEntries(PAPER_DOLL_POSES.map(pose=>[pose,paperDollAtlasReport(pose,!!includePreview&&pose==='idle')]))}
+      },
+      gearSetCatalog(){
+        return SET_DEFINITIONS.map(set=>({id:set.id,name:set.name,rarity:set.rarity,minLevel:set.minLevel}))
+      },
+      gearVisualCoverage(){
+        let missing=LOOT_ITEMS.filter(item=>item.setId?!SET_VISUAL_PROFILES[item.setId]:!FIELD_VISUAL_PROFILES.length).map(item=>item.id);
+        return{items:LOOT_ITEMS.length,setItems:SET_ITEMS.length,legacyItems:LEGACY_LOOT_ITEMS.length,sets:SET_DEFINITIONS.length,profiles:Object.keys(SET_VISUAL_PROFILES).length,missing,usesStripePattern:/drawPaperDollPattern/.test(String(composePaperDollPose))}
+      },
+      gearMaskBounds(pose,frame){
+        if(!PAPER_DOLL_POSES.includes(pose)||frame<0||frame>7)return null;
+        let canvas=document.createElement('canvas'),layer=canvas.getContext('2d'),mx=frame%4*PAPER_DOLL_MASK_CELL,my=Math.floor(frame/4)*PAPER_DOLL_MASK_CELL;
+        canvas.width=canvas.height=PAPER_DOLL_CELL;
+        return Object.fromEntries(GEAR_SLOTS.map(slot=>{
+          layer.clearRect(0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);
+          layer.drawImage(paperDollMasks[pose][slot],mx,my,PAPER_DOLL_MASK_CELL,PAPER_DOLL_MASK_CELL,0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);
+          cleanPaperDollMask(layer);
+          return[slot,paperDollMaskBounds(layer)]
+        }))
       }
     }
   }

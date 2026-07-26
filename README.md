@@ -1,4 +1,4 @@
-# RISK THE LOOT! v0.39.0
+# RISK THE LOOT! v0.40.0
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
 

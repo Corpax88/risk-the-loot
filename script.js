@@ -186,6 +186,11 @@
     ['floatingReefPillar',685,1515,72,2.5,1],['floatingReefPillar',1730,1510,74,1,0]
   ];
   const EXPEDITION_MAP_IDS=Object.keys(EXPEDITION_MAPS);
+  const MAP_ENVIRONMENT_THEMES={
+    guild:{floor:'#101b2b',line:'#31435d',detail:'#d6aa58',cover:'#17243a',coverInset:'#24344d',shadow:'#060b13'},
+    foundry:{floor:'#1c1115',line:'#4f2b2d',detail:'#e77845',cover:'#30191b',coverInset:'#4b2825',shadow:'#0d0708'},
+    summit:{floor:'#171321',line:'#463b58',detail:'#f2c14f',cover:'#242033',coverInset:'#3b3349',shadow:'#09070e'}
+  };
   const BOSSES={
     warden:{name:'VAULT WARDEN',kind:'warden',accent:'#d6aa58',intro:'THE LAST DOOR CLOSES',phase:['PHASE I \u00B7 THE FIRST LOCK','PHASE II \u00B7 SEAL THE FLOOR','PHASE III \u00B7 NO ONE LEAVES']},
     tyrant:{name:'CRIMSON CHAMPION',kind:'tyrant',accent:'#d64a50',intro:'THE CHAMPION SALUTES',phase:['PHASE I \u00B7 A FORMAL BOW','PHASE II \u00B7 RED TEMPEST','PHASE III \u00B7 TAKE MY BEST']},
@@ -334,7 +339,7 @@
   let gearUidCounter=0,gearTurnAngle=0,gearTurnDrag=null;
   let save=loadSave(),mode='base',paused=false,settingsWasRun=false,abandonArmed=false,devResetArmed=false;
   let W=960,H=540,dpr=1,miniW=132,miniH=92,miniDpr=1,last=0,elapsed=0,runTime=0,spawnClock=0,hazardClock=0,shake=0,flash=0,depthPulse=0,extracting=0,runScrap=0,depth=1,riskTier=0,routeDecision=false,route=null,zoneEventTriggered=false;
-  let player,enemies=[],bullets=[],pendingStrikes=[],enemyBullets=[],lootDrops=[],particles=[],effects=[],hazards=[],decor=[],obstacles=[],caches=[],cargo=[],lootBag={};
+  let player,enemies=[],bullets=[],pendingStrikes=[],enemyBullets=[],lootDrops=[],particles=[],effects=[],hazards=[],decor=[],obstacles=[],collisionMap=[],caches=[],cargo=[],lootBag={};
   const BOSS_LOOT_ORB_ARRIVAL=1.7,BOSS_LOOT_ORB_OPEN=1.05;
   let moduleDecision=false,moduleStage='offer',moduleOffer=[],pendingModule=null,activeCache=null,pendingWardenReward=null,bossActive=false,bossDefeated=false,bossEntity=null,bossLootChest=null,runStats=null,expeditionCycle=0,bossRunClears=0,postBossDecision=false,postBossIntent=null,bossLootRewards=[],bossLootSelected=0,bossExtraction=false,gearView='bag',gearFilter='all',gearRarityFilter='all',gearSort='power',selectedGearUid=null,hoverGearUid=null,sellFilterArmedKey='',sellFilterArmedUntil=0,vaultRewards=[],vaultOpening=false;
   let paperDollAtlases={idle:null,run:null,attack:null},paperDollKey='';
@@ -723,32 +728,36 @@
   ];
   function isDreamworldMap(){return (save.selectedMap||'guild')==='moonfall'}
   function isSkyglassMap(){return (save.selectedMap||'guild')==='skyglass'}
-  function buildArenaObstacles(){let mapId=save.selectedMap||'guild';obstacles=ARENA_OBSTACLE_LAYOUT.map((entry,index)=>({x:entry[0],y:entry[1],w:entry[2],h:entry[3],style:(index+EXPEDITION_MAP_IDS.indexOf(mapId)+4)%4,mapId,assetId:mapId==='moonfall'?DREAMWORLD_COVER_IDS[(index*5+2)%DREAMWORLD_COVER_IDS.length]:mapId==='skyglass'?SKYGLASS_COVER_IDS[(index*5+1)%SKYGLASS_COVER_IDS.length]:null}))}
+  function buildArenaObstacles(){let mapId=save.selectedMap||'guild';obstacles=ARENA_OBSTACLE_LAYOUT.map((entry,index)=>({x:entry[0],y:entry[1],w:entry[2],h:entry[3],style:index%4,mapId,assetId:mapId==='moonfall'?DREAMWORLD_COVER_IDS[(index*5+2)%DREAMWORLD_COVER_IDS.length]:mapId==='skyglass'?SKYGLASS_COVER_IDS[(index*5+1)%SKYGLASS_COVER_IDS.length]:null}))}
   function buildAdventureDecor(){
     if(isDreamworldMap()){
-      decor=DREAMWORLD_DECOR_LAYOUT.map((entry,index)=>{let meta=DREAMWORLD_PROP_META[entry[0]],width=entry[3]||meta.width;return {assetId:entry[0],x:entry[1],y:entry[2],w:width,r:width*1.2,phase:entry[4]||index*.47,flip:!!entry[5],rot:0}});
+      decor=DREAMWORLD_DECOR_LAYOUT.map((entry,index)=>{let meta=DREAMWORLD_PROP_META[entry[0]],width=entry[3]||meta.width,solid=['crescentArch','starMapObelisk','dreamTree','brokenCrescentShrine'].includes(entry[0]);return {assetId:entry[0],x:entry[1],y:entry[2],w:width,r:width*1.2,phase:entry[4]||index*.47,flip:!!entry[5],rot:0,solid}});
       let accents=['violetCrystals','dreamLotus','moonLantern','floatingRuinPillar','starMapObelisk'];
       let scatter=seed=>{let value=Math.sin(seed*12.9898)*43758.5453;return value-Math.floor(value)};
       for(let i=0;i<28;i++){let assetId=accents[(i*3+1)%accents.length],x=250+(i%7)*315+(scatter(i+1)-.5)*150,y=220+Math.floor(i/7)*360+(scatter(i+101)-.5)*170,width=(assetId==='moonLantern'?48:assetId==='floatingRuinPillar'?54:assetId==='starMapObelisk'?58:64)+(i%3)*5;decor.push({assetId,x,y,w:width,r:width*1.2,phase:i*.63,flip:i%3===0,rot:0})}
       return
     }
     if(isSkyglassMap()){
-      decor=SKYGLASS_DECOR_LAYOUT.map((entry,index)=>{let meta=SKYGLASS_PROP_META[entry[0]],width=entry[3]||meta.width;return {assetId:entry[0],x:entry[1],y:entry[2],w:width,r:width*1.18,phase:entry[4]||index*.53,flip:!!entry[5],rot:0}});
+      decor=SKYGLASS_DECOR_LAYOUT.map((entry,index)=>{let meta=SKYGLASS_PROP_META[entry[0]],width=entry[3]||meta.width,solid=['pearlShellShrine','seaGlassArch','tideCompassPedestal','celestialKoiStatue','spiralShellPortal'].includes(entry[0]);return {assetId:entry[0],x:entry[1],y:entry[2],w:width,r:width*1.18,phase:entry[4]||index*.53,flip:!!entry[5],rot:0,solid}});
       return
     }
-    for(let i=0;i<78;i++){let x=80+Math.random()*(WORLD.w-160),y=80+Math.random()*(WORLD.h-160);if(!pointBlocked(x,y,30))decor.push({x,y,r:8+Math.random()*24,type:Math.floor(Math.random()*4),rot:Math.random()*6})}
+    let mapId=save.selectedMap||'guild',seed=EXPEDITION_MAP_IDS.indexOf(mapId)+1,scatter=value=>{let n=Math.sin((value+seed*71)*12.9898)*43758.5453;return n-Math.floor(n)};
+    for(let i=0;i<54;i++){let x=95+scatter(i+1)*(WORLD.w-190),y=95+scatter(i+101)*(WORLD.h-190),r=10+scatter(i+211)*22;if(Math.hypot(x-WORLD.w/2,y-WORLD.h/2)<245||pointBlocked(x,y,r+12))continue;decor.push({x,y,r,type:i%4,variant:i%3,rot:scatter(i+307)*Math.PI*2,mapId})}
   }
   function obstacleBounds(o,pad){pad=pad||0;return {left:o.x-o.w/2-pad,right:o.x+o.w/2+pad,top:o.y-o.h/2-pad,bottom:o.y+o.h/2+pad}}
-  function pointBlocked(x,y,r){for(const o of obstacles){let b=obstacleBounds(o,r||0);if(x>b.left&&x<b.right&&y>b.top&&y<b.bottom)return true}return false}
-  function projectileHitsCover(x,y,r){for(const o of obstacles){let b=obstacleBounds(o),nx=Math.max(b.left,Math.min(b.right,x)),ny=Math.max(b.top,Math.min(b.bottom,y)),dx=x-nx,dy=y-ny;if(dx*dx+dy*dy<(r||1)*(r||1))return o}return null}
+  function decorCollision(d){let width=d.w||0;return d.solid?{x:d.x,y:d.y-width*.07,w:Math.max(28,width*.42),h:Math.max(20,width*.2),decor:d}:null}
+  function rebuildCollisionMap(){collisionMap=obstacles.slice();for(const d of decor){let body=decorCollision(d);if(body)collisionMap.push(body)}}
+  function collisionBodies(){return collisionMap.length?collisionMap:obstacles}
+  function pointBlocked(x,y,r){for(const o of collisionBodies()){let b=obstacleBounds(o,r||0);if(x>b.left&&x<b.right&&y>b.top&&y<b.bottom)return true}return false}
+  function projectileHitsCover(x,y,r){for(const o of collisionBodies()){let b=obstacleBounds(o),nx=Math.max(b.left,Math.min(b.right,x)),ny=Math.max(b.top,Math.min(b.bottom,y)),dx=x-nx,dy=y-ny;if(dx*dx+dy*dy<(r||1)*(r||1))return o}return null}
   function lineBlockedByCover(x1,y1,x2,y2,pad){let distance=Math.hypot(x2-x1,y2-y1),steps=Math.max(2,Math.ceil(distance/18));for(let step=1;step<steps;step++){let t=step/steps;if(pointBlocked(x1+(x2-x1)*t,y1+(y2-y1)*t,pad||0))return true}return false}
-  function moveAroundCover(entity,dx,dy){let blocked=false;entity.x+=dx;for(const o of obstacles){let b=obstacleBounds(o,entity.r),inside=entity.x>b.left&&entity.x<b.right&&entity.y>b.top&&entity.y<b.bottom;if(!inside)continue;blocked=true;entity.x=dx>0?b.left:dx<0?b.right:(Math.abs(entity.x-b.left)<Math.abs(b.right-entity.x)?b.left:b.right)}entity.y+=dy;for(const o of obstacles){let b=obstacleBounds(o,entity.r),inside=entity.x>b.left&&entity.x<b.right&&entity.y>b.top&&entity.y<b.bottom;if(!inside)continue;blocked=true;entity.y=dy>0?b.top:dy<0?b.bottom:(Math.abs(entity.y-b.top)<Math.abs(b.bottom-entity.y)?b.top:b.bottom)}entity.x=Math.max(entity.r,Math.min(WORLD.w-entity.r,entity.x));entity.y=Math.max(entity.r,Math.min(WORLD.h-entity.r,entity.y));return blocked}
+  function moveAroundCover(entity,dx,dy){let blocked=false,bodies=collisionBodies();entity.x+=dx;for(const o of bodies){let b=obstacleBounds(o,entity.r),inside=entity.x>b.left&&entity.x<b.right&&entity.y>b.top&&entity.y<b.bottom;if(!inside)continue;blocked=true;entity.x=dx>0?b.left:dx<0?b.right:(Math.abs(entity.x-b.left)<Math.abs(b.right-entity.x)?b.left:b.right)}entity.y+=dy;for(const o of bodies){let b=obstacleBounds(o,entity.r),inside=entity.x>b.left&&entity.x<b.right&&entity.y>b.top&&entity.y<b.bottom;if(!inside)continue;blocked=true;entity.y=dy>0?b.top:dy<0?b.bottom:(Math.abs(entity.y-b.top)<Math.abs(b.bottom-entity.y)?b.top:b.bottom)}entity.x=Math.max(entity.r,Math.min(WORLD.w-entity.r,entity.x));entity.y=Math.max(entity.r,Math.min(WORLD.h-entity.r,entity.y));return blocked}
   function openArenaPosition(x,y,r){x=Math.max(r,Math.min(WORLD.w-r,x));y=Math.max(r,Math.min(WORLD.h-r,y));if(!pointBlocked(x,y,r))return {x,y};for(let ring=48;ring<=360;ring+=48)for(let i=0;i<12;i++){let a=i*Math.PI/6,cx=Math.max(r,Math.min(WORLD.w-r,x+Math.cos(a)*ring)),cy=Math.max(r,Math.min(WORLD.h-r,y+Math.sin(a)*ring));if(!pointBlocked(cx,cy,r))return {x:cx,y:cy}}return {x:WORLD.w/2,y:WORLD.h/2}}
   function startRun(){
     cargo=[];if(save.starter)cargo.push({id:save.starter,rare:false,starter:true,power:starterPower(save.starter),recoveries:0,rareRecoveries:0});
     player={x:WORLD.w/2,y:WORLD.h/2,r:18,hp:maxHp(),maxHp:maxHp(),speed:235,fire:0,inv:0,angle:0,facing:1,dashCd:0,dashTime:0,dashX:1,dashY:0,lastX:1,lastY:0,shields:baseShields(),guardCd:0,recoil:0,attackAnim:0,attackDuration:.32,animClock:0,volley:0,burstCharge:0,thermalCharges:0,ramHits:new Set(),signatureCrits:0,phantomStrike:0,travelCharge:0,fateSaved:false,vaultWardAwarded:0};
-    enemies=[];bullets=[];pendingStrikes=[];enemyBullets=[];lootDrops=[];particles=[];effects=[];hazards=[];decor=[];obstacles=[];caches=[];lootBag={};elapsed=0;runTime=0;spawnClock=.5;hazardClock=3.5;runScrap=0;depth=1;riskTier=0;routeDecision=false;route=null;moduleDecision=false;depthPulse=0;extracting=0;shake=0;flash=0;paused=false;bossActive=false;bossDefeated=false;bossEntity=null;bossLootChest=null;pendingWardenReward=null;expeditionCycle=0;bossRunClears=0;postBossDecision=false;postBossIntent=null;bossLootRewards=[];bossLootSelected=0;bossExtraction=false;zoneEventTriggered=false;runStats={damage:0,kills:0,elites:0,risks:0,items:0,legendary:0,bosses:0,modules:[],warden:null,route:null,boss:null,map:save.selectedMap};
-    buildArenaObstacles();buildAdventureDecor();triggerFloorSignatures();
+    enemies=[];bullets=[];pendingStrikes=[];enemyBullets=[];lootDrops=[];particles=[];effects=[];hazards=[];decor=[];obstacles=[];collisionMap=[];caches=[];lootBag={};elapsed=0;runTime=0;spawnClock=.5;hazardClock=3.5;runScrap=0;depth=1;riskTier=0;routeDecision=false;route=null;moduleDecision=false;depthPulse=0;extracting=0;shake=0;flash=0;paused=false;bossActive=false;bossDefeated=false;bossEntity=null;bossLootChest=null;pendingWardenReward=null;expeditionCycle=0;bossRunClears=0;postBossDecision=false;postBossIntent=null;bossLootRewards=[];bossLootSelected=0;bossExtraction=false;zoneEventTriggered=false;runStats={damage:0,kills:0,elites:0,risks:0,items:0,legendary:0,bosses:0,modules:[],warden:null,route:null,boss:null,map:save.selectedMap};
+    buildArenaObstacles();buildAdventureDecor();rebuildCollisionMap();triggerFloorSignatures();
     spawnCache(player.x+190,player.y+25,false,false);ui.extractOverlay.classList.remove('show');ui.bossLootOverlay.classList.remove('show');ui.routeOverlay.classList.remove('show');ui.moduleOverlay.classList.remove('show');ui.resultOverlay.classList.remove('show');ui.lootToast.classList.remove('show','legendary');ui.bossHud.classList.remove('show','tyrant');ui.cargoHud.classList.remove('bossHidden');ui.depthRoute.classList.remove('bossHidden','furnace','dynamo');ui.expedition.classList.remove('legendaryCargo');ui.extract.classList.remove('hotLoot');ui.routeLabel.textContent=activeMap().short;ui.settingsOverlay.classList.remove('show');setView('run');applyCargoEffects(cargo[0]);updateCargoHud();updateZoneHud();updateRouteHud();updateHud();save.stats.runs++;persist();let firstZone=zoneAt(1);runNotice(save.starter?MODULES[save.starter].name.toUpperCase()+' READY':firstZone.name,firstZone.accent);sound('start')
   }
 
@@ -1289,9 +1298,56 @@
     if(o.assetId==='seaGlassShardWall'||o.assetId==='floatingReefBlocks'){ctx.shadowColor='#55dff2';ctx.shadowBlur=9}
     ctx.globalAlpha=.99;ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(image,-drawW/2,foot-drawH,drawW,drawH);ctx.shadowBlur=0;ctx.restore();return true
   }
-  function drawEnvironmentGround(cam,zone,viewLeft,viewTop,viewRight,viewBottom){return drawDreamworldGround(cam,zone,viewLeft,viewTop,viewRight,viewBottom)||drawSkyglassGround(cam,zone,viewLeft,viewTop,viewRight,viewBottom)}
-  function drawAdventureDecor(d,p,zone){if(d.assetId&&(drawDreamworldDecor(d,p)||drawSkyglassDecor(d,p)))return;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(d.rot);ctx.globalAlpha=.46;if(d.type===0){ctx.strokeStyle=zone.accent+'70';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,d.r*.7,0,Math.PI*2);ctx.stroke();ctx.beginPath();for(let i=0;i<8;i++){let a=i*Math.PI/4,rr=i%2?d.r*.32:d.r*.58;ctx.lineTo(Math.cos(a)*rr,Math.sin(a)*rr)}ctx.closePath();ctx.stroke()}else if(d.type===1){ctx.fillStyle='#17243a';ctx.strokeStyle='#d6aa5866';ctx.lineWidth=2;roundedRect(-d.r,-d.r*.56,d.r*2,d.r*1.12,4);ctx.fill();ctx.stroke();ctx.strokeStyle='#c83f4666';ctx.beginPath();ctx.moveTo(-d.r*.9,0);ctx.lineTo(d.r*.9,0);ctx.stroke()}else if(d.type===2){ctx.strokeStyle=route==='furnace'&&depth>=3?'#c83f4677':'#f4ead645';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(-d.r,0);ctx.quadraticCurveTo(0,d.r*.45,d.r,0);ctx.stroke();ctx.fillStyle='#d6aa5866';ctx.beginPath();ctx.arc(-d.r,0,2.5,0,Math.PI*2);ctx.arc(d.r,0,2.5,0,Math.PI*2);ctx.fill()}else{ctx.fillStyle='#f0d99b55';ctx.strokeStyle='#d6aa586b';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,-d.r*.8);ctx.lineTo(d.r*.46,-d.r*.12);ctx.lineTo(d.r*.32,d.r*.65);ctx.lineTo(-d.r*.32,d.r*.65);ctx.lineTo(-d.r*.46,-d.r*.12);ctx.closePath();ctx.fill();ctx.stroke();ctx.fillStyle='#c83f4655';ctx.fillRect(-d.r*.18,d.r*.66,d.r*.36,d.r*.35)}ctx.restore()}
-  function drawArenaCover(o,p,zone,frontOnly){if(o.assetId&&(drawDreamworldCover(o,p,frontOnly)||drawSkyglassCover(o,p,frontOnly)))return;let wide=o.w>o.h,palette=[['#162239','#d6aa58'],['#243143','#e4e7eb'],['#271d27','#d45cff'],['#17312d','#39dc78']][o.style%4],w=o.w,h=o.h;ctx.save();ctx.translate(p.x,p.y);if(frontOnly){ctx.fillStyle='#05080dc9';roundedRect(-w/2+4,h/2-9,w-8,13,3);ctx.fill();ctx.strokeStyle=palette[1];ctx.globalAlpha=.72;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-w/2+8,h/2-8);ctx.lineTo(w/2-8,h/2-8);ctx.stroke();ctx.restore();return}ctx.fillStyle='rgba(0,0,0,.34)';roundedRect(-w/2+7,-h/2+10,w,h,8);ctx.fill();ctx.fillStyle=palette[0];ctx.strokeStyle='#05080d';ctx.lineWidth=5;roundedRect(-w/2,-h/2,w,h,7);ctx.fill();ctx.stroke();ctx.strokeStyle=palette[1];ctx.lineWidth=2;roundedRect(-w/2+5,-h/2+5,w-10,h-10,4);ctx.stroke();ctx.fillStyle='#0a101c';ctx.globalAlpha=.72;if(wide){ctx.fillRect(-w/2+13,-5,w-26,10);for(let x=-w/2+22;x<w/2-12;x+=34){ctx.fillStyle=palette[1];ctx.beginPath();ctx.arc(x,-h/2+10,2.5,0,Math.PI*2);ctx.arc(x,h/2-10,2.5,0,Math.PI*2);ctx.fill()}}else{ctx.fillRect(-5,-h/2+13,10,h-26);for(let y=-h/2+22;y<h/2-12;y+=34){ctx.fillStyle=palette[1];ctx.beginPath();ctx.arc(-w/2+10,y,2.5,0,Math.PI*2);ctx.arc(w/2-10,y,2.5,0,Math.PI*2);ctx.fill()}}ctx.globalAlpha=.9;ctx.strokeStyle=zone.accent;ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(0,0,Math.min(16,Math.min(w,h)*.24),0,Math.PI*2);ctx.stroke();ctx.beginPath();for(let i=0;i<8;i++){let a=i*Math.PI/4,r=i%2?6:12;ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r)}ctx.closePath();ctx.stroke();ctx.restore()}
+  function drawIllustratedGround(cam,zone,viewLeft,viewTop,viewRight,viewBottom){
+    let mapId=save.selectedMap||'guild',theme=MAP_ENVIRONMENT_THEMES[mapId];if(!theme)return false;
+    let tile=mapId==='foundry'?150:mapId==='summit'?176:144,worldLeft=cam.x-W/(2*cam.zoom)-tile,worldTop=cam.y-H/(2*cam.zoom)-tile,worldRight=cam.x+W/(2*cam.zoom)+tile,worldBottom=cam.y+H/(2*cam.zoom)+tile,startX=Math.floor(worldLeft/tile)*tile,startY=Math.floor(worldTop/tile)*tile;
+    ctx.save();ctx.fillStyle=theme.floor;ctx.fillRect(viewLeft-3,viewTop-3,viewRight-viewLeft+6,viewBottom-viewTop+6);ctx.lineWidth=1;
+    for(let x=startX;x<worldRight;x+=tile)for(let y=startY;y<worldBottom;y+=tile){
+      let p=worldToScreen(x,y,cam),alternate=(Math.floor(x/tile)+Math.floor(y/tile))%2;
+      if(mapId==='guild'){
+        ctx.fillStyle=alternate?'#142238':'#111e31';ctx.strokeStyle=theme.line+'8c';roundedRect(p.x+2,p.y+2,tile-4,tile-4,8);ctx.fill();ctx.stroke();
+        ctx.strokeStyle='#d6aa5818';ctx.beginPath();ctx.arc(p.x+tile/2,p.y+tile/2,tile*.18,0,Math.PI*2);ctx.stroke()
+      }else if(mapId==='foundry'){
+        ctx.fillStyle=alternate?'#211519':'#1a1115';ctx.strokeStyle=theme.line+'a0';roundedRect(p.x+3,p.y+3,tile-6,tile-6,3);ctx.fill();ctx.stroke();
+        ctx.fillStyle='#d28a4a55';for(const point of [[12,12],[tile-12,12],[12,tile-12],[tile-12,tile-12]]){ctx.beginPath();ctx.arc(p.x+point[0],p.y+point[1],2.2,0,Math.PI*2);ctx.fill()}
+        if((Math.floor(x/tile)*3+Math.floor(y/tile))%7===0){ctx.strokeStyle='#e7784538';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(p.x+tile*.22,p.y+tile*.58);ctx.lineTo(p.x+tile*.46,p.y+tile*.45);ctx.lineTo(p.x+tile*.7,p.y+tile*.56);ctx.stroke()}
+      }else{
+        ctx.fillStyle=alternate?'#1c1727':'#15121e';ctx.strokeStyle=theme.line+'88';ctx.beginPath();ctx.moveTo(p.x+tile/2,p.y+3);ctx.lineTo(p.x+tile-3,p.y+tile/2);ctx.lineTo(p.x+tile/2,p.y+tile-3);ctx.lineTo(p.x+3,p.y+tile/2);ctx.closePath();ctx.fill();ctx.stroke();
+        ctx.strokeStyle='#f2c14f20';ctx.beginPath();ctx.moveTo(p.x+tile/2,p.y+tile*.25);ctx.lineTo(p.x+tile*.75,p.y+tile/2);ctx.lineTo(p.x+tile/2,p.y+tile*.75);ctx.lineTo(p.x+tile*.25,p.y+tile/2);ctx.closePath();ctx.stroke()
+      }
+    }
+    let wash=ctx.createRadialGradient(W/2,H/2,65,W/2,H/2,Math.max(W,H)/cam.zoom*.7);wash.addColorStop(0,theme.detail+'0c');wash.addColorStop(1,'rgba(2,5,12,.34)');ctx.fillStyle=wash;ctx.fillRect(viewLeft-3,viewTop-3,viewRight-viewLeft+6,viewBottom-viewTop+6);ctx.restore();return true
+  }
+  function drawEnvironmentGround(cam,zone,viewLeft,viewTop,viewRight,viewBottom){return drawDreamworldGround(cam,zone,viewLeft,viewTop,viewRight,viewBottom)||drawSkyglassGround(cam,zone,viewLeft,viewTop,viewRight,viewBottom)||drawIllustratedGround(cam,zone,viewLeft,viewTop,viewRight,viewBottom)}
+  function drawAdventureDecor(d,p,zone){
+    if(d.assetId&&(drawDreamworldDecor(d,p)||drawSkyglassDecor(d,p)))return;
+    let theme=MAP_ENVIRONMENT_THEMES[d.mapId]||MAP_ENVIRONMENT_THEMES.guild,r=d.r,detail=theme.detail;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(d.rot);ctx.globalAlpha=.68;ctx.lineJoin='round';
+    if(d.mapId==='foundry'){
+      if(d.type===0){ctx.fillStyle='#0b080a99';ctx.strokeStyle=detail+'8c';ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,r*.72,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle='#e7784530';for(let i=0;i<7;i++){let a=i*Math.PI*2/7;ctx.fillRect(Math.cos(a)*r*.45-2,Math.sin(a)*r*.45-2,4,4)}}
+      else if(d.type===1){ctx.fillStyle='#291719aa';ctx.strokeStyle='#8c493c';roundedRect(-r,-r*.48,r*2,r*.96,3);ctx.fill();ctx.stroke();ctx.fillStyle='#d6aa5855';ctx.fillRect(-r*.72,-2,r*1.44,4)}
+      else if(d.type===2){ctx.strokeStyle='#b85c3b88';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(-r,0);ctx.lineTo(-r*.4,-r*.18);ctx.lineTo(r*.08,r*.08);ctx.lineTo(r*.62,-r*.15);ctx.lineTo(r,0);ctx.stroke()}
+      else{ctx.fillStyle='#c4583d44';ctx.strokeStyle='#e7784577';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,r*.78,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.strokeStyle='#12090b';for(let i=-1;i<=1;i++){ctx.beginPath();ctx.moveTo(-r*.55,i*r*.22);ctx.lineTo(r*.55,i*r*.22);ctx.stroke()}}
+    }else if(d.mapId==='summit'){
+      if(d.type===0){ctx.strokeStyle=detail+'88';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,r*.72,0,Math.PI*2);ctx.stroke();ctx.beginPath();for(let i=0;i<8;i++){let a=i*Math.PI/4,rr=i%2?r*.28:r*.62;ctx.lineTo(Math.cos(a)*rr,Math.sin(a)*rr)}ctx.closePath();ctx.stroke()}
+      else if(d.type===1){ctx.fillStyle='#4a182244';ctx.strokeStyle='#b78d555e';ctx.beginPath();ctx.moveTo(-r,-r*.42);ctx.lineTo(r*.72,-r*.6);ctx.lineTo(r,r*.4);ctx.lineTo(-r*.7,r*.58);ctx.closePath();ctx.fill();ctx.stroke()}
+      else if(d.type===2){ctx.strokeStyle='#f2c14f66';ctx.lineWidth=4;ctx.beginPath();ctx.arc(0,0,r*.72,.2,Math.PI-.2);ctx.stroke();ctx.fillStyle='#f2c14f77';ctx.beginPath();ctx.arc(-r*.7,0,3,0,Math.PI*2);ctx.arc(r*.7,0,3,0,Math.PI*2);ctx.fill()}
+      else{ctx.fillStyle='#eee2c522';ctx.strokeStyle='#d6aa5866';ctx.beginPath();ctx.moveTo(0,-r*.8);ctx.lineTo(r*.52,-r*.08);ctx.lineTo(r*.3,r*.68);ctx.lineTo(-r*.3,r*.68);ctx.lineTo(-r*.52,-r*.08);ctx.closePath();ctx.fill();ctx.stroke()}
+    }else{
+      if(d.type===0){ctx.strokeStyle=detail+'78';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,r*.72,0,Math.PI*2);ctx.stroke();ctx.beginPath();for(let i=0;i<8;i++){let a=i*Math.PI/4,rr=i%2?r*.3:r*.58;ctx.lineTo(Math.cos(a)*rr,Math.sin(a)*rr)}ctx.closePath();ctx.stroke()}
+      else if(d.type===1){ctx.fillStyle='#20324a99';ctx.strokeStyle='#75869b66';roundedRect(-r,-r*.45,r*2,r*.9,5);ctx.fill();ctx.stroke();ctx.strokeStyle=detail+'55';ctx.beginPath();ctx.moveTo(-r*.72,0);ctx.lineTo(r*.72,0);ctx.stroke()}
+      else if(d.type===2){ctx.strokeStyle='#d6aa5862';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(-r,0);ctx.quadraticCurveTo(0,r*.45,r,0);ctx.stroke()}
+      else{ctx.fillStyle='#f0d99b25';ctx.strokeStyle='#d6aa5868';ctx.beginPath();ctx.moveTo(0,-r*.76);ctx.lineTo(r*.46,-r*.08);ctx.lineTo(r*.3,r*.62);ctx.lineTo(-r*.3,r*.62);ctx.lineTo(-r*.46,-r*.08);ctx.closePath();ctx.fill();ctx.stroke()}
+    }
+    ctx.restore()
+  }
+  function drawArenaCover(o,p,zone,frontOnly){
+    if(o.assetId&&(drawDreamworldCover(o,p,frontOnly)||drawSkyglassCover(o,p,frontOnly)))return;
+    let wide=o.w>o.h,theme=MAP_ENVIRONMENT_THEMES[o.mapId]||MAP_ENVIRONMENT_THEMES.guild,w=o.w,h=o.h,detail=theme.detail;ctx.save();ctx.translate(p.x,p.y);
+    if(frontOnly){ctx.fillStyle=theme.shadow+'e8';roundedRect(-w/2+4,h/2-10,w-8,14,3);ctx.fill();ctx.strokeStyle=detail;ctx.globalAlpha=.72;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-w/2+8,h/2-8);ctx.lineTo(w/2-8,h/2-8);ctx.stroke();ctx.restore();return}
+    ctx.fillStyle='rgba(0,0,0,.38)';roundedRect(-w/2+8,-h/2+10,w,h,8);ctx.fill();ctx.fillStyle=theme.cover;ctx.strokeStyle=theme.shadow;ctx.lineWidth=5;roundedRect(-w/2,-h/2,w,h,7);ctx.fill();ctx.stroke();ctx.fillStyle=theme.coverInset;ctx.strokeStyle=detail+'bb';ctx.lineWidth=2;roundedRect(-w/2+6,-h/2+6,w-12,h-12,4);ctx.fill();ctx.stroke();
+    ctx.fillStyle=theme.shadow;ctx.globalAlpha=.7;if(wide){ctx.fillRect(-w/2+14,-5,w-28,10);for(let x=-w/2+23;x<w/2-12;x+=34){ctx.fillStyle=detail;ctx.beginPath();ctx.arc(x,-h/2+10,2.5,0,Math.PI*2);ctx.arc(x,h/2-10,2.5,0,Math.PI*2);ctx.fill()}}else{ctx.fillRect(-5,-h/2+14,10,h-28);for(let y=-h/2+23;y<h/2-12;y+=34){ctx.fillStyle=detail;ctx.beginPath();ctx.arc(-w/2+10,y,2.5,0,Math.PI*2);ctx.arc(w/2-10,y,2.5,0,Math.PI*2);ctx.fill()}}
+    ctx.globalAlpha=.9;ctx.strokeStyle=detail;ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(0,0,Math.min(16,Math.min(w,h)*.24),0,Math.PI*2);ctx.stroke();ctx.beginPath();for(let i=0;i<8;i++){let a=i*Math.PI/4,r=i%2?6:12;ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r)}ctx.closePath();ctx.stroke();ctx.restore()
+  }
   function drawLagoonPoolHazard(h,p){
     let warning=h.warm>0,time=performance.now()/650,pulse=.78+Math.sin(time*5)*.12,r=h.r*(warning?.94:.9);
     ctx.save();ctx.translate(p.x,p.y);ctx.rotate((h.phase||0)*.2);
@@ -1348,7 +1404,7 @@
     while(ox>viewLeft)ox-=grid;while(oy>viewTop)oy-=grid;
     if(!environmentGroundDrawn){ctx.strokeStyle=zone.grid;ctx.lineWidth=1;for(let x=ox;x<viewRight;x+=grid){ctx.beginPath();ctx.moveTo(x,viewTop);ctx.lineTo(x,viewBottom);ctx.stroke()}for(let y=oy;y<viewBottom;y+=grid){ctx.beginPath();ctx.moveTo(viewLeft,y);ctx.lineTo(viewRight,y);ctx.stroke()}ctx.fillStyle='#f4ead608';for(let x=ox;x<viewRight;x+=grid)for(let y=oy;y<viewBottom;y+=grid){ctx.beginPath();ctx.arc(x,y,2,0,Math.PI*2);ctx.fill()}}
     if(depth===2){ctx.fillStyle=environmentGroundDrawn?'#c83f4607':'#c83f460a';for(let y=oy;y<viewBottom;y+=grid*2)ctx.fillRect(viewLeft,y,viewRight-viewLeft,grid*.24)}else if((depth===3||depth===4)&&route==='furnace'){ctx.strokeStyle=environmentGroundDrawn?'#c83f4618':'#c83f4625';ctx.lineWidth=depth===4?12:8;for(let x=ox-grid;x<viewRight+grid;x+=grid*2){ctx.beginPath();ctx.moveTo(x,viewTop);ctx.lineTo(x+(viewBottom-viewTop)*.32,viewBottom);ctx.stroke()}}else if(depth===3||depth===4){ctx.strokeStyle=environmentGroundDrawn?'#bfc8ff18':'#f4ead622';ctx.lineWidth=2;for(let x=ox;x<viewRight;x+=grid*2){ctx.beginPath();ctx.arc(x,H*.5,grid*.55,Math.PI*.35,Math.PI*1.65);ctx.stroke()}}else if(depth===5){ctx.strokeStyle=zone.accent+(environmentGroundDrawn?'20':'30');ctx.lineWidth=3;for(let r=90;r<Math.max(W,H)/cam.zoom;r+=120){ctx.beginPath();ctx.arc(W/2,H/2,r,0,Math.PI*2);ctx.stroke()}}
-    for(const d of decor){if(!combatViewContains(d.x,d.y,d.r,60,cam))continue;let p=worldToScreen(d.x,d.y,cam);drawAdventureDecor(d,p,zone)}
+    for(const d of decor){if(d.assetId&&d.y>player.y+8||!combatViewContains(d.x,d.y,d.r,60,cam))continue;let p=worldToScreen(d.x,d.y,cam);drawAdventureDecor(d,p,zone)}
     for(const o of obstacles){if(!combatViewContains(o.x,o.y,Math.max(o.w,o.h)/2,30,cam))continue;drawArenaCover(o,worldToScreen(o.x,o.y,cam),zone,false)}
     for(const h of hazards){let p=worldToScreen(h.x,h.y,cam);drawAdventureHazard(h,p)}
     for(const c of caches)drawTreasureChest(c,cam);if(bossLootChest)drawBossLootChest(bossLootChest,cam);for(const drop of lootDrops)drawAdventureLoot(drop,cam);
@@ -1362,6 +1418,7 @@
     }
     let pp=worldToScreen(player.x,player.y,cam),stats=cargoStats(),thermalReady=player.thermalCharges>0;ctx.save();ctx.translate(pp.x,pp.y);drawEquippedRarityAura();if(player.inv>0&&player.dashTime<=0&&Math.floor(player.inv*16)%2===0)ctx.globalAlpha=.42;if(player.dashTime>0){ctx.strokeStyle=thermalReady?'#b52d31cc':stats.ram?'#e0ad4fcc':'#efe5d0aa';ctx.lineWidth=5;ctx.beginPath();ctx.arc(0,0,player.r+7,0,Math.PI*2);ctx.stroke()}if(player.shields>0){ctx.strokeStyle='#e0ad4faa';ctx.lineWidth=3;ctx.setLineDash([6,4]);ctx.beginPath();ctx.arc(0,0,player.r+8,0,Math.PI*2);ctx.stroke();ctx.setLineDash([])}if(thermalReady){ctx.strokeStyle='#b52d31aa';ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,player.r+11+Math.sin(performance.now()/120)*2,0,Math.PI*2);ctx.stroke()}ctx.save();ctx.scale(player.facing<0?-1:1,1);drawPappaHammer();ctx.restore();ctx.restore();
     for(const o of obstacles){if(!combatViewContains(o.x,o.y,Math.max(o.w,o.h)/2,30,cam))continue;drawArenaCover(o,worldToScreen(o.x,o.y,cam),zone,true)}
+    for(const d of decor){if(!d.assetId||d.y<=player.y+8||!combatViewContains(d.x,d.y,d.r,60,cam))continue;let p=worldToScreen(d.x,d.y,cam);drawAdventureDecor(d,p,zone)}
     for(const fx of effects){
       let q=worldToScreen(fx.x,fx.y,cam),progress=1-fx.life/fx.max,alpha=Math.max(0,fx.life/fx.max),radius=fx.r+(fx.maxR-fx.r)*progress;ctx.save();ctx.globalAlpha=alpha;ctx.translate(q.x,q.y);
       if(fx.kind==='hammerSwing'){ctx.rotate(fx.angle||0);ctx.strokeStyle=fx.color;ctx.lineCap='round';ctx.lineWidth=Math.max(1,5*(1-progress));ctx.beginPath();ctx.arc(0,0,radius,-1.02,1.02);ctx.stroke();ctx.globalAlpha=alpha*.65;ctx.strokeStyle='#f4ead6';ctx.lineWidth=Math.max(1,2.4*(1-progress));ctx.beginPath();ctx.arc(0,0,radius*.72,-.88,.88);ctx.stroke()}
@@ -1403,9 +1460,31 @@
     let local=/^(localhost|127\.0\.0\.1)$/.test(location.hostname),enabled=/(?:^|[?&])playwright(?:[=&]|$)/.test(location.search||'');
     if(!local||!enabled)return;
     window.__riskTest={
+      openMap(mapId){
+        let map=EXPEDITION_MAPS[mapId];if(!map)return false;
+        save.level=Math.max(save.level,map.minLevel);save.selectedMap=mapId;save.seenIntro=true;
+        startRun();paused=true;enemies=[];enemyBullets=[];hazards=[];particles=[];effects=[];
+        return this.mapState()
+      },
+      movePlayer(x,y){
+        if(mode!=='run'||!player)return null;
+        let position=openArenaPosition(Number(x)||WORLD.w/2,Number(y)||WORLD.h/2,player.r);
+        player.x=position.x;player.y=position.y;
+        return this.mapState()
+      },
+      mapState(){
+        return{
+          map:save.selectedMap,
+          player:player?{x:Math.round(player.x),y:Math.round(player.y)}:null,
+          obstacles:obstacles.map(o=>({x:o.x,y:o.y,w:o.w,h:o.h,assetId:o.assetId||null})),
+          decor:decor.length,
+          collisionCount:collisionMap.length,
+          world:{w:WORLD.w,h:WORLD.h}
+        }
+      },
       fightEnemy(type,distance,pattern){
         if(mode!=='run')startRun();
-        postBossDecision=false;routeDecision=false;moduleDecision=false;paused=false;bossActive=false;bossDefeated=false;bossEntity=null;bossLootChest=null;obstacles=[];hazards=[];enemyBullets=[];enemies=[];depth=4;
+        postBossDecision=false;routeDecision=false;moduleDecision=false;paused=false;bossActive=false;bossDefeated=false;bossEntity=null;bossLootChest=null;obstacles=[];collisionMap=[];hazards=[];enemyBullets=[];enemies=[];depth=4;
         player.x=WORLD.w/2;player.y=WORLD.h/2;player.hp=player.maxHp;player.inv=0;
         let enemy=spawnEnemy(false,type);enemy.x=player.x+Math.max(90,distance||180);enemy.y=player.y;enemy.spawnGrace=0;enemy.fire=0;enemy.pattern=Math.max(0,pattern||0);enemy.think=1;
         updateEnemyEntity(enemy,1/120);
@@ -1433,7 +1512,7 @@
       },
       triggerBossPattern(stage,pattern){
         if(mode!=='run'||!bossActive||!bossEntity)return null;
-        obstacles=[];bossEntity.x=Math.max(80,Math.min(WORLD.w-80,player.x+185));bossEntity.y=player.y;
+        obstacles=[];collisionMap=[];bossEntity.x=Math.max(80,Math.min(WORLD.w-80,player.x+185));bossEntity.y=player.y;
         bossEntity.bossStage=Math.max(1,Math.min(3,stage||1));bossEntity.pattern=Math.max(0,pattern||0);bossEntity.stagger=0;bossEntity.spawnGrace=0;bossEntity.charge=0;bossEntity.fire=1;
         hazards=[];enemyBullets=[];
         let dx=player.x-bossEntity.x,dy=player.y-bossEntity.y,length=Math.hypot(dx,dy)||1;

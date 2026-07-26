@@ -92,8 +92,8 @@ test('every rarity renders in Character Preview and Inventory on desktop',async(
   await page.locator('#gearCharacterStage').screenshot({
     path:path.join('test-results','gear-reference','all-rarities-character-preview.png')
   });
-  await page.locator('#gearBagTab').click();
   await expect(page.locator('#gearGrid')).toBeVisible();
+  await expect(page.locator('#gearDetail')).toBeVisible();
   await page.mouse.move(1275,895);
   await page.waitForTimeout(180);
   await page.locator('#gearPanel').screenshot({
@@ -112,7 +112,6 @@ test('legendary Loadout and Bag remain readable without clipping on mobile',asyn
   await page.locator('#gearCharacterStage').screenshot({
     path:path.join('test-results','gear-reference','fatebound-mobile.png')
   });
-  await page.locator('#gearBagTab').click();
   await expect(page.locator('#gearGrid')).toBeVisible();
   const mobileLayout=await page.locator('#gearPanel').evaluate(element=>({
     left:element.getBoundingClientRect().left,

@@ -8,14 +8,14 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="description" content="Risk everything, recover equippable gear and build Pappa Hammer in this compact extraction roguelite.">
   <title>RISK THE LOOT!</title>
-  <link rel="stylesheet" href="style.css?v=0.41.0">
+  <link rel="stylesheet" href="style.css?v=0.42.0">
 </head>
 <body>
   <main id="game">
     <header class="topbar">
       <div class="brand" tabindex="0" data-help-title="Risk the Loot" data-help="Enter the tower, defeat champions and decide when the gear you carry is valuable enough to extract.">
         <span class="brandMark">R</span>
-        <div><strong>RISK THE LOOT!</strong><small>GEAR WARDROBE v0.41.0</small></div>
+        <div><strong>RISK THE LOOT!</strong><small>HAMMERSTORM v0.42.0</small></div>
       </div>
       <div class="resources">
         <div class="resource level" data-help-title="Pappa Level" data-help="Boss victories grant XP. Higher levels unlock stronger gear and tougher champions."><i>LV</i><div><b id="pappaLevel">1</b><span>PAPPA</span></div></div>
@@ -317,6 +317,7 @@
         <span id="xpText" class="xpText">0 / 2 XP</span>
       </div>
       <div id="touchControls" class="touchControls" aria-hidden="true"><div id="joystick" class="joystick" data-help-title="Movement" data-help="Drag in any direction to move. Pappa Hammer attacks nearby enemies automatically."><i id="joystickKnob"></i></div></div>
+      <button id="spinButton" class="spinButton" aria-label="Hammerstorm" title="Hammerstorm (Q)" data-help-title="Hammerstorm" data-help="Gather a pack, then dive into its center and spin. More enemies caught means more impact."><b>&#10038;</b><span>SPIN</span><em id="spinPackCount">0</em></button>
       <button id="dashButton" class="dashButton" aria-label="Dash" title="Dash (Space)"><b>&#187;</b><span>DASH</span></button>
     </section>
 
@@ -346,11 +347,11 @@
         </div>
         <button id="resumeButton" class="primaryButton settingsResume"><span>RESUME</span><i>&#8250;</i></button>
         <button id="abandonButton" class="dangerButton">ABANDON EXPEDITION</button>
-        <p class="buildStamp">v0.41.0 GEAR WARDROBE</p>
+        <p class="buildStamp">v0.42.0 HAMMERSTORM</p>
       </div>
     </div>
     <aside id="helpTooltip" class="helpTooltip" role="tooltip" aria-hidden="true"><strong id="helpTooltipTitle"></strong><span id="helpTooltipText"></span></aside>
   </main>
-  <script src="script.js?v=0.41.0"></script>
+  <script src="script.js?v=0.42.0"></script>
 </body>
 </html>

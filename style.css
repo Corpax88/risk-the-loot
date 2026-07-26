@@ -698,6 +698,153 @@ button:focus-visible{outline-color:#f4ead6}
   .unifiedGearBrowser .gearGrid{grid-auto-rows:60px}
 }
 
+/* Armory mobile UX and integrated equipment frames */
+.mobileGearSelection,.mobileGearControls,.gearMobileSheet{display:none}
+.adventureBagPanel .equipmentOrbitSlots .gearLoadoutSlot{
+  overflow:visible;
+  border:1px dashed #73819888;
+  border-bottom-width:1px;
+  border-radius:44% 44% 38% 38%;
+  background:#08111dcc;
+  box-shadow:inset 0 0 0 1px #d9e4ef0a,0 3px 9px #0008;
+}
+.adventureBagPanel .equipmentOrbitSlots .gearLoadoutSlot.filled{
+  border-style:solid;
+  border-color:color-mix(in srgb,var(--gear-color) 62%,#4e5d73);
+  background:radial-gradient(circle at 50% 43%,color-mix(in srgb,var(--gear-color) 12%,transparent),#08111dd9 72%);
+  box-shadow:inset 0 0 0 1px #ffffff0b,0 0 9px color-mix(in srgb,var(--gear-color) 22%,transparent),0 3px 9px #0009;
+}
+.equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="hat"]{clip-path:polygon(18% 18%,36% 4%,64% 4%,82% 18%,88% 52%,100% 72%,74% 92%,26% 92%,0 72%,12% 52%)}
+.equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="scarf"]{clip-path:polygon(26% 4%,74% 4%,96% 32%,84% 88%,50% 100%,16% 88%,4% 32%)}
+.equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="coat"]{clip-path:polygon(24% 4%,76% 4%,96% 26%,84% 96%,16% 96%,4% 26%)}
+.equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="hammer"]{clip-path:polygon(8% 22%,68% 22%,68% 4%,94% 4%,100% 96%,68% 96%,68% 78%,8% 78%,0 62%,0 38%)}
+.equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="gloves"]{clip-path:polygon(20% 4%,72% 4%,96% 26%,88% 82%,64% 100%,18% 84%,4% 50%)}
+.equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="boots"]{clip-path:polygon(24% 4%,72% 4%,84% 58%,100% 78%,90% 96%,10% 96%,4% 68%,18% 52%)}
+.gearSlotSilhouette{width:100%;height:100%;display:grid;place-items:center;color:#8b98aa66;font-size:20px;filter:grayscale(1)}
+.equipmentOrbitSlots .gearLoadoutSlot.filled .gearArt{filter:drop-shadow(0 2px 2px #000b)}
+.gearBagSlot[draggable="false"]{cursor:pointer;touch-action:pan-y;-webkit-touch-callout:none;user-select:none}
+
+@media(max-width:760px){
+  .menuOverlay:has(.adventureBagPanel){height:100%;min-height:0;overflow:hidden;align-items:stretch}
+  .adventureBagPanel{
+    height:100%;
+    max-height:none;
+    min-height:0;
+    display:grid;
+    grid-template-rows:auto minmax(0,1fr);
+    overflow:hidden;
+    overscroll-behavior:none;
+    touch-action:none;
+    padding:0 5px max(4px,env(safe-area-inset-bottom));
+  }
+  .adventureBagPanel .adventureBagHeader{position:relative;grid-template-columns:36px minmax(0,1fr) 76px;min-height:50px;height:50px;margin-bottom:4px;padding:5px 39px 5px 6px}
+  .adventureBagPanel .adventureBagHeader h2{font-size:14px}
+  .adventureBagPanel .adventureBagHeader small{font-size:5px}
+  .adventureBagPanel .adventureBagHeader .gearBagReadout b{font-size:7px}
+  .adventureBagPanel .adventureBagHeader .gearBagReadout small{font-size:4px}
+  .adventureBagPanel .panelClose{top:8px}
+  .unifiedEquipmentWorkspace{
+    height:100%;
+    min-height:0;
+    display:grid!important;
+    grid-template-rows:clamp(214px,38dvh,280px) minmax(0,1fr);
+    overflow:hidden;
+    gap:4px!important;
+  }
+  .adventureBagPanel .unifiedCharacterPanel{
+    min-height:0;
+    height:100%;
+    display:grid!important;
+    grid-template-rows:28px minmax(0,1fr)!important;
+    overflow:hidden;
+  }
+  .unifiedCharacterPanel .gearCharacterHeading{min-height:28px;height:28px;padding:5px 8px}
+  .unifiedCharacterPanel .gearCharacterHeading span,.unifiedCharacterPanel .gearCharacterHeading b{font-size:5px}
+  .unifiedCharacterPanel .gearCharacterStage{grid-row:2!important;min-height:0;height:100%}
+  .unifiedCharacterPanel .gearCharacterHero{width:min(286px,84vw);height:min(286px,84vw);bottom:-28px}
+  .unifiedCharacterPanel .gearTurntable,.unifiedCharacterPanel>.pappaProgress{display:none}
+  .unifiedCharacterPanel .gearPreviewName{bottom:3px;font-size:5px}
+  .adventureBagPanel .equipmentOrbitSlots .gearLoadoutSlot{width:49px;min-width:49px;min-height:43px;grid-template-columns:29px!important;grid-template-rows:28px auto;padding:2px}
+  .equipmentOrbitSlots .gearLoadoutSlot>i{width:28px!important;height:28px!important}
+  .equipmentOrbitSlots .gearLoadoutSlot small{font-size:3.8px}
+  .equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="hat"],.equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="hammer"]{top:5px}
+  .equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="coat"],.equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="boots"]{bottom:10px}
+  .equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="hat"],.equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="scarf"],.equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="coat"]{left:4px}
+  .equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="hammer"],.equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="gloves"],.equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="boots"]{right:4px}
+  .unifiedGearBrowser{
+    min-height:0;
+    height:100%;
+    display:grid;
+    grid-template-columns:1fr;
+    grid-template-rows:minmax(0,1fr);
+    overflow:hidden;
+    gap:0;
+  }
+  .unifiedGearBrowser .gearCategoryPanel,.unifiedGearBrowser>.gearDetail,.adventureBagPanel .gearToolbar{display:none!important}
+  .unifiedGearBrowser .gearInventoryPanel{
+    min-height:0;
+    height:100%;
+    display:grid!important;
+    grid-template-rows:28px 52px 36px minmax(0,1fr);
+    overflow:hidden;
+  }
+  .adventureBagPanel .gearInventoryHeading{min-height:28px;height:28px;padding:4px 7px}
+  .gearInventoryHeading span small{display:none}
+  .gearInventoryHeading span b{font-size:6px}
+  .gearInventoryHeading em{font-size:5px;white-space:nowrap}
+  .mobileGearSelection{
+    min-width:0;
+    display:grid;
+    grid-template-columns:42px minmax(0,1fr) 72px;
+    align-items:center;
+    gap:6px;
+    padding:4px 5px;
+    border-top:1px solid #2d3d55;
+    border-bottom:1px solid #2d3d55;
+    background:#0b1627;
+  }
+  .mobileGearSelectionArt{width:40px;height:40px;display:grid;place-items:center;border:1px solid color-mix(in srgb,var(--gear-color,#596a84) 55%,#34455d);border-radius:4px;background:#07101c}
+  .mobileGearSelectionArt .gearArt{width:38px;height:38px}
+  .mobileGearSelection>span{min-width:0}
+  .mobileGearSelection small,.mobileGearSelection b,.mobileGearSelection em{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .mobileGearSelection small{color:var(--gear-color,#9aa7b8);font-size:4.5px;letter-spacing:.65px}
+  .mobileGearSelection b{margin:2px 0;color:#f4ead6;font:700 9px/1 Georgia,serif;letter-spacing:0}
+  .mobileGearSelection em{color:#aab6c6;font-size:5px;font-style:normal}
+  .mobileGearSelection em.gain{color:#7ee0a8}.mobileGearSelection em.loss{color:#ef8a8a}.mobileGearSelection em.current{color:#e1bc67}
+  .mobileGearEquip{height:36px;padding:3px;border:1px solid var(--gear-color,#d6aa58);border-radius:4px;background:#a92f3b;color:#fff6e8;font-size:7px;letter-spacing:.8px}
+  .mobileGearEquip:disabled{opacity:.35}
+  .mobileGearControls{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:3px 5px;background:#0a1321}
+  .mobileGearControls button{min-height:30px;display:grid;grid-template-columns:22px 1fr;align-items:center;padding:3px 7px;border:1px solid #40516a;border-radius:3px;background:#15233a;color:#e2e8f0;text-align:left}
+  .mobileGearControls button>i{font-size:14px;font-style:normal;color:#d6aa58}
+  .mobileGearControls small,.mobileGearControls b{display:block}.mobileGearControls small{font-size:4px;color:#8797aa}.mobileGearControls b{margin-top:1px;font-size:6px}
+  .adventureBagPanel .gearBagLayout,.adventureBagPanel .animeBagShell,.adventureBagPanel .animeBagInterior,.adventureBagPanel .gearBagBrowser{min-height:0;height:100%!important}
+  .adventureBagPanel .gearBagLayout{overflow:hidden}
+  .adventureBagPanel .animeBagShell{height:100%!important;min-height:0!important;overflow:hidden}
+  .adventureBagPanel .animeBagInterior{padding:2px;overflow:hidden}
+  .adventureBagPanel .gearBagBrowser{overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
+  .adventureBagPanel .gearGrid{grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:68px;gap:3px;height:auto;min-height:100%;max-height:none;padding:4px 4px 18px;overflow:visible}
+  .adventureBagPanel .gearBagSlot{touch-action:pan-y;-webkit-touch-callout:none;user-select:none}
+  .gearMobileSheet{position:absolute;z-index:80;inset:0;align-items:end;justify-items:stretch}
+  .gearMobileSheet.show{display:grid}
+  .gearMobileSheetShade{position:absolute;inset:0;border:0;border-radius:0;background:#02060bc2}
+  .gearMobileSheet>section{position:relative;z-index:1;width:100%;max-height:68%;overflow:auto;padding:9px max(10px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));border-top:2px solid #d6aa58;background:#0c1728;box-shadow:0 -12px 34px #000}
+  .gearMobileSheet>section>header{height:36px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #384a63}
+  .gearMobileSheet>section>header small,.gearMobileSheet>section>header b{display:block}.gearMobileSheet>section>header small{font-size:4px;color:#8696aa}.gearMobileSheet>section>header b{font-size:9px}
+  .gearMobileSheet>section>header button{width:32px;height:32px;border:1px solid #4c5c72;border-radius:50%;background:#19273b;color:#f4ead6;font-size:18px}
+  .gearMobileSheetOptions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;padding-top:7px}
+  .gearMobileSheetOptions>button,.gearSheetGroup button{min-height:39px;padding:6px;border:1px solid #40516a;border-radius:3px;background:#142238;color:#cbd4e0;font-size:7px}
+  .gearMobileSheetOptions button.active,.gearSheetGroup button.active{border-color:var(--sheet-color,#d6aa58);background:#253452;color:#fff2c8;box-shadow:inset 0 0 12px color-mix(in srgb,var(--sheet-color,#d6aa58) 18%,transparent)}
+  .gearMobileSheetOptions>button{display:flex;align-items:center;justify-content:space-between}.gearMobileSheetOptions>button i{color:#d6aa58;font-size:5px;font-style:normal}
+  .gearSheetGroup{grid-column:1/3;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.gearSheetGroup>small{grid-column:1/4;padding:4px 1px 1px;color:#d6aa58;font-size:5px;letter-spacing:.8px}.raritySheetGroup{grid-template-columns:repeat(3,minmax(0,1fr))}.raritySheetGroup>small{grid-column:1/4}
+  .gearSheetActions{grid-column:1/3;display:grid;grid-template-columns:1fr 1.4fr;gap:5px;margin-top:3px}.gearSheetActions button{min-height:42px;border-radius:3px;font-size:7px}.gearSheetActions .reset{border:1px solid #53647a;background:#17243a;color:#b6c1cf}.gearSheetActions .done{border:1px solid #d6aa58;background:#9d303a;color:#fff6e8}
+}
+
+@media(max-width:390px){
+  .unifiedEquipmentWorkspace{grid-template-rows:clamp(198px,36dvh,245px) minmax(0,1fr)}
+  .unifiedCharacterPanel .gearCharacterHero{width:255px;height:255px}
+  .adventureBagPanel .gearGrid{grid-auto-rows:64px}
+}
+
 /* Per-item hover preview */
 .gearHoverPreview{--gear-color:#c2b9a5;--gear-glow:#827b6d;position:fixed;z-index:120;width:278px;overflow:hidden;border:1px solid var(--gear-color);border-radius:5px;background:#091322;color:#ecf0f5;box-shadow:inset 0 0 0 3px #152843,0 12px 34px #000e;opacity:0;visibility:hidden;transform:translateY(6px) scale(.98);transform-origin:top left;transition:opacity .12s ease,transform .12s ease;pointer-events:none}.gearHoverPreview:before{content:"";position:absolute;z-index:2;left:0;right:0;top:0;height:3px;background:var(--gear-color);box-shadow:0 0 10px var(--gear-glow)}.gearHoverPreview.show{opacity:1;visibility:visible;transform:translateY(0) scale(1)}
 .gearHoverPreview>header{min-height:38px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 9px;border-bottom:1px solid #53627a;background:#142641}.gearHoverPreview>header span,.gearHoverPreview>header small,.gearHoverPreview>header b{display:block}.gearHoverPreview>header small{color:var(--gear-color);font-size:6px;letter-spacing:1.2px}.gearHoverPreview>header b{margin-top:2px;color:#f4ead6;font-size:7px}.gearHoverPreview>header em{color:#d6aa58;font-style:normal;font-size:7px;letter-spacing:.6px}
@@ -933,3 +1080,36 @@ button:focus-visible{outline-color:#f4ead6}
 
 /* v0.30 Skyglass Leviathan boss identity */
 .bossHud.lagoon{border-color:#79e7f2;background:#071a26ed}.bossHud.lagoon span{color:#d9fbff}.bossHud.lagoon span em{color:#9bdde5}.bossHud.lagoon>div{background:#0a2634;border-color:#2f8390}.bossHud.lagoon i{background:linear-gradient(90deg,#174f70,#39bfd2,#e8fbff,#f29ab8)}
+
+/* Mobile combat visibility: readable controls without hiding the arena */
+@media(max-width:760px),(pointer:coarse){
+  #game.runMode .joystick{
+    background:#08132238;
+    border-color:#e5c16f8a;
+    box-shadow:inset 0 0 18px #0005,0 0 0 1px #08101c66;
+  }
+  #game.runMode .joystick i{
+    background:#263a526b;
+    border-color:#f4ead6c7;
+    box-shadow:0 3px 8px #0007;
+  }
+  #game.runMode .dashButton,#game.runMode .spinButton{
+    border-color:#e6c36ba8;
+    box-shadow:0 3px 0 #070b1280,0 5px 12px #0005;
+  }
+  #game.runMode .dashButton:before{
+    background:#10203970;
+    border:1px solid #f0c66a73;
+  }
+  #game.runMode .spinButton:before{
+    background:radial-gradient(circle at 46% 38%,#3346648a,#12203970 62%,#08101c70);
+    border-color:#f0c66a73;
+  }
+  #game.runMode .dashButton:active:before,#game.runMode .spinButton:active:before{
+    background:#172943d9;
+  }
+  #game.runMode .dashButton:active,#game.runMode .spinButton:active{
+    filter:brightness(1.18);
+    box-shadow:0 2px 0 #070b12,0 0 15px #d6aa5866;
+  }
+}

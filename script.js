@@ -436,55 +436,59 @@
   function paperDollGem(layer,x,y,r,profile){
     layer.save();layer.shadowColor=profile.accent;layer.shadowBlur=profile.rank===4?10:5;layer.fillStyle=paperDollMix(profile.accent,'#ffffff',.34);layer.strokeStyle=profile.shadow;layer.lineWidth=2;layer.beginPath();layer.moveTo(x,y-r);layer.lineTo(x+r*.78,y);layer.lineTo(x,y+r);layer.lineTo(x-r*.78,y);layer.closePath();layer.fill();layer.stroke();layer.restore()
   }
-  function drawPaperDollMaterial(layer,item,slot,b,pose,frame){
-    if(!b)return;let profile=paperDollProfile(item),x=b.x,y=b.y,w=b.w,h=b.h,rank=profile.rank,finish=profile.finish;
-    layer.save();layer.globalCompositeOperation='source-atop';
-    let material=layer.createLinearGradient(x,y,x+w*.72,y+h);material.addColorStop(0,paperDollMix(profile.primary,'#ffffff',finish==='ivory'?.1:.045));material.addColorStop(.3,profile.primary);material.addColorStop(.74,paperDollMix(profile.primary,profile.shadow,.16));material.addColorStop(1,profile.shadow);
-    layer.globalAlpha=finish==='ivory'?.88:.76+rank*.025;layer.fillStyle=material;layer.fillRect(x-3,y-3,w+6,h+6);
-    let depth=layer.createRadialGradient(x+w*.3,y+h*.18,3,x+w*.52,y+h*.5,Math.max(w,h)*.76);depth.addColorStop(0,'rgba(255,255,255,.24)');depth.addColorStop(.42,'rgba(255,255,255,0)');depth.addColorStop(1,'rgba(0,0,0,.5)');layer.globalAlpha=.54;layer.fillStyle=depth;layer.fillRect(x-4,y-4,w+8,h+8);
-
-    layer.globalAlpha=.52;layer.fillStyle=paperDollRgba(profile.secondary,.9);layer.strokeStyle=paperDollRgba(profile.metal,.92);layer.lineWidth=rank===4?2.8:2;
-    if(slot==='hat'){
-      layer.fillRect(x+w*.08,y+h*.48,w*.84,h*.18);layer.globalAlpha=.88;layer.beginPath();layer.moveTo(x+w*.1,y+h*.48);layer.lineTo(x+w*.9,y+h*.48);layer.stroke()
-    }else if(slot==='scarf'){
-      layer.globalAlpha=.32;layer.beginPath();layer.moveTo(x+w*.03,y+h*.18);layer.lineTo(x+w*.55,y+h*.23);layer.lineTo(x+w*.39,y+h*.94);layer.lineTo(x+w*.08,y+h*.82);layer.closePath();layer.fill()
-    }else if(slot==='coat'){
-      layer.globalAlpha=.36;layer.beginPath();layer.moveTo(x+w*.02,y+h*.13);layer.lineTo(x+w*.28,y+h*.08);layer.lineTo(x+w*.38,y+h*.94);layer.lineTo(x+w*.03,y+h*.98);layer.closePath();layer.fill();layer.beginPath();layer.moveTo(x+w*.7,y+h*.09);layer.lineTo(x+w*.98,y+h*.16);layer.lineTo(x+w*.97,y+h*.96);layer.lineTo(x+w*.62,y+h*.94);layer.closePath();layer.fill();
-      layer.globalAlpha=.78;layer.beginPath();layer.moveTo(x+w*.38,y+h*.12);layer.lineTo(x+w*.49,y+h*.4);layer.lineTo(x+w*.6,y+h*.12);layer.stroke()
-    }else if(slot==='hammer'){
-      layer.globalAlpha=.55;paperDollRoundedPath(layer,x+w*.14,y+h*.15,w*.72,h*.7,Math.min(9,h*.12));layer.fill();layer.globalAlpha=.9;paperDollRoundedPath(layer,x+w*.17,y+h*.18,w*.66,h*.64,Math.min(7,h*.1));layer.stroke()
-    }else if(slot==='boots'){
-      layer.globalAlpha=.5;layer.fillRect(x,y+h*.58,w,h*.42);layer.globalAlpha=.82;layer.beginPath();layer.moveTo(x,y+h*.64);layer.lineTo(x+w,y+h*.64);layer.stroke()
-    }
-
-    layer.globalAlpha=rank===4?.78:rank===3?.62:.48;layer.strokeStyle=paperDollRgba(profile.metal,.95);layer.fillStyle=paperDollRgba(profile.accent,.72);layer.lineWidth=rank===4?2.5:1.8;
-    if(['iron','forge','ivory','regal'].includes(finish)){
-      layer.beginPath();layer.ellipse(x+w*.52,y+h*.47,w*.27,h*.22,-.08,Math.PI*.12,Math.PI*1.78);layer.stroke();
-      if(rank>=3){paperDollRivet(layer,x+w*.31,y+h*.31,1.8,profile.metal);paperDollRivet(layer,x+w*.7,y+h*.68,1.8,profile.metal)}
-    }else if(['moon','storm','spectral','fate'].includes(finish)){
-      layer.globalAlpha=rank===4?.46:.3;let glow=layer.createRadialGradient(x+w*.52,y+h*.44,1,x+w*.52,y+h*.44,Math.min(w,h)*.32);glow.addColorStop(0,paperDollRgba(profile.accent,.72));glow.addColorStop(1,paperDollRgba(profile.accent,0));layer.fillStyle=glow;layer.fillRect(x,y,w,h);
-      if(rank>=3)paperDollGem(layer,x+w*.6,y+h*.36,2.8+rank*.38,profile)
-    }else if(['leather','canvas','voyager'].includes(finish)){
-      layer.globalAlpha=.52;paperDollRoundedPath(layer,x+w*.22,y+h*.25,w*.4,h*.34,Math.min(w,h)*.07);layer.stroke();
-      paperDollRivet(layer,x+w*.25,y+h*.28,1.6,profile.metal);paperDollRivet(layer,x+w*.59,y+h*.55,1.6,profile.metal)
-    }else if(['gilded','royal','lantern'].includes(finish)){
-      layer.globalAlpha=.64;layer.beginPath();layer.arc(x+w*.5,y+h*.47,Math.min(w,h)*.2,0,Math.PI*2);layer.stroke();
-      if(rank>=2)paperDollGem(layer,x+w*.5,y+h*.47,2.7+rank*.42,profile)
-    }else if(['blood','infernal'].includes(finish)){
-      layer.globalAlpha=.42;layer.fillStyle=paperDollRgba(profile.accent,.72);layer.beginPath();layer.moveTo(x+w*.34,y+h*.2);layer.lineTo(x+w*.66,y+h*.2);layer.lineTo(x+w*.56,y+h*.77);layer.lineTo(x+w*.43,y+h*.77);layer.closePath();layer.fill()
+  function drawPaperDollMaterial(layer,item,slot,b){
+    if(!b)return;let profile=paperDollProfile(item),x=b.x,y=b.y,w=b.w,h=b.h,rank=profile.rank;
+    layer.save();
+    // Preserve the authored sprite shading and silhouette. Gear only changes the
+    // material inside its mask; no synthetic seams or outlines are painted over it.
+    layer.globalCompositeOperation='source-atop';
+    let tint=layer.createLinearGradient(x,y,x+w*.72,y+h);
+    tint.addColorStop(0,paperDollMix(profile.primary,'#ffffff',.08));
+    tint.addColorStop(.42,profile.primary);
+    tint.addColorStop(1,paperDollMix(profile.primary,profile.shadow,.34));
+    layer.globalAlpha=.42+rank*.025;layer.fillStyle=tint;layer.fillRect(x-2,y-2,w+4,h+4);
+    let depth=layer.createRadialGradient(x+w*.31,y+h*.2,2,x+w*.55,y+h*.56,Math.max(w,h)*.78);
+    depth.addColorStop(0,'rgba(255,255,255,.2)');
+    depth.addColorStop(.45,'rgba(255,255,255,0)');
+    depth.addColorStop(1,'rgba(0,0,0,.34)');
+    layer.globalCompositeOperation='overlay';layer.globalAlpha=.34;layer.fillStyle=depth;layer.fillRect(x-3,y-3,w+6,h+6);
+    if(rank>=2){
+      let finish=layer.createRadialGradient(x+w*.5,y+h*.42,1,x+w*.5,y+h*.42,Math.max(8,Math.min(w,h)*.55));
+      finish.addColorStop(0,paperDollRgba(profile.accent,rank===4?.24:.12));
+      finish.addColorStop(1,paperDollRgba(profile.accent,0));
+      layer.globalCompositeOperation='screen';layer.globalAlpha=1;layer.fillStyle=finish;layer.fillRect(x,y,w,h)
     }
     layer.restore()
   }
-  const PAPER_DOLL_RENDER_ORDER=['scarf','coat','boots','hat','hammer'];
+  const PAPER_DOLL_RENDER_LAYERS=[
+    {slot:'coat',region:'chest-gloves'},
+    {slot:'scarf',region:'neck'},
+    {slot:'boots',region:'boots'},
+    {slot:'hat',region:'hat'},
+    {slot:'hammer',region:'hammer'}
+  ];
   function cleanPaperDollMask(maskLayer){
-    let image=maskLayer.getImageData(0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL),pixels=image.data;
-    for(let index=3;index<pixels.length;index+=4){let alpha=pixels[index];pixels[index]=alpha<=18?0:Math.min(255,Math.round((alpha-18)*1.18))}
+    let image=maskLayer.getImageData(0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL),pixels=image.data,alpha=new Uint8ClampedArray(PAPER_DOLL_CELL*PAPER_DOLL_CELL);
+    for(let pixel=0;pixel<alpha.length;pixel++)alpha[pixel]=pixels[pixel*4+3];
+    for(let y=0;y<PAPER_DOLL_CELL;y++)for(let x=0;x<PAPER_DOLL_CELL;x++){
+      let pixel=y*PAPER_DOLL_CELL+x,value=alpha[pixel],neighbors=0;
+      if(x>0&&alpha[pixel-1]>18)neighbors++;
+      if(x<PAPER_DOLL_CELL-1&&alpha[pixel+1]>18)neighbors++;
+      if(y>0&&alpha[pixel-PAPER_DOLL_CELL]>18)neighbors++;
+      if(y<PAPER_DOLL_CELL-1&&alpha[pixel+PAPER_DOLL_CELL]>18)neighbors++;
+      pixels[pixel*4+3]=value<=14||value<88&&neighbors<2?0:Math.min(255,Math.round((value-12)*255/243))
+    }
     maskLayer.putImageData(image,0,0)
   }
   function paperDollMaskBounds(maskLayer){
     let pixels=maskLayer.getImageData(0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL).data,minX=PAPER_DOLL_CELL,minY=PAPER_DOLL_CELL,maxX=-1,maxY=-1;
     for(let y=0;y<PAPER_DOLL_CELL;y+=2)for(let x=0;x<PAPER_DOLL_CELL;x+=2)if(pixels[(y*PAPER_DOLL_CELL+x)*4+3]>20){if(x<minX)minX=x;if(y<minY)minY=y;if(x>maxX)maxX=x;if(y>maxY)maxY=y}
     return maxX<0?null:{x:minX,y:minY,w:maxX-minX+2,h:maxY-minY+2}
+  }
+  const paperDollMaskFrameCache=new Map();
+  function paperDollMaskFrame(pose,slot,frame){
+    let key=pose+':'+slot+':'+frame,cached=paperDollMaskFrameCache.get(key);if(cached)return cached;
+    let canvas=document.createElement('canvas'),layer=canvas.getContext('2d'),mx=frame%4*PAPER_DOLL_MASK_CELL,my=Math.floor(frame/4)*PAPER_DOLL_MASK_CELL;canvas.width=canvas.height=PAPER_DOLL_CELL;layer.imageSmoothingEnabled=true;layer.imageSmoothingQuality='high';layer.drawImage(paperDollMasks[pose][slot],mx,my,PAPER_DOLL_MASK_CELL,PAPER_DOLL_MASK_CELL,0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);cleanPaperDollMask(layer);cached={canvas,bounds:paperDollMaskBounds(layer)};paperDollMaskFrameCache.set(key,cached);return cached
   }
   function drawPaperDollMark(layer,item,x,y,size){
     let set=item.setId&&SET_BY_ID[item.setId],mark=set&&set.mark||item.visual.mark||'\u2726';layer.save();layer.textAlign='center';layer.textBaseline='middle';layer.font='900 '+Math.max(10,size)+'px Georgia,serif';layer.lineWidth=Math.max(2,size*.16);layer.strokeStyle='#111827';layer.strokeText(mark,x,y);layer.fillStyle=item.visual.accent;layer.fillText(mark,x,y);layer.restore()
@@ -558,8 +562,8 @@
     layer.restore()
   }
   function composePaperDollPose(pose){
-    let source=pappaHammerSprites[pose],out=document.createElement('canvas'),scratch=document.createElement('canvas'),maskScratch=document.createElement('canvas'),shapeScratch=document.createElement('canvas');out.width=PAPER_DOLL_CELL*4;out.height=PAPER_DOLL_CELL*2;scratch.width=scratch.height=maskScratch.width=maskScratch.height=shapeScratch.width=shapeScratch.height=PAPER_DOLL_CELL;let outCtx=out.getContext('2d'),layer=scratch.getContext('2d'),maskLayer=maskScratch.getContext('2d'),shapeLayer=shapeScratch.getContext('2d');if(!outCtx||!layer||!maskLayer||!shapeLayer)return source;outCtx.imageSmoothingEnabled=layer.imageSmoothingEnabled=maskLayer.imageSmoothingEnabled=shapeLayer.imageSmoothingEnabled=true;outCtx.imageSmoothingQuality=layer.imageSmoothingQuality=maskLayer.imageSmoothingQuality=shapeLayer.imageSmoothingQuality='high';
-    for(let frame=0;frame<8;frame++){let sx=frame%4*512,sy=Math.floor(frame/4)*512,mx=frame%4*PAPER_DOLL_MASK_CELL,my=Math.floor(frame/4)*PAPER_DOLL_MASK_CELL,dx=frame%4*PAPER_DOLL_CELL,dy=Math.floor(frame/4)*PAPER_DOLL_CELL;outCtx.drawImage(source,sx,sy,512,512,dx,dy,PAPER_DOLL_CELL,PAPER_DOLL_CELL);for(const slot of PAPER_DOLL_RENDER_ORDER){let item=equippedItem(slot);if(!item)continue;let mask=paperDollMasks[pose][slot];maskLayer.clearRect(0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);maskLayer.globalCompositeOperation='source-over';maskLayer.globalAlpha=1;maskLayer.drawImage(mask,mx,my,PAPER_DOLL_MASK_CELL,PAPER_DOLL_MASK_CELL,0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);cleanPaperDollMask(maskLayer);let bounds=paperDollMaskBounds(maskLayer);layer.clearRect(0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);layer.globalCompositeOperation='source-over';layer.globalAlpha=1;layer.drawImage(source,sx,sy,512,512,0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);layer.globalCompositeOperation='destination-in';layer.drawImage(maskScratch,0,0);layer.globalCompositeOperation='source-over';drawPaperDollMaterial(layer,item,slot,bounds,pose,frame);outCtx.drawImage(scratch,dx,dy);shapeLayer.clearRect(0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);shapeLayer.globalCompositeOperation='source-over';drawPaperDollGeometry(shapeLayer,slot,item,bounds,pose,frame);shapeLayer.globalCompositeOperation='destination-in';shapeLayer.drawImage(maskScratch,0,0);shapeLayer.globalCompositeOperation='source-over';outCtx.drawImage(shapeScratch,dx,dy)}}return out
+    let source=pappaHammerSprites[pose],out=document.createElement('canvas'),scratch=document.createElement('canvas');out.width=PAPER_DOLL_CELL*4;out.height=PAPER_DOLL_CELL*2;scratch.width=scratch.height=PAPER_DOLL_CELL;let outCtx=out.getContext('2d'),layer=scratch.getContext('2d');if(!outCtx||!layer)return source;outCtx.imageSmoothingEnabled=layer.imageSmoothingEnabled=true;outCtx.imageSmoothingQuality=layer.imageSmoothingQuality='high';
+    for(let frame=0;frame<8;frame++){let sx=frame%4*512,sy=Math.floor(frame/4)*512,dx=frame%4*PAPER_DOLL_CELL,dy=Math.floor(frame/4)*PAPER_DOLL_CELL;outCtx.drawImage(source,sx,sy,512,512,dx,dy,PAPER_DOLL_CELL,PAPER_DOLL_CELL);for(const renderLayer of PAPER_DOLL_RENDER_LAYERS){let slot=renderLayer.slot,item=equippedItem(slot);if(!item)continue;let mask=paperDollMaskFrame(pose,slot,frame);layer.clearRect(0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);layer.globalCompositeOperation='source-over';layer.globalAlpha=1;layer.drawImage(source,sx,sy,512,512,0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);layer.globalCompositeOperation='destination-in';layer.drawImage(mask.canvas,0,0);layer.globalCompositeOperation='source-over';drawPaperDollMaterial(layer,item,slot,mask.bounds);outCtx.drawImage(scratch,dx,dy)}}return out
   }
   function refreshPaperDoll(){
     let fullSetId=equippedFullSetId(),setReady=paperDollSetReady(fullSetId),key=(setReady?'skin:'+fullSetId+':':'paper:')+paperDollLoadoutKey();if(key===paperDollKey&&paperDollAtlases.idle)return;if(!setReady&&!paperDollAssetsReady())return;let next={};for(const pose of PAPER_DOLL_POSES)next[pose]=setReady?paperDollSetSprites[fullSetId][pose]:composePaperDollPose(pose);paperDollAtlases=next;paperDollKey=key;let preview=next.idle&&typeof next.idle.toDataURL==='function'?'url("'+next.idle.toDataURL('image/png')+'")':'url("'+next.idle.src+'")';ui.pappaHammerBase.style.backgroundImage=preview;ui.gearCharacterHero.style.backgroundImage=preview
@@ -567,7 +571,8 @@
   function paperDollAtlasReport(pose,includePreview){
     let atlas=paperDollAtlases[pose];if(!imageReady(atlas))return null;let width=atlas.naturalWidth||atlas.width,height=atlas.naturalHeight||atlas.height,probe=document.createElement('canvas'),probeCtx=probe.getContext('2d');probe.width=128;probe.height=64;probeCtx.drawImage(atlas,0,0,width,height,0,0,probe.width,probe.height);let pixels=probeCtx.getImageData(0,0,probe.width,probe.height).data,hash=2166136261,opaque=0;
     for(let index=0;index<pixels.length;index+=4){let alpha=pixels[index+3];if(alpha>18)opaque++;hash^=pixels[index];hash=Math.imul(hash,16777619);hash^=pixels[index+1];hash=Math.imul(hash,16777619);hash^=pixels[index+2];hash=Math.imul(hash,16777619);hash^=alpha;hash=Math.imul(hash,16777619)}
-    let report={pose,width,height,hash:(hash>>>0).toString(16).padStart(8,'0'),opaque,corners:[pixels[3],pixels[(probe.width-1)*4+3],pixels[((probe.height-1)*probe.width)*4+3],pixels[(probe.width*probe.height-1)*4+3]]};
+    let frames=[];for(let frame=0;frame<8;frame++){let frameProbe=document.createElement('canvas'),frameCtx=frameProbe.getContext('2d'),sx=frame%4*width/4,sy=Math.floor(frame/4)*height/2;frameProbe.width=frameProbe.height=128;frameCtx.drawImage(atlas,sx,sy,width/4,height/2,0,0,128,128);let framePixels=frameCtx.getImageData(0,0,128,128).data,minX=128,minY=128,maxX=-1,maxY=-1,edgeOpaque=0,frameHash=2166136261;for(let y=0;y<128;y++)for(let x=0;x<128;x++){let index=(y*128+x)*4,alpha=framePixels[index+3];if(alpha>18){minX=Math.min(minX,x);minY=Math.min(minY,y);maxX=Math.max(maxX,x);maxY=Math.max(maxY,y);if(x===0||x===127||y===0||y===127)edgeOpaque++}frameHash^=framePixels[index];frameHash=Math.imul(frameHash,16777619);frameHash^=framePixels[index+1];frameHash=Math.imul(frameHash,16777619);frameHash^=framePixels[index+2];frameHash=Math.imul(frameHash,16777619);frameHash^=alpha;frameHash=Math.imul(frameHash,16777619)}frames.push({frame,hash:(frameHash>>>0).toString(16).padStart(8,'0'),edgeOpaque,bounds:maxX<0?null:{x:minX,y:minY,w:maxX-minX+1,h:maxY-minY+1}})}
+    let report={pose,width,height,hash:(hash>>>0).toString(16).padStart(8,'0'),opaque,corners:[pixels[3],pixels[(probe.width-1)*4+3],pixels[((probe.height-1)*probe.width)*4+3],pixels[(probe.width*probe.height-1)*4+3]],frames};
     if(includePreview){let preview=document.createElement('canvas'),previewCtx=preview.getContext('2d');preview.width=preview.height=512;previewCtx.drawImage(atlas,0,0,width/4,height/2,0,0,512,512);report.preview=preview.toDataURL('image/png')}
     return report
   }
@@ -1314,8 +1319,6 @@
   function worldToViewport(x,y,cam){let p=worldToScreen(x,y,cam),zoom=cam.zoom||1;return{x:W/2+(p.x-W/2)*zoom,y:H/2+(p.y-H/2)*zoom}}
   function roundedRect(x,y,w,h,r){ctx.beginPath();if(ctx.roundRect){ctx.roundRect(x,y,w,h,r);return}r=Math.min(r,w/2,h/2);ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath()}
   function drawGear(x,y,r,rot,color){ctx.save();ctx.translate(x,y);ctx.rotate(rot);ctx.fillStyle=color;for(let i=0;i<8;i++){ctx.rotate(Math.PI/4);ctx.fillRect(r*.72,-r*.14,r*.42,r*.28)}ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.fill();ctx.fillStyle='#131719';ctx.beginPath();ctx.arc(0,0,r*.38,0,Math.PI*2);ctx.fill();ctx.restore()}
-  function drawPappaGearBack(){let scarf=equippedItem('scarf'),coat=equippedItem('coat');if(coat){let v=coat.visual;ctx.save();ctx.globalAlpha=.88;ctx.fillStyle=v.color;ctx.strokeStyle=v.accent;ctx.lineWidth=v.style>=4?2.6:1.5;ctx.beginPath();ctx.moveTo(-8,-5);ctx.quadraticCurveTo(-24,5,-22,25);ctx.lineTo(-7,18);ctx.lineTo(3,8);ctx.closePath();ctx.fill();ctx.stroke();if(v.style>=3){ctx.fillStyle=v.accent;ctx.fillRect(-21,13,5,2)}ctx.restore()}if(scarf){let v=scarf.visual;ctx.save();ctx.fillStyle=v.color;ctx.strokeStyle=v.accent;ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(-8,-9);ctx.quadraticCurveTo(-25,-11,-31,-1);ctx.lineTo(-17,2);ctx.lineTo(-29,10);ctx.quadraticCurveTo(-13,8,-3,-3);ctx.closePath();ctx.fill();ctx.stroke();if(v.style>=3){ctx.strokeStyle=v.accent;ctx.beginPath();ctx.moveTo(-26,1);ctx.lineTo(-14,2);ctx.stroke()}ctx.restore()}}
-  function drawPappaGearFront(strike,showHammer){let hat=equippedItem('hat'),scarf=equippedItem('scarf'),coat=equippedItem('coat'),hammer=equippedItem('hammer'),boots=equippedItem('boots');if(coat){let v=coat.visual;ctx.save();ctx.globalAlpha=v.style===5?.9:.72;ctx.strokeStyle=v.color;ctx.lineWidth=v.style>=4?4:2.8;ctx.beginPath();ctx.moveTo(-13,-3);ctx.quadraticCurveTo(-8,8,-11,18);ctx.moveTo(8,-4);ctx.quadraticCurveTo(5,8,9,17);ctx.stroke();ctx.strokeStyle=v.accent;ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(-10,0);ctx.lineTo(-3,8);ctx.lineTo(-7,17);ctx.moveTo(6,0);ctx.lineTo(1,8);ctx.lineTo(7,16);ctx.stroke();ctx.restore()}if(scarf){let v=scarf.visual;ctx.save();ctx.fillStyle=v.color;ctx.strokeStyle=v.accent;ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(-8,-10);ctx.lineTo(8,-9);ctx.lineTo(4,1);ctx.lineTo(-2,5);ctx.lineTo(-10,-3);ctx.closePath();ctx.fill();ctx.stroke();ctx.restore()}if(hat){let v=hat.visual;ctx.save();ctx.strokeStyle=v.color;ctx.lineWidth=v.style>=4?4:3;ctx.beginPath();ctx.moveTo(-17,-21);ctx.quadraticCurveTo(0,-17,18,-21);ctx.stroke();ctx.strokeStyle=v.accent;ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(-13,-23);ctx.lineTo(13,-21);ctx.stroke();ctx.fillStyle=v.accent;if(v.style%3===0){ctx.beginPath();ctx.arc(1,-22,3,0,Math.PI*2);ctx.fill()}else if(v.style%3===1){ctx.fillRect(-2,-25,5,6)}else{ctx.beginPath();ctx.moveTo(1,-27);ctx.lineTo(5,-22);ctx.lineTo(1,-18);ctx.lineTo(-3,-22);ctx.closePath();ctx.fill()}ctx.restore()}if(hammer&&showHammer!==false){let v=hammer.visual,x=42+strike*3;ctx.save();ctx.translate(x,-1);ctx.rotate(strike*.08);ctx.fillStyle='#4c3327';ctx.fillRect(-13,-1,15,3);ctx.fillStyle=v.color;ctx.strokeStyle=v.accent;ctx.lineWidth=v.style>=4?2.6:1.8;roundedRect(-1,-10,19,20,v.style>=3?4:2);ctx.fill();ctx.stroke();ctx.strokeStyle=v.accent;ctx.lineWidth=1.2;ctx.strokeRect(4,-6,9,12);if(v.style>=3){ctx.beginPath();ctx.moveTo(4,0);ctx.lineTo(13,0);ctx.moveTo(8.5,-5);ctx.lineTo(8.5,5);ctx.stroke()}ctx.restore()}if(boots){let v=boots.visual;ctx.save();ctx.fillStyle=v.color;ctx.strokeStyle=v.accent;ctx.lineWidth=1.4;for(const x of [-10,8]){ctx.save();ctx.translate(x,18);ctx.rotate(x<0?.12:-.12);roundedRect(-5,-3,11,8,2);ctx.fill();ctx.stroke();if(v.style>=2){ctx.strokeStyle=v.accent;ctx.beginPath();ctx.moveTo(-3,0);ctx.lineTo(3,0);ctx.moveTo(-2,2);ctx.lineTo(4,2);ctx.stroke()}ctx.restore()}ctx.restore()}}
   function drawPappaHammer(){
     let move=movement(),spinning=player.spinTime>0,moving=player.dashTime>0||player.spinLeap>0||Math.abs(move.x)+Math.abs(move.y)>.05,attacking=player.attackAnim>0||spinning,pose=attacking?'attack':moving?'run':'idle',duration=pose==='attack'?player.attackDuration:pose==='run'?.68:1.65,progress=spinning?(player.spinAngle%(Math.PI*2))/(Math.PI*2):pose==='attack'?1-player.attackAnim/player.attackDuration:(player.animClock%duration)/duration,frame=Math.max(0,Math.min(7,Math.floor(progress*8))),sprite=paperDollAtlases[pose]||pappaHammerSprites[pose];
     ctx.save();
@@ -1807,27 +1810,30 @@
         paperDollKey='';refreshPaperDoll();refreshBase();openGearLocker();setGearView('loadout');renderGearLocker();
         return this.gearVisualState()
       },
+      previewGearRarity(rarityId){
+        let pool=LOOT_BY_RARITY[rarityId]||[];if(!pool.length)return null;
+        for(const slot of GEAR_SLOTS)save.equipped[slot]=null;
+        for(const slot of GEAR_SLOTS){
+          let item=pool.find(entry=>entry.slot===slot);if(!item)continue;
+          let gear=rollGearInstance(item,Math.max(item.minLevel||1,save.level),1.08);save.gear.push(gear);save.equipped[slot]=gear.uid
+        }
+        paperDollKey='';refreshPaperDoll();refreshBase();openGearLocker();setGearView('loadout');renderGearLocker();
+        return this.gearVisualState()
+      },
       gearVisualState(includePreview){
         let setId=equippedFullSetId(),set=setId&&SET_BY_ID[setId],profile=equippedRarityProfile();
-        return{setId,rarity:set&&set.rarity||profile.name.toLowerCase(),paperDollKey,usesProductionSkin:paperDollSetReady(setId),visualProfile:setId&&SET_VISUAL_PROFILES[setId]?setId:null,atlases:Object.fromEntries(PAPER_DOLL_POSES.map(pose=>[pose,paperDollAtlasReport(pose,!!includePreview&&pose==='idle')]))}
+        return{setId,rarity:set&&set.rarity||profile.name.toLowerCase(),paperDollKey,usesProductionSkin:paperDollSetReady(setId),visualProfile:setId&&SET_VISUAL_PROFILES[setId]?setId:null,layers:PAPER_DOLL_RENDER_LAYERS.map(layer=>Object.assign({},layer)),atlases:Object.fromEntries(PAPER_DOLL_POSES.map(pose=>[pose,paperDollAtlasReport(pose,!!includePreview)]))}
       },
       gearSetCatalog(){
         return SET_DEFINITIONS.map(set=>({id:set.id,name:set.name,rarity:set.rarity,minLevel:set.minLevel}))
       },
       gearVisualCoverage(){
         let missing=LOOT_ITEMS.filter(item=>item.setId?!SET_VISUAL_PROFILES[item.setId]:!FIELD_VISUAL_PROFILES.length).map(item=>item.id);
-        return{items:LOOT_ITEMS.length,setItems:SET_ITEMS.length,legacyItems:LEGACY_LOOT_ITEMS.length,sets:SET_DEFINITIONS.length,profiles:Object.keys(SET_VISUAL_PROFILES).length,missing,usesStripePattern:/drawPaperDollPattern/.test(String(composePaperDollPose))}
+        return{items:LOOT_ITEMS.length,setItems:SET_ITEMS.length,legacyItems:LEGACY_LOOT_ITEMS.length,sets:SET_DEFINITIONS.length,profiles:Object.keys(SET_VISUAL_PROFILES).length,missing,usesStripePattern:/drawPaperDollPattern|drawPaperDollGeometry/.test(String(composePaperDollPose)),usesLegacyGearOverlay:/drawPappaGearBack|drawPappaGearFront/.test(String(drawPappaHammer))}
       },
       gearMaskBounds(pose,frame){
         if(!PAPER_DOLL_POSES.includes(pose)||frame<0||frame>7)return null;
-        let canvas=document.createElement('canvas'),layer=canvas.getContext('2d'),mx=frame%4*PAPER_DOLL_MASK_CELL,my=Math.floor(frame/4)*PAPER_DOLL_MASK_CELL;
-        canvas.width=canvas.height=PAPER_DOLL_CELL;
-        return Object.fromEntries(GEAR_SLOTS.map(slot=>{
-          layer.clearRect(0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);
-          layer.drawImage(paperDollMasks[pose][slot],mx,my,PAPER_DOLL_MASK_CELL,PAPER_DOLL_MASK_CELL,0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);
-          cleanPaperDollMask(layer);
-          return[slot,paperDollMaskBounds(layer)]
-        }))
+        return Object.fromEntries(GEAR_SLOTS.map(slot=>[slot,paperDollMaskFrame(pose,slot,frame).bounds]))
       }
     }
   }

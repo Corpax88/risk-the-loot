@@ -3,6 +3,7 @@ const fs=require('fs'),assert=require('assert'),child=require('child_process');
 const html=fs.readFileSync('index.html','utf8');
 const css=fs.readFileSync('style.css','utf8');
 const script=fs.readFileSync('script.js','utf8');
+const pkg=JSON.parse(fs.readFileSync('package.json','utf8'));
 const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(match=>match[1]);
 const unique=new Set(ids);
 
@@ -14,7 +15,7 @@ for(const match of script.matchAll(/\$\('([^']+)'\)/g)){
 const openBraces=(css.match(/{/g)||[]).length;
 const closeBraces=(css.match(/}/g)||[]).length;
 assert.equal(openBraces,closeBraces,'CSS braces are unbalanced');
-assert(html.includes('style.css?v=0.39.0')&&html.includes('script.js?v=0.39.0'),'release assets are not versioned');
+assert(html.includes('style.css?v='+pkg.version)&&html.includes('script.js?v='+pkg.version),'release assets are not versioned');
 assert(script.includes('function beginTouchHelp')&&script.includes('function gearHelpFromNode'),'unified mobile hold-help system is missing');
 assert(css.includes('.gearHoverPreview.touchPreview'),'mobile gear comparison preview is missing');
 assert(html.includes('id="contractPrompt"')&&html.includes('id="vaultReward"')&&script.includes('function vaultProgress')&&script.includes('function openGrandVault')&&script.includes('function rollVaultGear')&&css.includes('.contractTracker.imminent')&&css.includes('.vaultReward.revealed'),'repeatable Grand Vault reward or anticipation presentation is missing');
@@ -92,6 +93,7 @@ assert(/function destroyEnemy\(e\)[\s\S]*?runScrap\+=coins;/.test(script)&&!/fun
 assert(script.includes("const GEAR_SLOTS=['hat','scarf','coat','hammer','boots']")&&script.includes('gearStats')&&script.includes('gearArtMarkup'),'gear slots, stats, or visual equipment are missing');
 assert(script.includes('paperDollMasks')&&script.includes('composePaperDollPose')&&script.includes('paperDollAtlases[pose]'),'animated equipped gear is not wired into Pappa Hammer');
 assert(script.includes('PAPER_DOLL_CELL=512')&&script.includes('PAPER_DOLL_MASK_CELL=256'),'paper-doll output is not Retina sharp or mobile optimized');
+assert(!script.includes('drawPaperDollSilhouette'),'equipped gear must stay inside the painted hero instead of adding rarity-colored outlines');
 assert(/\.pappaHammerBase\{[\s\S]*?image-rendering:auto;[\s\S]*?filter:none;[\s\S]*?\}/.test(css),'iPhone-softening hero filter is active');
 assert(html.includes('id="gearLockerButton"')&&html.includes('id="gearGrid"')&&html.includes('id="gearCharacterPreview"'),'Gear Locker or live character preview is missing');
 assert(html.includes('id="gearTurnLeft"')&&html.includes('id="gearTurnRight"')&&html.includes('id="gearSetSummary"')&&script.includes('updateGearTurntable'),'rotating preview or set summary is missing');

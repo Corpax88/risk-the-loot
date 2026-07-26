@@ -14,7 +14,7 @@ for(const match of script.matchAll(/\$\('([^']+)'\)/g)){
 const openBraces=(css.match(/{/g)||[]).length;
 const closeBraces=(css.match(/}/g)||[]).length;
 assert.equal(openBraces,closeBraces,'CSS braces are unbalanced');
-assert(html.includes('style.css?v=0.37.0')&&html.includes('script.js?v=0.37.0'),'release assets are not versioned');
+assert(html.includes('style.css?v=0.38.0')&&html.includes('script.js?v=0.38.0'),'release assets are not versioned');
 assert(script.includes('function beginTouchHelp')&&script.includes('function gearHelpFromNode'),'unified mobile hold-help system is missing');
 assert(css.includes('.gearHoverPreview.touchPreview'),'mobile gear comparison preview is missing');
 assert(html.includes('id="contractPrompt"')&&html.includes('id="vaultReward"')&&script.includes('function vaultProgress')&&script.includes('function openGrandVault')&&script.includes('function rollVaultGear')&&css.includes('.contractTracker.imminent')&&css.includes('.vaultReward.revealed'),'repeatable Grand Vault reward or anticipation presentation is missing');
@@ -54,7 +54,9 @@ assert(script.includes('function combatViewContains')&&script.includes('function
 assert(script.includes('ARENA_OBSTACLE_LAYOUT')&&script.includes('function moveAroundCover')&&script.includes('projectileHitsCover(b.x,b.y,b.r)')&&script.includes('lineBlockedByCover'),'physical arena cover is missing');
 assert(script.includes('CAMERA_ZOOM={mobile:.72,desktop:.8}')&&script.includes('ctx.scale(cam.zoom,cam.zoom)'),'zoomed-out combat camera is missing');
 assert(script.includes('function updateEnemyEntity')&&script.includes('spawnGrace:spawnDuration')&&script.includes('e.stepFx<=0'),'living enemy movement or deterministic arrival animation is missing');
-assert(script.includes('TANK_RUSH_WINDUP')&&script.includes('function drawTankTelegraph')&&script.includes("kind:'tankImpact'"),'Shield Guard rush or danger-lane feedback is missing');
+assert(script.includes('TANK_RUSH_RANGE=420')&&script.includes('TANK_RUSH_OVERSHOOT=64')&&script.includes('function prepareEnemyDash')&&script.includes('function finishEnemyDash')&&script.includes('function drawTankTelegraph')&&script.includes("kind:'tankImpact'"),'Shield Guard long rush, recovery, or danger-lane feedback is missing');
+assert(script.includes('LANCER_THRUST_RANGE=410')&&script.includes('RUSHER_POUNCE_SPEED=390')&&script.includes('function drawLancerTelegraph'),'Lancer thrust or Rusher pounce identity is missing');
+assert(script.includes('fan=(e.elite||depth>=3)'),'Gunner fan-volley variation is missing');
 assert(!/v0\.[23456]\.\d/.test(html+css+script),'stale release version found');
 assert(script.includes('DEPTH_THRESHOLDS=[0,55,120,195,280]'),'expedition pacing is missing');
 assert(script.includes('BOSS_SCHEMATICS')&&script.includes('pendingWardenReward'),'permanent boss rewards are missing');

@@ -1,6 +1,8 @@
-# RISK THE LOOT! v0.37.0
+# RISK THE LOOT! v0.38.0
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
+
+Raider Tactics gives regular enemies distinct combat jobs. Rushers weave into range before a short pounce, Gunners alternate precise shots with late-floor fan volleys, Lancers threaten a long narrow thrust, and Shield Guards lock a broad charge lane that reaches past Pappa Hammer instead of stopping short. Dashes crash into physical cover, successful attacks enter visible recovery windows, and authored telegraphs keep every threat readable on mobile and desktop.
 
 Champion Rituals gives every boss a more readable three-act fight. Phase changes now clear old projectiles and briefly stagger the champion, creating a deliberate breath before the next pattern. Vault Warden seals parts of the arena and closes a visible lock corridor, Crimson Champion telegraphs sweeping cleaves between its projectile salvos, and Skyglass Leviathan crosses the lagoon with tidal lanes alongside its undertow pools. Physical cover blocks the new lane attacks, preserving the arena's positional strategy.
 

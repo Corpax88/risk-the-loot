@@ -1,6 +1,8 @@
-# RISK THE LOOT! v0.36.0
+# RISK THE LOOT! v0.37.0
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
+
+Champion Rituals gives every boss a more readable three-act fight. Phase changes now clear old projectiles and briefly stagger the champion, creating a deliberate breath before the next pattern. Vault Warden seals parts of the arena and closes a visible lock corridor, Crimson Champion telegraphs sweeping cleaves between its projectile salvos, and Skyglass Leviathan crosses the lagoon with tidal lanes alongside its undertow pools. Physical cover blocks the new lane attacks, preserving the arena's positional strategy.
 
 Gear 2.0 begins with five playstyle-defining hero sets. Three matching pieces awaken a combat signature and five pieces master it: Tower Bulwark periodically blocks a hit, Stormrunner turns Dash into a wind-blade attack, Hammer Choir adds repeating shockwaves, Crimson Oath makes critical hits echo, and Riskreaver converts unsecured loot and deeper floors into dangerous offensive power. Inventory details and hold previews now show direct stat gains and losses alongside each signature, while newly awakened builds receive a dedicated equip celebration.
 
@@ -96,7 +98,7 @@ Champion's Mark combines with Battle Rhythm for Relentless Pursuit, which rechar
 - Crimson Path offers 16% more sale value and ends with the Crimson Champion.
 - Moonlit Path improves high-grade gear odds and ends with the Vault Warden.
 
-Both bosses have distinct movement, projectiles, hazards, phases, and permanent Boss Trophy rewards.
+All three champions have distinct movement, projectiles, arena hazards, phases, and permanent Boss Trophy rewards.
 
 ## Controls
 

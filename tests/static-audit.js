@@ -14,7 +14,7 @@ for(const match of script.matchAll(/\$\('([^']+)'\)/g)){
 const openBraces=(css.match(/{/g)||[]).length;
 const closeBraces=(css.match(/}/g)||[]).length;
 assert.equal(openBraces,closeBraces,'CSS braces are unbalanced');
-assert(html.includes('style.css?v=0.36.0')&&html.includes('script.js?v=0.36.0'),'release assets are not versioned');
+assert(html.includes('style.css?v=0.37.0')&&html.includes('script.js?v=0.37.0'),'release assets are not versioned');
 assert(script.includes('function beginTouchHelp')&&script.includes('function gearHelpFromNode'),'unified mobile hold-help system is missing');
 assert(css.includes('.gearHoverPreview.touchPreview'),'mobile gear comparison preview is missing');
 assert(html.includes('id="contractPrompt"')&&html.includes('id="vaultReward"')&&script.includes('function vaultProgress')&&script.includes('function openGrandVault')&&script.includes('function rollVaultGear')&&css.includes('.contractTracker.imminent')&&css.includes('.vaultReward.revealed'),'repeatable Grand Vault reward or anticipation presentation is missing');
@@ -64,6 +64,10 @@ assert(html.includes('id="routeOverlay"')&&html.includes('id="routeFurnace"')&&h
 assert(script.includes('ROUTES')&&script.includes('routeDecision')&&script.includes('chooseRoute'),'branching route logic is missing');
 assert(script.includes('tyrantVolley')&&script.includes('thermalBlast'),'Furnace boss or Thermal Capacitor is missing');
 assert(script.includes("boss:'leviathan'")&&script.includes('function leviathanVolley')&&script.includes('function drawLagoonBossArt')&&script.includes("type:'lagoonPool'"),'Skyglass Leviathan identity, attacks, or animation is missing');
+assert(script.includes('function spawnWardenLock')&&script.includes("type:'vaultSeal'")&&script.includes("type:'wardenLock'"),'Vault Warden arena locks are missing');
+assert(script.includes("spawnBossLane(e,'crimsonCleave'")&&script.includes("spawnBossLane(e,'tidalLane'"),'Champion cleaves or Leviathan tide lanes are missing');
+assert(script.includes('function drawBossLaneHazard')&&script.includes('function drawVaultSealHazard')&&script.includes('function pointSegmentDistance'),'Champion telegraphs or lane collision are missing');
+assert(script.includes('e.stagger=.82')&&script.includes('if(e.stagger>0)'),'Champion phase stagger is missing');
 assert(html.includes('id="miniMapCanvas"')&&html.includes('id="miniMapCacheCount"')&&script.includes('function drawMiniMap')&&script.includes('rareCaches=caches.filter'),'rare-cache minimap is missing');
 assert(html.includes('id="xpHud"')&&html.includes('id="xpFill"')&&html.includes('id="xpSpark"')&&script.includes('function syncXpHud')&&script.includes('function pulseXpLevel'),'expedition XP rail or level feedback is missing');
 assert(script.includes('LOOT_ITEMS')&&script.includes('lootDrops')&&script.includes('collectLoot')&&script.includes('drawAdventureItemShape'),'physical loot item system is missing');

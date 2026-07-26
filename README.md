@@ -1,6 +1,10 @@
-# RISK THE LOOT! v0.41.0
+# RISK THE LOOT! v0.42.0
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
+
+Hammerstorm rebuilds the regular combat loop around large authored waves instead of a constant trickle. Raiders enter in clustered packs with a short breather between waves, giving the player time to kite, gather and deliberately dive into danger. The new Hammerstorm action leaps Pappa into the pack center, repeatedly strikes every enemy in reach, applies heavy radial knockback and launches defeated bodies outward with hit-stop, camera shake, hammer trails, critical bursts and one combined payoff.
+
+Riskreaver is now the dedicated surrounded build. Two pieces improve movement, four pieces awaken damage scaling from nearby enemies, and the complete five-piece set increases that scaling, shortens Hammerstorm recovery and heals only from unique enemies struck by Hammerstorm. Healing is capped at 12% of maximum health per activation, so aggressive pack dives can recover a mistake without making Pappa immortal.
 
 Gear Wardrobe replaces the old diagonal paper-doll stripes across every current item. All 20 sets now use authored material, trim, silhouette and emblem profiles across idle, run and attack animations, while all 40 legacy items share the same clean layered renderer. Hammer Choir keeps its bespoke production sprite sheets. Riskreaver, Grand Vault, Crownless King and Fatebound use separate legendary palettes, motifs and animated complete-set presentation so top-tier equipment reads immediately on Pappa Hammer.
 
@@ -8,7 +12,7 @@ Raider Tactics gives regular enemies distinct combat jobs. Rushers weave into ra
 
 Champion Rituals gives every boss a more readable three-act fight. Phase changes now clear old projectiles and briefly stagger the champion, creating a deliberate breath before the next pattern. Vault Warden seals parts of the arena and closes a visible lock corridor, Crimson Champion telegraphs sweeping cleaves between its projectile salvos, and Skyglass Leviathan crosses the lagoon with tidal lanes alongside its undertow pools. Physical cover blocks the new lane attacks, preserving the arena's positional strategy.
 
-Gear 2.0 now gives all 20 hero sets a playstyle-defining signature. Three matching pieces awaken the signature and five pieces master it. The complete catalog covers hunting, comeback defense, explosive volleys, dash ambushes, coin hunting, floor sustain, movement momentum, critical chains, elite recovery, evasion, star impacts, exploration rewards, treasure wards, execution damage, fated strikes, and the original five signature builds. Inventory details and hold previews show direct stat gains and losses alongside every signature, while newly awakened builds receive a dedicated equip celebration.
+Gear 2.0 now gives all 20 hero sets a playstyle-defining signature. Most signatures awaken at three matching pieces and master at five; Riskreaver uses a deliberate 2/4/5 progression for its surrounded build. The complete catalog covers hunting, comeback defense, explosive volleys, dash ambushes, coin hunting, floor sustain, movement momentum, critical chains, elite recovery, evasion, star impacts, exploration rewards, treasure wards, execution damage, fated strikes, and the original five signature builds. Inventory details and hold previews show direct stat gains and losses alongside every signature, while newly awakened builds receive a dedicated equip celebration.
 
 This project is in active playtest development. Better gameplay and cleaner systems take priority over preserving old save formats; save resets are acceptable when a feature needs a better data model.
 
@@ -65,7 +69,7 @@ The boss catalog contains exactly 100 set items: 20 named sets with a Hat, Scarf
 
 Every recovered piece is a unique item instance with its own item level, quality roll, randomized stats, and sale value. Finding the same named piece again can therefore still produce a meaningful upgrade. Gear can change health, hammer damage, pickup reach, movement speed, strike rate, armor, loot value, dash recharge, and critical chance.
 
-Each set has fixed 2-piece, 3-piece, and 5-piece bonuses designed around its rarity and theme. The individual piece rolls vary, while the set milestones always remain predictable.
+Set milestones are fixed and predictable while individual piece rolls vary. Most sets use 2-piece, 3-piece, and 5-piece bonuses; Riskreaver uses 2-piece, 4-piece, and 5-piece milestones to reserve its aggressive sustain for a committed build.
 
 Equipment uses a fixed anime gear atlas for readable slot silhouettes, while set colors, marks, names, and paper-doll treatments distinguish the 100 boss pieces. Locker cards, equipped slots, recovery reports, pickup notices, and boss drops keep the same item identity. Empty slots automatically equip the strongest matching item after the first successful recovery.
 
@@ -107,6 +111,7 @@ All three champions have distinct movement, projectiles, arena hazards, phases, 
 ## Controls
 
 - Move: `WASD`, arrow keys, or the mobile joystick
+- Hammerstorm: `Q`, `F`, or the on-screen Spin button
 - Dash: `Space` or the on-screen dash button
 - Extract: `E` or the on-screen extract button
 - Pause/settings: `Escape` or the top-right settings button

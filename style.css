@@ -249,6 +249,14 @@ html,body{background:#080c14;font-family:Trebuchet MS,Segoe UI,Arial,sans-serif}
 .bossHud.tyrant{border-color:#c83f46}.bossHud.tyrant span{color:#f3d9c2}.bossHud.tyrant>div{background:#35131a;border-color:#7e2834}.bossHud.tyrant i{background:linear-gradient(90deg,#741722,#c83f46,#d6aa58)}
 .joystick{background:#101a2da8;border-color:#d6aa5880}.joystick i{background:#253754;border-color:#f4ead6;box-shadow:0 4px 0 #080c14}
 .dashButton{background:conic-gradient(#d6aa58 var(--ready),#29384e 0);border-color:#d6aa58;box-shadow:0 5px 0 #070b12,0 8px 16px #0009}.dashButton:before{background:#17243a}
+.spinButton{--ready:360deg;--pack-color:#d6aa58;position:absolute;right:118px;bottom:21px;width:92px;height:92px;border-radius:50%;display:grid;place-items:center;padding:8px;background:conic-gradient(var(--pack-color) var(--ready),#29384e 0);border:2px solid #d6aa58;box-shadow:0 5px 0 #070b12,0 9px 22px #000b,inset 0 0 18px #d6aa5824;z-index:8;isolation:isolate;touch-action:manipulation}.spinButton:before{content:"";position:absolute;inset:6px;border-radius:50%;background:radial-gradient(circle at 46% 38%,#334664,#17243a 62%,#0b111d);border:1px solid #f0c66a80;z-index:-1}.spinButton b,.spinButton span,.spinButton em{position:relative;z-index:1;grid-column:1;grid-row:1}.spinButton b{font-size:38px;line-height:1;color:#f4ead6;text-shadow:0 0 10px #d6aa58;transform:translateY(-7px)}.spinButton span{font-size:8px;letter-spacing:1.2px;transform:translateY(24px)}.spinButton em{min-width:22px;height:22px;display:grid;place-items:center;right:-31px;top:-30px;border-radius:50%;border:2px solid #111827;background:#d6aa58;color:#111827;font:900 10px Georgia,serif;box-shadow:0 2px 0 #070b12,0 0 11px #d6aa5877}.spinButton.cooling{filter:saturate(.42);color:#829095}.spinButton.cooling b{color:#8793a0;text-shadow:none}.spinButton.primed{--pack-color:#ef5350;animation:hammerstormReady .72s ease-in-out infinite alternate;border-color:#f4ead6}.spinButton.primed em{background:#ef5350;color:#fff;border-color:#f4ead6}.spinButton.overloaded{--pack-color:#ffc928;box-shadow:0 5px 0 #070b12,0 0 0 3px #ffc92855,0 0 30px #ffc92899,inset 0 0 22px #ffc92844}.spinButton:active{transform:scale(.95)}
+.spinButton.active{--pack-color:#ffc928;filter:none;box-shadow:0 5px 0 #070b12,0 0 0 3px #ffc92866,0 0 32px #ffc928aa,inset 0 0 22px #ffc92855}.spinButton.active b{color:#fff1bd;text-shadow:0 0 13px #ffc928;animation:hammerButtonSpin .34s linear infinite}.spinButton.active em{background:#c83f46;color:#fff;border-color:#fff1bd}
+@keyframes hammerstormReady{from{filter:brightness(1);transform:scale(1)}to{filter:brightness(1.18);transform:scale(1.035)}}
+@keyframes hammerButtonSpin{to{transform:translateY(-7px) rotate(1turn)}}
+.spinButton.noTarget{animation:spinNoTarget .2s ease-out}
+@keyframes spinNoTarget{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+@media(max-width:720px){.spinButton{right:max(102px,calc(84px + env(safe-area-inset-right)));bottom:max(23px,env(safe-area-inset-bottom));width:86px;height:86px}.spinButton b{font-size:35px}.spinButton span{transform:translateY(22px)}.spinButton em{right:-28px;top:-28px}}
+@media(max-height:620px) and (orientation:landscape){.spinButton{right:94px;bottom:max(14px,env(safe-area-inset-bottom));width:74px;height:74px}.spinButton b{font-size:30px;transform:translateY(-6px)}.spinButton span{font-size:7px;transform:translateY(18px)}.spinButton em{right:-25px;top:-24px;width:19px;height:19px;min-width:19px}}
 .riskChoice,.routeChoice{border-radius:5px}.extractChoice{background:#21382f;border-color:#79a67e}.pushChoice{background:#4a1c26;border-color:#c83f46}
 .furnaceRoute{background:#351821;border-color:#aa3741;color:#f6dadd}.furnaceRoute>i{border-color:#c83f46;color:#ef9ba0;box-shadow:none}.furnaceRoute strong{color:#e67a80}
 .dynamoRoute{background:#17243a;border-color:#6f84a7;color:#edf0f5}.dynamoRoute>i{border-color:#d6aa58;color:#f0d99b;box-shadow:none}.dynamoRoute strong{color:#d6aa58}
@@ -693,8 +701,12 @@ button:focus-visible{outline-color:#f4ead6}
   .xpHud{left:max(158px,calc(env(safe-area-inset-left) + 152px));right:max(100px,calc(env(safe-area-inset-right) + 94px));bottom:max(10px,env(safe-area-inset-bottom));width:auto;min-width:0;height:26px;grid-template-columns:32px minmax(28px,1fr) 42px;gap:3px;padding:3px;transform:none}
   .xpLevel{height:18px;font-size:6px}.xpLevel b{font-size:9px}.xpTrack{height:8px}.xpText{font-size:5px}
   .xpHud.levelUp{animation-name:xpLevelUpMobile}
+  .touchControls{bottom:max(46px,calc(env(safe-area-inset-bottom) + 46px))}
+  .dashButton,.spinButton{bottom:max(46px,calc(env(safe-area-inset-bottom) + 46px))}
+  .miniMap{bottom:calc(max(46px,calc(env(safe-area-inset-bottom) + 46px)) + 94px)}
+  .xpHud{bottom:max(4px,calc(env(safe-area-inset-bottom) + 4px))}
 }
-@media(max-width:374px){.xpHud{left:max(10px,env(safe-area-inset-left));right:max(10px,env(safe-area-inset-right));bottom:calc(max(24px,env(safe-area-inset-bottom)) + 138px);grid-template-columns:38px minmax(70px,1fr) 52px}}
+@media(max-width:374px){.xpHud{left:max(116px,calc(env(safe-area-inset-left) + 110px));right:max(94px,calc(env(safe-area-inset-right) + 88px));bottom:max(4px,calc(env(safe-area-inset-bottom) + 4px));grid-template-columns:32px minmax(24px,1fr) 40px}}
 @keyframes xpLevelUpMobile{0%{filter:brightness(1);transform:scale(1)}28%{filter:brightness(1.8);transform:scale(1.035)}100%{filter:brightness(1);transform:scale(1)}}
 
 @media(max-height:620px) and (orientation:landscape){

@@ -20,7 +20,7 @@ assert.equal(sandbox.__blueprintTest.starterPowerAt(2,0),1.15,'MK II starter out
 elements.blueprintButton.click();assert(elements.blueprintOverlay.classList.contains('show'),'relic rack did not open');assert.equal(elements.wardenTechGrid.children.length,4,'boss trophy rack did not render');let burstEntry=elements.blueprintGrid.children[0],actions=burstEntry.children[0];assert(burstEntry.innerHTML.includes('LUCKY EFFECT')&&burstEntry.innerHTML.includes('2 / 3 RECOVERED'),'relic recovery and effect are not explained');assert(!burstEntry.innerHTML.includes('PICKS'),'internal pick telemetry leaked into the player-facing rack');actions.children[0].click();assert(elements.starterName.textContent.includes('HAMMER ECHO'),'lucky relic did not equip');let platingEntry=elements.blueprintGrid.children[2],platingActions=platingEntry.children[0];platingActions.children[1].click();assert(elements.blueprintGrid.children[2].innerHTML.includes('110% POWER')&&elements.blueprintGrid.children[2].innerHTML.includes('4% ARMOR'),'polish did not update the concrete Guard Charm effect');elements.closeBlueprints.click();
 elements.gearLockerButton.click();
 assert(elements.gearOverlay.classList.contains('show'),'Gear Locker did not open');
-assert.equal(elements.gearLoadoutSlots.children.length,5,'Gear Locker did not render five slots');
+assert.equal(elements.gearLoadoutSlots.children.length,6,'Unified Equipment did not render six visible body zones');
 assert.equal(elements.gearRarityFilters.children.length,6,'rarity filters did not render');
 assert.equal(elements.gearRaritySummary.children.length,5,'Vault Bag rarity totals did not render');
 assert.equal(elements.gearBagCount.textContent,'2 ITEMS','Vault Bag item count is wrong');

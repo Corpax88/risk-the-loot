@@ -1,8 +1,10 @@
-# RISK THE LOOT! v0.45.0
+# RISK THE LOOT! v0.46.0
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
 
-Hammerstorm rebuilds the regular combat loop around large authored waves instead of a constant trickle. Raiders enter in clustered packs with a short breather between waves, giving the player time to kite, gather and deliberately dive into danger. The new Hammerstorm action leaps Pappa into the pack center, repeatedly strikes every enemy in reach, applies heavy radial knockback and launches defeated bodies outward with hit-stop, camera shake, hammer trails, critical bursts and one combined payoff.
+Horde Engine rebuilds regular combat around overlapping packs of 30-60 raiders. New packs arrive before the old one is completely gone, naturally collecting around Pappa while spatial separation keeps the crowd readable. Regular enemies deal individually lighter damage than the old trickle encounters, but being surrounded remains the central threat. Special encounters and extraction now call in compact hordes instead of isolated targets, keeping combat moving toward the next dangerous dive.
+
+Hammerstorm turns pack pressure into power for every build. Nearby enemies increase spin damage, reach and duration; Pappa leaps into the densest part of the crowd, gains a brief unstoppable window, repeatedly strikes the pack and launches defeated bodies outward. Large clears add stronger hit-stop, camera shake, hammer trails and one combined payoff, while multikills refund part of the cooldown so a successful dive flows naturally into the next horde.
 
 Riskreaver is now the dedicated surrounded build. Two pieces improve movement, four pieces awaken damage scaling from nearby enemies, and the complete five-piece set increases that scaling, shortens Hammerstorm recovery and heals only from unique enemies struck by Hammerstorm. Healing is capped at 12% of maximum health per activation, so aggressive pack dives can recover a mistake without making Pappa immortal.
 

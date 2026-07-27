@@ -8,18 +8,19 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="description" content="Risk everything, recover equippable gear and build Pappa Hammer in this compact extraction roguelite.">
   <title>RISK THE LOOT!</title>
-  <link rel="stylesheet" href="style.css?v=0.43.0">
+  <link rel="stylesheet" href="style.css?v=0.44.0">
 </head>
 <body>
   <main id="game">
     <header class="topbar">
       <div class="brand" tabindex="0" data-help-title="Risk the Loot" data-help="Enter the tower, defeat champions and decide when the gear you carry is valuable enough to extract.">
         <span class="brandMark">R</span>
-        <div><strong>RISK THE LOOT!</strong><small>ARMORY v0.43.0</small></div>
+        <div><strong>RISK THE LOOT!</strong><small>LOOT DECISIONS v0.44.0</small></div>
       </div>
       <div class="resources">
         <div class="resource level" data-help-title="Pappa Level" data-help="Boss victories grant XP. Higher levels unlock stronger gear and tougher champions."><i>LV</i><div><b id="pappaLevel">1</b><span>PAPPA</span></div></div>
         <div class="resource scrap" data-help-title="Coins" data-help="Safe coins banked in the workshop. Sell spare gear or extract alive to earn more."><i>$</i><div><b id="bankScrap">0</b><span>COINS</span></div></div>
+        <div class="resource materials" data-help-title="Crafting Materials" data-help="Permanent resources gained by salvaging boss gear. Legendary items also grant Legendary Cores. Crafting will arrive in a future update."><i>&#9874;</i><div><b id="materialCount">0</b><span>MATERIALS <em id="legendaryCoreCount">0 CORE</em></span></div></div>
         <div class="resource cores" data-help-title="Boss Seals" data-help="Permanent trophies taken from defeated tower champions."><i>&#9733;</i><div><b id="coreCount">0</b><span>BOSS SEALS</span></div></div>
         <div class="resource record" data-help-title="Best Floor" data-help="The highest tower floor reached across all expeditions."><i>&#x25B2;</i><div><b id="bestDepth">0</b><span>BEST FLOOR</span></div></div>
       </div>
@@ -263,29 +264,42 @@
           <div class="bossLootHalo" aria-hidden="true"><i></i><i></i><i></i></div>
           <small id="bossLootEyebrow">CHAMPION FALLEN</small>
           <h2 id="bossLootTitle">BOSS LOOT FOUND</h2>
-          <div class="bossLootShowcase">
-            <div id="bossLootArt" class="bossLootArt"></div>
-            <div class="bossLootIdentity">
-              <span id="bossLootRarity">RARE BOSS GEAR</span>
-              <b id="bossLootName">Recovered Gear</b>
-              <em id="bossLootStats">Unsecured until extraction</em>
-              <div id="bossLootCompare" class="bossLootCompare" tabindex="0" data-help-title="Gear Comparison" data-help="Compares the selected boss drop with the item currently worn in the same slot. Green means stronger overall power.">
-                <div class="bossLootEquippedArt" id="bossLootEquippedArt"></div>
-                <span><small>EQUIPPED</small><b id="bossLootEquippedName">OPEN SLOT</b><em id="bossLootEquippedPower">0 POWER</em></span>
-                <strong id="bossLootVerdict">UPGRADE</strong>
+          <div id="bossLootDecision" class="bossLootDecision">
+            <div class="bossLootDecisionStage">
+              <div class="bossLootPappaFrame">
+                <div id="bossLootPappa" class="bossLootPappa" aria-label="Pappa Hammer live gear preview"></div>
+                <small>LIVE PREVIEW</small>
+              </div>
+              <div class="bossLootShowcase">
+                <div id="bossLootArt" class="bossLootArt"></div>
+                <div class="bossLootIdentity">
+                  <span id="bossLootRarity">RARE BOSS GEAR</span>
+                  <b id="bossLootName">Recovered Gear</b>
+                  <em id="bossLootStats">Choose its fate</em>
+                </div>
+              </div>
+            </div>
+            <div id="bossLootCompare" class="bossLootStatCompare" aria-live="polite"></div>
+            <div class="bossLootDecisionFooter">
+              <span id="bossLootDecisionCount">ITEM 1 OF 1</span>
+              <div class="bossLootDecisionActions">
+                <button id="bossLootEquip" class="bossLootDecisionButton equip"><i>&#9874;</i><span><b>EQUIP</b><em>Wear it now</em></span></button>
+                <button id="bossLootSalvage" class="bossLootDecisionButton salvage"><i>&#10022;</i><span><b>SALVAGE</b><em id="bossLootSalvageReward">+1 Material</em></span></button>
               </div>
             </div>
           </div>
-          <div class="bossLootManifestHeading"><span>TAP LOOT TO COMPARE</span><b id="bossLootCount">0 ITEMS</b></div>
-          <div id="bossLootGrid" class="bossLootGrid"></div>
-          <div class="bossLootGamble" tabindex="0" data-help-title="Risk or Extract" data-help="The left side is everything currently unsecured. The right side previews the improved gear odds offered by the next champion.">
-            <span><small>CURRENT HAUL</small><b id="bossLootValue">0 COINS</b></span>
-            <i aria-hidden="true">&#8250;</i>
-            <span><small>NEXT CHAMPION</small><b id="bossLootMultiplier">x1.00 LOOT</b></span>
-          </div>
-          <div class="bossLootChoices">
-            <button id="bossLootExtract" class="bossLootChoice bossLootSecure"><i>&#x26EF;</i><span><b>EXTRACT NOW</b><em>Survive the final ambush</em></span></button>
-            <button id="bossLootPush" class="bossLootChoice bossLootGreed"><i>&#x2694;</i><span><b>GO DEEPER</b><em>Keep it all at risk</em></span></button>
+          <div id="bossLootPath" class="bossLootPath" aria-hidden="true">
+            <div class="bossLootManifestHeading"><span>LOOT DECISIONS COMPLETE</span><b id="bossLootCount">0 ITEMS</b></div>
+            <div id="bossLootGrid" class="bossLootGrid"></div>
+            <div class="bossLootGamble" tabindex="0" data-help-title="Risk or Extract" data-help="The left side is everything currently unsecured. The right side previews the improved gear odds offered by the next champion.">
+              <span><small>CURRENT HAUL</small><b id="bossLootValue">0 COINS</b></span>
+              <i aria-hidden="true">&#8250;</i>
+              <span><small>NEXT CHAMPION</small><b id="bossLootMultiplier">x1.00 LOOT</b></span>
+            </div>
+            <div class="bossLootChoices">
+              <button id="bossLootExtract" class="bossLootChoice bossLootSecure"><i>&#x26EF;</i><span><b>EXTRACT NOW</b><em>Survive the final ambush</em></span></button>
+              <button id="bossLootPush" class="bossLootChoice bossLootGreed"><i>&#x2694;</i><span><b>GO DEEPER</b><em>Keep it all at risk</em></span></button>
+            </div>
           </div>
         </div>
       </div>
@@ -355,11 +369,11 @@
         </div>
         <button id="resumeButton" class="primaryButton settingsResume"><span>RESUME</span><i>&#8250;</i></button>
         <button id="abandonButton" class="dangerButton">ABANDON EXPEDITION</button>
-        <p class="buildStamp">v0.43.0 ARMORY</p>
+        <p class="buildStamp">v0.44.0 LOOT DECISIONS</p>
       </div>
     </div>
     <aside id="helpTooltip" class="helpTooltip" role="tooltip" aria-hidden="true"><strong id="helpTooltipTitle"></strong><span id="helpTooltipText"></span></aside>
   </main>
-  <script src="script.js?v=0.43.0"></script>
+  <script src="script.js?v=0.44.0"></script>
 </body>
 </html>

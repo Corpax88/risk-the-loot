@@ -1158,3 +1158,559 @@ button:focus-visible{outline-color:#f4ead6}
     box-shadow:0 2px 0 #070b12,0 0 15px #d6aa5866;
   }
 }
+
+/* v0.45 Loot Excitement Pass */
+.adventureBagPanel{
+  background:
+    radial-gradient(circle at 31% 34%,#29466c26,transparent 31%),
+    linear-gradient(180deg,#101d31,#08111f 72%);
+}
+.adventureBagPanel .adventureBagHeader{
+  min-height:64px;
+  margin-bottom:8px;
+  padding:8px 58px 8px 10px;
+  border:0;
+  border-bottom:1px solid #d6aa5866;
+  background:#11223a;
+  box-shadow:0 6px 20px #0005;
+}
+.adventureBagPanel .adventureBagHeader h2{font-size:24px}
+.adventureBagPanel .adventureBagHeader p{opacity:.5}
+.adventureBagPanel .adventureBagHeader .gearBagReadout{
+  border-color:#50617a;
+  background:#0b1626a6;
+  box-shadow:none;
+  opacity:.72;
+}
+.adventureBagPanel .adventureBagHeader .gearBagReadout:hover{opacity:1}
+
+.adventureBagPanel .unifiedCharacterPanel{
+  border-color:#d6aa5848;
+  background:linear-gradient(180deg,#244164 0 64%,#0a1425 64%);
+  box-shadow:inset 0 0 48px #0007,0 7px 18px #0006;
+}
+.unifiedCharacterPanel .gearCharacterHeading{
+  border-bottom-color:#d6aa5840;
+  background:#13243aa6;
+  opacity:.72;
+}
+.unifiedCharacterPanel .gearCharacterStage{
+  background:
+    radial-gradient(circle at 50% 45%,#6383b03d 0 20%,transparent 48%),
+    linear-gradient(180deg,#29496f 0 72%,#0d1a2d 72%);
+}
+.unifiedCharacterPanel .gearCharacterStage:before{opacity:.35}
+.unifiedCharacterPanel .gearCharacterHero{
+  width:min(455px,112%);
+  height:min(455px,112%);
+  bottom:-19px;
+  filter:drop-shadow(0 17px 12px #02060da8);
+}
+.unifiedCharacterPanel .gearTurntable,
+.unifiedCharacterPanel>.pappaProgress,
+.unifiedCharacterPanel>.gearStatsBlock .gearStatsSummary{
+  border-color:#43526a80;
+  background:#0914239c;
+}
+.unifiedCharacterPanel>.gearStatsBlock .gearStatsSummary span+span{border-left-color:#39486073}
+.unifiedCharacterPanel>.gearSetBlock{opacity:.72}
+
+.adventureBagPanel .equipmentOrbitSlots .gearLoadoutSlot{
+  width:70px;
+  min-width:70px;
+  min-height:58px;
+  grid-template-columns:38px!important;
+  grid-template-rows:36px auto;
+  border-color:#91a0b34d;
+  background:#07111caf;
+  box-shadow:0 5px 12px #0007;
+  opacity:.62;
+  transition:opacity .18s ease,transform .18s ease,filter .18s ease;
+}
+.adventureBagPanel .equipmentOrbitSlots .gearLoadoutSlot.filled{
+  border-color:color-mix(in srgb,var(--gear-color) 52%,#47566b);
+  background:radial-gradient(circle at 50% 43%,color-mix(in srgb,var(--gear-color) 10%,transparent),#07111cc4 74%);
+  box-shadow:0 5px 13px #0008;
+}
+.adventureBagPanel .equipmentOrbitSlots .gearLoadoutSlot:hover,
+.adventureBagPanel .equipmentOrbitSlots .gearLoadoutSlot:focus-visible,
+.adventureBagPanel .equipmentOrbitSlots .gearLoadoutSlot.selected{
+  opacity:1;
+  filter:brightness(1.12);
+}
+.equipmentOrbitSlots .gearLoadoutSlot>i{width:35px!important;height:35px!important}
+.equipmentOrbitSlots .gearLoadoutSlot small{font-size:4px;opacity:.72}
+
+.unifiedGearBrowser{grid-template-columns:92px minmax(0,1fr) minmax(300px,340px);gap:10px}
+.unifiedGearBrowser .gearCategoryPanel{
+  border-color:#53627a52;
+  background:#0914219c;
+  box-shadow:none;
+  opacity:.7;
+  transition:opacity .18s ease;
+}
+.unifiedGearBrowser .gearCategoryPanel:hover,
+.unifiedGearBrowser .gearCategoryPanel:focus-within{opacity:1}
+.unifiedGearBrowser .gearCategoryPanel>header{
+  border-bottom-color:#53627a4d;
+  background:#16273b80;
+}
+.unifiedGearBrowser .gearSlotFilters button{
+  min-height:43px;
+  border-color:transparent;
+  background:transparent;
+  box-shadow:none;
+}
+.unifiedGearBrowser .gearSlotFilters button:hover,
+.unifiedGearBrowser .gearSlotFilters button.active{
+  border-color:#d6aa5866;
+  background:#d6aa5810;
+}
+.adventureBagPanel .rarityCount{
+  min-height:31px;
+  border-color:transparent;
+  border-bottom-width:1px;
+  background:transparent;
+  box-shadow:none;
+}
+.adventureBagPanel .rarityCount>i{height:16px;border-radius:4px}
+.adventureBagPanel .rarityCount.active{
+  background:color-mix(in srgb,var(--rarity-color) 10%,transparent);
+  box-shadow:none;
+}
+.adventureBagPanel .equippedProtection{
+  border-color:transparent;
+  background:transparent;
+  opacity:.58;
+}
+
+.adventureBagPanel .gearInventoryHeading{
+  min-height:38px;
+  border:0;
+  border-bottom:1px solid #d6aa5845;
+  border-radius:0;
+  background:transparent;
+}
+.adventureBagPanel .gearToolbar{
+  margin:0 0 8px;
+  padding:6px;
+  border:0;
+  background:#09132185;
+  box-shadow:none;
+  opacity:.72;
+  transition:opacity .18s ease;
+}
+.adventureBagPanel .gearToolbar:hover,
+.adventureBagPanel .gearToolbar:focus-within{opacity:1}
+.adventureBagPanel .gearRarityFilters button{
+  border-color:transparent;
+  background:transparent;
+  box-shadow:none;
+}
+.adventureBagPanel .gearRarityFilters button.active{
+  border-color:var(--filter-color);
+  background:color-mix(in srgb,var(--filter-color) 10%,transparent);
+}
+.adventureBagPanel .gearSortButton,
+.adventureBagPanel .sellFilteredGear{
+  min-height:34px;
+  border-color:#53627a68;
+  background:#111e2fa6;
+  box-shadow:none;
+}
+.animeBagShell{
+  padding:66px 11px 11px;
+  border-width:2px;
+  border-color:#d6aa588c;
+  background:linear-gradient(135deg,#2b486e,#162842 58%,#0c1728);
+  box-shadow:inset 0 0 0 2px #0a111e,inset 0 -9px #8f273180,0 10px 24px #0008;
+}
+.animeBagShell:before{border-color:#ebcc7b38}
+.animeBagInterior{
+  border-width:1px;
+  border-color:#9d783f70;
+  background:linear-gradient(180deg,#721f2a80 0 3px,#07101c 3px 100%);
+  box-shadow:inset 0 0 34px #000a;
+}
+.adventureBagPanel .gearBagBrowser{
+  border:0;
+  background:
+    radial-gradient(circle at 50% 44%,#203a5a48,transparent 68%),
+    #08111e;
+  box-shadow:inset 0 0 34px #000a;
+}
+.adventureBagPanel .gearGrid{
+  grid-auto-rows:91px;
+  gap:9px;
+  padding:12px;
+}
+.adventureBagPanel .gearBagSlot{
+  aspect-ratio:1;
+  grid-template-rows:1fr;
+  padding:5px;
+  overflow:visible;
+  border:1px solid color-mix(in srgb,var(--gear-color) 42%,#41516a);
+  border-bottom-width:1px;
+  border-radius:7px;
+  background:
+    radial-gradient(circle at 50% 52%,color-mix(in srgb,var(--gear-color) 13%,transparent),transparent 63%),
+    linear-gradient(145deg,#172944cc,#091321e8);
+  box-shadow:
+    inset 0 0 0 1px #ffffff08,
+    0 7px 12px #0008,
+    0 0 0 transparent;
+  transform:translateY(0) scale(1);
+  transition:transform .2s cubic-bezier(.2,.8,.25,1),box-shadow .2s ease,border-color .2s ease,filter .2s ease;
+}
+.adventureBagPanel .gearBagSlot:before{
+  inset:5px;
+  border:0;
+  border-radius:50%;
+  background:radial-gradient(circle,color-mix(in srgb,var(--gear-glow) 18%,transparent),transparent 68%);
+  opacity:.58;
+}
+.adventureBagPanel .gearBagSlot:hover,
+.adventureBagPanel .gearBagSlot:focus-visible,
+.adventureBagPanel .gearBagSlot.selected{
+  z-index:4;
+  border-color:var(--gear-color);
+  background:
+    radial-gradient(circle at 50% 50%,color-mix(in srgb,var(--gear-color) 22%,transparent),transparent 68%),
+    linear-gradient(145deg,#1d3352,#0b1728);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb,var(--gear-color) 22%,transparent),
+    0 11px 19px #000a,
+    0 0 18px color-mix(in srgb,var(--gear-glow) 38%,transparent);
+  transform:translateY(-5px) scale(1.035);
+}
+.adventureBagPanel .gearBagSlot.selected{
+  box-shadow:
+    inset 0 0 0 2px color-mix(in srgb,var(--gear-color) 46%,transparent),
+    0 11px 19px #000a,
+    0 0 22px color-mix(in srgb,var(--gear-glow) 52%,transparent);
+}
+.adventureBagPanel .gearBagSlot.equipped{background-color:#10253a}
+.adventureBagPanel .gearBagArt{overflow:visible}
+.adventureBagPanel .gearBagArt .gearArt.bag{
+  width:76px;
+  height:76px;
+  transform:translateY(0) scale(1);
+  filter:drop-shadow(0 8px 5px #000b) drop-shadow(0 0 6px color-mix(in srgb,var(--gear-glow) 42%,transparent));
+  transition:transform .22s cubic-bezier(.2,.8,.25,1),filter .22s ease;
+}
+.adventureBagPanel .gearBagSlot:hover .gearArt.bag,
+.adventureBagPanel .gearBagSlot:focus-visible .gearArt.bag,
+.adventureBagPanel .gearBagSlot.selected .gearArt.bag{
+  transform:translateY(-3px) scale(1.09);
+  filter:drop-shadow(0 11px 6px #000c) drop-shadow(0 0 10px color-mix(in srgb,var(--gear-glow) 62%,transparent));
+}
+.adventureBagPanel .gearBagSlotMeta,
+.adventureBagPanel .gearBagSlotName{display:none}
+.adventureBagPanel .gearBagSlot .gearBagArt:after{
+  left:50%;
+  top:auto;
+  bottom:1px;
+  width:24px;
+  height:3px;
+  overflow:hidden;
+  padding:0;
+  border:0;
+  border-radius:4px;
+  background:var(--gear-color);
+  color:transparent;
+  font-size:0;
+  box-shadow:0 0 8px var(--gear-color);
+}
+.adventureBagPanel .gearCopyCount,
+.adventureBagPanel .gearWornMark{box-shadow:0 3px 7px #000b}
+.adventureBagPanel .gearBagSlot.rarity3{
+  box-shadow:inset 0 0 0 1px #ffffff08,0 8px 15px #0009,0 0 13px color-mix(in srgb,var(--gear-glow) 20%,transparent);
+}
+.adventureBagPanel .gearBagSlot.rarity4{
+  border-color:#ffd85a!important;
+  background:
+    radial-gradient(circle at 50% 46%,#ffd85a31,transparent 66%),
+    linear-gradient(145deg,#342b16,#11182a)!important;
+  box-shadow:
+    inset 0 0 0 1px #fff1a366,
+    0 10px 18px #000a,
+    0 0 19px #f5b8178a!important;
+  animation:lootLegendaryBreathe 3.4s ease-in-out infinite;
+}
+.adventureBagPanel .gearBagSlot.rarity4:hover,
+.adventureBagPanel .gearBagSlot.rarity4.selected{
+  box-shadow:
+    inset 0 0 0 2px #fff0a3,
+    0 13px 22px #000b,
+    0 0 30px #ffc928c2!important;
+}
+
+.unifiedGearBrowser>.gearDetail{
+  min-height:584px;
+  overflow:hidden;
+  border:0;
+  background:
+    radial-gradient(circle at 50% 22%,#27466b4f,transparent 38%),
+    #081321;
+  box-shadow:0 8px 22px #0007;
+}
+.unifiedGearBrowser .gearDetailCard{
+  min-height:584px;
+  animation:lootInspectIn .32s cubic-bezier(.2,.8,.2,1) both;
+}
+.unifiedGearBrowser .gearDetailCard>header{
+  position:absolute;
+  z-index:4;
+  inset:8px 8px auto;
+  padding:5px 7px;
+  border:0;
+  border-radius:4px;
+  background:#050b14a6;
+  backdrop-filter:blur(3px);
+}
+.unifiedGearBrowser .gearDetailArt{
+  height:236px;
+  overflow:hidden;
+  border:0;
+  background:
+    radial-gradient(circle at 50% 55%,color-mix(in srgb,var(--gear-glow) 25%,transparent),transparent 54%),
+    linear-gradient(180deg,color-mix(in srgb,var(--gear-color) 7%,#0b1728),#07101b);
+}
+.unifiedGearBrowser .gearDetailArt:before{
+  width:142px;
+  height:142px;
+  border-color:color-mix(in srgb,var(--gear-color) 34%,transparent);
+  opacity:.58;
+}
+.unifiedGearBrowser .gearDetailArt .gearArt.detail{
+  width:194px;
+  height:194px;
+  transform:translateY(2px);
+  filter:drop-shadow(0 14px 8px #000d) drop-shadow(0 0 15px color-mix(in srgb,var(--gear-glow) 58%,transparent));
+  animation:lootArtifactFloat 3.8s ease-in-out infinite;
+}
+.unifiedGearBrowser .gearDetailArt>i{
+  right:10px;
+  bottom:9px;
+  border:0;
+  border-bottom:2px solid var(--gear-color);
+  background:#050b14b8;
+  box-shadow:0 4px 12px #0008;
+}
+.unifiedGearBrowser .gearDetailTitle{
+  padding:14px 13px 8px;
+  text-align:center;
+}
+.unifiedGearBrowser .gearDetailTitle h3{
+  margin-top:5px;
+  font-size:21px;
+  line-height:1.08;
+}
+.unifiedGearBrowser .gearDetailTitle small{opacity:.62}
+.unifiedGearBrowser .gearDetailTitle>b{font-size:7px}
+.unifiedGearBrowser .gearComparison{
+  gap:6px;
+  padding:7px 10px;
+  border-color:#31435f70;
+  background:#07101d8a;
+}
+.unifiedGearBrowser .gearCompareCard{
+  border-color:#40516a78;
+  background:#0c192a9e;
+}
+.unifiedGearBrowser .gearCompareRows span{
+  border-left-width:2px;
+  background:#07111d8f;
+}
+.unifiedGearBrowser .gearDetailStats{display:none}
+.unifiedGearBrowser .gearDetailMeta{
+  border-color:#35435a66;
+  background:#07101b85;
+}
+.unifiedGearBrowser .gearDetailMeta span{padding:7px 11px}
+.unifiedGearBrowser .gearDetailMeta small{opacity:.58}
+.unifiedGearBrowser .gearDetailActions{gap:8px;padding:10px}
+.unifiedGearBrowser .gearDetailActions button{
+  min-height:45px;
+  border-color:#53637d73;
+  background:#14243a;
+  box-shadow:none;
+  transition:transform .14s ease,filter .14s ease,box-shadow .14s ease;
+}
+.unifiedGearBrowser .gearDetailActions button:hover,
+.unifiedGearBrowser .gearDetailActions button:focus-visible{
+  transform:translateY(-2px);
+  filter:brightness(1.14);
+  box-shadow:0 7px 13px #0007;
+}
+
+@keyframes lootInspectIn{
+  from{opacity:.25;transform:translateY(9px) scale(.985)}
+  to{opacity:1;transform:none}
+}
+@keyframes lootArtifactFloat{
+  0%,100%{transform:translateY(3px)}
+  50%{transform:translateY(-3px)}
+}
+@keyframes lootLegendaryBreathe{
+  0%,100%{filter:brightness(1);transform:translateY(0)}
+  50%{filter:brightness(1.08);transform:translateY(-2px)}
+}
+
+@media(max-width:1180px) and (min-width:761px){
+  .unifiedGearBrowser{grid-template-columns:82px minmax(0,1fr)}
+  .unifiedGearBrowser>.gearDetail{grid-column:1/3}
+  .unifiedGearBrowser .gearDetailCard{
+    grid-template-columns:220px minmax(0,1fr);
+  }
+  .unifiedGearBrowser .gearDetailArt{min-height:250px}
+}
+
+@media(max-width:760px){
+  .adventureBagPanel{padding:0 4px max(4px,env(safe-area-inset-bottom))}
+  .adventureBagPanel .adventureBagHeader{
+    grid-template-columns:34px minmax(0,1fr) 70px;
+    min-height:44px;
+    height:44px;
+    margin:0 -4px 3px;
+    padding:4px 37px 4px 5px;
+    box-shadow:0 4px 12px #0005;
+  }
+  .adventureBagPanel .adventureBagHeader h2{font-size:13px}
+  .adventureBagPanel .adventureBagHeader .gearBagReadout{padding:3px}
+  .adventureBagPanel .panelClose{top:6px}
+  .unifiedEquipmentWorkspace{
+    grid-template-rows:clamp(202px,34dvh,238px) minmax(0,1fr);
+    gap:3px!important;
+  }
+  .unifiedGearBrowser{
+    grid-template-columns:minmax(0,1fr);
+  }
+  .unifiedGearBrowser .gearCategoryPanel,
+  .unifiedGearBrowser .gearInventoryPanel,
+  .unifiedGearBrowser>.gearDetail{
+    grid-column:1;
+  }
+  .adventureBagPanel .unifiedCharacterPanel{
+    grid-template-rows:24px minmax(0,1fr)!important;
+    border-color:#d6aa584d;
+  }
+  .unifiedCharacterPanel .gearCharacterHeading{
+    min-height:24px;
+    height:24px;
+    padding:4px 7px;
+    background:#10203994;
+  }
+  .unifiedCharacterPanel .gearCharacterHero{
+    width:min(270px,78vw);
+    height:min(270px,78vw);
+    bottom:-25px;
+  }
+  .unifiedCharacterPanel .gearCharacterStage:before{opacity:.16}
+  .adventureBagPanel .equipmentOrbitSlots .gearLoadoutSlot{
+    width:43px;
+    min-width:43px;
+    min-height:38px;
+    grid-template-columns:27px!important;
+    grid-template-rows:26px auto;
+    padding:2px;
+    opacity:.55;
+  }
+  .equipmentOrbitSlots .gearLoadoutSlot>i{width:26px!important;height:26px!important}
+  .equipmentOrbitSlots .gearLoadoutSlot small{font-size:3px}
+  .adventureBagPanel .equipmentOrbitSlots .gearLoadoutSlot:active,
+  .adventureBagPanel .equipmentOrbitSlots .gearLoadoutSlot.selected{opacity:1}
+  .unifiedGearBrowser .gearInventoryPanel{
+    grid-template-rows:24px 60px 32px minmax(0,1fr);
+  }
+  .adventureBagPanel .gearInventoryHeading{
+    min-height:24px;
+    height:24px;
+    padding:3px 6px;
+  }
+  .mobileGearSelection{
+    grid-template-columns:50px minmax(0,1fr) 74px;
+    gap:7px;
+    padding:4px 6px;
+    border-color:#3d506e66;
+    background:
+      radial-gradient(circle at 5% 50%,color-mix(in srgb,var(--gear-color,#596a84) 17%,transparent),transparent 30%),
+      #091524;
+  }
+  .mobileGearSelectionArt{
+    width:48px;
+    height:48px;
+    border-color:color-mix(in srgb,var(--gear-color,#596a84) 58%,transparent);
+    background:transparent;
+    box-shadow:0 5px 10px #0008,0 0 11px color-mix(in srgb,var(--gear-color,#596a84) 24%,transparent);
+  }
+  .mobileGearSelectionArt .gearArt{width:47px;height:47px}
+  .mobileGearSelection>span small{opacity:.7}
+  .mobileGearSelection>span b{font:700 10px/1.1 Georgia,serif}
+  .mobileGearSelection>span em{font-size:6px}
+  .mobileGearEquip{
+    min-height:42px;
+    border-radius:4px;
+    box-shadow:0 3px 0 #070b12;
+  }
+  .mobileGearControls{
+    gap:4px;
+    padding:3px 5px;
+    border:0;
+    background:#081321a6;
+  }
+  .mobileGearControls button{
+    min-height:27px;
+    border-color:#53647e66;
+    background:transparent;
+    box-shadow:none;
+  }
+  .animeBagShell{
+    padding:40px 6px 7px;
+    border-width:1px;
+    border-radius:28px 28px 12px 12px;
+    box-shadow:inset 0 0 0 1px #0a111e,inset 0 -5px #8f27315c,0 7px 17px #0007;
+  }
+  .animeBagShell:before{inset:5px;border-width:1px;border-radius:23px 23px 9px 9px}
+  .animeBagShell:after{height:7px;bottom:9px;border-width:1px}
+  .animeBagInterior{padding:2px;border:0}
+  .adventureBagPanel .gearGrid{
+    grid-auto-rows:72px;
+    gap:5px;
+    padding:7px 7px 18px;
+  }
+  .adventureBagPanel .gearBagSlot{
+    min-height:68px;
+    padding:2px;
+    border-radius:5px;
+    box-shadow:inset 0 0 0 1px #ffffff06,0 5px 9px #0008;
+  }
+  .adventureBagPanel .gearBagSlot:hover{transform:none}
+  .adventureBagPanel .gearBagSlot:active,
+  .adventureBagPanel .gearBagSlot.selected{
+    transform:translateY(-2px) scale(1.025);
+    box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--gear-color) 42%,transparent),0 8px 13px #0009,0 0 15px color-mix(in srgb,var(--gear-glow) 40%,transparent);
+  }
+  .adventureBagPanel .gearBagArt .gearArt.bag{
+    width:min(64px,100%);
+    height:min(64px,100%);
+  }
+  .adventureBagPanel .gearBagSlot:active .gearArt.bag,
+  .adventureBagPanel .gearBagSlot.selected .gearArt.bag{transform:translateY(-2px) scale(1.06)}
+  .adventureBagPanel .gearBagSlot.rarity4{
+    box-shadow:inset 0 0 0 1px #fff1a355,0 6px 11px #0009,0 0 13px #f5b81770!important;
+  }
+}
+
+@media(max-width:390px){
+  .unifiedEquipmentWorkspace{grid-template-rows:clamp(196px,33dvh,226px) minmax(0,1fr)}
+  .unifiedCharacterPanel .gearCharacterHero{width:min(250px,76vw);height:min(250px,76vw)}
+  .adventureBagPanel .gearGrid{grid-auto-rows:68px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .adventureBagPanel .gearBagSlot,
+  .adventureBagPanel .gearBagSlot .gearArt,
+  .unifiedGearBrowser .gearDetailCard,
+  .unifiedGearBrowser .gearDetailArt .gearArt.detail{animation:none!important;transition:none!important}
+}

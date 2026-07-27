@@ -1,12 +1,14 @@
-# RISK THE LOOT! v0.46.0
+# RISK THE LOOT! v0.47.0
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
 
 Horde Engine rebuilds regular combat around overlapping packs of 30-60 raiders. New packs arrive before the old one is completely gone, naturally collecting around Pappa while spatial separation keeps the crowd readable. Regular enemies deal individually lighter damage than the old trickle encounters, but being surrounded remains the central threat. Special encounters and extraction now call in compact hordes instead of isolated targets, keeping combat moving toward the next dangerous dive.
 
-Hammerstorm turns pack pressure into power for every build. Nearby enemies increase spin damage, reach and duration; Pappa leaps into the densest part of the crowd, gains a brief unstoppable window, repeatedly strikes the pack and launches defeated bodies outward. Large clears add stronger hit-stop, camera shake, hammer trails and one combined payoff, while multikills refund part of the cooldown so a successful dive flows naturally into the next horde.
+Melee Awakening makes courage the combat engine. Pappa only performs automatic hammer impacts at close range, and every outward-reaching player attack is now a physical consequence of a hammer strike: ground fractures, pressure waves, debris, and knockback. Traditional player projectiles and safe ranged damage are gone.
 
-Riskreaver is now the dedicated surrounded build. Two pieces improve movement, four pieces awaken damage scaling from nearby enemies, and the complete five-piece set increases that scaling, shortens Hammerstorm recovery and heals only from unique enemies struck by Hammerstorm. Healing is capped at 12% of maximum health per activation, so aggressive pack dives can recover a mistake without making Pappa immortal.
+Hammerstorm is always available. Hold the on-screen button, `Q`, or `F` to dive into the densest nearby pack and keep spinning; release to stop and reposition. Nearby enemies increase spin damage and reach, while large packs trigger periodic outer pressure waves. The dive grants only a brief landing window, so sustained spinning remains dangerous instead of becoming permanent invulnerability.
+
+Riskreaver remains the dedicated surrounded build. Two pieces improve movement, four pieces awaken damage scaling from nearby enemies, and the complete five-piece set increases that scaling and heals only from unique enemies struck by Hammerstorm. Healing is capped at 12% of maximum health per activation, so aggressive pack dives can recover a mistake without making Pappa immortal.
 
 Gear Wardrobe replaces the old diagonal paper-doll stripes across every current item. All 20 sets now use authored material, trim, silhouette and emblem profiles across idle, run and attack animations, while all 40 legacy items share the same clean layered renderer. Hammer Choir keeps its bespoke production sprite sheets. Riskreaver, Grand Vault, Crownless King and Fatebound use separate legendary palettes, motifs and animated complete-set presentation so top-tier equipment reads immediately on Pappa Hammer.
 
@@ -14,7 +16,7 @@ Raider Tactics gives regular enemies distinct combat jobs. Rushers weave into ra
 
 Champion Rituals gives every boss a more readable three-act fight. Phase changes now clear old projectiles and briefly stagger the champion, creating a deliberate breath before the next pattern. Vault Warden seals parts of the arena and closes a visible lock corridor, Crimson Champion telegraphs sweeping cleaves between its projectile salvos, and Skyglass Leviathan crosses the lagoon with tidal lanes alongside its undertow pools. Physical cover blocks the new lane attacks, preserving the arena's positional strategy.
 
-Gear 2.0 now gives all 20 hero sets a playstyle-defining signature. Most signatures awaken at three matching pieces and master at five; Riskreaver uses a deliberate 2/4/5 progression for its surrounded build. The complete catalog covers hunting, comeback defense, explosive volleys, dash ambushes, coin hunting, floor sustain, movement momentum, critical chains, elite recovery, evasion, star impacts, exploration rewards, treasure wards, execution damage, fated strikes, and the original five signature builds. Inventory details and hold previews show direct stat gains and losses alongside every signature, while newly awakened builds receive a dedicated equip celebration.
+Gear 2.0 gives all 20 hero sets a playstyle-defining signature. Existing ranged-facing labels are presented as melee reinforcement: Impact Speed, Hammer Echoes, ground-breaking impacts, dash slams, critical chains, and physical shockwaves. Most signatures awaken at three matching pieces and master at five; Riskreaver uses a deliberate 2/4/5 progression for its surrounded build.
 
 This project is in active playtest development. Better gameplay and cleaner systems take priority over preserving old save formats; save resets are acceptable when a feature needs a better data model.
 
@@ -113,11 +115,11 @@ All three champions have distinct movement, projectiles, arena hazards, phases, 
 ## Controls
 
 - Move: `WASD`, arrow keys, or the mobile joystick
-- Hammerstorm: `Q`, `F`, or the on-screen Spin button
+- Hold Hammerstorm: hold `Q`, `F`, or the on-screen Hold button
 - Dash: `Space` or the on-screen dash button
 - Extract: `E` or the on-screen extract button
 - Pause/settings: `Escape` or the top-right settings button
-- Combat: automatic targeting and ranged melee hammer arcs
+- Combat: automatic close-range hammer impacts; no player ranged DPS
 
 ## Run locally
 

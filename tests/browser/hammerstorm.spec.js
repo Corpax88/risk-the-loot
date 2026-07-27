@@ -25,8 +25,12 @@ test('Hammerstorm dives into a pack, launches enemies and rewards the full surro
   expect(state.spin.hits).toBeGreaterThanOrEqual(16);
   expect(state.spin.kills).toBeGreaterThanOrEqual(16);
   expect(state.launched).toBeGreaterThanOrEqual(16);
-  state=await page.evaluate(()=>window.__riskTest.advanceHammerstorm(.8));
-  expect(state.spin.cd).toBeGreaterThan(0);
+  await page.evaluate(()=>window.__riskTest.releaseHammerstorm());
+  state=await page.evaluate(()=>window.__riskTest.advanceHammerstorm(.3));
+  expect(state.spin.cd).toBe(0);
+  expect(state.spin.time).toBe(0);
+  expect(state.playerProjectiles).toBe(0);
+  expect((await page.evaluate(()=>window.__riskTest.triggerHammerstorm())).started).toBe(true);
 
   state=await page.evaluate(()=>window.__riskTest.spawnHammerstormPack(24,{durable:true,hurt:true,fullRiskreaver:true}));
   const woundedHp=state.player.hp;
@@ -38,5 +42,6 @@ test('Hammerstorm dives into a pack, launches enemies and rewards the full surro
   expect(state.spin.heal).toBeLessThanOrEqual(maxHeal+.01);
   expect(state.player.hp).toBeGreaterThan(woundedHp);
   expect(state.player.hp).toBeLessThanOrEqual(woundedHp+maxHeal+.01);
+  await page.evaluate(()=>window.__riskTest.releaseHammerstorm());
   expect(pageErrors).toEqual([]);
 });

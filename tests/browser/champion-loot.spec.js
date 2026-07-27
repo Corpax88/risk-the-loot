@@ -29,7 +29,7 @@ test('defeat the first Champion, equip each revealed item, and go deeper',async(
   await expect(page.locator('#bossLootPappa')).toBeVisible();
   await expect(page.locator('#bossLootPappa')).not.toHaveCSS('background-image','none');
   await expect(page.locator('#bossLootCompare .gearComparison')).toBeVisible();
-  for(const stat of ['DAMAGE','ARMOR','ATTACK SPEED','CRIT','LIFE STEAL']){
+  for(const stat of ['DAMAGE','ARMOR','IMPACT SPEED','CRIT','LIFE STEAL']){
     await expect(page.locator('#bossLootCompare')).toContainText(stat);
   }
   await expect(page.locator('#bossLootEquip')).toBeVisible();

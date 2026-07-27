@@ -48,7 +48,8 @@ for(const pose of ['idle','run','attack'])assert.deepEqual(pngSize('assets/pappa
 for(const pose of ['idle','run','attack'])assert.deepEqual(pngSize('assets/hammer-choir-'+pose+'-v1.png'),[2048,1024],'Hammer Choir '+pose+' sheet dimensions are wrong');
 assert(script.includes("assets/pappa-hammer-idle-v2.png")&&script.includes("assets/pappa-hammer-run-v2.png")&&script.includes("assets/pappa-hammer-attack-v2.png")&&script.includes("assets/pappa-hammer-enemies.png")&&script.includes("assets/pappa-hammer-bosses.png"),'Pappa Hammer animation or combat assets are not wired');
 assert(script.includes('paperDollSetSprites')&&script.includes('equippedFullSetId')&&script.includes('paperDollSetReady')&&script.includes("assets/hammer-choir-idle-v1.png")&&script.includes("assets/hammer-choir-run-v1.png")&&script.includes("assets/hammer-choir-attack-v1.png"),'production Hammer Choir skin is not wired');
-assert(script.includes('pendingStrikes')&&script.includes('releaseHammerStrike')&&script.includes("kind:'hammerSwing'"),'ranged melee hammer timing or impact arc is missing');
+assert(script.includes('pendingStrikes')&&script.includes('releaseHammerStrike')&&script.includes("kind:'hammerSwing'"),'melee hammer timing or impact arc is missing');
+assert(!script.includes('bullets.push(')&&script.includes('nearestEnemy(MELEE.reach+32)'),'safe player ranged damage still exists');
 assert(css.includes('@keyframes pappaHammerFrames')&&css.includes("background-image:url('assets/pappa-hammer-idle-v2.png')"),'live Gear Locker animation is missing');
 assert(script.includes('THE FIRST LOCK')&&script.includes('A FORMAL BOW')&&script.includes('source:e.bossKind||e.type'),'distinct boss personalities are not wired');
 assert(script.includes('function combatViewContains')&&script.includes('function enemyCanAttack')&&script.includes('combatViewContains(b.x,b.y,b.r,0,bulletCam)'),'offscreen enemy projectile safety is missing');

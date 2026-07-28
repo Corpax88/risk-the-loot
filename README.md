@@ -1,8 +1,10 @@
-# RISK THE LOOT! v0.49.0
+# RISK THE LOOT! v0.49.1
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
 
 Anime Rush sharpens every part of expedition pacing independently. Enemies arrive aggressively, move with role-specific speed, recover faster, and overlap into the next horde before the arena goes quiet. Pappa moves and animates faster, hammer impacts release sooner, hit reactions are shorter and brighter, and champion loot transitions resolve quickly without losing rarity readability. Regular enemy health is slightly lower to offset the increased pressure.
+
+The v0.49.1 Vortex Dash pass lets Pappa Hammer Dash seamlessly while Hammerstorm remains active. Its pull field now stays centered on him throughout the movement, keeps packs gathered around a readable inner radius, and the five-second Hammerstorm introduction is shown only once per save.
 
 The v0.49.0 Black Hole pass adds a production-ready cosmic legendary set for Pappa Hammer. It includes dedicated idle, run and attack sheets, a massive singularity hammer, matching inventory and ground-loot art, and gravity-well impact effects built through the same full-body pipeline as Hammer Choir.
 

@@ -1,6 +1,10 @@
-# RISK THE LOOT! v0.47.0
+# RISK THE LOOT! v0.48.1
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
+
+Anime Rush sharpens every part of expedition pacing independently. Enemies arrive aggressively, move with role-specific speed, recover faster, and overlap into the next horde before the arena goes quiet. Pappa moves and animates faster, hammer impacts release sooner, hit reactions are shorter and brighter, and champion loot transitions resolve quickly without losing rarity readability. Regular enemy health is slightly lower to offset the increased pressure.
+
+The v0.48.1 balance pass keeps that pacing intact while reducing regular raider damage by 18%. Champion damage, movement, attack cadence, wave overlap and horde size are unchanged.
 
 Horde Engine rebuilds regular combat around overlapping packs of 30-60 raiders. New packs arrive before the old one is completely gone, naturally collecting around Pappa while spatial separation keeps the crowd readable. Regular enemies deal individually lighter damage than the old trickle encounters, but being surrounded remains the central threat. Special encounters and extraction now call in compact hordes instead of isolated targets, keeping combat moving toward the next dangerous dive.
 

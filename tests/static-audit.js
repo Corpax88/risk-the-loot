@@ -56,8 +56,11 @@ assert(script.includes('function combatViewContains')&&script.includes('function
 assert(script.includes('ARENA_OBSTACLE_LAYOUT')&&script.includes('function moveAroundCover')&&script.includes('projectileHitsCover(b.x,b.y,b.r)')&&script.includes('lineBlockedByCover'),'physical arena cover is missing');
 assert(script.includes('CAMERA_ZOOM={mobile:.72,desktop:.8}')&&script.includes('ctx.scale(cam.zoom,cam.zoom)'),'zoomed-out combat camera is missing');
 assert(script.includes('function updateEnemyEntity')&&script.includes('spawnGrace:spawnDuration')&&script.includes('e.stepFx<=0'),'living enemy movement or deterministic arrival animation is missing');
-assert(script.includes('TANK_RUSH_RANGE=420')&&script.includes('TANK_RUSH_OVERSHOOT=64')&&script.includes('function prepareEnemyDash')&&script.includes('function finishEnemyDash')&&script.includes('function drawTankTelegraph')&&script.includes("kind:'tankImpact'"),'Shield Guard long rush, recovery, or danger-lane feedback is missing');
-assert(script.includes('LANCER_THRUST_RANGE=410')&&script.includes('RUSHER_POUNCE_SPEED=390')&&script.includes('function drawLancerTelegraph'),'Lancer thrust or Rusher pounce identity is missing');
+assert(script.includes('TANK_RUSH_RANGE=440')&&script.includes('TANK_RUSH_OVERSHOOT=72')&&script.includes('function prepareEnemyDash')&&script.includes('function finishEnemyDash')&&script.includes('function drawTankTelegraph')&&script.includes("kind:'tankImpact'"),'Shield Guard long rush, recovery, or danger-lane feedback is missing');
+assert(script.includes('LANCER_THRUST_RANGE=430')&&script.includes('RUSHER_POUNCE_SPEED=455')&&script.includes('function drawLancerTelegraph'),'Lancer thrust or Rusher pounce identity is missing');
+assert(script.includes('ENEMY_SPAWN_GRACE=.42')&&script.includes('overlapRatio:.58')&&script.includes('clearBreather:.24')&&script.includes('attackDuration:.24'),'Anime Rush combat pacing is missing');
+assert(script.includes('REGULAR_ENEMY_DAMAGE_SCALE=.82')&&script.includes('map.enemyDamage*.45*REGULAR_ENEMY_DAMAGE_SCALE'),'regular-enemy forgiveness scaling is missing');
+assert(script.includes("damage:((isTyrant?20:isLagoon?18:18)+riskTier*1.5)*damageScale*map.bossDamage"),'Champion damage must remain independent from regular-enemy scaling');
 assert(script.includes('fan=(e.elite||depth>=3)'),'Gunner fan-volley variation is missing');
 assert(!/v0\.[23456]\.\d/.test(html+css+script),'stale release version found');
 assert(script.includes('DEPTH_THRESHOLDS=[0,55,120,195,280]'),'expedition pacing is missing');
@@ -71,7 +74,7 @@ assert(script.includes("boss:'leviathan'")&&script.includes('function leviathanV
 assert(script.includes('function spawnWardenLock')&&script.includes("type:'vaultSeal'")&&script.includes("type:'wardenLock'"),'Vault Warden arena locks are missing');
 assert(script.includes("spawnBossLane(e,'crimsonCleave'")&&script.includes("spawnBossLane(e,'tidalLane'"),'Champion cleaves or Leviathan tide lanes are missing');
 assert(script.includes('function drawBossLaneHazard')&&script.includes('function drawVaultSealHazard')&&script.includes('function pointSegmentDistance'),'Champion telegraphs or lane collision are missing');
-assert(script.includes('e.stagger=.82')&&script.includes('if(e.stagger>0)'),'Champion phase stagger is missing');
+assert(script.includes('e.stagger=.58')&&script.includes('if(e.stagger>0)'),'Champion phase stagger is missing');
 assert(html.includes('id="miniMapCanvas"')&&html.includes('id="miniMapCacheCount"')&&script.includes('function drawMiniMap')&&script.includes('rareCaches=caches.filter'),'rare-cache minimap is missing');
 assert(html.includes('id="xpHud"')&&html.includes('id="xpFill"')&&html.includes('id="xpSpark"')&&script.includes('function syncXpHud')&&script.includes('function pulseXpLevel'),'expedition XP rail or level feedback is missing');
 assert(script.includes('LOOT_ITEMS')&&script.includes('lootDrops')&&script.includes('collectLoot')&&script.includes('drawAdventureItemShape'),'physical loot item system is missing');
@@ -83,7 +86,7 @@ assert(css.includes("assets/environment/dreamworld/dreamworld-ground-tile.png")&
 assert(script.includes('SKYGLASS_DECOR_LAYOUT')&&script.includes('function drawSkyglassGround')&&script.includes('function drawSkyglassDecor')&&script.includes('function drawSkyglassCover'),'Skyglass environment rendering is missing');
 assert(css.includes("assets/environment/skyglass/skyglass-ground-tile.png")&&css.includes("assets/environment/skyglass/props/celestial-koi-statue.png"),'Skyglass map preview is not using the imported assets');
 assert(script.includes('const SET_DEFINITIONS=[')&&script.includes('const SET_ITEMS=SET_DEFINITIONS.flatMap')&&script.includes('activeSetBonuses'),'set item catalog or fixed set bonuses are missing');
-assert(script.includes('const GEAR_SIGNATURES=')&&script.includes('function activeGearSignatures')&&script.includes('function gearSignatureProfile'),'Gear 2.0 signature registry is missing');
+assert(script.includes('const GEAR_SIGNATURES=')&&script.includes('function gearSignatureProfile'),'Gear 2.0 signature registry is missing');
 for(const signature of ['trailwarden','ironGuild','redBanner','moonlitScout','coinseeker','towerBulwark','stormrunner','hammerChoir','lanternGuard','grandWayfarer','crimsonOath','moonbreaker','kingsRoad','phantomCourt','starforge','grandVoyager','riskreaver','grandVault','crownlessKing','fatebound'])assert(script.includes(signature+':{role:'),'Gear 2.0 signature is missing: '+signature);
 assert(script.includes('function releaseStormDash')&&script.includes('function triggerCritEcho')&&script.includes('function triggerMoonArc')&&script.includes('function triggerFloorSignatures')&&script.includes('player.guardCd')&&script.includes('player.fateSaved'),'Gear 2.0 combat effects are incomplete');
 assert(css.includes('.gearSignature')&&css.includes('.gearDeltaGrid')&&css.includes('.signatureAwaken'),'Gear 2.0 inventory or equip feedback is missing');
@@ -98,7 +101,7 @@ assert(!script.includes('drawPaperDollSilhouette'),'equipped gear must stay insi
 assert(/\.pappaHammerBase\{[\s\S]*?image-rendering:auto;[\s\S]*?filter:none;[\s\S]*?\}/.test(css),'iPhone-softening hero filter is active');
 assert(html.includes('id="gearLockerButton"')&&html.includes('id="gearGrid"')&&html.includes('id="gearCharacterPreview"'),'Gear Locker or live character preview is missing');
 assert(html.includes('id="gearTurnLeft"')&&html.includes('id="gearTurnRight"')&&html.includes('id="gearSetSummary"')&&script.includes('updateGearTurntable'),'rotating preview or set summary is missing');
-assert(html.includes('id="gearRarityFilters"')&&html.includes('id="sellFilteredGear"')&&script.includes('gearSellableCount')&&script.includes('sellFilteredGear'),'protected filtered gear sale is missing');
+assert(html.includes('id="gearRarityFilters"')&&html.includes('id="sellFilteredGear"')&&script.includes('filteredGearSaleSummary')&&script.includes('sellFilteredGear'),'protected filtered gear sale is missing');
 assert(html.includes('id="gearBagCount"')&&html.includes('id="gearRaritySummary"')&&html.includes('id="gearSortButton"')&&html.includes('id="gearDetail"'),'Vault Bag count, rarity summary, sorting, or item details are missing');
 assert(html.includes('id="gearHoverPreview"')&&script.includes('function showGearHover')&&script.includes('function bindGearHover')&&css.includes('.gearHoverPreview.show'),'per-item hover and focus preview is missing');
 assert(html.includes('id="helpTooltip"')&&script.includes('function bindContextHelp')&&script.includes('HELP_COPY')&&css.includes('.helpTooltip.show'),'universal contextual help is missing');

@@ -6,7 +6,7 @@ test('all gear sets awaken and master their own signature',async({page})=>{
 
   const catalog=await page.evaluate(()=>window.__riskTest.gearSignatures());
   const rules=await page.evaluate(()=>window.__riskTest.gearSetRules());
-  expect(Object.keys(catalog)).toHaveLength(20);
+  expect(Object.keys(catalog)).toHaveLength(21);
 
   for(const [setId,signature] of Object.entries(catalog)){
     const rule=rules[setId];

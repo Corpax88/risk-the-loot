@@ -425,6 +425,7 @@ button:focus-visible{outline-color:#f4ead6}
 .gearArt{--gear-x:0%;--gear-y:0%;--gear-rarity:#9aa5aa;width:42px;height:42px;display:inline-block;flex:none;background-image:url('assets/gear-items-atlas.png');background-repeat:no-repeat;background-position:var(--gear-x) var(--gear-y);background-size:1000% 500%;filter:drop-shadow(0 2px 2px #000c) drop-shadow(0 0 3px color-mix(in srgb,var(--gear-rarity) 32%,transparent))}
 .gearArt.setGearSprite{background-image:url('assets/set-gear-atlas.png');background-size:500% 1600%}
 .gearArt.legendarySprite{background-image:url('assets/legendary-gear-atlas.png');background-size:500% 500%;filter:drop-shadow(0 3px 2px #000e) drop-shadow(0 0 5px color-mix(in srgb,var(--legendary-accent) 45%,transparent))}
+.gearArt.blackHoleSprite{background-image:url('assets/black-hole-gear-icons-v1.png');background-size:500% 100%;filter:drop-shadow(0 4px 3px #000f) drop-shadow(0 0 7px #1b75d8aa) drop-shadow(0 0 3px #7ddcff)}
 .gearArt.small{width:34px;height:34px}.gearArt.micro{width:26px;height:26px}.gearArt.card{width:52px;height:52px}.gearArt.toast{width:42px;height:42px}
 .baseGearSlot .gearArt,.gearLoadoutSlot>i .gearArt,.lootToast>i .gearArt{max-width:100%;max-height:100%}.lootResult>i{width:24px;height:24px;display:grid;place-items:center}.lootResult>i .gearArt{width:24px;height:24px}
 

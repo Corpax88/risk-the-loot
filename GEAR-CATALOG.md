@@ -1,12 +1,12 @@
-# Risk the Loot - Gear Catalog v0.48.1
+# Risk the Loot - Gear Catalog v0.49.0
 
 Denne katalogen er generert fra de aktive definisjonene i `script.js`.
 
 ## Kort fasit
 
-- Spillet har **140 gear-maler**.
+- Spillet har **145 gear-maler**.
 - 40 er frittstaende field-items.
-- 100 er set-items: 20 sett x 5 slots.
+- 105 er set-items: 21 sett x 5 slots.
 - Slots: Hat, Scarf, Coat, Hammer og Boots.
 - Rarities i aktiv kode: Common, Rare, Epic, Mythic og Legendary.
 - Det finnes ikke Uncommon gear i den aktive loot-tabellen.
@@ -84,7 +84,7 @@ Tallene nedenfor er **base stats**. Når et item dropper, skaleres hver stat med
 | Legendary | Hammer | RISKREAVER | +20 DMG, +22% IMPACT, +22% CRIT | Dedicated legendary item/drop atlas cell; no full animation sheet |
 | Legendary | Coat | Grand Vault Coat | +90 HP, +15% ARMOR, +10% MOVE | Dedicated legendary item/drop atlas cell; no full animation sheet |
 
-## Hvordan de 100 set-item-statsa bygges
+## Hvordan de 105 set-item-statsa bygges
 
 Hvert sett har disse fem item-navnene:
 
@@ -114,7 +114,7 @@ I tillegg far Crown, Longcoat og Striders settets **Focus A**. Oathwrap og Great
 
 Eksempel: Hammer Choir har Focus A = DMG og Focus B = IMPACT. Hammer Choir Crown, Longcoat og Striders far derfor ekstra DMG, mens Oathwrap og Great Hammer far ekstra IMPACT.
 
-## Alle 20 gear sets
+## Alle 21 gear sets
 
 `Assets` beskriver om settet har samme type assets som Hammer Choir.
 
@@ -140,14 +140,15 @@ Eksempel: Hammer Choir har Focus A = DMG og Focus B = IMPACT. Hammer Choir Crown
 | Grand Vault | Legendary / Lv 18 | HP / ARMOR | 2p: +55 HP; 3p: +8% ARMOR; 5p: +14% VALUE, +45 HP, +4 DMG | Vaultbound: to unsecured boss-items gir guard charge / hvert item gir charge, maks to | Dedicated legendary item/drop atlas + Gear 2.0 legendary layers |
 | Crownless King | Legendary / Lv 20 | DMG / HP | 2p: +5 DMG, +28 HP; 3p: +7% CRIT, +5% ARMOR; 5p: +8% MOVE, +8% IMPACT, +10% VALUE | Kingslayer: elites/bosser under 30% HP tar +20% / under 40% tar +35% | Dedicated legendary item/drop atlas + Gear 2.0 legendary layers |
 | Fatebound | Legendary / Lv 24 | CRIT / MOVE | 2p: +7% CRIT, +5% MOVE; 3p: +8.5% IMPACT, -9% DASH; 5p: +9 DMG, +6% CRIT, +8% VALUE | Fated Strike: hvert syvende strike garanterer crit / hvert femte critter og ett dodsfall avverges per expedition | Dedicated legendary item/drop atlas + Gear 2.0 legendary layers |
+| **Black Hole** | Legendary / Lv 22 | DMG / ARMOR | 2p: +5% ARMOR, +4 DMG; 3p: +6% CRIT, +6% IMPACT; 5p: +8 DMG, +7% IMPACT, +4% CRIT | Gravity Well: hvert femte strike trekker flokken inn / hvert tredje lager en stor, sterk singularitet | **Tre fullfigur-sheets, eget ikon/drop-atlas og animert vortex-VFX** |
 
 ## Asset-fasit
 
 ### Fullstendig samme asset-type som Hammer Choir
 
-**Ingen andre sett akkurat na.**
+To sett bruker na den ferdigtegnede fullfigur-pipelinen.
 
-Hammer Choir er eneste oppforing i `paperDollSetSprites` og har:
+Hammer Choir har:
 
 - `assets/hammer-choir-idle-v1.png`
 - `assets/hammer-choir-run-v1.png`
@@ -156,9 +157,20 @@ Hammer Choir er eneste oppforing i `paperDollSetSprites` og har:
 
 Nar hele Hammer Choir-settet er equipped, bytter spillet til disse ferdigtegnede fullfigur-animasjonene.
 
+Black Hole har:
+
+- `assets/black-hole-hammer-idle-v1.png`
+- `assets/black-hole-hammer-run-v1.png`
+- `assets/black-hole-hammer-attack-v1.png`
+- `assets/black-hole-hammer-vfx-v1.png`
+- `assets/black-hole-gear-icons-v1.png`
+- `assets/black-hole-gear-drops-v1.png`
+- Fullfigur-sheetene og VFX-sheetet er 2048 x 1024 med 8 frames.
+- Nar hele settet er equipped, brukes den morkebla cosmic fullfigur-animasjonen. Gravity Well bruker det egne VFX-sheetet i kamp.
+
 ### Hva de andre settene faktisk har
 
-Alle 20 sett har:
+Alle 21 sett har:
 
 - En egen `SET_VISUAL_PROFILES`-profil.
 - Egne item-ikoner i atlas.
@@ -171,7 +183,7 @@ De 16 Rare/Epic/Mythic-settene bruker:
 - `assets/set-gear-atlas.png`
 - `assets/set-gear-drops.png`
 
-De fire Legendary-settene bruker:
+De fire opprinnelige Legendary-settene bruker:
 
 - `assets/legendary-gear-atlas.png`
 - `assets/legendary-gear-drops.png`

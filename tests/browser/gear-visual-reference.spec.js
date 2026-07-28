@@ -10,18 +10,18 @@ test('every current gear item has a Gear 2.0 visual profile',async({page})=>{
   await waitForGearBridge(page);
   const coverage=await page.evaluate(()=>window.__riskTest.gearVisualCoverage());
   expect(coverage).toMatchObject({
-    items:140,
-    setItems:100,
+    items:145,
+    setItems:105,
     legacyItems:40,
-    sets:20,
-    profiles:20,
+    sets:21,
+    profiles:21,
     missing:[],
     usesStripePattern:false,
     usesLegacyGearOverlay:false
   });
 });
 
-test('all twenty sets render every animation without clipping or edge artifacts',async({page})=>{
+test('all sets render every animation without clipping or edge artifacts',async({page})=>{
   test.setTimeout(120000);
   await page.setViewportSize({width:1280,height:900});
   await waitForGearBridge(page);
@@ -35,7 +35,7 @@ test('all twenty sets render every animation without clipping or edge artifacts'
     const state=await page.evaluate(()=>window.__riskTest.gearVisualState(true));
     expect(state.setId).toBe(set.id);
     expect(state.visualProfile).toBe(set.id);
-    expect(state.usesProductionSkin).toBe(set.id==='hammerChoir');
+    expect(state.usesProductionSkin).toBe(['hammerChoir','blackHole'].includes(set.id));
     expect(state.layers).toEqual([
       {slot:'coat',region:'chest-gloves'},
       {slot:'scarf',region:'neck'},
@@ -141,5 +141,37 @@ test('legendary equipment remains applied in live expedition combat',async({page
   expect(state.setId).toBe('crownlessKing');
   await page.locator('#world').screenshot({
     path:path.join('test-results','gear-reference','crownless-live-combat.png')
+  });
+});
+
+test('Black Hole legendary remains readable and gathers the combat pack',async({page})=>{
+  test.setTimeout(60000);
+  await page.setViewportSize({width:1280,height:900});
+  await waitForGearBridge(page);
+  await page.evaluate(()=>window.__riskTest.previewGearSet('blackHole'));
+  await expect.poll(()=>page.evaluate(()=>window.__riskTest.gearVisualState().setId)).toBe('blackHole');
+  await page.locator('#gearCharacterStage').screenshot({
+    path:path.join('test-results','gear-reference','black-hole-armory-desktop.png')
+  });
+
+  await page.locator('#closeGear').click();
+  const gravity=await page.evaluate(()=>window.__riskTest.blackHoleProbe());
+  expect(gravity).toMatchObject({setId:'blackHole',hits:18,pulled:18,enemies:18});
+  expect(gravity.effects).toContain('blackHoleVfx');
+  await page.waitForTimeout(80);
+  await page.locator('#world').screenshot({
+    path:path.join('test-results','gear-reference','black-hole-gravity-well.png')
+  });
+
+  await page.setViewportSize({width:390,height:844});
+  await waitForGearBridge(page);
+  await page.evaluate(()=>window.__riskTest.previewGearSet('blackHole'));
+  const stage=page.locator('#gearCharacterStage');
+  await expect(stage).toBeVisible();
+  const box=await stage.boundingBox();
+  expect(box.width).toBeLessThanOrEqual(390);
+  expect(box.height).toBeGreaterThan(180);
+  await stage.screenshot({
+    path:path.join('test-results','gear-reference','black-hole-armory-mobile.png')
   });
 });

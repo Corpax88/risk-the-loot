@@ -21,6 +21,7 @@ test('Guild Outskirts seeds stay connected, reproducible, and spawn away from Pa
     expect(first.spawnZones).toEqual(second.spawnZones);
     expect(first.player.x).toBeLessThan(220);
     expect(first.spawnZones.length).toBeGreaterThanOrEqual(10);
+    expect(first.bossGuideVisible).toBe(false);
     const anchors=await page.evaluate(()=>window.__riskTest.sampleSpawnAnchors(4));
     expect(anchors).toHaveLength(4);
     expect(anchors.every(anchor=>!anchor.blocked&&anchor.distance>380)).toBe(true);
@@ -29,6 +30,8 @@ test('Guild Outskirts seeds stay connected, reproducible, and spawn away from Pa
     signatures.add(first.pathRows.join('-')+'|'+first.moduleKinds.join('-'));
   }
   expect(signatures.size).toBeGreaterThan(4);
+  await page.evaluate(()=>window.__riskTest.fightBoss('warden'));
+  expect((await page.evaluate(()=>window.__riskTest.mapState())).bossGuideVisible).toBe(true);
   expect(pageErrors).toEqual([]);
 });
 

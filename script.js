@@ -1973,9 +1973,8 @@
     let pad=5,scale=Math.min((miniW-pad*2)/WORLD.w,(miniH-pad*2)/WORLD.h),mapW=WORLD.w*scale,mapH=WORLD.h*scale,mapX=(miniW-mapW)/2,mapY=(miniH-mapH)/2,zone=zoneAt(depth),toMap=(x,y)=>({x:mapX+x*scale,y:mapY+y*scale});
     miniCtx.fillStyle='#081321';miniCtx.fillRect(mapX,mapY,mapW,mapH);
     miniCtx.globalAlpha=.2;miniCtx.fillStyle=zone.accent;for(let x=mapX;x<mapX+mapW;x+=mapW/6)miniCtx.fillRect(x,mapY,1,mapH);for(let y=mapY;y<mapY+mapH;y+=mapH/4)miniCtx.fillRect(mapX,y,mapW,1);miniCtx.globalAlpha=1;
-    if(guildTerrain){
+    if(guildTerrain&&bossActive&&!bossDefeated){
       miniCtx.strokeStyle='#d6aa5870';miniCtx.lineWidth=1.35;miniCtx.setLineDash([3,2]);miniCtx.beginPath();for(let index=0;index<guildTerrain.routePoints.length;index++){let routePoint=toMap(guildTerrain.routePoints[index].x,guildTerrain.routePoints[index].y);if(!index)miniCtx.moveTo(routePoint.x,routePoint.y);else miniCtx.lineTo(routePoint.x,routePoint.y)}miniCtx.stroke();miniCtx.setLineDash([]);
-      if(!bossDefeated){let target=toMap(guildTerrain.bossAnchor.x,guildTerrain.bossAnchor.y),pulse=.75+Math.sin(performance.now()/190)*.25;miniCtx.save();miniCtx.translate(target.x,target.y);miniCtx.rotate(Math.PI/4);miniCtx.fillStyle=bossActive?'#c83f46':'#c83f46'+Math.round(90+90*pulse).toString(16).padStart(2,'0');miniCtx.strokeStyle='#f4ead6';miniCtx.lineWidth=.8;miniCtx.fillRect(-3,-3,6,6);miniCtx.strokeRect(-3,-3,6,6);miniCtx.restore()}
     }
     miniCtx.fillStyle='#40506a';for(const o of obstacles){let p=toMap(o.x-o.w/2,o.y-o.h/2);miniCtx.fillRect(p.x,p.y,Math.max(1.5,o.w*scale),Math.max(1.5,o.h*scale))}
     let cam=camera(),viewW=Math.min(WORLD.w,W/cam.zoom),viewH=Math.min(WORLD.h,H/cam.zoom),view=toMap(cam.x-viewW/2,cam.y-viewH/2);miniCtx.fillStyle='#e8f0ff0b';miniCtx.fillRect(view.x,view.y,viewW*scale,viewH*scale);miniCtx.strokeStyle='#b6c6dc88';miniCtx.lineWidth=1;miniCtx.strokeRect(view.x+.5,view.y+.5,Math.max(1,viewW*scale-1),Math.max(1,viewH*scale-1));
@@ -2096,6 +2095,7 @@
           pathRows:guildTerrain?guildTerrain.pathRows.slice():[],
           spawnZones:guildTerrain?guildTerrain.spawnZones.map(zone=>({x:Math.round(zone.x),y:Math.round(zone.y),col:zone.col,row:zone.row})):[],
           bossAnchor:guildTerrain?{x:Math.round(guildTerrain.bossAnchor.x),y:Math.round(guildTerrain.bossAnchor.y)}:null,
+          bossGuideVisible:!!(guildTerrain&&bossActive&&!bossDefeated),
           validation:guildTerrain?guildTerrain.validation:null
         }
       },

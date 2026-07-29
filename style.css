@@ -1819,3 +1819,132 @@ button:focus-visible{outline-color:#f4ead6}
     bottom:-58px;
   }
 }
+
+/* v0.50 Black Hole Legendary: reclaim the removed bag masthead for Pappa. */
+.adventureBagPanel{
+  position:relative;
+  padding-top:8px;
+}
+.adventureBagPanel>.panelClose{
+  position:absolute;
+  z-index:80;
+  top:8px;
+  right:8px;
+  width:38px;
+  height:38px;
+  margin:0;
+  border-color:#d6aa58aa;
+  background:#07111ee8;
+  box-shadow:0 4px 13px #000a;
+}
+.adventureBagPanel .unifiedCharacterPanel{
+  grid-template-rows:auto minmax(462px,1fr) 52px auto auto auto;
+}
+.unifiedCharacterPanel .gearCharacterHero{
+  width:min(560px,137%);
+  height:min(560px,137%);
+  bottom:-50px;
+}
+.unifiedCharacterPanel .gearCharacterHalo{
+  width:238px;
+  height:238px;
+}
+.unifiedGearBrowser .gearInventoryHeading{
+  padding-right:46px;
+}
+
+@media(max-width:1180px) and (min-width:761px){
+  .adventureBagPanel .unifiedCharacterPanel{
+    grid-template-rows:auto minmax(440px,1fr) 52px auto auto auto;
+  }
+  .unifiedCharacterPanel .gearCharacterHero{
+    width:min(525px,128%);
+    height:min(525px,128%);
+    bottom:-45px;
+  }
+}
+
+@media(max-width:760px){
+  .adventureBagPanel{
+    grid-template-rows:minmax(0,1fr);
+    padding-top:3px;
+  }
+  .adventureBagPanel>.panelClose{
+    top:max(7px,env(safe-area-inset-top));
+    right:max(7px,env(safe-area-inset-right));
+    width:34px;
+    height:34px;
+  }
+  .unifiedEquipmentWorkspace{
+    grid-template-rows:clamp(252px,43dvh,315px) minmax(0,1fr);
+  }
+  .adventureBagPanel .unifiedCharacterPanel{
+    grid-template-rows:27px minmax(0,1fr)!important;
+  }
+  .unifiedCharacterPanel .gearCharacterHero{
+    width:min(330px,94vw);
+    height:min(330px,94vw);
+    bottom:-16px;
+  }
+  .unifiedCharacterPanel .gearCharacterHalo{
+    width:204px;
+    height:204px;
+  }
+  .unifiedGearBrowser .gearInventoryHeading{
+    padding-right:42px;
+  }
+  .equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="hammer"]{
+    top:48px;
+  }
+}
+
+@media(max-width:390px){
+  .unifiedEquipmentWorkspace{
+    grid-template-rows:clamp(235px,41dvh,280px) minmax(0,1fr);
+  }
+  .unifiedCharacterPanel .gearCharacterHero{
+    width:min(300px,92vw);
+    height:min(300px,92vw);
+    bottom:-16px;
+  }
+}
+
+/* Black Hole set: the control shares the singularity's own visual language. */
+.spinButton.blackHole,
+.spinButton.blackHole.primed,
+.spinButton.blackHole.overloaded,
+.spinButton.blackHole.cataclysm,
+.spinButton.blackHole.active{
+  --pack-color:#278be8;
+  border-color:#8edcff;
+  background:conic-gradient(#57c8ff var(--ready),#09172b 0);
+  box-shadow:
+    0 5px 0 #020611,
+    0 0 0 2px #2c82dd55,
+    0 0 25px #176fdc88,
+    inset 0 0 22px #041126;
+}
+.spinButton.blackHole:before{
+  background:
+    radial-gradient(circle at 50% 50%,#000 0 21%,#092b5d 23% 31%,#06101f 48%,#02050d 72%),
+    radial-gradient(circle at 38% 30%,#a9e7ff55,transparent 18%);
+  border-color:#78d4ffb5;
+  box-shadow:inset 0 0 17px #3aa8ff66;
+}
+.spinButton.blackHole b{
+  color:#e9f9ff;
+  text-shadow:0 0 6px #fff,0 0 15px #259cff;
+}
+.spinButton.blackHole em{
+  background:#071225;
+  color:#dff7ff;
+  border-color:#76d7ff;
+  box-shadow:0 2px 0 #020611,0 0 13px #258fffaa;
+}
+.spinButton.blackHole.active{
+  animation:singularityControlPulse .42s ease-in-out infinite alternate;
+}
+@keyframes singularityControlPulse{
+  from{filter:brightness(.94);transform:scale(1)}
+  to{filter:brightness(1.12);transform:scale(1.025)}
+}

@@ -8,14 +8,14 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="description" content="Risk everything, recover equippable gear and build Pappa Hammer in this compact extraction roguelite.">
   <title>RISK THE LOOT!</title>
-  <link rel="stylesheet" href="style.css?v=0.49.1">
+  <link rel="stylesheet" href="style.css?v=0.50.0">
 </head>
 <body>
   <main id="game">
     <header class="topbar">
       <div class="brand" tabindex="0" data-help-title="Risk the Loot" data-help="Enter the tower, defeat champions and decide when the gear you carry is valuable enough to extract.">
         <span class="brandMark">R</span>
-        <div><strong>RISK THE LOOT!</strong><small>VORTEX DASH v0.49.1</small></div>
+        <div><strong>RISK THE LOOT!</strong><small>BLACK HOLE LEGENDARY v0.50.0</small></div>
       </div>
       <div class="resources">
         <div class="resource level" data-help-title="Pappa Level" data-help="Boss victories grant XP. Higher levels unlock stronger gear and tougher champions."><i>LV</i><div><b id="pappaLevel">1</b><span>PAPPA</span></div></div>
@@ -63,18 +63,9 @@
 
       <div id="baseNotice" class="baseNotice" role="status"></div>
 
-      <div id="gearOverlay" class="menuOverlay" role="dialog" aria-modal="true" aria-labelledby="gearTitle">
+      <div id="gearOverlay" class="menuOverlay" role="dialog" aria-modal="true" aria-label="Pappa Hammer equipment">
         <div id="gearPanel" class="menuPanel gearPanel adventureBagPanel">
           <button id="closeGear" class="panelClose" aria-label="Close Adventure Bag">&#215;</button>
-          <header class="adventureBagHeader">
-            <i class="adventureBagEmblem" aria-hidden="true"><span>PH</span></i>
-            <div>
-              <small>PAPPA HAMMER'S</small>
-              <h2 id="gearTitle">ADVENTURE BAG</h2>
-              <p>GEAR RECOVERED FROM THE TOWER</p>
-            </div>
-            <div class="gearBagReadout" tabindex="0" data-help-title="Secured Loot" data-help="Gear in this bag is permanently safe. Only gear still carried inside an expedition can be lost."><i class="gearBagIcon" aria-hidden="true"></i><span><small>SECURED LOOT</small><b id="gearBagCount">0 ITEMS</b></span></div>
-          </header>
           <div class="gearWorkspace unifiedEquipmentWorkspace">
             <aside class="gearCharacterPanel unifiedCharacterPanel">
               <div class="gearCharacterHeading"><span>PAPPA HAMMER LOADOUT</span><b id="gearEquippedCount">0 / 5 EQUIPPED</b></div>
@@ -370,11 +361,11 @@
         </div>
         <button id="resumeButton" class="primaryButton settingsResume"><span>RESUME</span><i>&#8250;</i></button>
         <button id="abandonButton" class="dangerButton">ABANDON EXPEDITION</button>
-        <p class="buildStamp">v0.49.1 VORTEX DASH</p>
+        <p class="buildStamp">v0.50.0 BLACK HOLE LEGENDARY</p>
       </div>
     </div>
     <aside id="helpTooltip" class="helpTooltip" role="tooltip" aria-hidden="true"><strong id="helpTooltipTitle"></strong><span id="helpTooltipText"></span></aside>
   </main>
-  <script src="script.js?v=0.49.1"></script>
+  <script src="script.js?v=0.50.0"></script>
 </body>
 </html>

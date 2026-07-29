@@ -23,7 +23,7 @@ assert(elements.gearOverlay.classList.contains('show'),'Gear Locker did not open
 assert.equal(elements.gearLoadoutSlots.children.length,6,'Unified Equipment did not render six visible body zones');
 assert.equal(elements.gearRarityFilters.children.length,6,'rarity filters did not render');
 assert.equal(elements.gearRaritySummary.children.length,5,'Vault Bag rarity totals did not render');
-assert.equal(elements.gearBagCount.textContent,'2 ITEMS','Vault Bag item count is wrong');
+assert(elements.gearInventorySummary.textContent.includes('SHOWING 2 OF 2'),'inventory item count is wrong');
 assert.equal(elements.gearCharacterPreview.children.length,0,'obsolete geometric gear leaked onto the animated character');
 assert(elements.gearLoadoutSlots.children[0].innerHTML.includes('gearArt'),'equipped atlas art is missing from the loadout slot');
 assert.equal(elements.gearGrid.children.length,2,'unique migrated copies did not render separately');

@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const $=id=>document.getElementById(id),canvas=$('world'),ctx=canvas.getContext('2d'),miniMapCanvas=$('miniMapCanvas'),miniCtx=miniMapCanvas.getContext('2d');
+  const $=id=>document.getElementById(id),canvas=$('world'),ctx=canvas.getContext('2d'),miniMapCanvas=$('miniMapCanvas'),miniCtx=miniMapCanvas.getContext('2d'),guildTerrainApi=window.GuildTerrain||null;
   function loadImage(src){let image=typeof Image==='function'?new Image():document.createElement('img');image.src=src;return image}
   const pappaHammerImage=loadImage('assets/pappa-hammer-player.png');
   const pappaHammerSprites={
@@ -99,7 +99,7 @@
     mapOverlay:$('mapOverlay'),closeMaps:$('closeMaps'),mapGrid:$('mapGrid'),mapPappaLevel:$('mapPappaLevel'),nextMapUnlock:$('nextMapUnlock'),selectedMapLabel:$('selectedMapLabel'),briefingOverlay:$('briefingOverlay'),briefingStart:$('briefingStart'),contractTracker:$('contractTracker'),contractTitle:$('contractTitle'),contractReadout:$('contractReadout'),contractFill:$('contractFill'),contractPrompt:$('contractPrompt'),contractOverlay:$('contractOverlay'),closeContract:$('closeContract'),vaultClaimLabel:$('vaultClaimLabel'),vaultEyebrow:$('vaultEyebrow'),vaultCycle:$('vaultCycle'),vaultReward:$('vaultReward'),vaultDescription:$('vaultDescription'),vaultOdds:$('vaultOdds'),contractCompleteTitle:$('contractCompleteTitle'),
     resultOverlay:$('resultOverlay'),resultPanel:document.querySelector('.resultPanel'),resultTitle:$('resultTitle'),resultScrap:$('resultScrap'),resultDepth:$('resultDepth'),resultTime:$('resultTime'),resultKills:$('resultKills'),resultDamage:$('resultDamage'),resultRisk:$('resultRisk'),resultItems:$('resultItems'),resultRecord:$('resultRecord'),resultLootSummary:$('resultLootSummary'),resultLoot:$('resultLoot'),resultModules:$('resultModules'),closeResult:$('closeResult'),
     healthText:$('healthText'),healthFill:$('healthFill'),runScrap:$('runScrap'),lootMetric:$('lootMetric'),lootBest:$('lootBest'),depth:$('depthText'),risk:$('riskText'),extract:$('extractButton'),
-    miniMap:$('miniMap'),miniMapCacheCount:$('miniMapCacheCount'),xpHud:$('xpHud'),xpLevel:$('xpLevel'),xpFill:$('xpFill'),xpSpark:$('xpSpark'),xpText:$('xpText'),
+    miniMap:$('miniMap'),miniMapCacheCount:$('miniMapCacheCount'),mapSeedDebug:$('mapSeedDebug'),xpHud:$('xpHud'),xpLevel:$('xpLevel'),xpFill:$('xpFill'),xpSpark:$('xpSpark'),xpText:$('xpText'),
     depthRoute:$('depthRoute'),routeLabel:$('routeLabel'),routeTicks:$('routeTicks'),routeProgress:$('routeProgressFill'),runNotice:$('runNotice'),lootToast:$('lootToast'),lootToastIcon:$('lootToastIcon'),lootToastRarity:$('lootToastRarity'),lootToastName:$('lootToastName'),lootToastValue:$('lootToastValue'),cargoHud:$('cargoHud'),cargoSlots:$('cargoSlots'),zoneHud:$('zoneHud'),zoneDepth:$('zoneDepth'),zoneName:$('zoneName'),bossHud:$('bossHud'),bossName:$('bossName'),bossHealthFill:$('bossHealthFill'),bossPhase:$('bossPhaseText'),
     extractOverlay:$('extractOverlay'),extractCount:$('extractCount'),cancelExtract:$('cancelExtract'),
     bossLootOverlay:$('bossLootOverlay'),bossLootPanel:$('bossLootPanel'),bossLootEyebrow:$('bossLootEyebrow'),bossLootTitle:$('bossLootTitle'),bossLootDecision:$('bossLootDecision'),bossLootPappa:$('bossLootPappa'),bossLootArt:$('bossLootArt'),bossLootRarity:$('bossLootRarity'),bossLootName:$('bossLootName'),bossLootStats:$('bossLootStats'),bossLootCompare:$('bossLootCompare'),bossLootDecisionCount:$('bossLootDecisionCount'),bossLootEquip:$('bossLootEquip'),bossLootSalvage:$('bossLootSalvage'),bossLootSalvageReward:$('bossLootSalvageReward'),bossLootPath:$('bossLootPath'),bossLootCount:$('bossLootCount'),bossLootGrid:$('bossLootGrid'),bossLootValue:$('bossLootValue'),bossLootMultiplier:$('bossLootMultiplier'),bossLootExtract:$('bossLootExtract'),bossLootPush:$('bossLootPush'),
@@ -402,7 +402,7 @@
   let gearUidCounter=0,gearTurnAngle=0,gearTurnDrag=null;
   let save=loadSave(),mode='base',paused=false,settingsWasRun=false,abandonArmed=false,devResetArmed=false;
   let W=960,H=540,dpr=1,miniW=132,miniH=92,miniDpr=1,last=0,elapsed=0,runTime=0,spawnClock=0,hazardClock=0,shake=0,flash=0,depthPulse=0,extracting=0,runScrap=0,depth=1,riskTier=0,routeDecision=false,route=null,zoneEventTriggered=false,hitStop=0;
-  let player,enemies=[],pendingStrikes=[],enemyBullets=[],lootDrops=[],particles=[],effects=[],hazards=[],decor=[],obstacles=[],collisionMap=[],caches=[],cargo=[],lootBag={};
+  let player,enemies=[],pendingStrikes=[],enemyBullets=[],lootDrops=[],particles=[],effects=[],hazards=[],decor=[],obstacles=[],collisionMap=[],caches=[],cargo=[],lootBag={},guildTerrain=null,currentMapSeed=0,guildSpawnCursor=0;
   let waveDirector={number:0,phase:'idle',timer:0,spawnClock:0,queue:[],anchors:[],packId:0,kills:0,startCount:0,targetPopulation:0,clearRewarded:false};
   const BOSS_LOOT_ORB_ARRIVAL=1.05,BOSS_LOOT_ORB_OPEN=.68;
   let moduleDecision=false,moduleStage='offer',moduleOffer=[],pendingModule=null,activeCache=null,pendingWardenReward=null,bossActive=false,bossDefeated=false,bossEntity=null,bossLootChest=null,runStats=null,expeditionCycle=0,bossRunClears=0,postBossDecision=false,postBossIntent=null,bossLootRewards=[],bossLootSelected=0,bossLootResolved=[],bossLootPhase='idle',bossExtraction=false,runGearEquipBackups={},gearView='unified',gearFilter='all',gearRarityFilter='all',gearSort='power',selectedGearUid=null,hoverGearUid=null,sellFilterArmedKey='',sellFilterArmedUntil=0,vaultRewards=[],vaultOpening=false;
@@ -1043,10 +1043,34 @@
     [365,765,56,270],[610,1050,300,52],[890,1340,270,50],[1485,1320,320,52],[1995,1160,56,270],
     [1890,855,285,50],[520,1370,210,48],[2180,780,180,48],[1470,250,170,48]
   ];
+  function isGuildMap(){return (save.selectedMap||'guild')==='guild'}
   function isDreamworldMap(){return (save.selectedMap||'guild')==='moonfall'}
   function isSkyglassMap(){return (save.selectedMap||'guild')==='skyglass'}
-  function buildArenaObstacles(){let mapId=save.selectedMap||'guild';obstacles=ARENA_OBSTACLE_LAYOUT.map((entry,index)=>({x:entry[0],y:entry[1],w:entry[2],h:entry[3],style:index%4,mapId,assetId:mapId==='moonfall'?DREAMWORLD_COVER_IDS[(index*5+2)%DREAMWORLD_COVER_IDS.length]:mapId==='skyglass'?SKYGLASS_COVER_IDS[(index*5+1)%SKYGLASS_COVER_IDS.length]:null}))}
+  function queryValue(name){let search=location&&location.search||'',match=search.match(new RegExp('(?:^|[?&])'+name+'=([^&]+)'));return match?decodeURIComponent(match[1]):''}
+  function hashMapSeed(value){let hash=2166136261,text=String(value);for(let index=0;index<text.length;index++){hash^=text.charCodeAt(index);hash=Math.imul(hash,16777619)}return (hash>>>0)||1}
+  function nextGuildSeed(){let requested=Number(queryValue('mapSeed'));if(Number.isFinite(requested)&&requested>0)return Math.floor(requested)>>>0;return hashMapSeed('guild:'+(save.stats&&save.stats.runs||0)+':'+save.level+':'+save.best+':'+save.bestRisk)}
+  function buildFixedArenaObstacles(){
+    let mapId=save.selectedMap||'guild';
+    obstacles=ARENA_OBSTACLE_LAYOUT.map((entry,index)=>({x:entry[0],y:entry[1],w:entry[2],h:entry[3],style:index%4,mapId,assetId:mapId==='moonfall'?DREAMWORLD_COVER_IDS[(index*5+2)%DREAMWORLD_COVER_IDS.length]:mapId==='skyglass'?SKYGLASS_COVER_IDS[(index*5+1)%SKYGLASS_COVER_IDS.length]:null}))
+  }
+  function buildArenaObstacles(seedOverride){
+    guildTerrain=null;currentMapSeed=0;guildSpawnCursor=0;
+    if(isGuildMap()&&guildTerrainApi&&queryValue('fixedArena')!=='1'){
+      currentMapSeed=guildTerrainApi.normalizeSeed(seedOverride||nextGuildSeed());
+      let generated=guildTerrainApi.generate(currentMapSeed);
+      if(generated&&generated.validation&&generated.validation.valid){
+        guildTerrain=generated;
+        obstacles=generated.obstacles.map(obstacle=>Object.assign({},obstacle));
+        return
+      }
+    }
+    buildFixedArenaObstacles()
+  }
   function buildAdventureDecor(){
+    if(guildTerrain){
+      decor=guildTerrain.decor.map(entry=>Object.assign({},entry));
+      return
+    }
     if(isDreamworldMap()){
       decor=DREAMWORLD_DECOR_LAYOUT.map((entry,index)=>{let meta=DREAMWORLD_PROP_META[entry[0]],width=entry[3]||meta.width,solid=['crescentArch','starMapObelisk','dreamTree','brokenCrescentShrine'].includes(entry[0]);return {assetId:entry[0],x:entry[1],y:entry[2],w:width,r:width*1.2,phase:entry[4]||index*.47,flip:!!entry[5],rot:0,solid}});
       let accents=['violetCrystals','dreamLotus','moonLantern','floatingRuinPillar','starMapObelisk'];
@@ -1070,12 +1094,22 @@
   function lineBlockedByCover(x1,y1,x2,y2,pad){let distance=Math.hypot(x2-x1,y2-y1),steps=Math.max(2,Math.ceil(distance/18));for(let step=1;step<steps;step++){let t=step/steps;if(pointBlocked(x1+(x2-x1)*t,y1+(y2-y1)*t,pad||0))return true}return false}
   function moveAroundCover(entity,dx,dy){let blocked=false,bodies=collisionBodies();entity.x+=dx;for(const o of bodies){let b=obstacleBounds(o,entity.r),inside=entity.x>b.left&&entity.x<b.right&&entity.y>b.top&&entity.y<b.bottom;if(!inside)continue;blocked=true;entity.x=dx>0?b.left:dx<0?b.right:(Math.abs(entity.x-b.left)<Math.abs(b.right-entity.x)?b.left:b.right)}entity.y+=dy;for(const o of bodies){let b=obstacleBounds(o,entity.r),inside=entity.x>b.left&&entity.x<b.right&&entity.y>b.top&&entity.y<b.bottom;if(!inside)continue;blocked=true;entity.y=dy>0?b.top:dy<0?b.bottom:(Math.abs(entity.y-b.top)<Math.abs(b.bottom-entity.y)?b.top:b.bottom)}entity.x=Math.max(entity.r,Math.min(WORLD.w-entity.r,entity.x));entity.y=Math.max(entity.r,Math.min(WORLD.h-entity.r,entity.y));return blocked}
   function openArenaPosition(x,y,r){x=Math.max(r,Math.min(WORLD.w-r,x));y=Math.max(r,Math.min(WORLD.h-r,y));if(!pointBlocked(x,y,r))return {x,y};for(let ring=48;ring<=360;ring+=48)for(let i=0;i<12;i++){let a=i*Math.PI/6,cx=Math.max(r,Math.min(WORLD.w-r,x+Math.cos(a)*ring)),cy=Math.max(r,Math.min(WORLD.h-r,y+Math.sin(a)*ring));if(!pointBlocked(cx,cy,r))return {x:cx,y:cy}}return {x:WORLD.w/2,y:WORLD.h/2}}
-  function startRun(){
+  function guildRoutePosition(level){
+    if(!guildTerrain)return null;
+    let index=Math.max(0,Math.min(guildTerrain.routePoints.length-1,Math.ceil(level||1))),point=guildTerrain.routePoints[index];
+    return point?openArenaPosition(point.x,point.y,44):null
+  }
+  function updateMapSeedDebug(){
+    if(!ui.mapSeedDebug)return;
+    ui.mapSeedDebug.textContent=guildTerrain?'SEED '+currentMapSeed:isGuildMap()?'FIXED':'';
+    ui.mapSeedDebug.classList.toggle('show',isGuildMap())
+  }
+  function startRun(seedOverride){
     cargo=[];if(save.starter)cargo.push({id:save.starter,rare:false,starter:true,power:starterPower(save.starter),recoveries:0,rareRecoveries:0});
     player={x:WORLD.w/2,y:WORLD.h/2,r:18,hp:maxHp(),maxHp:maxHp(),speed:255,fire:0,inv:0,angle:0,facing:1,dashCd:0,dashTime:0,dashX:1,dashY:0,lastX:1,lastY:0,shields:baseShields(),guardCd:0,recoil:0,attackAnim:0,attackDuration:.24,animClock:0,volley:0,burstCharge:0,thermalCharges:0,ramHits:new Set(),signatureCrits:0,phantomStrike:0,travelCharge:0,fateSaved:false,vaultWardAwarded:0,spinCd:0,spinTime:0,spinLeap:0,spinLeapMax:0,spinAngle:0,spinPulse:0,spinHits:0,spinKills:0,spinCoins:0,spinPack:0,spinPeakPack:0,spinHeal:0,spinLifeTargets:new Set(),blackHoleAge:0,blackHolePulse:0};
     enemies=[];pendingStrikes=[];enemyBullets=[];lootDrops=[];particles=[];effects=[];hazards=[];decor=[];obstacles=[];collisionMap=[];caches=[];lootBag={};elapsed=0;runTime=0;spawnClock=.28;hazardClock=3.5;runScrap=0;depth=1;riskTier=0;routeDecision=false;route=null;moduleDecision=false;depthPulse=0;extracting=0;shake=0;flash=0;hitStop=0;paused=false;bossActive=false;bossDefeated=false;bossEntity=null;bossLootChest=null;pendingWardenReward=null;expeditionCycle=0;bossRunClears=0;postBossDecision=false;postBossIntent=null;bossLootRewards=[];bossLootSelected=0;bossLootResolved=[];bossLootPhase='idle';runGearEquipBackups={};bossExtraction=false;zoneEventTriggered=false;runStats={damage:0,kills:0,elites:0,risks:0,items:0,legendary:0,bosses:0,modules:[],warden:null,route:null,boss:null,map:save.selectedMap};
-    buildArenaObstacles();buildAdventureDecor();rebuildCollisionMap();resetWaveDirector(.34);triggerFloorSignatures();
-    spawnCache(player.x+190,player.y+25,false,false);ui.extractOverlay.classList.remove('show');ui.bossLootOverlay.classList.remove('show');ui.routeOverlay.classList.remove('show');ui.moduleOverlay.classList.remove('show');ui.resultOverlay.classList.remove('show');ui.lootToast.classList.remove('show','legendary');ui.bossHud.classList.remove('show','tyrant');ui.cargoHud.classList.remove('bossHidden');ui.depthRoute.classList.remove('bossHidden','furnace','dynamo');ui.expedition.classList.remove('legendaryCargo');ui.extract.classList.remove('hotLoot');ui.routeLabel.textContent=activeMap().short;ui.settingsOverlay.classList.remove('show');setView('run');applyCargoEffects(cargo[0]);updateCargoHud();updateZoneHud();updateRouteHud();updateHud();save.stats.runs++;persist();let firstZone=zoneAt(1);runNotice(save.starter?MODULES[save.starter].name.toUpperCase()+' READY':firstZone.name,firstZone.accent);sound('start')
+    buildArenaObstacles(seedOverride);buildAdventureDecor();rebuildCollisionMap();if(guildTerrain){let entrance=openArenaPosition(guildTerrain.entrance.x,guildTerrain.entrance.y,player.r+5);player.x=entrance.x;player.y=entrance.y;player.lastX=1;player.lastY=0;player.angle=0}resetWaveDirector(.34);triggerFloorSignatures();
+    let firstCache=guildRoutePosition(1);spawnCache(firstCache?firstCache.x:player.x+190,firstCache?firstCache.y:player.y+25,false,false);ui.extractOverlay.classList.remove('show');ui.bossLootOverlay.classList.remove('show');ui.routeOverlay.classList.remove('show');ui.moduleOverlay.classList.remove('show');ui.resultOverlay.classList.remove('show');ui.lootToast.classList.remove('show','legendary');ui.bossHud.classList.remove('show','tyrant');ui.cargoHud.classList.remove('bossHidden');ui.depthRoute.classList.remove('bossHidden','furnace','dynamo');ui.expedition.classList.remove('legendaryCargo');ui.extract.classList.remove('hotLoot');ui.routeLabel.textContent=activeMap().short;ui.settingsOverlay.classList.remove('show');setView('run');applyCargoEffects(cargo[0]);updateCargoHud();updateZoneHud();updateRouteHud();updateMapSeedDebug();updateHud();save.stats.runs++;persist();let firstZone=zoneAt(1);runNotice(save.starter?MODULES[save.starter].name.toUpperCase()+' READY':firstZone.name,firstZone.accent);sound('start')
   }
 
   function showResult(survived,scrapAmount,reached,modules,newRecord,status,fieldData){
@@ -1127,7 +1161,7 @@
   function continueAfterBoss(){expeditionCycle++;riskTier+=2;if(runStats)runStats.risks++;bossDefeated=false;bossActive=false;bossEntity=null;bossLootChest=null;bossExtraction=false;bossLootRewards=[];bossLootSelected=0;bossLootResolved=[];bossLootPhase='idle';depth=1;elapsed=0;spawnClock=.3;hazardClock=2.8;zoneEventTriggered=false;enemies=[];enemyBullets=[];pendingStrikes=[];hazards=[];caches=[];resetWaveDirector(.3);fieldRepair(.12);triggerFloorSignatures();spawnCache(Math.max(50,Math.min(WORLD.w-50,player.x+190)),player.y+20,true,false);depthPulse=1.15;updateZoneHud();updateRouteHud();updateHud();runNotice('ASCENT CONTINUES  \u00B7  FLOOR '+expeditionFloor(),'#f2c14f');shake=Math.max(shake,6);sound('start')}
   function showRouteDecision(){routeDecision=true;ui.routeOverlay.classList.add('show');runNotice('ADVENTURE CROSSROADS','#d6aa58');sound('upgrade')}
   function chooseRoute(id){if(!routeDecision||!ROUTES[id])return;route=id;routeDecision=false;if(runStats)runStats.route=id;ui.routeOverlay.classList.remove('show');ui.depthRoute.classList.remove('furnace','dynamo');ui.depthRoute.classList.add(id);ui.routeLabel.textContent=ROUTES[id].short;enterDepth(3);runNotice(ROUTES[id].name,zoneAt(3).accent);sound('start')}
-  function enterDepth(nextDepth){depth=nextDepth;if(depth===3||depth===5){riskTier++;if(runStats)runStats.risks++}zoneEventTriggered=false;hazards=[];hazardClock=2.2;depthPulse=1.15;fieldRepair(depth===5?.2:.15);triggerFloorSignatures();sound('upgrade');updateZoneHud();updateRouteHud();if(depth===5){waveDirector.phase='idle';startBoss();updateHud();return}resetWaveDirector(.3);let zone=zoneAt(depth),a=Math.random()*Math.PI*2,d=300+Math.random()*180,rareChance=.15+depth*.06+(routeConfig()?routeConfig().relicRare:0);runNotice(zone.name,zone.accent);spawnCache(player.x+Math.cos(a)*d,player.y+Math.sin(a)*d,depth>=3&&Math.random()<rareChance,false)}
+  function enterDepth(nextDepth){depth=nextDepth;if(depth===3||depth===5){riskTier++;if(runStats)runStats.risks++}zoneEventTriggered=false;hazards=[];hazardClock=2.2;depthPulse=1.15;fieldRepair(depth===5?.2:.15);triggerFloorSignatures();sound('upgrade');updateZoneHud();updateRouteHud();if(depth===5){waveDirector.phase='idle';startBoss();updateHud();return}resetWaveDirector(.3);let zone=zoneAt(depth),a=Math.random()*Math.PI*2,d=300+Math.random()*180,rareChance=.15+depth*.06+(routeConfig()?routeConfig().relicRare:0),objective=guildRoutePosition(depth);runNotice(zone.name,zone.accent);spawnCache(objective?objective.x:player.x+Math.cos(a)*d,objective?objective.y:player.y+Math.sin(a)*d,depth>=3&&Math.random()<rareChance,false)}
   function tryDash(){if(mode!=='run'||postBossDecision||routeDecision||moduleDecision||paused||!player||player.dashCd>0)return false;let move=movement(),dx=move.x||player.lastX||Math.cos(player.angle),dy=move.y||player.lastY||Math.sin(player.angle),l=Math.hypot(dx,dy)||1,stats=cargoStats(),thermal=schematicLevel('thermal'),blast=thermalBlast(thermal),signature=stats.signature,blackHoleDash=usesBlackHoleStorm(stats)&&(player.spinTime>0||player.spinLeap>0);if(player.spinLeap>0){player.spinLeap=0;player.spinTime=Math.max(player.spinTime,.001);player.spinPulse=Math.min(0,player.spinPulse||0)}player.dashX=dx/l;player.dashY=dy/l;player.dashTime=.16;player.dashFx=0;player.dashCd=stats.dashCd;player.ramHits=new Set();player.inv=Math.max(player.inv,signature.phantomCourt?(signature.phantomCourt===2?.58:.42):(stats.ram?.34:.24));if(signature.moonlitScout)player.signatureCrits=Math.max(player.signatureCrits,signature.moonlitScout===2?2:1);if(signature.phantomCourt)player.phantomStrike=signature.phantomCourt;if(thermal)player.thermalCharges=Math.max(player.thermalCharges||0,blast.charges);if(stats.stormDash)releaseStormDash(stats.stormDash,player.dashX,player.dashY);shake=Math.max(shake,3);if(blackHoleDash)spawnGravityMotes(player.x,player.y,18,stats.spinRadius*.78,true);else burst(player.x,player.y,thermal?'#c83f46':stats.stormDash?'#79e7f2':signature.phantomCourt?'#b7c7d9':stats.ram?'#d6aa58':'#f4ead6',thermal?16:10,thermal?1.1:.8);sound('dash');return true}
   function updateDashMotion(dt,stats){
     if(player.dashTime<=0)return false;
@@ -1185,7 +1219,35 @@
   function livingRegularEnemies(){return enemies.filter(enemy=>!enemy.dead&&!enemy.boss)}
   function nearbyEnemyCount(x,y,radius,includeBoss){let radiusSq=radius*radius,count=0;for(const enemy of enemies){if(enemy.dead||!includeBoss&&enemy.boss)continue;let dx=enemy.x-x,dy=enemy.y-y;if(dx*dx+dy*dy<=radiusSq)count++}return count}
   function resetWaveDirector(delay){waveDirector={number:0,phase:'breather',timer:delay==null?.34:delay,spawnClock:0,queue:[],anchors:[],packId:0,kills:0,startCount:0,targetPopulation:0,clearRewarded:false}}
-  function waveSpawnAnchors(amount){let anchors=[],cam=camera(),viewRadius=Math.max(W/cam.zoom,H/cam.zoom)*.58,base=Math.random()*Math.PI*2;for(let index=0;index<amount;index++){let angle=base+index*Math.PI*2/amount+(Math.random()-.5)*.34,distance=viewRadius+115+Math.random()*80,open=openArenaPosition(player.x+Math.cos(angle)*distance,player.y+Math.sin(angle)*distance,40);anchors.push(open)}return anchors}
+  function guildWaveSpawnAnchors(amount){
+    if(!guildTerrain||!guildTerrain.spawnZones.length)return null;
+    let cam=camera(),halfW=W/(2*cam.zoom),halfH=H/(2*cam.zoom),view={left:cam.x-halfW-55,right:cam.x+halfW+55,top:cam.y-halfH-55,bottom:cam.y+halfH+55},playerCol=Math.max(0,Math.min(4,Math.floor(player.x/(WORLD.w/5)))),targetCol=Math.max(playerCol+1,Math.min(4,depth)),offset=guildSpawnCursor++%guildTerrain.spawnZones.length;
+    let candidates=guildTerrain.spawnZones.map((zone,index)=>{
+      let dx=zone.x-player.x,dy=zone.y-player.y,distance=Math.hypot(dx,dy),angle=Math.atan2(dy,dx),sector=Math.floor(((angle+Math.PI)/(Math.PI*2))*8)%8,outside=zone.x<view.left||zone.x>view.right||zone.y<view.top||zone.y>view.bottom,forward=zone.col>=playerCol,score=(outside?1200:0)+(forward?180:0)-Math.abs(zone.col-targetCol)*95+Math.min(900,distance)-Math.abs(index-offset)*.01;
+      return{zone,index,distance,angle,sector,score}
+    }).filter(entry=>entry.distance>380&&!pointBlocked(entry.zone.x,entry.zone.y,42)).sort((a,b)=>b.score-a.score);
+    let anchors=[],usedEntries=new Set(),usedModules=new Set(),usedSectors=new Set(),diverseTarget=Math.min(amount,3);
+    function addAnchor(entry){
+      anchors.push(openArenaPosition(entry.zone.x,entry.zone.y,40));usedEntries.add(entry.index);usedModules.add(entry.zone.moduleId);usedSectors.add(entry.sector)
+    }
+    for(const entry of candidates){
+      if(usedSectors.has(entry.sector)||usedModules.has(entry.zone.moduleId))continue;
+      addAnchor(entry);
+      if(anchors.length>=diverseTarget)break
+    }
+    for(const entry of candidates){
+      if(anchors.length>=amount)break;
+      if(usedEntries.has(entry.index)||usedModules.has(entry.zone.moduleId))continue;
+      addAnchor(entry);
+    }
+    for(const entry of candidates){
+      if(anchors.length>=amount)break;
+      if(usedEntries.has(entry.index))continue;
+      addAnchor(entry);
+    }
+    return anchors.length?anchors:null
+  }
+  function waveSpawnAnchors(amount){let generated=guildWaveSpawnAnchors(amount);if(generated)return generated;let anchors=[],cam=camera(),viewRadius=Math.max(W/cam.zoom,H/cam.zoom)*.58,base=Math.random()*Math.PI*2;for(let index=0;index<amount;index++){let angle=base+index*Math.PI*2/amount+(Math.random()-.5)*.34,distance=viewRadius+115+Math.random()*80,open=openArenaPosition(player.x+Math.cos(angle)*distance,player.y+Math.sin(angle)*distance,40);anchors.push(open)}return anchors}
   function waveEnemyType(index,count){let pool=zoneAt(depth).pool,heavy=pool.filter(type=>type==='brute'||type==='lancer'),ranged=pool.includes('shooter');if(heavy.length&&index%9===8)return heavy[index%heavy.length];if(ranged&&index%7===6)return 'shooter';if(pool.includes('rusher'))return index%5===4?pool[index%pool.length]:'rusher';return pool[index%pool.length]}
   function waveTargetPopulation(number){let mapPressure=Math.min(1.18,1/Math.max(.74,activeMap().spawnRate)),target=HORDE.basePopulation+(depth-1)*3+riskTier*2+expeditionCycle*5+Math.min(15,Math.max(0,number-1)*3);return Math.max(HORDE.basePopulation,Math.min(HORDE.maxPopulation,Math.round(target*mapPressure)))}
   function prepareNextWave(){
@@ -1221,7 +1283,7 @@
   function startBoss(){
     let def=currentBoss(),map=activeMap(),isTyrant=def.kind==='tyrant',isLagoon=def.kind==='leviathan',levelScale=1+(save.level-1)*.11,damageScale=1+(save.level-1)*.035;
     bossActive=true;extracting=0;hazards=[];ui.extractOverlay.classList.remove('show');enemies=[];enemyBullets=[];
-    let a=Math.random()*Math.PI*2,x=Math.max(90,Math.min(WORLD.w-90,player.x+Math.cos(a)*410)),y=Math.max(90,Math.min(WORLD.h-90,player.y+Math.sin(a)*410)),open=openArenaPosition(x,y,isLagoon?66:isTyrant?58:52),hp=(620+riskTier*120+Math.min(540,save.weapon*18))*(isLagoon?1.15:isTyrant?1.08:1)*levelScale*map.bossHp*.9;
+    let a=Math.random()*Math.PI*2,bossAnchor=guildTerrain&&isGuildMap()?guildTerrain.bossAnchor:null,x=bossAnchor?bossAnchor.x:Math.max(90,Math.min(WORLD.w-90,player.x+Math.cos(a)*410)),y=bossAnchor?bossAnchor.y:Math.max(90,Math.min(WORLD.h-90,player.y+Math.sin(a)*410)),open=openArenaPosition(x,y,isLagoon?66:isTyrant?58:52),hp=(620+riskTier*120+Math.min(540,save.weapon*18))*(isLagoon?1.15:isTyrant?1.08:1)*levelScale*map.bossHp*.9;
     x=open.x;y=open.y;
     bossEntity={x,y,r:isLagoon?60:isTyrant?54:48,hp,max:hp,speed:(isLagoon?48:isTyrant?46:51)*map.enemySpeed,damage:((isTyrant?20:isLagoon?18:18)+riskTier*1.5)*damageScale*map.bossDamage,hit:0,attack:0,fire:.82,charge:0,dashTime:0,type:'boss',boss:true,bossKind:def.kind,elite:true,angle:0,strafe:Math.random()<.5?-1:1,phase:0,bossStage:1,pattern:0,anim:0,recoil:0,aimX:0,aimY:0,stagger:0,spawnGrace:0,spawnDuration:0};
     enemies.push(bossEntity);if(runStats)runStats.boss=def.kind;ui.bossHud.classList.add('show');ui.bossHud.classList.toggle('tyrant',isTyrant);ui.bossHud.classList.toggle('lagoon',isLagoon);ui.bossName.textContent=def.name+'  \u00B7  LV '+save.level;ui.cargoHud.classList.add('bossHidden');ui.depthRoute.classList.add('bossHidden');ui.bossHealthFill.style.width='100%';ui.bossPhase.textContent=def.phase[0];depthPulse=1.2;shake=Math.max(shake,10);updateZoneHud();setMusicMode('run');runNotice(def.name+' \u00B7 '+def.intro,def.accent);sound('boss')
@@ -1822,6 +1884,25 @@
     }
     let wash=ctx.createRadialGradient(W/2,H/2,65,W/2,H/2,Math.max(W,H)/cam.zoom*.7);wash.addColorStop(0,theme.detail+'0c');wash.addColorStop(1,'rgba(2,5,12,.34)');ctx.fillStyle=wash;ctx.fillRect(viewLeft-3,viewTop-3,viewRight-viewLeft+6,viewBottom-viewTop+6);ctx.restore();return true
   }
+  function drawGuildTerrainModules(cam){
+    if(!guildTerrain)return;
+    let cellW=guildTerrain.grid.cellW,cellH=guildTerrain.grid.cellH;
+    ctx.save();ctx.lineJoin='round';ctx.lineCap='round';ctx.setLineDash([14,12]);ctx.strokeStyle='rgba(214,170,88,.12)';ctx.lineWidth=3;ctx.beginPath();
+    for(let index=0;index<guildTerrain.routePoints.length;index++){let point=guildTerrain.routePoints[index],screen=worldToScreen(point.x,point.y,cam);if(!index)ctx.moveTo(screen.x,screen.y);else ctx.lineTo(screen.x,screen.y)}
+    ctx.stroke();ctx.setLineDash([]);
+    for(const module of guildTerrain.modules){
+      if(!combatViewContains(module.x,module.y,Math.max(cellW,cellH)*.7,30,cam))continue;
+      let p=worldToScreen(module.x,module.y,cam),w=cellW-22,h=cellH-22,path=module.path;ctx.save();ctx.translate(p.x,p.y);ctx.globalAlpha=path?.72:.34;ctx.strokeStyle=path?'rgba(214,170,88,.2)':'rgba(111,133,164,.13)';ctx.lineWidth=path?2:1;roundedRect(-w/2,-h/2,w,h,24);ctx.stroke();
+      if(module.kind==='open'||module.kind==='courtyard'){ctx.strokeStyle=path?'rgba(244,234,214,.12)':'rgba(93,116,151,.1)';ctx.beginPath();ctx.arc(0,0,Math.min(w,h)*.25,0,Math.PI*2);ctx.stroke()}
+      else if(module.kind==='crossroads'){ctx.strokeStyle='rgba(214,170,88,.14)';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(-w*.36,0);ctx.lineTo(w*.36,0);ctx.moveTo(0,-h*.34);ctx.lineTo(0,h*.34);ctx.stroke()}
+      else if(module.kind==='passage'){ctx.strokeStyle='rgba(214,170,88,.12)';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-w*.44,-h*.13);ctx.lineTo(w*.44,-h*.13);ctx.moveTo(-w*.44,h*.13);ctx.lineTo(w*.44,h*.13);ctx.stroke()}
+      else if(module.kind==='blocked'){ctx.fillStyle='rgba(7,13,23,.14)';roundedRect(-w*.18,-h*.12,w*.36,h*.24,12);ctx.fill()}
+      else if(module.kind==='entrance'){ctx.fillStyle='rgba(214,170,88,.2)';ctx.beginPath();ctx.moveTo(w*.12,0);ctx.lineTo(-w*.08,-h*.08);ctx.lineTo(-w*.08,h*.08);ctx.closePath();ctx.fill()}
+      else if(module.kind==='boss'){ctx.strokeStyle='rgba(200,63,70,.2)';ctx.lineWidth=3;for(let ring=1;ring<=2;ring++){ctx.beginPath();ctx.arc(0,0,34+ring*24,0,Math.PI*2);ctx.stroke()}}
+      ctx.restore()
+    }
+    ctx.restore()
+  }
   function drawEnvironmentGround(cam,zone,viewLeft,viewTop,viewRight,viewBottom){return drawDreamworldGround(cam,zone,viewLeft,viewTop,viewRight,viewBottom)||drawSkyglassGround(cam,zone,viewLeft,viewTop,viewRight,viewBottom)||drawIllustratedGround(cam,zone,viewLeft,viewTop,viewRight,viewBottom)}
   function drawAdventureDecor(d,p,zone){
     if(d.assetId&&(drawDreamworldDecor(d,p)||drawSkyglassDecor(d,p)))return;
@@ -1892,6 +1973,10 @@
     let pad=5,scale=Math.min((miniW-pad*2)/WORLD.w,(miniH-pad*2)/WORLD.h),mapW=WORLD.w*scale,mapH=WORLD.h*scale,mapX=(miniW-mapW)/2,mapY=(miniH-mapH)/2,zone=zoneAt(depth),toMap=(x,y)=>({x:mapX+x*scale,y:mapY+y*scale});
     miniCtx.fillStyle='#081321';miniCtx.fillRect(mapX,mapY,mapW,mapH);
     miniCtx.globalAlpha=.2;miniCtx.fillStyle=zone.accent;for(let x=mapX;x<mapX+mapW;x+=mapW/6)miniCtx.fillRect(x,mapY,1,mapH);for(let y=mapY;y<mapY+mapH;y+=mapH/4)miniCtx.fillRect(mapX,y,mapW,1);miniCtx.globalAlpha=1;
+    if(guildTerrain){
+      miniCtx.strokeStyle='#d6aa5870';miniCtx.lineWidth=1.35;miniCtx.setLineDash([3,2]);miniCtx.beginPath();for(let index=0;index<guildTerrain.routePoints.length;index++){let routePoint=toMap(guildTerrain.routePoints[index].x,guildTerrain.routePoints[index].y);if(!index)miniCtx.moveTo(routePoint.x,routePoint.y);else miniCtx.lineTo(routePoint.x,routePoint.y)}miniCtx.stroke();miniCtx.setLineDash([]);
+      if(!bossDefeated){let target=toMap(guildTerrain.bossAnchor.x,guildTerrain.bossAnchor.y),pulse=.75+Math.sin(performance.now()/190)*.25;miniCtx.save();miniCtx.translate(target.x,target.y);miniCtx.rotate(Math.PI/4);miniCtx.fillStyle=bossActive?'#c83f46':'#c83f46'+Math.round(90+90*pulse).toString(16).padStart(2,'0');miniCtx.strokeStyle='#f4ead6';miniCtx.lineWidth=.8;miniCtx.fillRect(-3,-3,6,6);miniCtx.strokeRect(-3,-3,6,6);miniCtx.restore()}
+    }
     miniCtx.fillStyle='#40506a';for(const o of obstacles){let p=toMap(o.x-o.w/2,o.y-o.h/2);miniCtx.fillRect(p.x,p.y,Math.max(1.5,o.w*scale),Math.max(1.5,o.h*scale))}
     let cam=camera(),viewW=Math.min(WORLD.w,W/cam.zoom),viewH=Math.min(WORLD.h,H/cam.zoom),view=toMap(cam.x-viewW/2,cam.y-viewH/2);miniCtx.fillStyle='#e8f0ff0b';miniCtx.fillRect(view.x,view.y,viewW*scale,viewH*scale);miniCtx.strokeStyle='#b6c6dc88';miniCtx.lineWidth=1;miniCtx.strokeRect(view.x+.5,view.y+.5,Math.max(1,viewW*scale-1),Math.max(1,viewH*scale-1));
     let rareCaches=caches.filter(cache=>cache.rare&&!cache.opened),pulse=.85+Math.sin(performance.now()/180)*.15;for(const cache of rareCaches){let p=toMap(cache.x,cache.y),r=3.2*pulse;miniCtx.save();miniCtx.translate(p.x,p.y);miniCtx.rotate(Math.PI/4);miniCtx.fillStyle='#ffe19a';miniCtx.shadowColor='#f2c14f';miniCtx.shadowBlur=6;miniCtx.fillRect(-r/2,-r/2,r,r);miniCtx.restore()}if(bossLootChest){let p=toMap(bossLootChest.x,bossLootChest.y),r=(4.2+(bossLootChest.rank||0)*.4)*pulse;miniCtx.save();miniCtx.translate(p.x,p.y);miniCtx.fillStyle=bossLootChest.color;miniCtx.strokeStyle='#fff4d2';miniCtx.lineWidth=1.2;miniCtx.shadowColor=bossLootChest.color;miniCtx.shadowBlur=10;miniCtx.beginPath();miniCtx.arc(0,0,r,0,Math.PI*2);miniCtx.fill();miniCtx.stroke();miniCtx.globalAlpha=.7;miniCtx.beginPath();miniCtx.arc(0,0,r+2.2,0,Math.PI*2);miniCtx.stroke();miniCtx.restore()}
@@ -1905,6 +1990,7 @@
     let viewLeft=(W-W/cam.zoom)/2,viewTop=(H-H/cam.zoom)/2,viewRight=W-viewLeft,viewBottom=H-viewTop,grid=96,ox=(((-cam.x+W/2)%grid)+grid)%grid,oy=(((-cam.y+H/2)%grid)+grid)%grid,environmentGroundDrawn=drawEnvironmentGround(cam,zone,viewLeft,viewTop,viewRight,viewBottom);
     while(ox>viewLeft)ox-=grid;while(oy>viewTop)oy-=grid;
     if(!environmentGroundDrawn){ctx.strokeStyle=zone.grid;ctx.lineWidth=1;for(let x=ox;x<viewRight;x+=grid){ctx.beginPath();ctx.moveTo(x,viewTop);ctx.lineTo(x,viewBottom);ctx.stroke()}for(let y=oy;y<viewBottom;y+=grid){ctx.beginPath();ctx.moveTo(viewLeft,y);ctx.lineTo(viewRight,y);ctx.stroke()}ctx.fillStyle='#f4ead608';for(let x=ox;x<viewRight;x+=grid)for(let y=oy;y<viewBottom;y+=grid){ctx.beginPath();ctx.arc(x,y,2,0,Math.PI*2);ctx.fill()}}
+    drawGuildTerrainModules(cam);
     if(depth===2){ctx.fillStyle=environmentGroundDrawn?'#c83f4607':'#c83f460a';for(let y=oy;y<viewBottom;y+=grid*2)ctx.fillRect(viewLeft,y,viewRight-viewLeft,grid*.24)}else if((depth===3||depth===4)&&route==='furnace'){ctx.strokeStyle=environmentGroundDrawn?'#c83f4618':'#c83f4625';ctx.lineWidth=depth===4?12:8;for(let x=ox-grid;x<viewRight+grid;x+=grid*2){ctx.beginPath();ctx.moveTo(x,viewTop);ctx.lineTo(x+(viewBottom-viewTop)*.32,viewBottom);ctx.stroke()}}else if(depth===3||depth===4){ctx.strokeStyle=environmentGroundDrawn?'#bfc8ff18':'#f4ead622';ctx.lineWidth=2;for(let x=ox;x<viewRight;x+=grid*2){ctx.beginPath();ctx.arc(x,H*.5,grid*.55,Math.PI*.35,Math.PI*1.65);ctx.stroke()}}else if(depth===5){ctx.strokeStyle=zone.accent+(environmentGroundDrawn?'20':'30');ctx.lineWidth=3;for(let r=90;r<Math.max(W,H)/cam.zoom;r+=120){ctx.beginPath();ctx.arc(W/2,H/2,r,0,Math.PI*2);ctx.stroke()}}
     for(const d of decor){if(d.assetId&&d.y>player.y+8||!combatViewContains(d.x,d.y,d.r,60,cam))continue;let p=worldToScreen(d.x,d.y,cam);drawAdventureDecor(d,p,zone)}
     for(const o of obstacles){if(!combatViewContains(o.x,o.y,Math.max(o.w,o.h)/2,30,cam))continue;drawArenaCover(o,worldToScreen(o.x,o.y,cam),zone,false)}
@@ -1982,6 +2068,14 @@
         startRun();paused=true;enemies=[];enemyBullets=[];hazards=[];particles=[];effects=[];
         return this.mapState()
       },
+      openGuildSeed(seed){
+        save.level=Math.max(1,save.level);save.selectedMap='guild';save.seenIntro=true;
+        startRun(Number(seed)||1);paused=true;enemies=[];enemyBullets=[];hazards=[];particles=[];effects=[];
+        return this.mapState()
+      },
+      sampleSpawnAnchors(amount){
+        return waveSpawnAnchors(Math.max(1,Math.min(6,Number(amount)||3))).map(point=>({x:Math.round(point.x),y:Math.round(point.y),blocked:pointBlocked(point.x,point.y,40),visible:combatViewContains(point.x,point.y,40,0),distance:Math.round(Math.hypot(point.x-player.x,point.y-player.y)),angle:Math.atan2(point.y-player.y,point.x-player.x)}))
+      },
       movePlayer(x,y){
         if(mode!=='run'||!player)return null;
         let position=openArenaPosition(Number(x)||WORLD.w/2,Number(y)||WORLD.h/2,player.r);
@@ -1995,7 +2089,14 @@
           obstacles:obstacles.map(o=>({x:o.x,y:o.y,w:o.w,h:o.h,assetId:o.assetId||null})),
           decor:decor.length,
           collisionCount:collisionMap.length,
-          world:{w:WORLD.w,h:WORLD.h}
+          world:{w:WORLD.w,h:WORLD.h},
+          seed:currentMapSeed||null,
+          procedural:!!guildTerrain,
+          moduleKinds:guildTerrain?guildTerrain.modules.map(module=>module.kind):[],
+          pathRows:guildTerrain?guildTerrain.pathRows.slice():[],
+          spawnZones:guildTerrain?guildTerrain.spawnZones.map(zone=>({x:Math.round(zone.x),y:Math.round(zone.y),col:zone.col,row:zone.row})):[],
+          bossAnchor:guildTerrain?{x:Math.round(guildTerrain.bossAnchor.x),y:Math.round(guildTerrain.bossAnchor.y)}:null,
+          validation:guildTerrain?guildTerrain.validation:null
         }
       },
       fightEnemy(type,distance,pattern){

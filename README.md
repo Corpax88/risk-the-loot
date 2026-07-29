@@ -1,8 +1,10 @@
-# RISK THE LOOT! v0.50.0
+# RISK THE LOOT! v0.51.0
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
 
 Anime Rush sharpens every part of expedition pacing independently. Enemies arrive aggressively, move with role-specific speed, recover faster, and overlap into the next horde before the arena goes quiet. Pappa moves and animates faster, hammer impacts release sooner, hit reactions are shorter and brighter, and champion loot transitions resolve quickly without losing rarity readability. Regular enemy health is slightly lower to offset the increased pressure.
+
+Procedural Frontier prototypes deterministic modular terrain in Guild Outskirts. Each expedition assembles a connected route from handcrafted entrance, courtyard, crossroads, passage, open-combat and boss modules; Pappa enters at the western edge, hordes use validated module spawn zones and the champion waits at the far end. The minimap exposes the reproducible seed, while every other biome and the original fixed arena remain untouched as a fallback.
 
 The v0.50.0 Black Hole Legendary pass gives the Constellation set a fully separate combat presentation: dedicated spawn, idle, pull, pulse, dash, collapse and singularity-burst sheets, a mobile gravity particle system and a living vortex that stays attached to Pappa Hammer. The standard gold Hammerstorm remains exclusive to non-Black-Hole builds. The Adventure Bag header was also removed so the character preview gets the visual focus.
 

@@ -18,10 +18,23 @@ test('all expedition maps render, remain playable, and respect environment colli
   for(const map of maps){
     const state=await page.evaluate(id=>window.__riskTest.openMap(id),map.id);
     expect(state.map).toBe(map.id);
-    expect(state.obstacles).toHaveLength(14);
     expect(state.decor).toBeGreaterThan(10);
-    expect(state.collisionCount).toBeGreaterThanOrEqual(14);
-    expect(state.player).toEqual({x:1200,y:800});
+    if(map.id==='guild'){
+      expect(state.procedural).toBe(true);
+      expect(state.seed).toBeTruthy();
+      expect(state.validation.valid).toBe(true);
+      expect(state.obstacles.length).toBeGreaterThanOrEqual(28);
+      expect(state.collisionCount).toBe(state.obstacles.length);
+      expect(state.player.x).toBeLessThan(220);
+      expect(state.pathRows).toHaveLength(5);
+      expect(state.moduleKinds).toContain('entrance');
+      expect(state.moduleKinds).toContain('boss');
+      expect(Math.hypot(state.bossAnchor.x-state.player.x,state.bossAnchor.y-state.player.y)).toBeGreaterThan(1500);
+    }else{
+      expect(state.obstacles).toHaveLength(14);
+      expect(state.collisionCount).toBeGreaterThanOrEqual(14);
+      expect(state.player).toEqual({x:1200,y:800});
+    }
 
     await page.waitForTimeout(120);
     const pixels=await page.locator('#world').evaluate(canvas=>{

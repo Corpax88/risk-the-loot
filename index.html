@@ -8,14 +8,14 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="description" content="Risk everything, recover equippable gear and build Pappa Hammer in this compact extraction roguelite.">
   <title>RISK THE LOOT!</title>
-  <link rel="stylesheet" href="style.css?v=0.50.0">
+  <link rel="stylesheet" href="style.css?v=0.51.0">
 </head>
 <body>
   <main id="game">
     <header class="topbar">
       <div class="brand" tabindex="0" data-help-title="Risk the Loot" data-help="Enter the tower, defeat champions and decide when the gear you carry is valuable enough to extract.">
         <span class="brandMark">R</span>
-        <div><strong>RISK THE LOOT!</strong><small>BLACK HOLE LEGENDARY v0.50.0</small></div>
+        <div><strong>RISK THE LOOT!</strong><small>PROCEDURAL FRONTIER v0.51.0</small></div>
       </div>
       <div class="resources">
         <div class="resource level" data-help-title="Pappa Level" data-help="Boss victories grant XP. Higher levels unlock stronger gear and tougher champions."><i>LV</i><div><b id="pappaLevel">1</b><span>PAPPA</span></div></div>
@@ -322,6 +322,7 @@
       <div id="miniMap" class="miniMap" data-help-title="Expedition Map" data-help="The white arrow is Pappa Hammer. Gold diamonds reveal unopened rare caches; the thin frame shows the area currently on screen.">
         <canvas id="miniMapCanvas" aria-hidden="true"></canvas>
         <span class="miniMapLabel">MAP</span>
+        <span id="mapSeedDebug" class="mapSeedDebug"></span>
         <span id="miniMapCacheCount" class="miniMapCacheCount"></span>
       </div>
       <div id="xpHud" class="xpHud" data-help-title="Pappa Experience" data-help="Defeat champions to gain experience. Each full bar raises Pappa's level and unlocks stronger gear, harder maps and richer rewards.">
@@ -361,11 +362,12 @@
         </div>
         <button id="resumeButton" class="primaryButton settingsResume"><span>RESUME</span><i>&#8250;</i></button>
         <button id="abandonButton" class="dangerButton">ABANDON EXPEDITION</button>
-        <p class="buildStamp">v0.50.0 BLACK HOLE LEGENDARY</p>
+        <p class="buildStamp">v0.51.0 PROCEDURAL FRONTIER</p>
       </div>
     </div>
     <aside id="helpTooltip" class="helpTooltip" role="tooltip" aria-hidden="true"><strong id="helpTooltipTitle"></strong><span id="helpTooltipText"></span></aside>
   </main>
-  <script src="script.js?v=0.50.0"></script>
+  <script src="guild-terrain.js?v=0.51.0"></script>
+  <script src="script.js?v=0.51.0"></script>
 </body>
 </html>

@@ -16,6 +16,7 @@ const openBraces=(css.match(/{/g)||[]).length;
 const closeBraces=(css.match(/}/g)||[]).length;
 assert.equal(openBraces,closeBraces,'CSS braces are unbalanced');
 assert(html.includes('style.css?v='+packageJson.version)&&html.includes('script.js?v='+packageJson.version),'release assets do not match package version '+packageJson.version);
+assert(fs.existsSync('guild-terrain.js')&&html.includes('guild-terrain.js?v='+packageJson.version),'Guild Outskirts terrain generator is missing or stale');
 assert(script.includes('function beginTouchHelp')&&script.includes('function gearHelpFromNode'),'unified mobile hold-help system is missing');
 assert(css.includes('.gearHoverPreview.touchPreview'),'mobile gear comparison preview is missing');
 assert(html.includes('id="contractPrompt"')&&html.includes('id="vaultReward"')&&script.includes('function vaultProgress')&&script.includes('function openGrandVault')&&script.includes('function rollVaultGear')&&css.includes('.contractTracker.imminent')&&css.includes('.vaultReward.revealed'),'repeatable Grand Vault reward or anticipation presentation is missing');
@@ -61,6 +62,7 @@ assert(css.includes('@keyframes pappaHammerFrames')&&css.includes("background-im
 assert(script.includes('THE FIRST LOCK')&&script.includes('A FORMAL BOW')&&script.includes('source:e.bossKind||e.type'),'distinct boss personalities are not wired');
 assert(script.includes('function combatViewContains')&&script.includes('function enemyCanAttack')&&script.includes('combatViewContains(b.x,b.y,b.r,0,bulletCam)'),'offscreen enemy projectile safety is missing');
 assert(script.includes('ARENA_OBSTACLE_LAYOUT')&&script.includes('function moveAroundCover')&&script.includes('projectileHitsCover(b.x,b.y,b.r)')&&script.includes('lineBlockedByCover'),'physical arena cover is missing');
+assert(script.includes('function guildWaveSpawnAnchors')&&script.includes('function guildRoutePosition')&&script.includes('guildTerrain.bossAnchor')&&html.includes('id="mapSeedDebug"'),'procedural Guild Outskirts integration is missing');
 assert(script.includes('CAMERA_ZOOM={mobile:.72,desktop:.8}')&&script.includes('ctx.scale(cam.zoom,cam.zoom)'),'zoomed-out combat camera is missing');
 assert(script.includes('function updateEnemyEntity')&&script.includes('spawnGrace:spawnDuration')&&script.includes('e.stepFx<=0'),'living enemy movement or deterministic arrival animation is missing');
 assert(script.includes('TANK_RUSH_RANGE=440')&&script.includes('TANK_RUSH_OVERSHOOT=72')&&script.includes('function prepareEnemyDash')&&script.includes('function finishEnemyDash')&&script.includes('function drawTankTelegraph')&&script.includes("kind:'tankImpact'"),'Shield Guard long rush, recovery, or danger-lane feedback is missing');

@@ -1,6 +1,8 @@
-# RISK THE LOOT! v0.51.1
+# RISK THE LOOT! v0.52.0
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
+
+Living Legend gives the workshop Pappa Hammer a dedicated presentation rig. His existing sprite and equipped Gear 2.0 layers now share subtle breathing, grounded weight shifts, eased direction changes and restrained squash-and-stretch, while the paper-doll frames remain independent and crisp. Every effect is compositor-only CSS, pauses outside the workshop and respects reduced-motion preferences.
 
 Anime Rush sharpens every part of expedition pacing independently. Enemies arrive aggressively, move with role-specific speed, recover faster, and overlap into the next horde before the arena goes quiet. Pappa moves and animates faster, hammer impacts release sooner, hit reactions are shorter and brighter, and champion loot transitions resolve quickly without losing rarity readability. Regular enemy health is slightly lower to offset the increased pressure.
 

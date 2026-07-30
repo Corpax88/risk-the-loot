@@ -1,6 +1,8 @@
-# RISK THE LOOT! v0.52.0
+# RISK THE LOOT! v0.52.1
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
+
+Living Legend v0.52.1 removes the obsolete workshop background renderer that was painting the original Pappa underneath Gear 2.0. The menu and Armory now each have one authoritative paper-doll sprite, with the old empty equipment-overlay nodes and render hook removed.
 
 Living Legend gives the workshop Pappa Hammer a dedicated presentation rig. His existing sprite and equipped Gear 2.0 layers now share subtle breathing, grounded weight shifts, eased direction changes and restrained squash-and-stretch, while the paper-doll frames remain independent and crisp. Every effect is compositor-only CSS, pauses outside the workshop and respects reduced-motion preferences.
 

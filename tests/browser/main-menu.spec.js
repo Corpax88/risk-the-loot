@@ -26,6 +26,9 @@ test('workshop Pappa uses restrained layered motion on desktop and mobile',async
   await expect(pappa).toBeVisible();
   await expect(sprite).toBeVisible();
   await expect(sprite).toHaveCSS('image-rendering','auto');
+  await expect(page.locator('#pappaHammerBaseSprite')).toHaveCount(1);
+  await expect(page.locator('#baseGearPreview, #gearCharacterPreview')).toHaveCount(0);
+  await expect(pappa).toHaveCSS('background-image','none');
 
   const animationNames=await page.evaluate(()=>({
     motion:getComputedStyle(document.querySelector('.pappaHammerBaseMotion')).animationName,
@@ -67,4 +70,30 @@ test('workshop Pappa respects reduced motion',async({page})=>{
   await expect(page.locator('.pappaHammerBaseMotion')).toHaveCSS('animation-name','none');
   await expect(page.locator('.pappaHammerBaseVisual')).toHaveCSS('animation-name','none');
   await expect(page.locator('#pappaHammerBaseSprite')).toHaveCSS('animation-name','none');
+});
+
+test('production gear sets remain the only visible workshop character layer',async({page},testInfo)=>{
+  await page.setViewportSize({width:1280,height:720});
+  await page.goto('/?playwright');
+  await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest))).toBe(true);
+
+  for(const setId of ['hammerChoir','blackHole']){
+    await page.evaluate(id=>window.__riskTest.previewGearSet(id),setId);
+    await page.locator('#closeGear').click();
+    const layers=await page.locator('.pappaHammerBase').evaluate(element=>
+      [element,...element.querySelectorAll('*')].map(node=>({
+        className:node.className,
+        background:getComputedStyle(node).backgroundImage
+      })).filter(layer=>layer.background!=='none')
+    );
+    expect(layers).toHaveLength(1);
+    expect(layers[0].className).toBe('pappaHammerBaseSprite');
+    expect(layers[0].background).toContain(setId==='blackHole'?'black-hole-hammer-idle-v1.png':'hammer-choir-idle-v1.png');
+  }
+
+  await page.screenshot({path:testInfo.outputPath('black-hole-workshop-desktop.png'),fullPage:true});
+  await page.setViewportSize({width:390,height:844});
+  await expect(page.locator('.pappaHammerBase')).toBeVisible();
+  await expect(page.locator('.pappaHammerBase')).toHaveCSS('background-image','none');
+  await page.screenshot({path:testInfo.outputPath('black-hole-workshop-mobile.png'),fullPage:true});
 });

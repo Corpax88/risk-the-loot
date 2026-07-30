@@ -111,7 +111,9 @@ assert(!script.includes('drawPaperDollSilhouette'),'equipped gear must stay insi
 assert(html.includes('id="pappaHammerBaseSprite"')&&css.includes('.pappaHammerBaseMotion')&&css.includes('.pappaHammerBaseVisual'),'layered workshop Pappa motion rig is missing');
 assert(/\.pappaHammerBaseSprite\{[\s\S]*?image-rendering:auto;[\s\S]*?filter:none;[\s\S]*?\}/.test(css),'iPhone-softening hero filter is active');
 assert(css.includes('@keyframes pappaMenuWeightShift')&&css.includes('@keyframes pappaMenuBreath')&&css.includes('@keyframes pappaMenuFollowThrough'),'premium workshop motion is incomplete');
-assert(html.includes('id="gearLockerButton"')&&html.includes('id="gearGrid"')&&html.includes('id="gearCharacterPreview"'),'Gear Locker or live character preview is missing');
+assert(!/\.pappaHammerBase\{[^}]*background(?:-image)?:/.test(css),'obsolete default Pappa background still renders beneath Gear 2.0');
+assert(!html.includes('id="baseGearPreview"')&&!html.includes('id="gearCharacterPreview"')&&!script.includes('renderGearLayers'),'obsolete paper-doll overlay hierarchy is still present');
+assert(html.includes('id="gearLockerButton"')&&html.includes('id="gearGrid"')&&html.includes('class="gearCharacterHero"'),'Gear Locker or live character preview is missing');
 assert(html.includes('id="gearTurnLeft"')&&html.includes('id="gearTurnRight"')&&html.includes('id="gearSetSummary"')&&script.includes('updateGearTurntable'),'rotating preview or set summary is missing');
 assert(html.includes('id="gearRarityFilters"')&&html.includes('id="sellFilteredGear"')&&script.includes('filteredGearSaleSummary')&&script.includes('sellFilteredGear'),'protected filtered gear sale is missing');
 assert(html.includes('id="gearInventorySummary"')&&html.includes('id="gearRaritySummary"')&&html.includes('id="gearSortButton"')&&html.includes('id="gearDetail"'),'inventory count, rarity summary, sorting, or item details are missing');

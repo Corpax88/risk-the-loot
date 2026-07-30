@@ -46,7 +46,7 @@ test('mobile Armory keeps Pappa and slots fixed while only inventory scrolls',as
   expect(scroll.inventoryRange).toBeGreaterThan(0);
   expect(scroll.inventoryTop).toBeGreaterThan(0);
   expect(scroll.panelTop).toBe(scroll.panelStart);
-  expect(scroll.gridOverflow).toBe('visible');
+  expect(scroll.gridOverflow).toBe('auto');
   expect(scroll.panelOverflow).toBe('hidden');
   const after=await stage.boundingBox();
   expect(Math.abs(after.y-before.y)).toBeLessThanOrEqual(1);

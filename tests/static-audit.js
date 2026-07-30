@@ -136,7 +136,8 @@ assert(script.includes("common:{materials:1,cores:0}")&&script.includes("uncommo
 assert(!html.includes('id="riskOverlay"')&&!script.includes('showRiskDecision'),'obsolete pre-boss Risk It interruption is still present');
 assert(script.includes('bossGearOdds(nextLevel,riskTier+2)')&&html.includes('EPIC+ ODDS'),'loot odds are not explained with concrete values');
 assert(html.includes('id="resultLootSummary"')&&script.includes('resultLootGroup')&&script.includes('gearQualityLabel(drop)'),'sorted post-run gear report is missing');
-assert(html.includes('id="devLoot"')&&script.includes('devDropLegendary'),'legendary loot test tool is missing');
+assert(html.includes('id="devGear"')&&html.includes('id="devGearSelect"')&&html.includes('id="devGearSpawn"')&&html.includes('id="devGearEquip"')&&script.includes('function devGrantGear')&&script.includes('SET_DEFINITIONS')&&script.includes('LOOT_ITEMS'),'unified gear test tool is missing');
+assert(!html.includes('id="devRig"')&&!html.includes('id="devBlackHole"')&&!html.includes('id="devLoot"'),'obsolete gear-specific dev tools are still visible');
 assert(html.includes('id="devButton"')&&html.includes('id="devWarden"')&&html.includes('id="devTyrant"')&&script.includes('devFightWarden')&&script.includes('devFightTyrant'),'playtest dev tools are missing');
 assert(html.includes('viewport-fit=cover'),'mobile safe-area viewport support is missing');
 assert(css.includes('env(safe-area-inset-bottom)')&&css.includes('@media(max-width:420px){.resultStats'),'mobile safe areas or narrow result layout is missing');

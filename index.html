@@ -354,15 +354,21 @@
         <div id="devPanel" class="devPanel">
           <div class="devGrid">
             <button id="devScrap">+500 COINS</button>
-            <button id="devRig">GEAR 2.0 SET</button>
-            <button id="devBlackHole">BLACK HOLE SET</button>
+            <button id="devGear" aria-expanded="false" aria-controls="devGearPanel">DEV GEAR</button>
             <button id="devHeal">FULL HEAL</button>
             <button id="devCache">RARE CACHE</button>
-            <button id="devLoot">LEGENDARY LOOT</button>
             <button id="devLevel">PAPPA +1 LEVEL</button>
             <button id="devWarden">FIGHT VAULT WARDEN</button>
             <button id="devTyrant">FIGHT CHAMPION</button>
             <button id="devSchematic">NEXT TROPHY</button>
+          </div>
+          <div id="devGearPanel" class="devGearPanel" hidden>
+            <label for="devGearSelect">GEAR OR COMPLETE SET</label>
+            <select id="devGearSelect"></select>
+            <div>
+              <button id="devGearSpawn">ADD TO BAG</button>
+              <button id="devGearEquip">EQUIP</button>
+            </div>
           </div>
           <button id="devReset" class="devReset">HARD RESET SAVE</button>
         </div>

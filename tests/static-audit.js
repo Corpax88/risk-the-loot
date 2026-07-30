@@ -4,6 +4,9 @@ const html=fs.readFileSync('index.html','utf8');
 const css=fs.readFileSync('style.css','utf8');
 const script=fs.readFileSync('script.js','utf8');
 const packageJson=JSON.parse(fs.readFileSync('package.json','utf8'));
+const retiredRarity=String.fromCharCode(109,121,116,104,105,99);
+const ignoredAuditDirs=new Set(['.git','node_modules','playwright-report','test-results']);
+function sourceFiles(dir='.'){let files=[];for(const entry of fs.readdirSync(dir,{withFileTypes:true})){if(ignoredAuditDirs.has(entry.name))continue;let path=dir+'/'+entry.name;if(entry.isDirectory())files.push(...sourceFiles(path));else if(/\.(?:html|css|js|json|md|py)$/.test(entry.name))files.push(path)}return files}
 const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(match=>match[1]);
 const unique=new Set(ids);
 
@@ -16,6 +19,8 @@ const openBraces=(css.match(/{/g)||[]).length;
 const closeBraces=(css.match(/}/g)||[]).length;
 assert.equal(openBraces,closeBraces,'CSS braces are unbalanced');
 assert(html.includes('style.css?v='+packageJson.version)&&html.includes('script.js?v='+packageJson.version),'release assets do not match package version '+packageJson.version);
+for(const file of sourceFiles())assert(!new RegExp(retiredRarity,'i').test(fs.readFileSync(file,'utf8')),'retired rarity survived in '+file);
+assert(/id:'stormrunner',name:'STORMCALLER',rarity:'legendary'/.test(script),'Stormcaller is not classified as Legendary');
 assert(fs.existsSync('guild-terrain.js')&&html.includes('guild-terrain.js?v='+packageJson.version),'Guild Outskirts terrain generator is missing or stale');
 assert(script.includes('function beginTouchHelp')&&script.includes('function gearHelpFromNode'),'unified mobile hold-help system is missing');
 assert(css.includes('.gearHoverPreview.touchPreview'),'mobile gear comparison preview is missing');
@@ -33,7 +38,7 @@ function pngSize(path){const data=fs.readFileSync(path);return [data.readUInt32B
 assert.deepEqual(pngSize('assets/gear-items-atlas.png'),[2560,1280],'full gear atlas dimensions are wrong');
 assert.deepEqual(pngSize('assets/gear-drops-atlas.png'),[800,400],'drop gear atlas dimensions are wrong');
 const setGearAtlas=JSON.parse(fs.readFileSync('assets/set-gear-atlas.json','utf8'));
-assert.equal(setGearAtlas.items.length,80,'set gear atlas must map all 80 non-legendary set pieces');
+assert.equal(setGearAtlas.items.length,80,'set gear atlas must map all 80 authored set pieces');
 assert.equal(new Set(setGearAtlas.items.map(item=>item.id)).size,80,'set gear atlas item ids must be unique');
 assert.deepEqual(setGearAtlas.slotOrder,['hat','scarf','coat','hammer','boots'],'set gear atlas slot columns are out of order');
 assert.deepEqual(pngSize('assets/set-gear-atlas.png'),[1280,4096],'set gear atlas dimensions are wrong');

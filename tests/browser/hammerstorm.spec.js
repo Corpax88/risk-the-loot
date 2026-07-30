@@ -133,6 +133,7 @@ test('Hammerstorm dead-zone ignores tiny joystick drift',async({page})=>{
 });
 
 test('touch Hammerstorm help appears once for five seconds and stays seen after reload',async({page})=>{
+  test.setTimeout(25000);
   const pageErrors=[];
   page.on('pageerror',error=>pageErrors.push(error.message));
   await page.setViewportSize({width:390,height:844});

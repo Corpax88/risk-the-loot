@@ -69,7 +69,7 @@ test('all sets render every animation without clipping or edge artifacts',async(
   await page.evaluate(cards=>{
     document.body.innerHTML='<main id="contact"></main>';
     const style=document.createElement('style');
-    style.textContent='*{box-sizing:border-box}html,body{height:auto!important;min-height:0!important;overflow:visible!important}body{margin:0;background:#080d16;color:#f4ead6;font-family:Georgia,serif}#contact{display:grid;grid-template-columns:repeat(4,330px);gap:10px;padding:12px;width:max-content}.card{position:relative;height:220px;overflow:hidden;border:1px solid #53637d;background:linear-gradient(#203b61,#0b1422)}.poses{display:grid;grid-template-columns:repeat(3,1fr);padding:9px 6px 34px}.pose{display:grid;text-align:center;color:#9fb1cc;font:9px system-ui;text-transform:uppercase}.pose img{display:block;width:104px;height:165px;object-fit:contain}.card>b{position:absolute;left:8px;right:8px;bottom:7px;padding:5px;border:1px solid #d6aa58;background:#080d16e8;text-align:center;font-size:11px;letter-spacing:1px}.card[data-rarity="legendary"]{border-color:#f2c14f;box-shadow:inset 0 0 28px #f2c14f22}.card[data-rarity="mythic"]{border-color:#ec6670}';
+    style.textContent='*{box-sizing:border-box}html,body{height:auto!important;min-height:0!important;overflow:visible!important}body{margin:0;background:#080d16;color:#f4ead6;font-family:Georgia,serif}#contact{display:grid;grid-template-columns:repeat(4,330px);gap:10px;padding:12px;width:max-content}.card{position:relative;height:220px;overflow:hidden;border:1px solid #53637d;background:linear-gradient(#203b61,#0b1422)}.poses{display:grid;grid-template-columns:repeat(3,1fr);padding:9px 6px 34px}.pose{display:grid;text-align:center;color:#9fb1cc;font:9px system-ui;text-transform:uppercase}.pose img{display:block;width:104px;height:165px;object-fit:contain}.card>b{position:absolute;left:8px;right:8px;bottom:7px;padding:5px;border:1px solid #d6aa58;background:#080d16e8;text-align:center;font-size:11px;letter-spacing:1px}.card[data-rarity="legendary"]{border-color:#f2c14f;box-shadow:inset 0 0 28px #f2c14f22}';
     document.head.appendChild(style);
     const root=document.querySelector('#contact');
     for(const card of cards){const article=document.createElement('article');article.className='card';article.dataset.rarity=card.rarity;const poses=document.createElement('div');poses.className='poses';for(const entry of card.poses){const pose=document.createElement('span');pose.className='pose';const image=document.createElement('img');image.src=entry.image;pose.append(image,entry.pose);poses.appendChild(pose)}const title=document.createElement('b');title.textContent=card.name;article.append(poses,title);root.appendChild(article)}
@@ -81,7 +81,7 @@ test('every rarity renders in Character Preview and Inventory on desktop',async(
   test.setTimeout(60000);
   await page.setViewportSize({width:1280,height:900});
   await waitForGearBridge(page);
-  for(const rarity of ['common','rare','epic','mythic','legendary']){
+  for(const rarity of ['common','rare','epic','legendary']){
     const state=await page.evaluate(id=>window.__riskTest.previewGearRarity(id),rarity);
     expect(state.rarity).toBe(rarity);
     for(const pose of ['idle','run','attack']){

@@ -72,7 +72,7 @@
       "id": "crownGear",
       "name": "Crown of the Lost Road",
       "slot": "hat",
-      "rarity": "mythic",
+      "rarity": "legendary",
       "column": 7,
       "row": 0
     },
@@ -192,7 +192,7 @@
       "id": "phantomLantern",
       "name": "King's Oathcoat",
       "slot": "coat",
-      "rarity": "mythic",
+      "rarity": "legendary",
       "column": 7,
       "row": 2
     },
@@ -264,7 +264,7 @@
       "id": "chronoEscapement",
       "name": "Moonbreaker Hammer",
       "slot": "hammer",
-      "rarity": "mythic",
+      "rarity": "legendary",
       "column": 7,
       "row": 3
     },

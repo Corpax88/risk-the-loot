@@ -2005,3 +2005,319 @@ button:focus-visible{outline-color:#f4ead6}
   from{filter:brightness(.94);transform:scale(1)}
   to{filter:brightness(1.12);transform:scale(1.025)}
 }
+
+/* v0.53 Armory hierarchy: charcoal surfaces let Pappa and the loot carry the color. */
+.menuOverlay:has(.adventureBagPanel){
+  background:rgba(3,4,4,.92);
+}
+.adventureBagPanel{
+  color:#eee7d8;
+  border-color:#80613a;
+  background:
+    radial-gradient(circle at 25% 34%,rgba(190,139,66,.07),transparent 28%),
+    linear-gradient(180deg,#151513,#090a0a 70%,#060707);
+  box-shadow:inset 0 0 0 1px #d4aa6530,0 18px 52px #000d;
+}
+.adventureBagPanel>.panelClose{
+  border-color:#a77d43;
+  background:#111210ed;
+  color:#f3e5c6;
+  box-shadow:0 4px 14px #000b,inset 0 0 0 1px #e7c2791c;
+}
+.adventureBagPanel>.panelClose:hover,
+.adventureBagPanel>.panelClose:focus-visible{
+  border-color:#e0b969;
+  background:#1b1914;
+}
+
+.unifiedEquipmentWorkspace{
+  grid-template-columns:minmax(540px,585px) minmax(640px,1fr)!important;
+  gap:15px!important;
+}
+.adventureBagPanel .unifiedCharacterPanel{
+  grid-template-rows:auto minmax(490px,1fr) 48px auto auto auto;
+  border:1px solid #8d6b3c63;
+  background:linear-gradient(180deg,#151513 0 68%,#0a0b0b 68%);
+  box-shadow:inset 0 0 52px #0009,0 9px 24px #0008;
+}
+.unifiedCharacterPanel .gearCharacterHeading{
+  border-bottom:1px solid #9d773945;
+  background:rgba(17,17,15,.76);
+  opacity:.72;
+}
+.unifiedCharacterPanel .gearCharacterHeading span{color:#caa765}
+.unifiedCharacterPanel .gearCharacterStage{
+  background:
+    radial-gradient(circle at 50% 44%,rgba(195,148,77,.12) 0 18%,rgba(90,68,39,.07) 36%,transparent 58%),
+    linear-gradient(180deg,#191918 0 76%,#0a0b0b 76%);
+  box-shadow:inset 0 0 48px #0008;
+}
+.unifiedCharacterPanel .gearCharacterStage:before{
+  border-color:#b58a4730;
+  background:rgba(191,142,67,.025);
+  opacity:.46;
+}
+.unifiedCharacterPanel .gearCharacterStage:after{opacity:.46}
+.unifiedCharacterPanel .gearCharacterHalo{
+  width:258px;
+  height:258px;
+  border-color:#b48a4642;
+  background:radial-gradient(circle,rgba(203,155,79,.06),transparent 68%);
+  box-shadow:inset 0 0 45px #a9792810,0 0 28px #0009;
+  opacity:.68;
+}
+.unifiedCharacterPanel .gearCharacterHero{
+  width:min(645px,151%);
+  height:min(645px,151%);
+  bottom:-65px;
+  filter:drop-shadow(0 20px 14px #000c);
+}
+.unifiedCharacterPanel .gearTurntable,
+.unifiedCharacterPanel>.pappaProgress,
+.unifiedCharacterPanel>.gearStatsBlock .gearStatsSummary{
+  border-color:#7d623a52;
+  background:#0c0d0ce8;
+}
+.unifiedCharacterPanel>.gearStatsBlock .gearStatsSummary span+span{border-left-color:#7d623a35}
+.unifiedCharacterPanel>.gearSetBlock{opacity:.8}
+
+.adventureBagPanel .equipmentOrbitSlots .gearLoadoutSlot{
+  width:50px;
+  min-width:50px;
+  min-height:43px;
+  grid-template-columns:28px!important;
+  grid-template-rows:27px auto;
+  padding:3px 2px;
+  border:1px solid #9d80513d;
+  background:rgba(11,12,11,.6);
+  box-shadow:0 4px 10px #0006;
+  opacity:.36;
+}
+.adventureBagPanel .equipmentOrbitSlots .gearLoadoutSlot.filled{
+  border-color:color-mix(in srgb,var(--gear-color) 64%,#9d8051);
+  background:
+    radial-gradient(circle at 50% 43%,color-mix(in srgb,var(--gear-color) 12%,transparent),transparent 70%),
+    rgba(11,12,11,.78);
+  box-shadow:0 4px 10px #0008,0 0 7px color-mix(in srgb,var(--gear-color) 18%,transparent);
+}
+.equipmentOrbitSlots .gearLoadoutSlot>i{
+  width:27px!important;
+  height:27px!important;
+  border-color:color-mix(in srgb,var(--gear-color) 60%,#806842);
+  background:rgba(10,10,9,.42);
+}
+.equipmentOrbitSlots .gearLoadoutSlot small{font-size:3.5px;opacity:.56}
+.equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="hat"],
+.equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="scarf"],
+.equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="coat"]{left:12px}
+.equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="hammer"],
+.equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="gloves"],
+.equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="boots"]{right:12px}
+.unifiedCharacterPanel .gearPreviewName{
+  border-color:#a98248;
+  background:#0b0c0be8;
+  color:#ead59f;
+  box-shadow:0 5px 13px #0008;
+}
+
+.unifiedGearBrowser{
+  grid-template-columns:84px minmax(0,1fr) minmax(285px,325px);
+  gap:14px;
+}
+.unifiedGearBrowser .gearCategoryPanel{
+  border:0;
+  background:#10110ff2;
+  box-shadow:none;
+}
+.unifiedGearBrowser .gearCategoryPanel>header{
+  border-bottom-color:#8c6a373d;
+  background:#171713;
+}
+.unifiedGearBrowser .gearSlotFilters button:hover,
+.unifiedGearBrowser .gearSlotFilters button.active{
+  border-color:#bd92515c;
+  background:#c69a5112;
+}
+.adventureBagPanel .rarityCount,
+.adventureBagPanel .gearInventoryHeading{
+  border-color:#8c6a3742;
+  background:transparent;
+}
+.adventureBagPanel .gearToolbar{
+  grid-template-columns:minmax(0,1fr);
+  background:#10110fbd;
+}
+.adventureBagPanel .gearInventoryActions{
+  grid-template-columns:1fr 1fr;
+}
+.adventureBagPanel .gearSortButton,
+.adventureBagPanel .sellFilteredGear{
+  border-color:#8c704859;
+  background:#171713;
+  color:#e8deca;
+}
+.adventureBagPanel .gearRarityFilters button.active{
+  background:color-mix(in srgb,var(--filter-color) 9%,#121210);
+}
+
+.adventureBagPanel .animeBagShell{
+  border-color:#96703e;
+  background:
+    linear-gradient(180deg,rgba(24,15,7,.58),rgba(6,7,7,.72)),
+    url('assets/anime-adventure-bag-v2.webp') center/100% 100% no-repeat;
+  box-shadow:inset 0 0 0 2px #080908,inset 0 -8px #6d292c66,0 10px 24px #000b;
+}
+.animeBagShell:before{border-color:#cba56336}
+.animeBagShell:after{
+  border-color:#8f6b39;
+  background:#622126;
+}
+.animeBagInterior{
+  border-color:#8f713f5c;
+  background:linear-gradient(180deg,#5f20265e 0 3px,#0a0b0b 3px 100%);
+}
+.adventureBagPanel .gearBagBrowser{
+  background:
+    radial-gradient(circle at 50% 42%,rgba(174,127,58,.06),transparent 66%),
+    #0b0c0b;
+  box-shadow:inset 0 0 30px #000d;
+}
+.adventureBagPanel .gearBagSlot{
+  border-color:color-mix(in srgb,var(--gear-color) 38%,#655b4c);
+  background:
+    radial-gradient(circle at 50% 52%,color-mix(in srgb,var(--gear-color) 11%,transparent),transparent 62%),
+    linear-gradient(145deg,#181816,#0d0e0d);
+  box-shadow:inset 0 0 0 1px #ffffff06,0 7px 12px #000a;
+}
+.adventureBagPanel .gearBagSlot:hover,
+.adventureBagPanel .gearBagSlot:focus-visible,
+.adventureBagPanel .gearBagSlot.selected{
+  background:
+    radial-gradient(circle at 50% 50%,color-mix(in srgb,var(--gear-color) 19%,transparent),transparent 66%),
+    linear-gradient(145deg,#211f1a,#10110f);
+}
+.adventureBagPanel .gearBagSlot.equipped{
+  background:
+    radial-gradient(circle at 50% 50%,color-mix(in srgb,var(--gear-color) 16%,transparent),transparent 66%),
+    #12130f;
+}
+
+.unifiedGearBrowser>.gearDetail{
+  border:0;
+  background:
+    radial-gradient(circle at 50% 22%,rgba(190,143,67,.075),transparent 38%),
+    #0e0f0e;
+  box-shadow:0 8px 22px #0009;
+}
+.unifiedGearBrowser .gearDetailCard>header{
+  background:#090a09d9;
+}
+.unifiedGearBrowser .gearDetailArt{
+  background:
+    radial-gradient(circle at 50% 55%,color-mix(in srgb,var(--gear-glow) 22%,transparent),transparent 55%),
+    linear-gradient(180deg,#171713,#0b0c0b);
+}
+.unifiedGearBrowser .gearComparison,
+.unifiedGearBrowser .gearCompareCard,
+.unifiedGearBrowser .gearCompareRows span,
+.unifiedGearBrowser .gearDetailMeta{
+  border-color:#8066413d;
+  background:#10110fd1;
+}
+.unifiedGearBrowser .gearDetailActions button{
+  border-color:#8c70485c;
+  background:#1a1915;
+}
+
+@media(max-width:1180px) and (min-width:761px){
+  .unifiedEquipmentWorkspace{
+    grid-template-columns:minmax(455px,510px) minmax(500px,1fr)!important;
+  }
+  .adventureBagPanel .unifiedCharacterPanel{
+    grid-template-rows:auto minmax(455px,1fr) 48px auto auto auto;
+  }
+  .unifiedCharacterPanel .gearCharacterHero{
+    width:min(605px,144%);
+    height:min(605px,144%);
+    bottom:-61px;
+  }
+}
+
+@media(max-width:760px){
+  .unifiedEquipmentWorkspace{
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-template-rows:clamp(292px,46dvh,352px) minmax(0,1fr);
+    gap:7px!important;
+  }
+  .unifiedGearBrowser{
+    width:100%;
+    min-width:0;
+    grid-template-columns:minmax(0,1fr);
+    grid-template-rows:minmax(0,1fr);
+    gap:0;
+  }
+  .unifiedGearBrowser .gearInventoryPanel{
+    width:100%;
+    min-width:0;
+  }
+  .adventureBagPanel .unifiedCharacterPanel{
+    grid-template-rows:27px minmax(0,1fr)!important;
+  }
+  .unifiedCharacterPanel .gearCharacterHero{
+    width:min(380px,106vw);
+    height:min(380px,106vw);
+    bottom:-29px;
+  }
+  .unifiedCharacterPanel .gearCharacterHalo{
+    width:220px;
+    height:220px;
+  }
+  .adventureBagPanel .equipmentOrbitSlots .gearLoadoutSlot{
+    width:36px;
+    min-width:36px;
+    min-height:32px;
+    grid-template-columns:22px!important;
+    grid-template-rows:21px auto;
+    padding:2px 1px;
+  }
+  .equipmentOrbitSlots .gearLoadoutSlot>i{
+    width:21px!important;
+    height:21px!important;
+  }
+  .equipmentOrbitSlots .gearLoadoutSlot small{font-size:3px}
+  .equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="hat"],
+  .equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="scarf"],
+  .equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="coat"]{left:8px}
+  .equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="hammer"],
+  .equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="gloves"],
+  .equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="boots"]{right:8px}
+  .equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="hammer"]{top:46px}
+  .mobileGearSelection,
+  .mobileGearControls{
+    border-color:#765d3a52;
+    background:#0e0f0e;
+  }
+  .mobileGearSelectionArt{
+    background:#0a0b0a;
+  }
+  .mobileGearControls button{
+    border-color:#80664152;
+    background:#141512;
+  }
+  .adventureBagPanel .animeBagShell{
+    background:
+      linear-gradient(180deg,rgba(24,15,7,.6),rgba(6,7,7,.74)),
+      url('assets/anime-adventure-bag-v2.webp') center/100% 100% no-repeat;
+  }
+}
+
+@media(max-width:390px){
+  .unifiedEquipmentWorkspace{
+    grid-template-rows:clamp(270px,44dvh,320px) minmax(0,1fr);
+  }
+  .unifiedCharacterPanel .gearCharacterHero{
+    width:min(345px,104vw);
+    height:min(345px,104vw);
+    bottom:-28px;
+  }
+}

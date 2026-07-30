@@ -120,6 +120,7 @@
   const ENEMY_SPAWN_GRACE=.42,ENEMY_VIEW_MARGIN=34,TANK_RUSH_WINDUP=.88,TANK_RUSH_SPEED=650,TANK_RUSH_RANGE=440,TANK_RUSH_OVERSHOOT=72,TANK_RUSH_RECOVERY=.48,LANCER_THRUST_WINDUP=.64,LANCER_THRUST_SPEED=650,LANCER_THRUST_RANGE=430,RUSHER_POUNCE_WINDUP=.34,RUSHER_POUNCE_SPEED=455;
   const HAMMERSTORM={acquireRadius:410,leapDuration:.18,pulseInterval:.115,baseRadius:108,maxLeap:315,minSpin:.16};
   const BLACK_HOLE_STORM={spawnDuration:.34,pulseDuration:.24,collapseDuration:.68,idleFps:7,pullFps:12,dashFps:15,orbiters:12,mobileOrbiters:8,pullRadiusScale:1.72,pullMin:72,pullMax:318,pullSmoothing:10.5,orbitSpeed:1.92,orbitGap:20,orbitLaneGap:13,orbitLanes:5,elitePull:.48};
+  const LIGHTNING_DASH={range:470,duration:.085,anticipation:.024,impactPause:.026,maxDashesPerSecond:8.5,inputQueueSize:3,damageMultiplier:.92,targetHistoryDuration:.78,targetHistorySize:4,bossOrbitDistance:30,arrivalGap:9,visualIntensity:.72,inputDeadzone:.18};
   const MELEE={reach:96,impactRadius:72,shockwaveRadius:158};
   const DISPLACEMENT=Object.freeze({
     none:Object.freeze({direction:0,strength:0,duration:0,bossScale:0}),
@@ -362,7 +363,7 @@
     moonlitScout:{role:'AMBUSH',name:'MOONSTEP',unlock:'Dashing guarantees the next hammer strike will critically hit.',mastery:'Dashing guarantees the next two strikes will critically hit.',color:'#d9e0f0'},
     coinseeker:{role:'FORTUNE',name:'GILDED BOUNTY',unlock:'Foes carry 30% more coins.',mastery:'Foes carry 60% more coins and elites pay an extra bounty.',color:'#e1b34c'},
     towerBulwark:{role:'FORTRESS',name:'LAST BASTION',unlock:'Negate one hit every 8 seconds.',mastery:'Ward recharges in 6 seconds and answers with a hammer burst.',color:'#9eb2d5'},
-    stormrunner:{role:'MOBILITY',name:'GALE STEP',unlock:'Dash drives a physical impact wake through nearby enemies.',mastery:'The impact wake becomes wider, stronger and launches enemies farther.',color:'#79e7f2'},
+    stormrunner:{role:'MOBILITY',name:'LIGHTNING PAPPA HAMMER',unlock:'Dash releases a short storm trail while normal Hammerstorm remains available.',mastery:'The complete set replaces Hammerstorm. Tap rapidly to chain through fresh targets or flash around one champion.',color:'#79e7f2'},
     hammerChoir:{role:'IMPACT',name:'RESONANT SLAM',unlock:'Every fourth hammer strike releases a damaging shockwave.',mastery:'Every third strike releases a larger, stronger shockwave.',color:'#d7c1ff'},
     lanternGuard:{role:'SUSTAIN',name:'GUIDING LIGHT',unlock:'Entering a new floor restores one guard charge.',mastery:'New floors restore two guard charges and a little health.',color:'#ffe09a'},
     grandWayfarer:{role:'MOMENTUM',name:'LONG ROAD',unlock:'Moving charges the next strike with up to 25% bonus damage.',mastery:'Momentum charges faster and reaches 45% bonus damage.',color:'#e4d9c3'},
@@ -398,7 +399,7 @@
     {id:'counter',name:'COUNTERSTRIKE',needs:['burst','plating'],desc:'Blocking a hit slams out a defensive pressure wave.'},
     {id:'finisher',name:'FINAL VERDICT',needs:['mark','volatile'],desc:'Wounded bosses take another 20% hammer damage.'}
   ];
-  const keys={},stick={active:false,id:null,x:0,y:0},audio={ctx:null,timer:null,mode:'base',step:0};let spinHeld=false;
+  const keys={},stick={active:false,id:null,x:0,y:0},audio={ctx:null,timer:null,mode:'base',step:0};let spinHeld=false,spinControlLightning=false;
   let gearUidCounter=0,gearTurnAngle=0,gearTurnDrag=null;
   let save=loadSave(),mode='base',paused=false,settingsWasRun=false,abandonArmed=false,devResetArmed=false;
   let W=960,H=540,dpr=1,miniW=132,miniH=92,miniDpr=1,last=0,elapsed=0,runTime=0,spawnClock=0,hazardClock=0,shake=0,flash=0,depthPulse=0,extracting=0,runScrap=0,depth=1,riskTier=0,routeDecision=false,route=null,zoneEventTriggered=false,hitStop=0;
@@ -410,7 +411,7 @@
   let gearDragState=null,gearPointerType='mouse',gearTapUid=null,suppressGearClickUntil=0,gearMobileSheetMode=null;
   const paperDollPreviewCache=new Map();
   const gearItemNodes=new Map(),gearPerf={fullRenders:0,gridRenders:0,slotRenders:0,incrementalRenders:0};
-  const particlePool=[];
+  const particlePool=[],lightningEffectPool=[];
 
   function clampNumber(value,min,max){value=Number(value);return Number.isFinite(value)?Math.max(min,Math.min(max,value)):min}
   function mobileArmory(){return typeof window.matchMedia==='function'&&window.matchMedia('(max-width:760px), (pointer:coarse)').matches}
@@ -710,7 +711,7 @@
     let powers={};for(const module of cargo)powers[module.id]=(powers[module.id]||0)+(module.power||(module.rare?2:1));
     let synergies={};for(const synergy of SYNERGIES){synergies[synergy.id]=true;for(const id of synergy.needs)if(!(powers[id]>0)){synergies[synergy.id]=false;break}}
     let over=powers.overdrive||0,volatile=powers.volatile||0,mark=powers.mark||0,plating=platingProtection(powers.plating||0),gear=gearStats(),signature=gearSignatureProfile(),dashTech=1-schematicLevel('thrusters')*.06,surrounded=player?nearbyEnemyCount(player.x,player.y,245,false):0,committedPack=player&&(player.spinTime>0||player.spinLeap>0)?player.spinPack||0:0,pressure=Math.max(surrounded,committedPack),corePressure=1+Math.min(.22,surrounded*.009),riskDamage=signature.riskreaver?1+Math.min(signature.riskreaver===2?.62:.34,surrounded*(signature.riskreaver===2?.038:.026)):1,spinDamage=1+Math.min(1.15,pressure*.032)+(signature.riskreaver?signature.riskreaver===2?.28:.14:0),ironActive=!!(player&&player.maxHp&&player.hp/player.maxHp<=.4&&signature.ironGuild),ironDamage=ironActive?(signature.ironGuild===2?1.2:1.12):1,ironArmor=ironActive?(signature.ironGuild===2?.1:.06):0;
-    return {burst:Math.min(3,powers.burst||0),shields:baseShields()+plating.shields,armor:Math.min(.55,plating.armor+gear.armor+ironArmor),speed:1+over*.12+gear.speed,fire:Math.max(.42,(1-over*.11)*(1-gear.fire)),damage:(1+volatile*.34)*corePressure*riskDamage*ironDamage,hp:Math.max(.58,1-volatile*.11),dashCd:2.2*dashTech*(1-gear.dash),crit:gear.crit,championDamage:1+mark*.1,bossDropChance:Math.min(.28,mark*.07),ram:synergies.kinetic?34+shotDamage()*1.2:0,shrapnel:synergies.shrapnel,counter:synergies.counter,pursuit:synergies.pursuit,finisher:synergies.finisher,signature,critEcho:signature.critEcho,bulwark:signature.bulwark,stormDash:signature.stormDash,hammerWave:signature.hammerWave,riskreaver:signature.riskreaver,riskTaken:1-Math.min(.38,surrounded*.013),surrounded,pressure,spinDamage,spinRadius:HAMMERSTORM.baseRadius+Math.min(58,pressure*1.35)+(signature.riskreaver?signature.riskreaver===2?32:18:0),spinRate:Math.min(1.75,1+over*.08+gear.fire),spinLifesteal:signature.riskreaver===2?.006:0}
+    return {burst:Math.min(3,powers.burst||0),shields:baseShields()+plating.shields,armor:Math.min(.55,plating.armor+gear.armor+ironArmor),speed:1+over*.12+gear.speed,fire:Math.max(.42,(1-over*.11)*(1-gear.fire)),damage:(1+volatile*.34)*corePressure*riskDamage*ironDamage,hp:Math.max(.58,1-volatile*.11),dashCd:2.2*dashTech*(1-gear.dash),crit:gear.crit,championDamage:1+mark*.1,bossDropChance:Math.min(.28,mark*.07),ram:synergies.kinetic?34+shotDamage()*1.2:0,shrapnel:synergies.shrapnel,counter:synergies.counter,pursuit:synergies.pursuit,finisher:synergies.finisher,signature,critEcho:signature.critEcho,bulwark:signature.bulwark,stormDash:signature.stormDash,lightningDash:signature.stormrunner===2,hammerWave:signature.hammerWave,riskreaver:signature.riskreaver,riskTaken:1-Math.min(.38,surrounded*.013),surrounded,pressure,spinDamage,spinRadius:HAMMERSTORM.baseRadius+Math.min(58,pressure*1.35)+(signature.riskreaver?signature.riskreaver===2?32:18:0),spinRate:Math.min(1.75,1+over*.08+gear.fire),spinLifesteal:signature.riskreaver===2?.006:0}
   }
   function blueprintCount(){return MODULE_IDS.reduce((sum,id)=>sum+save.blueprints[id].copies,0)}
   function vaultProgress(){let spentSeals=save.vaultCycle*VAULT_SEALS,spentRelics=save.vaultCycle*VAULT_RELICS,seals=Math.max(0,save.cores-spentSeals),relics=Math.max(0,blueprintCount()-spentRelics),sealRatio=Math.min(1,seals/VAULT_SEALS),relicRatio=Math.min(1,relics/VAULT_RELICS);return {seals,relics,sealRatio,relicRatio,total:(sealRatio+relicRatio)/2}}
@@ -1116,7 +1117,7 @@
   }
   function startRun(seedOverride){
     cargo=[];if(save.starter)cargo.push({id:save.starter,rare:false,starter:true,power:starterPower(save.starter),recoveries:0,rareRecoveries:0});
-    player={x:WORLD.w/2,y:WORLD.h/2,r:18,hp:maxHp(),maxHp:maxHp(),speed:255,fire:0,inv:0,angle:0,facing:1,dashCd:0,dashTime:0,dashX:1,dashY:0,lastX:1,lastY:0,shields:baseShields(),guardCd:0,recoil:0,attackAnim:0,attackDuration:.24,animClock:0,volley:0,burstCharge:0,thermalCharges:0,ramHits:new Set(),signatureCrits:0,phantomStrike:0,travelCharge:0,fateSaved:false,vaultWardAwarded:0,spinCd:0,spinTime:0,spinLeap:0,spinLeapMax:0,spinAutoRemaining:0,spinAutoDuration:0,spinManual:false,spinAngle:0,spinPulse:0,spinHits:0,spinKills:0,spinCoins:0,spinPack:0,spinPeakPack:0,spinHeal:0,spinLifeTargets:new Set(),blackHoleAge:0,blackHolePulse:0};
+    player={x:WORLD.w/2,y:WORLD.h/2,r:18,hp:maxHp(),maxHp:maxHp(),speed:255,fire:0,inv:0,angle:0,facing:1,dashCd:0,dashTime:0,dashX:1,dashY:0,lastX:1,lastY:0,shields:baseShields(),guardCd:0,recoil:0,attackAnim:0,attackDuration:.24,animClock:0,volley:0,burstCharge:0,thermalCharges:0,ramHits:new Set(),signatureCrits:0,phantomStrike:0,travelCharge:0,fateSaved:false,vaultWardAwarded:0,spinCd:0,spinTime:0,spinLeap:0,spinLeapMax:0,spinAutoRemaining:0,spinAutoDuration:0,spinManual:false,spinAngle:0,spinPulse:0,spinHits:0,spinKills:0,spinCoins:0,spinPack:0,spinPeakPack:0,spinHeal:0,spinLifeTargets:new Set(),blackHoleAge:0,blackHolePulse:0,lightningPhase:'idle',lightningTime:0,lightningRate:0,lightningQueue:0,lightningTarget:null,lightningStartX:0,lightningStartY:0,lightningEndX:0,lightningEndY:0,lightningHistoryTargets:[null,null,null,null],lightningHistoryTimes:[0,0,0,0],lightningHistoryCursor:0,lightningBossSide:1,lightningImpacts:0,lightningPresses:0};
     enemies=[];pendingStrikes=[];enemyBullets=[];lootDrops=[];particles=[];effects=[];hazards=[];decor=[];obstacles=[];collisionMap=[];caches=[];lootBag={};elapsed=0;runTime=0;spawnClock=.28;hazardClock=3.5;runScrap=0;depth=1;riskTier=0;routeDecision=false;route=null;moduleDecision=false;depthPulse=0;extracting=0;shake=0;flash=0;hitStop=0;paused=false;bossActive=false;bossDefeated=false;bossEntity=null;bossLootChest=null;pendingWardenReward=null;expeditionCycle=0;bossRunClears=0;postBossDecision=false;postBossIntent=null;bossLootRewards=[];bossLootSelected=0;bossLootResolved=[];bossLootPhase='idle';runGearEquipBackups={};bossExtraction=false;zoneEventTriggered=false;runStats={damage:0,kills:0,elites:0,risks:0,items:0,legendary:0,bosses:0,modules:[],warden:null,route:null,boss:null,map:save.selectedMap};
     buildArenaObstacles(seedOverride);buildAdventureDecor();rebuildCollisionMap();if(guildTerrain){let entrance=openArenaPosition(guildTerrain.entrance.x,guildTerrain.entrance.y,player.r+5);player.x=entrance.x;player.y=entrance.y;player.lastX=1;player.lastY=0;player.angle=0}resetWaveDirector(.34);triggerFloorSignatures();
     let firstCache=guildRoutePosition(1);spawnCache(firstCache?firstCache.x:player.x+190,firstCache?firstCache.y:player.y+25,false,false);ui.extractOverlay.classList.remove('show');ui.bossLootOverlay.classList.remove('show');ui.routeOverlay.classList.remove('show');ui.moduleOverlay.classList.remove('show');ui.resultOverlay.classList.remove('show');ui.lootToast.classList.remove('show','legendary');ui.bossHud.classList.remove('show','tyrant');ui.cargoHud.classList.remove('bossHidden');ui.depthRoute.classList.remove('bossHidden','furnace','dynamo');ui.expedition.classList.remove('legendaryCargo');ui.extract.classList.remove('hotLoot');ui.routeLabel.textContent=activeMap().short;ui.settingsOverlay.classList.remove('show');setView('run');applyCargoEffects(cargo[0]);updateCargoHud();updateZoneHud();updateRouteHud();updateMapSeedDebug();updateHud();save.stats.runs++;persist();let firstZone=zoneAt(1);runNotice(save.starter?MODULES[save.starter].name.toUpperCase()+' READY':firstZone.name,firstZone.accent);sound('start')
@@ -1172,7 +1173,7 @@
   function showRouteDecision(){routeDecision=true;ui.routeOverlay.classList.add('show');runNotice('ADVENTURE CROSSROADS','#d6aa58');sound('upgrade')}
   function chooseRoute(id){if(!routeDecision||!ROUTES[id])return;route=id;routeDecision=false;if(runStats)runStats.route=id;ui.routeOverlay.classList.remove('show');ui.depthRoute.classList.remove('furnace','dynamo');ui.depthRoute.classList.add(id);ui.routeLabel.textContent=ROUTES[id].short;enterDepth(3);runNotice(ROUTES[id].name,zoneAt(3).accent);sound('start')}
   function enterDepth(nextDepth){depth=nextDepth;if(depth===3||depth===5){riskTier++;if(runStats)runStats.risks++}zoneEventTriggered=false;hazards=[];hazardClock=2.2;depthPulse=1.15;fieldRepair(depth===5?.2:.15);triggerFloorSignatures();sound('upgrade');updateZoneHud();updateRouteHud();if(depth===5){waveDirector.phase='idle';startBoss();updateHud();return}resetWaveDirector(.3);let zone=zoneAt(depth),a=Math.random()*Math.PI*2,d=300+Math.random()*180,rareChance=.15+depth*.06+(routeConfig()?routeConfig().relicRare:0),objective=guildRoutePosition(depth);runNotice(zone.name,zone.accent);spawnCache(objective?objective.x:player.x+Math.cos(a)*d,objective?objective.y:player.y+Math.sin(a)*d,depth>=3&&Math.random()<rareChance,false)}
-  function tryDash(){if(mode!=='run'||postBossDecision||routeDecision||moduleDecision||paused||!player||player.dashCd>0)return false;let move=movement(),dx=move.x||player.lastX||Math.cos(player.angle),dy=move.y||player.lastY||Math.sin(player.angle),l=Math.hypot(dx,dy)||1,stats=cargoStats(),thermal=schematicLevel('thermal'),blast=thermalBlast(thermal),signature=stats.signature,blackHoleDash=usesBlackHoleStorm(stats)&&(player.spinTime>0||player.spinLeap>0);if(player.spinLeap>0){player.spinLeap=0;player.spinTime=Math.max(player.spinTime,.001);player.spinPulse=Math.min(0,player.spinPulse||0)}player.dashX=dx/l;player.dashY=dy/l;player.dashTime=.16;player.dashFx=0;player.dashCd=stats.dashCd;player.ramHits=new Set();player.inv=Math.max(player.inv,signature.phantomCourt?(signature.phantomCourt===2?.58:.42):(stats.ram?.34:.24));if(signature.moonlitScout)player.signatureCrits=Math.max(player.signatureCrits,signature.moonlitScout===2?2:1);if(signature.phantomCourt)player.phantomStrike=signature.phantomCourt;if(thermal)player.thermalCharges=Math.max(player.thermalCharges||0,blast.charges);if(stats.stormDash)releaseStormDash(stats.stormDash,player.dashX,player.dashY);shake=Math.max(shake,3);if(blackHoleDash)spawnGravityMotes(player.x,player.y,18,stats.spinRadius*.78,true);else burst(player.x,player.y,thermal?'#c83f46':stats.stormDash?'#79e7f2':signature.phantomCourt?'#b7c7d9':stats.ram?'#d6aa58':'#f4ead6',thermal?16:10,thermal?1.1:.8);sound('dash');return true}
+  function tryDash(){if(mode!=='run'||postBossDecision||routeDecision||moduleDecision||paused||!player||player.dashCd>0||player.lightningPhase&&player.lightningPhase!=='idle')return false;let move=movement(),dx=move.x||player.lastX||Math.cos(player.angle),dy=move.y||player.lastY||Math.sin(player.angle),l=Math.hypot(dx,dy)||1,stats=cargoStats(),thermal=schematicLevel('thermal'),blast=thermalBlast(thermal),signature=stats.signature,blackHoleDash=usesBlackHoleStorm(stats)&&(player.spinTime>0||player.spinLeap>0);if(player.spinLeap>0){player.spinLeap=0;player.spinTime=Math.max(player.spinTime,.001);player.spinPulse=Math.min(0,player.spinPulse||0)}player.dashX=dx/l;player.dashY=dy/l;player.dashTime=.16;player.dashFx=0;player.dashCd=stats.dashCd;player.ramHits=new Set();player.inv=Math.max(player.inv,signature.phantomCourt?(signature.phantomCourt===2?.58:.42):(stats.ram?.34:.24));if(signature.moonlitScout)player.signatureCrits=Math.max(player.signatureCrits,signature.moonlitScout===2?2:1);if(signature.phantomCourt)player.phantomStrike=signature.phantomCourt;if(thermal)player.thermalCharges=Math.max(player.thermalCharges||0,blast.charges);if(stats.stormDash&&!stats.lightningDash)releaseStormDash(stats.stormDash,player.dashX,player.dashY);shake=Math.max(shake,3);if(blackHoleDash)spawnGravityMotes(player.x,player.y,18,stats.spinRadius*.78,true);else burst(player.x,player.y,thermal?'#c83f46':stats.stormDash?'#79e7f2':signature.phantomCourt?'#b7c7d9':stats.ram?'#d6aa58':'#f4ead6',thermal?16:10,thermal?1.1:.8);sound('dash');return true}
   function updateDashMotion(dt,stats){
     if(player.dashTime<=0)return false;
     player.dashTime=Math.max(0,player.dashTime-dt);player.x+=player.dashX*820*dt;player.y+=player.dashY*820*dt;if(Math.abs(player.dashX)>.08)player.facing=player.dashX<0?-1:1;player.dashFx=(player.dashFx||0)-dt;
@@ -1188,8 +1189,122 @@
     return{targets,x:landing.x,y:landing.y}
   }
   function usesBlackHoleStorm(stats){return !!(stats&&(stats.gravityWell||stats.signature&&stats.signature.gravityWell))}
+  function usesLightningDash(stats){return !!(stats&&stats.lightningDash)}
+  function lightningHistoryPenalty(enemy){
+    let penalty=0;
+    for(let index=0;index<LIGHTNING_DASH.targetHistorySize;index++){
+      if(player.lightningHistoryTargets[index]!==enemy)continue;
+      let remaining=player.lightningHistoryTimes[index]-runTime;
+      if(remaining>0)penalty=Math.max(penalty,remaining/LIGHTNING_DASH.targetHistoryDuration)
+    }
+    return penalty
+  }
+  function rememberLightningTarget(enemy){
+    let index=player.lightningHistoryCursor%LIGHTNING_DASH.targetHistorySize;
+    player.lightningHistoryTargets[index]=enemy;player.lightningHistoryTimes[index]=runTime+LIGHTNING_DASH.targetHistoryDuration;player.lightningHistoryCursor=(index+1)%LIGHTNING_DASH.targetHistorySize
+  }
+  function selectLightningTarget(move){
+    let directional=move&&move.strength>LIGHTNING_DASH.inputDeadzone,best=null,bestScore=Infinity,fallback=null,fallbackScore=Infinity,rangeSq=LIGHTNING_DASH.range*LIGHTNING_DASH.range;
+    for(const enemy of enemies){
+      if(enemy.dead)continue;
+      let dx=enemy.x-player.x,dy=enemy.y-player.y,distanceSq=dx*dx+dy*dy;
+      if(distanceSq>rangeSq||lineBlockedByCover(player.x,player.y,enemy.x,enemy.y,5))continue;
+      let distance=Math.sqrt(distanceSq)||1,history=lightningHistoryPenalty(enemy),score=distance+history*LIGHTNING_DASH.range*2.4;
+      if(score<fallbackScore){fallback=enemy;fallbackScore=score}
+      if(directional){
+        let dot=dx/distance*move.x+dy/distance*move.y;
+        if(dot<-.18)continue;
+        score+=(1-dot)*LIGHTNING_DASH.range*1.25
+      }
+      if(score<bestScore){best=enemy;bestScore=score}
+    }
+    return best||fallback
+  }
+  function lightningArrival(target){
+    let distance=target.r+player.r+LIGHTNING_DASH.arrivalGap,angle;
+    if(target.boss){
+      let approach=Math.atan2(player.y-target.y,player.x-target.x);
+      if(target.lightningOrbitAngle==null)target.lightningOrbitAngle=approach+1.08;else target.lightningOrbitAngle+=Math.PI;
+      angle=target.lightningOrbitAngle;player.lightningBossSide*=-1;
+      distance+=LIGHTNING_DASH.bossOrbitDistance
+    }else angle=Math.atan2(player.y-target.y,player.x-target.x);
+    return openArenaPosition(target.x+Math.cos(angle)*distance,target.y+Math.sin(angle)*distance,player.r+4)
+  }
+  function setLightningDestination(target){
+    let arrival=lightningArrival(target);player.lightningTarget=target;player.lightningStartX=player.x;player.lightningStartY=player.y;player.lightningEndX=arrival.x;player.lightningEndY=arrival.y;player.lightningTime=0;player.lightningImpactDone=false;rememberLightningTarget(target);
+    let dx=arrival.x-player.x,dy=arrival.y-player.y;if(Math.abs(dx)>.5)player.facing=dx<0?-1:1;player.angle=Math.atan2(dy,dx)
+  }
+  function beginLightningDash(move){
+    let target=selectLightningTarget(move);
+    if(!target){ui.spin.classList.remove('noTarget');void ui.spin.offsetWidth;ui.spin.classList.add('noTarget');return false}
+    ui.spin.classList.remove('noTarget');
+    setLightningDestination(target);player.lightningPhase='anticipate';player.lightningTime=LIGHTNING_DASH.anticipation;player.lightningPresses++;player.lightningRate=1/LIGHTNING_DASH.maxDashesPerSecond;player.attackAnim=Math.max(player.attackAnim,.12);
+    spawnLightningEffect({kind:'lightningCharge',x:player.x,y:player.y,r:4,maxR:24,life:.1,max:.1,color:'#dffbff'});sound('dash');return true
+  }
+  function requestLightningDash(){
+    if(mode!=='run'||postBossDecision||routeDecision||moduleDecision||paused||!player||!usesLightningDash(cargoStats()))return false;
+    if(player.lightningPhase==='idle'&&(player.lightningRate<=0||player.lightningPresses===0))return beginLightningDash(movement());
+    if(player.lightningQueue>=LIGHTNING_DASH.inputQueueSize)return false;
+    player.lightningQueue++;return true
+  }
+  function resetLightningDash(clearQueue){
+    if(!player)return;player.lightningPhase='idle';player.lightningTime=0;player.lightningTarget=null;player.lightningImpactDone=false;if(clearQueue)player.lightningQueue=0
+  }
+  function lightningTravelEffects(){
+    let dx=player.lightningEndX-player.lightningStartX,dy=player.lightningEndY-player.lightningStartY;
+    spawnLightningEffect({kind:'lightningTrail',x:player.lightningStartX,y:player.lightningStartY,tx:player.lightningEndX,ty:player.lightningEndY,r:0,maxR:0,life:.16,max:.16,color:'#79e7f2'});
+    spawnLightningEffect({kind:'lightningAfterimage',x:player.lightningStartX,y:player.lightningStartY,r:0,maxR:0,life:.13,max:.13,color:'#bdf7ff',facing:player.facing});
+    spawnLightningEffect({kind:'lightningAfterimage',x:player.lightningStartX+dx*.46,y:player.lightningStartY+dy*.46,r:0,maxR:0,life:.09,max:.09,color:'#79e7f2',facing:player.facing})
+  }
+  function resolveLightningImpact(stats){
+    if(player.lightningImpactDone)return;player.lightningImpactDone=true;
+    let target=player.lightningTarget;
+    if(target&&!target.dead){
+      let distance=Math.hypot(target.x-player.x,target.y-player.y),reach=target.r+player.r+54;
+      if(distance<=reach&&!lineBlockedByCover(player.x,player.y,target.x,target.y,3)){
+        let critical=Math.random()<stats.crit,damage=playerDamageAgainst(target,shotDamage()*stats.damage*LIGHTNING_DASH.damageMultiplier*(critical?1.8:1));
+        damageEnemy(target,damage,target.x,target.y,true);player.lightningImpacts++;if(critical)effects.push({kind:'spinCrit',x:target.x,y:target.y,r:4,maxR:30,life:.2,max:.2,color:'#e9fdff'})
+      }
+    }
+    spawnLightningEffect({kind:'lightningImpact',x:player.x,y:player.y,r:4,maxR:34,life:.16,max:.16,color:'#dffbff'});if(save.settings.particles)for(let index=0;index<6;index++){let angle=index*Math.PI/3+(runTime%1);spawnParticle({x:player.x,y:player.y,vx:Math.cos(angle)*(55+index*5),vy:Math.sin(angle)*(55+index*5),life:.16,max:.16,r:2.2,color:index%2?'#79e7f2':'#e9fdff'})}shake=Math.max(shake,2.2);hitStop=Math.max(hitStop,LIGHTNING_DASH.impactPause);sound('hit')
+  }
+  function retargetLightningDash(move){
+    let target=selectLightningTarget(move);if(!target)return false;setLightningDestination(target);player.lightningPhase='travel';lightningTravelEffects();return true
+  }
+  function updateLightningDash(dt,stats,move){
+    player.lightningRate=Math.max(0,(player.lightningRate||0)-dt);
+    if(!usesLightningDash(stats)){resetLightningDash(true);return ''}
+    if(player.lightningPhase==='idle'){
+      if(player.lightningQueue>0&&player.lightningRate<=0){player.lightningQueue--;if(!beginLightningDash(move))player.lightningQueue=0}
+      if(player.lightningPhase==='idle')return ''
+    }
+    if(player.lightningPhase==='anticipate'){
+      if(player.lightningTarget&&player.lightningTarget.dead&&!retargetLightningDash(move)){resetLightningDash(false);return ''}
+      player.lightningTime=Math.max(0,player.lightningTime-dt);player.attackAnim=Math.max(player.attackAnim,.1);
+      if(player.lightningTime<=0){player.lightningPhase='travel';player.lightningTime=0;lightningTravelEffects()}
+      return 'anticipate'
+    }
+    if(player.lightningPhase==='travel'){
+      if(player.lightningTarget&&player.lightningTarget.dead&&!retargetLightningDash(move))player.lightningTarget=null;
+      player.lightningTime=Math.min(LIGHTNING_DASH.duration,player.lightningTime+dt);let progress=player.lightningTime/LIGHTNING_DASH.duration,eased=progress<.5?4*progress*progress*progress:1-Math.pow(-2*progress+2,3)/2;
+      player.x=player.lightningStartX+(player.lightningEndX-player.lightningStartX)*eased;player.y=player.lightningStartY+(player.lightningEndY-player.lightningStartY)*eased;player.attackAnim=Math.max(player.attackAnim,.1);
+      if(progress>=1){player.x=player.lightningEndX;player.y=player.lightningEndY;resolveLightningImpact(stats);player.lightningPhase='impact';player.lightningTime=LIGHTNING_DASH.impactPause}
+      return 'travel'
+    }
+    if(player.lightningPhase==='impact'){
+      player.lightningTime=Math.max(0,player.lightningTime-dt);player.attackAnim=Math.max(player.attackAnim,.08);
+      if(player.lightningTime<=0)resetLightningDash(false);
+      return 'impact'
+    }
+    resetLightningDash(false);return ''
+  }
+  function activateSpinControl(){
+    let stats=cargoStats();
+    if(usesLightningDash(stats)){spinHeld=false;return requestLightningDash()}
+    spinHeld=true;return tryHammerSpin()
+  }
   function tryHammerSpin(){
-    if(mode!=='run'||postBossDecision||routeDecision||moduleDecision||paused||!player||player.spinTime>0||player.spinLeap>0||player.dashTime>0)return false;
+    if(mode!=='run'||postBossDecision||routeDecision||moduleDecision||paused||!player||usesLightningDash(cargoStats())||player.spinTime>0||player.spinLeap>0||player.dashTime>0)return false;
     let spinStats=cargoStats(),blackHole=usesBlackHoleStorm(spinStats),landing=hammerstormLanding(),targets=landing.targets;
     player.spinPack=targets.length;player.spinPeakPack=targets.length;player.spinLeap=targets.length?HAMMERSTORM.leapDuration:.001;player.spinLeapMax=player.spinLeap;player.spinAutoRemaining=0;player.spinAutoDuration=0;player.spinManual=false;player.spinStartX=player.x;player.spinStartY=player.y;player.spinTargetX=landing.x;player.spinTargetY=landing.y;player.spinTime=0;player.spinPulse=0;player.spinAngle=0;player.spinShock=0;player.spinHits=0;player.spinKills=0;player.spinCoins=0;player.spinHeal=0;player.spinLifeTargets=new Set();player.spinVortexX=player.x;player.spinVortexY=player.y;player.blackHoleAge=0;player.blackHolePulse=0;player.blackHoleTrail=0;player.inv=Math.max(player.inv,player.spinLeap+.08);player.fire=Math.max(player.fire,.2);
     if(blackHole)spawnGravityMotes(player.x,player.y,Math.min(30,14+Math.floor(targets.length/2)),spinStats.spinRadius,true);
@@ -1374,6 +1489,8 @@
   function spawnCache(x,y,rare,bossReward){let pos=openArenaPosition(x,y,25);caches.push({x:pos.x,y:pos.y,r:19,rare:!!rare,bossReward:!!bossReward,spin:Math.random()*6,opened:false})}
   function particleLimit(){return mobileArmory()?220:LIMITS.particles}
   function spawnParticle(data){if(particles.length>=particleLimit())return null;let particle=particlePool.pop()||{};for(const key of Object.keys(particle))delete particle[key];Object.assign(particle,data);particles.push(particle);return particle}
+  function spawnLightningEffect(data){let effect=lightningEffectPool.pop()||{};for(const key of Object.keys(effect))delete effect[key];Object.assign(effect,data);effects.push(effect);return effect}
+  function recycleLightningEffect(effect){if(effect&&String(effect.kind||'').startsWith('lightning'))lightningEffectPool.push(effect)}
   function spawnGravityMotes(x,y,count,radius,followPlayer){
     if(!save.settings.particles)return;count=mobileArmory()?Math.ceil(count*.64):count;
     for(let index=0;index<count;index++){
@@ -1648,13 +1765,13 @@
     if(e.vortexActive&&!e.boss){e.x+=(e.vortexVx||0)*dt;e.y+=(e.vortexVy||0)*dt}else{let vortexDecay=Math.pow(.004,dt);e.vortexVx=(e.vortexVx||0)*vortexDecay;e.vortexVy=(e.vortexVy||0)*vortexDecay;e.vortexInfluence=Math.max(0,(e.vortexInfluence||0)-dt*5);e.vortexOrbiting=false}e.vortexActive=false;
     let wantedX=e.x,wantedY=e.y;e.x=beforeX;e.y=beforeY;let coverHit=moveAroundCover(e,wantedX-beforeX,wantedY-beforeY);if(coverHit&&e.dashTime>0){finishEnemyDash(e,e.type==='brute'?TANK_RUSH_RECOVERY:.38,e.type==='brute'?'#c83f46':'#8f9dff');effects.push({kind:'coverImpact',x:e.x,y:e.y,r:4,maxR:24,life:.18,max:.18,color:e.boss?'#ffc928':'#e4e7eb'})}else if(coverHit){moveAroundCover(e,-ny*e.strafe*e.speed*dt*.62,nx*e.strafe*e.speed*dt*.62)}
     let moved=Math.hypot(e.x-beforeX,e.y-beforeY);if(save.settings.particles&&e.spawnGrace<=0&&moved>.4&&e.stepFx<=0&&combatViewContains(e.x,e.y,e.r,20)&&particles.length<LIMITS.particles){e.stepFx=e.dashTime>0?.1:e.type==='rusher'?.22:.42;particles.push({x:e.x-(e.x-beforeX)*2,y:e.y-(e.y-beforeY)*2+e.r*.5,vx:Math.sin(e.anim*3+e.seed)*9,vy:10+Math.abs(Math.cos(e.anim*2+e.seed))*8,life:.22,max:.22,r:2,color:e.type==='brute'?'#d6aa58':'#9eb2d5'})}
-    dx=player.x-e.x;dy=player.y-e.y;l=Math.hypot(dx,dy)||1;if(!knocked&&e.spawnGrace<=0&&l<e.r+player.r+3&&e.attack<=0){let rushing=e.dashTime>0;e.attack=.5;if(rushing){finishEnemyDash(e,e.type==='brute'?TANK_RUSH_RECOVERY:.28,e.type==='brute'?'#c83f46':'#8f9dff');effects.push({kind:'tankImpact',x:e.x,y:e.y,angle:e.angle,r:12,maxR:58,life:.22,max:.22,color:e.type==='brute'?'#c83f46':'#8f9dff'});shake=Math.max(shake,e.type==='brute'?6:4)}let rushDamage=e.type==='brute'?.45:e.type==='lancer'?.62:.5;if(damagePlayer(e.damage*(rushing?rushDamage:1)))return true}return false
+    dx=player.x-e.x;dy=player.y-e.y;l=Math.hypot(dx,dy)||1;if(player.lightningPhase!=='travel'&&!knocked&&e.spawnGrace<=0&&l<e.r+player.r+3&&e.attack<=0){let rushing=e.dashTime>0;e.attack=.5;if(rushing){finishEnemyDash(e,e.type==='brute'?TANK_RUSH_RECOVERY:.28,e.type==='brute'?'#c83f46':'#8f9dff');effects.push({kind:'tankImpact',x:e.x,y:e.y,angle:e.angle,r:12,maxR:58,life:.22,max:.22,color:e.type==='brute'?'#c83f46':'#8f9dff'});shake=Math.max(shake,e.type==='brute'?6:4)}let rushDamage=e.type==='brute'?.45:e.type==='lancer'?.62:.5;if(damagePlayer(e.damage*(rushing?rushDamage:1)))return true}return false
   }
 
   function update(dt){
     if(mode!=='run'||paused)return;if(postBossDecision||routeDecision||moduleDecision)return;runTime+=dt;if(!bossActive&&!bossDefeated)elapsed+=dt;let nextDepth=depthForElapsed(elapsed);if(nextDepth>depth){if(nextDepth===3&&!route){if(!extracting){showRouteDecision();return}}else{enterDepth(nextDepth);if(postBossDecision||bossActive)return}}if(!bossActive&&!bossDefeated&&!zoneEventTriggered&&zoneProgress()>=.58)triggerZoneEvent();
     let playerBeforeX=player.x,playerBeforeY=player.y;
-    let move=movement(),stats=cargoStats();player.inv=Math.max(0,player.inv-dt);player.fire-=dt;player.guardCd=Math.max(0,(player.guardCd||0)-dt);player.recoil=Math.max(0,player.recoil-dt);player.attackAnim=Math.max(0,(player.attackAnim||0)-dt);player.animClock=(player.animClock||0)+dt;player.dashCd=Math.max(0,player.dashCd-dt);let spinMotion=updateHammerSpin(dt,stats,move);
+    let move=movement(),stats=cargoStats();player.inv=Math.max(0,player.inv-dt);player.fire-=dt;player.guardCd=Math.max(0,(player.guardCd||0)-dt);player.recoil=Math.max(0,player.recoil-dt);player.attackAnim=Math.max(0,(player.attackAnim||0)-dt);player.animClock=(player.animClock||0)+dt;player.dashCd=Math.max(0,player.dashCd-dt);let lightningMotion=updateLightningDash(dt,stats,move),spinMotion=lightningMotion||updateHammerSpin(dt,stats,move);
     if(!spinMotion&&!updateDashMotion(dt,stats)){player.x+=move.x*player.speed*stats.speed*dt;player.y+=move.y*player.speed*stats.speed*dt;if(move.x||move.y){player.lastX=move.x;player.lastY=move.y;player.angle=Math.atan2(move.y,move.x);if(Math.abs(move.x)>.08)player.facing=move.x<0?-1:1}}player.x=Math.max(player.r,Math.min(WORLD.w-player.r,player.x));player.y=Math.max(player.r,Math.min(WORLD.h-player.r,player.y));
     if(stats.signature.grandWayfarer&&(move.x||move.y||player.dashTime>0))player.travelCharge=Math.min(1,(player.travelCharge||0)+dt/(stats.signature.grandWayfarer===2?1.7:2.4));
     if(spinMotion!=='leap'){let playerWantedX=player.x,playerWantedY=player.y;player.x=playerBeforeX;player.y=playerBeforeY;let playerCoverHit=moveAroundCover(player,playerWantedX-playerBeforeX,playerWantedY-playerBeforeY);if(playerCoverHit&&player.dashTime>0){player.dashTime=0;effects.push({kind:'coverImpact',x:player.x,y:player.y,r:4,maxR:28,life:.2,max:.2,color:'#ffc928'});shake=Math.max(shake,2);sound('hit')}}if(updateHazards(dt))return;
@@ -1666,7 +1783,7 @@
     const magnet=magnetRange();for(const drop of lootDrops){drop.spin+=dt*(2.5+LOOT_RARITIES[drop.item.rarity].rank*.45);drop.x+=drop.vx*dt;drop.y+=drop.vy*dt;drop.vx*=Math.pow(.02,dt);drop.vy*=Math.pow(.02,dt);let dx=player.x-drop.x,dy=player.y-drop.y,l=Math.hypot(dx,dy)||1;if(l<magnet){let pull=(1-l/magnet)*820;drop.x+=dx/l*pull*dt;drop.y+=dy/l*pull*dt}if(l<player.r+drop.r+5){drop.dead=true;collectLoot(drop)}}lootDrops=lootDrops.filter(drop=>!drop.dead);
     for(const c of caches){c.spin+=dt*1.4;let dx=player.x-c.x,dy=player.y-c.y,l=Math.hypot(dx,dy)||1;if(l<magnet*.72){let pull=(1-l/(magnet*.72))*320;c.x+=dx/l*pull*dt;c.y+=dy/l*pull*dt}if(l<player.r+c.r+7){c.opened=true;burst(c.x,c.y,c.rare?'#f2c14f':'#47c5b6',c.rare?28:16,c.rare?1.4:1);openModuleCache(c);break}}caches=caches.filter(c=>!c.opened);
     if(bossLootChest){bossLootChest.spin+=dt*(1.45+(bossLootChest.rank||0)*.12);if(bossLootChest.arrival>0)bossLootChest.arrival=Math.max(0,bossLootChest.arrival-dt);else if(bossLootChest.opening>0){bossLootChest.opening-=dt;if(bossLootChest.burstAt>0&&bossLootChest.opening<=bossLootChest.burstAt){bossLootChest.burstAt=0;burst(bossLootChest.x,bossLootChest.y,bossLootChest.color,52,2.2);flash=Math.max(flash,.05)}if(bossLootChest.opening<=0){finishBossLootChest();return}}}
-    updateParticles(dt);for(const effect of effects){if(effect.kind==='enemyLaunch'){effect.x+=(effect.vx||0)*dt;effect.y+=(effect.vy||0)*dt;effect.vx*=Math.pow(.12,dt);effect.vy*=Math.pow(.12,dt);effect.rot+=(effect.spin||0)*dt}effect.life-=dt}effects=effects.filter(effect=>effect.life>0);shake*=Math.pow(.02,dt);flash=Math.max(0,flash-dt);depthPulse=Math.max(0,depthPulse-dt);
+    updateParticles(dt);let liveEffectCount=0;for(const effect of effects){if(effect.kind==='enemyLaunch'){effect.x+=(effect.vx||0)*dt;effect.y+=(effect.vy||0)*dt;effect.vx*=Math.pow(.12,dt);effect.vy*=Math.pow(.12,dt);effect.rot+=(effect.spin||0)*dt}effect.life-=dt;if(effect.life>0)effects[liveEffectCount++]=effect;else recycleLightningEffect(effect)}effects.length=liveEffectCount;shake*=Math.pow(.02,dt);flash=Math.max(0,flash-dt);depthPulse=Math.max(0,depthPulse-dt);
     if(extracting>0){extracting-=dt;ui.extractCount.textContent=Math.max(1,Math.ceil(extracting));if(extracting<=0){bossExtraction=false;ui.extractOverlay.classList.remove('show');returnBase(true);return}}updateHud();
   }
 
@@ -2039,6 +2156,10 @@
     for(const fx of effects){
       let q=worldToScreen(fx.x,fx.y,cam),progress=1-fx.life/fx.max,alpha=Math.max(0,fx.life/fx.max),radius=fx.r+(fx.maxR-fx.r)*progress;ctx.save();ctx.globalAlpha=alpha;ctx.translate(q.x,q.y);
       if(fx.kind==='hammerSwing'){ctx.rotate(fx.angle||0);ctx.strokeStyle=fx.color;ctx.lineCap='round';ctx.lineWidth=Math.max(1,5*(1-progress));ctx.beginPath();ctx.arc(0,0,radius,-1.02,1.02);ctx.stroke();ctx.globalAlpha=alpha*.65;ctx.strokeStyle='#f4ead6';ctx.lineWidth=Math.max(1,2.4*(1-progress));ctx.beginPath();ctx.arc(0,0,radius*.72,-.88,.88);ctx.stroke()}
+      else if(fx.kind==='lightningTrail'){let target=worldToScreen(fx.tx,fx.ty,cam),dx=target.x-q.x,dy=target.y-q.y;ctx.lineCap='round';ctx.strokeStyle='#2da9e8';ctx.shadowColor='#79e7f2';ctx.shadowBlur=9;ctx.lineWidth=Math.max(1,7*(1-progress));ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(dx,dy);ctx.stroke();ctx.globalAlpha=alpha*.9;ctx.strokeStyle='#e9fdff';ctx.shadowBlur=3;ctx.lineWidth=Math.max(1,2.2*(1-progress));ctx.beginPath();ctx.moveTo(dx*.05,0);ctx.lineTo(dx,dy);ctx.stroke()}
+      else if(fx.kind==='lightningAfterimage'){ctx.globalAlpha=alpha*.2;ctx.scale((fx.facing||1)*(.97+progress*.03),.97+progress*.03);ctx.shadowColor=fx.color;ctx.shadowBlur=7;drawPappaHammer()}
+      else if(fx.kind==='lightningImpact'){ctx.strokeStyle=fx.color;ctx.shadowColor='#79e7f2';ctx.shadowBlur=9;ctx.lineWidth=Math.max(1,4*(1-progress));ctx.beginPath();ctx.arc(0,0,radius,0,Math.PI*2);ctx.stroke();ctx.rotate(progress*.7);for(let ray=0;ray<6;ray++){ctx.rotate(Math.PI/3);ctx.beginPath();ctx.moveTo(radius*.22,0);ctx.lineTo(radius,0);ctx.stroke()}}
+      else if(fx.kind==='lightningCharge'){ctx.strokeStyle=fx.color;ctx.shadowColor='#79e7f2';ctx.shadowBlur=8;ctx.lineWidth=Math.max(1,3*(1-progress));ctx.setLineDash([4,4]);ctx.lineDashOffset=-progress*14;ctx.beginPath();ctx.arc(0,0,radius,0,Math.PI*2);ctx.stroke();ctx.setLineDash([])}
       else if(fx.kind==='hitSpark'){ctx.rotate(fx.angle||0);ctx.strokeStyle=fx.color;ctx.lineCap='round';ctx.shadowColor=fx.color;ctx.shadowBlur=5;ctx.lineWidth=Math.max(1,3.5*(1-progress));for(let ray=0;ray<6;ray++){ctx.rotate(Math.PI/3);ctx.beginPath();ctx.moveTo(radius*.18,0);ctx.lineTo(radius,0);ctx.stroke()}}
       else if(fx.kind==='lunarArc'){let target=worldToScreen(fx.tx,fx.ty,cam);ctx.strokeStyle=fx.color;ctx.lineWidth=Math.max(1,4*(1-progress));ctx.shadowColor=fx.color;ctx.shadowBlur=8;ctx.beginPath();ctx.moveTo(0,0);ctx.quadraticCurveTo((target.x-q.x)*.48-10,(target.y-q.y)*.48-14,target.x-q.x,target.y-q.y);ctx.stroke()}
       else if(fx.kind==='coinText'){ctx.translate(0,-progress*28);ctx.fillStyle=fx.color;ctx.strokeStyle='#111827';ctx.lineWidth=3;ctx.font='900 11px Georgia,serif';ctx.textAlign='center';ctx.strokeText(fx.text||'+$',0,0);ctx.fillText(fx.text||'+$',0,0)}
@@ -2060,7 +2181,13 @@
   }
 
   function updateRouteHud(){let ticks=[...ui.routeTicks.children];ticks.forEach((tick,index)=>{let level=index+1;tick.className=level<depth||bossDefeated?'done':level===depth?(bossActive?'boss':'current'):''});let label=route?ROUTES[route].short:activeMap().short;ui.routeLabel.textContent=expeditionCycle?label+'  \u00B7  ASCENT '+(expeditionCycle+1):label;ui.depthRoute.classList.toggle('furnace',route==='furnace');ui.depthRoute.classList.toggle('dynamo',route==='dynamo');ui.routeProgress.style.width=(bossActive||bossDefeated?100:zoneProgress()*100)+'%'}
-  function updateHud(){let hp=Math.max(0,player?player.hp:0),max=player?player.maxHp:maxHp(),danger=depth+riskTier*2,mult=lootMultiplier(),best=bestLootEntry(),bestItem=gearDefinition(best),legendary=lootManifest().some(entry=>gearDefinition(entry).rarity==='legendary');ui.healthText.textContent=Math.ceil(hp)+' / '+max+(player&&player.shields?'  \u25C6'+player.shields:'');ui.healthFill.style.width=(hp/max*100)+'%';ui.runScrap.textContent=runScrap;ui.lootBest.textContent=bestItem?bestItem.name:'NO BOSS GEAR';ui.lootBest.style.color=bestItem?LOOT_RARITIES[bestItem.rarity].color:'';ui.lootMetric.classList.toggle('legendary',legendary);ui.expedition.classList.toggle('legendaryCargo',legendary);ui.extract.classList.toggle('hotLoot',legendary);ui.extract.disabled=!!bossLootChest;ui.extract.classList.toggle('cacheLocked',!!bossLootChest);ui.depth.textContent=expeditionFloor();let risk=bossActive?'BOSS':danger<3?'LOW':danger<7?'RISING':danger<11?'HIGH':'EXTREME';ui.risk.textContent=risk+' x'+mult.toFixed(1);ui.risk.style.color=bossActive?currentBoss().accent:danger<3?'#7ccf63':danger<7?'#f2c14f':'#ef5350';if(player){let stats=cargoStats(),dashMax=stats.dashCd,dashReady=Math.max(0,1-player.dashCd/dashMax),pack=nearbyEnemyCount(player.x,player.y,HAMMERSTORM.acquireRadius,true),activeSpin=player.spinLeap>0||player.spinTime>0,spinCount=activeSpin?(player.spinKills||player.spinPack):pack;ui.dash.style.setProperty('--ready',dashReady*360+'deg');ui.dash.classList.toggle('cooling',player.dashCd>0);ui.spin.style.setProperty('--ready','360deg');ui.spin.classList.remove('cooling');ui.spin.classList.toggle('blackHole',usesBlackHoleStorm(stats));ui.spin.classList.toggle('active',activeSpin);ui.spin.classList.toggle('primed',!activeSpin&&pack>=8);ui.spin.classList.toggle('overloaded',!activeSpin&&pack>=18);ui.spin.classList.toggle('cataclysm',!activeSpin&&pack>=30);ui.spinPackCount.textContent=spinCount>99?'99+':spinCount}syncXpHud();updateRouteHud()}
+  function syncSpinControlMode(lightning){
+    if(spinControlLightning===lightning)return;spinControlLightning=lightning;let icon=ui.spin.querySelector('b'),label=ui.spin.querySelector('span');
+    ui.spin.classList.toggle('lightning',lightning);if(icon)icon.textContent=lightning?'\u26A1':'\u2738';if(label)label.textContent=lightning?'TAP':'HOLD';
+    let title=lightning?'Lightning Dash':'Hold Hammerstorm',help=lightning?'Tap to flash-strike a nearby enemy. Aim with movement input and tap rapidly to chain between fresh targets.':'Hold to dive and keep spinning. Dash between packs without releasing. More nearby enemies increase power and reach.';
+    ui.spin.setAttribute('aria-label',title);ui.spin.title=title+(lightning?' (Q / F)':' (Q)');ui.spin.dataset.helpTitle=title;ui.spin.dataset.help=help
+  }
+  function updateHud(){let hp=Math.max(0,player?player.hp:0),max=player?player.maxHp:maxHp(),danger=depth+riskTier*2,mult=lootMultiplier(),best=bestLootEntry(),bestItem=gearDefinition(best),legendary=lootManifest().some(entry=>gearDefinition(entry).rarity==='legendary');ui.healthText.textContent=Math.ceil(hp)+' / '+max+(player&&player.shields?'  \u25C6'+player.shields:'');ui.healthFill.style.width=(hp/max*100)+'%';ui.runScrap.textContent=runScrap;ui.lootBest.textContent=bestItem?bestItem.name:'NO BOSS GEAR';ui.lootBest.style.color=bestItem?LOOT_RARITIES[bestItem.rarity].color:'';ui.lootMetric.classList.toggle('legendary',legendary);ui.expedition.classList.toggle('legendaryCargo',legendary);ui.extract.classList.toggle('hotLoot',legendary);ui.extract.disabled=!!bossLootChest;ui.extract.classList.toggle('cacheLocked',!!bossLootChest);ui.depth.textContent=expeditionFloor();let risk=bossActive?'BOSS':danger<3?'LOW':danger<7?'RISING':danger<11?'HIGH':'EXTREME';ui.risk.textContent=risk+' x'+mult.toFixed(1);ui.risk.style.color=bossActive?currentBoss().accent:danger<3?'#7ccf63':danger<7?'#f2c14f':'#ef5350';if(player){let stats=cargoStats(),lightning=usesLightningDash(stats),dashMax=stats.dashCd,dashReady=Math.max(0,1-player.dashCd/dashMax),pack=nearbyEnemyCount(player.x,player.y,HAMMERSTORM.acquireRadius,true),activeSpin=lightning?player.lightningPhase!=='idle':player.spinLeap>0||player.spinTime>0,spinCount=lightning?(player.lightningQueue||pack):activeSpin?(player.spinKills||player.spinPack):pack;syncSpinControlMode(lightning);ui.dash.style.setProperty('--ready',dashReady*360+'deg');ui.dash.classList.toggle('cooling',player.dashCd>0);ui.spin.style.setProperty('--ready',lightning?Math.max(0,1-player.lightningRate*LIGHTNING_DASH.maxDashesPerSecond)*360+'deg':'360deg');ui.spin.classList.remove('cooling');ui.spin.classList.toggle('blackHole',!lightning&&usesBlackHoleStorm(stats));ui.spin.classList.toggle('active',activeSpin);ui.spin.classList.toggle('primed',!lightning&&!activeSpin&&pack>=8);ui.spin.classList.toggle('overloaded',!lightning&&!activeSpin&&pack>=18);ui.spin.classList.toggle('cataclysm',!lightning&&!activeSpin&&pack>=30);ui.spinPackCount.textContent=spinCount>99?'99+':spinCount}syncXpHud();updateRouteHud()}
   function loop(now){let dt=Math.min(.033,(now-last)/1000||0);last=now;if(hitStop>0)hitStop=Math.max(0,hitStop-dt);else update(dt);draw();drawMiniMap();requestAnimationFrame(loop)}
 
   function syncSettings(){for(const pair of [[ui.soundToggle,'sound'],[ui.shakeToggle,'shake'],[ui.particlesToggle,'particles']]){let on=save.settings[pair[1]];pair[0].classList.toggle('off',!on);pair[0].setAttribute('aria-checked',String(on));pair[0].querySelector('b').textContent=on?'ON':'OFF'}}
@@ -2223,9 +2350,9 @@
       spawnHammerstormPack(count,options){
         options=options||{};if(mode!=='run')startRun();
         postBossDecision=false;routeDecision=false;moduleDecision=false;paused=false;bossActive=false;bossDefeated=false;bossEntity=null;bossLootChest=null;activeCache=null;obstacles=[];collisionMap=[];hazards=[];enemyBullets=[];pendingStrikes=[];enemies=[];effects=[];particles=[];caches=[];lootDrops=[];ui.moduleOverlay.classList.remove('show');depth=2;
-        player.x=WORLD.w/2;player.y=WORLD.h/2;player.hp=options.hurt?player.maxHp*.5:player.maxHp;player.inv=99;player.fire=99;player.spinCd=0;player.spinTime=0;player.spinLeap=0;player.spinAutoRemaining=0;player.spinAutoDuration=0;player.spinManual=false;player.spinHits=0;player.spinKills=0;player.spinCoins=0;player.spinHeal=0;player.spinLifeTargets=new Set();spinHeld=false;
-        if(options.fullRiskreaver||options.fullBlackHole){
-          let set=SET_BY_ID[options.fullBlackHole?'blackHole':'riskreaver'];
+        player.x=WORLD.w/2;player.y=WORLD.h/2;player.hp=options.hurt?player.maxHp*.5:player.maxHp;player.inv=99;player.fire=99;player.spinCd=0;player.spinTime=0;player.spinLeap=0;player.spinAutoRemaining=0;player.spinAutoDuration=0;player.spinManual=false;player.spinHits=0;player.spinKills=0;player.spinCoins=0;player.spinHeal=0;player.spinLifeTargets=new Set();player.lightningPhase='idle';player.lightningTime=0;player.lightningRate=0;player.lightningQueue=0;player.lightningTarget=null;player.lightningHistoryTargets.fill(null);player.lightningHistoryTimes.fill(0);player.lightningHistoryCursor=0;player.lightningBossSide=1;player.lightningImpacts=0;player.lightningPresses=0;spinHeld=false;
+        if(options.fullRiskreaver||options.fullBlackHole||options.fullLightning){
+          let set=SET_BY_ID[options.fullBlackHole?'blackHole':options.fullLightning?'stormrunner':'riskreaver'];
           for(const slot of GEAR_SLOTS){let item=SET_ITEMS.find(entry=>entry.setId===set.id&&entry.slot===slot),gear=rollGearInstance(item,Math.max(set.minLevel,save.level),1.08);save.gear.push(gear);save.equipped[slot]=gear.uid}
         }
         let amount=Math.max(1,Math.min(HORDE.maxPopulation,Math.floor(count||18))),centerX=player.x+150,centerY=player.y;
@@ -2233,8 +2360,28 @@
         for(let i=0;i<amount;i++){let angle=i/amount*Math.PI*2,radius=30+(i%4)*20,position={x:centerX+Math.cos(angle)*radius,y:centerY+Math.sin(angle)*radius},enemy=spawnEnemy(false,['rusher','rusher','lancer','brute'][i%4],{position,packId:1,packX:centerX,packY:centerY});enemy.spawnGrace=99;enemy.attack=99;enemy.fire=99;if(options.eliteEvery&&i%Math.max(1,options.eliteEvery)===0)enemy.elite=true;if(options.immuneBoss&&i===0){enemy.boss=true;enemy.bossStage=1;enemy.speed=0}if(options.fragile)enemy.hp=1;else if(options.vortexTest)enemy.hp=enemy.max=1e9;else if(options.durable)enemy.hp=enemy.max*12}
         return this.hammerstormState()
       },
+      setLightningTargets(points,options){
+        options=options||{};if(!player)return null;enemies=[];player.lightningPhase='idle';player.lightningTime=0;player.lightningRate=0;player.lightningQueue=0;player.lightningTarget=null;let list=Array.isArray(points)?points:[];
+        for(let index=0;index<list.length;index++){let point=list[index]||{},enemy=spawnEnemy(false,point.type||'rusher',{position:{x:player.x+(Number(point.x)||0),y:player.y+(Number(point.y)||0)},packId:1,packX:player.x,packY:player.y});enemy.lightningTestId=point.id||'target-'+index;enemy.spawnGrace=99;enemy.attack=99;enemy.fire=99;enemy.speed=0;enemy.hp=enemy.max=point.hp==null?(options.durable?1e7:120):Number(point.hp);if(point.boss){enemy.boss=true;enemy.bossStage=1;enemy.bossKind='warden';enemy.r=42}if(point.elite)enemy.elite=true}
+        return this.lightningDashState()
+      },
+      pressLightning(){
+        let accepted=activateSpinControl();return{accepted,state:this.lightningDashState()}
+      },
+      advanceLightning(seconds){
+        let remaining=Math.max(0,Number(seconds)||0),step=1/240;
+        while(remaining>0&&mode==='run'){let dt=Math.min(step,remaining);if(hitStop>0)hitStop=Math.max(0,hitStop-dt);else update(dt);remaining-=dt}
+        return this.lightningDashState()
+      },
+      unequipLightningPiece(slot){
+        slot=GEAR_SLOTS.includes(slot)?slot:'hat';save.equipped[slot]=null;updateHud();return this.lightningDashState()
+      },
+      lightningDashState(){
+        let stats=cargoStats(),target=player.lightningTarget,living=enemies.filter(enemy=>!enemy.dead);
+        return{enabled:usesLightningDash(stats),phase:player.lightningPhase,queue:player.lightningQueue,presses:player.lightningPresses,impacts:player.lightningImpacts,rate:Math.round(player.lightningRate*1000)/1000,target:target&&(target.lightningTestId||target.type)||null,player:{x:Math.round(player.x*10)/10,y:Math.round(player.y*10)/10,hp:Math.round(player.hp*100)/100},enemies:living.map(enemy=>({id:enemy.lightningTestId||enemy.type,hp:Math.round(enemy.hp*100)/100,x:Math.round(enemy.x),y:Math.round(enemy.y),boss:!!enemy.boss})),history:player.lightningHistoryTargets.map(enemy=>enemy&&(enemy.lightningTestId||enemy.type)).filter(Boolean),effects:effects.map(effect=>effect.kind||'ring'),button:{lightning:ui.spin.classList.contains('lightning'),label:ui.spin.querySelector('span').textContent}}
+      },
       triggerHammerstorm(){
-        spinHeld=true;return{started:tryHammerSpin(),state:this.hammerstormState()}
+        let started=activateSpinControl();return{started,state:usesLightningDash(cargoStats())?this.lightningDashState():this.hammerstormState()}
       },
       releaseHammerstorm(){
         spinHeld=false;return this.hammerstormState()
@@ -2417,9 +2564,9 @@
   ui.start.addEventListener('click',requestStart);ui.contractTracker.addEventListener('click',openGrandVault);ui.closeMaps.addEventListener('click',closeMapAtlas);ui.briefingStart.addEventListener('click',completeBriefing);ui.gearLockerButton.addEventListener('click',()=>openGearLocker());ui.closeGear.addEventListener('click',closeGearLocker);ui.gearSortButton.addEventListener('click',cycleGearSort);ui.sellFilteredGear.addEventListener('click',sellFilteredGear);ui.mobileGearEquip.addEventListener('click',()=>{let gear=selectedGear();if(gear)equipGear(gear.uid)});ui.mobileGearSort.addEventListener('click',()=>openGearMobileSheet('sort'));ui.mobileGearFilter.addEventListener('click',()=>openGearMobileSheet('filter'));ui.gearMobileSheetShade.addEventListener('click',closeGearMobileSheet);ui.closeGearMobileSheet.addEventListener('click',closeGearMobileSheet);ui.gearTurnLeft.addEventListener('click',()=>turnGear(-45));ui.gearTurnRight.addEventListener('click',()=>turnGear(45));ui.gearCharacterStage.addEventListener('pointerdown',e=>{if(e.target.closest&&e.target.closest('.gearLoadoutSlot'))return;e.preventDefault();gearTurnDrag={id:e.pointerId,x:e.clientX,angle:gearTurnAngle};ui.gearCharacterStage.setPointerCapture&&ui.gearCharacterStage.setPointerCapture(e.pointerId);ui.gearCharacterStage.classList.add('turning')});ui.gearCharacterStage.addEventListener('pointermove',e=>{if(!gearTurnDrag||e.pointerId!==gearTurnDrag.id)return;gearTurnAngle=gearTurnDrag.angle+(e.clientX-gearTurnDrag.x)*.72;updateGearTurntable()});function endGearTurn(e){if(!gearTurnDrag||e.pointerId!==gearTurnDrag.id)return;gearTurnDrag=null;ui.gearCharacterStage.classList.remove('turning')}ui.gearCharacterStage.addEventListener('pointerup',endGearTurn);ui.gearCharacterStage.addEventListener('pointercancel',endGearTurn);ui.blueprintButton.addEventListener('click',openBlueprints);ui.closeBlueprints.addEventListener('click',closeBlueprints);ui.closeResult.addEventListener('click',closeResultPanel);ui.closeContract.addEventListener('click',claimContract);
   canvas.addEventListener('pointerup',event=>{if(tryOpenBossLootAt(event)){event.preventDefault();event.stopPropagation()}},{passive:false});
   ui.extract.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();beginExtract()});ui.cancelExtract.addEventListener('click',cancelExtract);ui.bossLootEquip.addEventListener('click',()=>resolveBossLoot('equip'));ui.bossLootSalvage.addEventListener('click',()=>resolveBossLoot('salvage'));ui.bossLootExtract.addEventListener('click',()=>chooseBossOutcome('extract'));ui.bossLootPush.addEventListener('click',()=>chooseBossOutcome('deeper'));ui.routeFurnace.addEventListener('click',()=>chooseRoute('furnace'));ui.routeDynamo.addEventListener('click',()=>chooseRoute('dynamo'));ui.moduleSkip.addEventListener('click',skipModule);
-  ui.spin.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();spinHeld=true;tryHammerSpin();if(ui.spin.setPointerCapture)try{ui.spin.setPointerCapture(e.pointerId)}catch(error){}});function releaseSpin(){spinHeld=false}ui.spin.addEventListener('pointerup',releaseSpin);ui.spin.addEventListener('pointercancel',releaseSpin);ui.spin.addEventListener('lostpointercapture',releaseSpin);ui.dash.addEventListener('pointerdown',e=>{e.preventDefault();tryDash()});
+  ui.spin.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();activateSpinControl();if(ui.spin.setPointerCapture)try{ui.spin.setPointerCapture(e.pointerId)}catch(error){}});function releaseSpin(){spinHeld=false}ui.spin.addEventListener('pointerup',releaseSpin);ui.spin.addEventListener('pointercancel',releaseSpin);ui.spin.addEventListener('lostpointercapture',releaseSpin);ui.dash.addEventListener('pointerdown',e=>{e.preventDefault();tryDash()});
   ui.settingsButton.addEventListener('click',openSettings);ui.closeSettings.addEventListener('click',closeSettings);ui.resume.addEventListener('click',closeSettings);ui.soundToggle.addEventListener('click',()=>toggleSetting('sound'));ui.shakeToggle.addEventListener('click',()=>toggleSetting('shake'));ui.particlesToggle.addEventListener('click',()=>toggleSetting('particles'));ui.abandon.addEventListener('click',abandonRun);ui.devButton.addEventListener('click',toggleDevPanel);ui.devScrap.addEventListener('click',devAddScrap);ui.devRig.addEventListener('click',devUpgradeRig);ui.devBlackHole.addEventListener('click',devEquipBlackHole);ui.devHeal.addEventListener('click',devRepair);ui.devCache.addEventListener('click',devDropCache);ui.devLoot.addEventListener('click',devDropLegendary);ui.devLevel.addEventListener('click',devAddLevel);ui.devWarden.addEventListener('click',devFightWarden);ui.devTyrant.addEventListener('click',devFightTyrant);ui.devSchematic.addEventListener('click',devUnlockSchematic);ui.devReset.addEventListener('click',devHardReset);
-  window.addEventListener('keydown',e=>{keys[e.code]=true;if(e.code==='Space'&&!e.repeat)tryDash();if((e.code==='KeyQ'||e.code==='KeyF')&&!e.repeat){spinHeld=true;tryHammerSpin()}if(e.code==='KeyE'&&!e.repeat)beginExtract();if(e.code==='Escape'&&!e.repeat){if(ui.settingsOverlay.classList.contains('show'))closeSettings();else if(ui.mapOverlay.classList.contains('show'))closeMapAtlas();else if(ui.gearOverlay.classList.contains('show'))closeGearLocker();else if(ui.blueprintOverlay.classList.contains('show'))closeBlueprints();else if(ui.resultOverlay.classList.contains('show'))closeResultPanel();else if(!ui.contractOverlay.classList.contains('show'))openSettings()}if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault()});window.addEventListener('keyup',e=>{keys[e.code]=false;if(e.code==='KeyQ'||e.code==='KeyF')spinHeld=false});window.addEventListener('resize',resize);
+  window.addEventListener('keydown',e=>{keys[e.code]=true;if(e.code==='Space'&&!e.repeat)tryDash();if((e.code==='KeyQ'||e.code==='KeyF')&&!e.repeat)activateSpinControl();if(e.code==='KeyE'&&!e.repeat)beginExtract();if(e.code==='Escape'&&!e.repeat){if(ui.settingsOverlay.classList.contains('show'))closeSettings();else if(ui.mapOverlay.classList.contains('show'))closeMapAtlas();else if(ui.gearOverlay.classList.contains('show'))closeGearLocker();else if(ui.blueprintOverlay.classList.contains('show'))closeBlueprints();else if(ui.resultOverlay.classList.contains('show'))closeResultPanel();else if(!ui.contractOverlay.classList.contains('show'))openSettings()}if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault()});window.addEventListener('keyup',e=>{keys[e.code]=false;if(e.code==='KeyQ'||e.code==='KeyF')spinHeld=false});window.addEventListener('resize',resize);
   document.addEventListener('visibilitychange',()=>{if(document.hidden&&mode==='run'&&!paused)openSettings()});
   function stickMove(e){let r=ui.joystick.getBoundingClientRect(),x=e.clientX-(r.left+r.width/2),y=e.clientY-(r.top+r.height/2),m=r.width*.34,l=Math.hypot(x,y)||1,cl=Math.min(m,l);stick.x=x/l*(cl/m);stick.y=y/l*(cl/m);ui.knob.style.transform='translate('+(stick.x*m)+'px,'+(stick.y*m)+'px)'}
   ui.joystick.addEventListener('pointerdown',e=>{stick.active=true;stick.id=e.pointerId;ui.joystick.setPointerCapture(e.pointerId);stickMove(e)});ui.joystick.addEventListener('pointermove',e=>{if(stick.active&&e.pointerId===stick.id)stickMove(e)});function stickEnd(e){if(e.pointerId!==stick.id)return;stick.active=false;stick.x=stick.y=0;ui.knob.style.transform=''}ui.joystick.addEventListener('pointerup',stickEnd);ui.joystick.addEventListener('pointercancel',stickEnd);

@@ -41,7 +41,7 @@ test('Black Hole set owns a dedicated Armory and combat presentation',async({pag
   state=await page.evaluate(()=>window.__riskTest.advanceHammerstorm(.06));
   expect(state.spin.phase).toBe('dash');
   expect(state.player.x).toBeGreaterThan(beforeX+20);
-  expect(state.spin.vortex).toEqual({x:state.player.x,y:state.player.y});
+  expect(state.spin.vortex).toMatchObject({x:state.player.x,y:state.player.y});
   await page.locator('#world').screenshot({
     path:path.join('test-results','black-hole-v2','dash-desktop.png')
   });

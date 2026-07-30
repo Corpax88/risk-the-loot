@@ -295,6 +295,12 @@ html,body{background:#080c14;font-family:Trebuchet MS,Segoe UI,Arial,sans-serif}
 @keyframes hammerButtonSpin{to{transform:translateY(-7px) rotate(1turn)}}
 .spinButton.noTarget{animation:spinNoTarget .2s ease-out}
 @keyframes spinNoTarget{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.spinButton.lightning{--pack-color:#79e7f2;border-color:#bff8ff;background:conic-gradient(#79e7f2 var(--ready),#162a3a 0);box-shadow:0 5px 0 #070b12,0 0 0 2px #79e7f244,0 0 20px #2da9e866,inset 0 0 18px #79e7f226}
+.spinButton.lightning:before{background:radial-gradient(circle at 46% 38%,#e9fdff 0 4%,#174967 11%,#10283c 46%,#080f1b 72%);border-color:#bff8ff99}
+.spinButton.lightning b{color:#e9fdff;text-shadow:0 0 5px #fff,0 0 13px #2da9e8;animation:none}
+.spinButton.lightning em{background:#12354c;color:#e9fdff;border-color:#9beeff;box-shadow:0 2px 0 #07111a,0 0 11px #2da9e888}
+.spinButton.lightning.active{--pack-color:#e9fdff;animation:lightningControlPulse .18s ease-out;box-shadow:0 4px 0 #070b12,0 0 0 3px #79e7f255,0 0 25px #2da9e899,inset 0 0 18px #bff8ff33}
+@keyframes lightningControlPulse{50%{filter:brightness(1.2);transform:scale(.96)}}
 @media(max-width:720px){.spinButton{right:max(102px,calc(84px + env(safe-area-inset-right)));bottom:max(23px,env(safe-area-inset-bottom));width:86px;height:86px}.spinButton b{font-size:35px}.spinButton span{transform:translateY(22px)}.spinButton em{right:-28px;top:-28px}}
 @media(max-height:620px) and (orientation:landscape){.spinButton{right:94px;bottom:max(14px,env(safe-area-inset-bottom));width:74px;height:74px}.spinButton b{font-size:30px;transform:translateY(-6px)}.spinButton span{font-size:7px;transform:translateY(18px)}.spinButton em{right:-25px;top:-24px;width:19px;height:19px;min-width:19px}}
 .riskChoice,.routeChoice{border-radius:5px}.extractChoice{background:#21382f;border-color:#79a67e}.pushChoice{background:#4a1c26;border-color:#c83f46}

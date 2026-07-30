@@ -35,12 +35,12 @@ SETS = [
     ("hammerChoir", "HAMMER CHOIR", "epic", "#40345f", "#d7c1ff"),
     ("lanternGuard", "LANTERN GUARD", "epic", "#51432d", "#ffe09a"),
     ("grandWayfarer", "GRAND WAYFARER", "epic", "#273f64", "#e4d9c3"),
-    ("crimsonOath", "CRIMSON OATH", "mythic", "#631e2c", "#ec9295"),
-    ("moonbreaker", "MOONBREAKER", "mythic", "#24274f", "#aebcf0"),
-    ("kingsRoad", "KING'S ROAD", "mythic", "#152d55", "#d6aa58"),
-    ("phantomCourt", "PHANTOM COURT", "mythic", "#36314d", "#b7c7d9"),
-    ("starforge", "STARFORGE", "mythic", "#30243c", "#f0b83e"),
-    ("grandVoyager", "GRAND VOYAGER", "mythic", "#234253", "#d6c58f"),
+    ("crimsonOath", "CRIMSON OATH", "legendary", "#631e2c", "#ec9295"),
+    ("moonbreaker", "MOONBREAKER", "legendary", "#24274f", "#aebcf0"),
+    ("kingsRoad", "KING'S ROAD", "legendary", "#152d55", "#d6aa58"),
+    ("phantomCourt", "PHANTOM COURT", "legendary", "#36314d", "#b7c7d9"),
+    ("starforge", "STARFORGE", "legendary", "#30243c", "#f0b83e"),
+    ("grandVoyager", "GRAND VOYAGER", "legendary", "#234253", "#d6c58f"),
 ]
 
 

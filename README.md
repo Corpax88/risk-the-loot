@@ -1,8 +1,8 @@
-# RISK THE LOOT! v0.53.0
+# RISK THE LOOT! v0.54.0
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
 
-I Am the Lightning v0.53.0 turns the complete Stormcaller set into a living storm. The opening ten seconds are overcharged, nearby packs are struck by branching chain lightning, rapid taps build toward an achievable ten strikes per second, and storm armor plus jump invulnerability reward diving directly into crowds. Brighter multi-bolt trails, explosive enemy launches, sharper impact sparks, controlled shake and layered escalating audio make every chain feel heavy without increasing mobile particle limits.
+Legendary Storm v0.54.0 promotes Stormcaller and every former top-tier set into one clear Legendary class. Four player-facing rarities now drive loot labels, filters, tooltips, inventory effects, and reward presentation, while the original item stats, unlock levels, internal drop bands, and exact rarity odds remain unchanged.
 
 Living Legend v0.52.1 removes the obsolete workshop background renderer that was painting the original Pappa underneath Gear 2.0. The menu and Armory now each have one authoritative paper-doll sprite, with the old empty equipment-overlay nodes and render hook removed.
 
@@ -84,10 +84,10 @@ Pappa Hammer earns boss XP and levels up whenever a champion falls. Every level 
 
 - Rare set gear can drop immediately.
 - Epic set gear begins at Pappa level 4.
-- Mythic set gear begins at Pappa level 8.
-- Legendary set gear begins at Pappa level 16.
+- Legendary set gear begins with Stormcaller at Pappa level 4.
+- Higher Legendary drop bands begin at Pappa levels 8 and 16.
 
-The boss catalog contains exactly 100 set items: 20 named sets with a Hat, Scarf, Coat, Hammer, and Boots in each set. Five sets are Rare, five are Epic, six are Mythic, and four are Legendary. Ordinary enemies only drop coins; equipment is reserved for boss victories.
+The boss catalog contains exactly 105 set items: 21 named sets with a Hat, Scarf, Coat, Hammer, and Boots in each set. Five sets are Rare, four are Epic, and twelve are Legendary. Ordinary enemies only drop coins; equipment is reserved for boss victories.
 
 Every recovered piece is a unique item instance with its own item level, quality roll, randomized stats, and sale value. Finding the same named piece again can therefore still produce a meaningful upgrade. Gear can change health, hammer damage, pickup reach, movement speed, strike rate, armor, loot value, dash recharge, and critical chance.
 
@@ -101,7 +101,7 @@ The Adventure Bag now separates loot management from the character loadout. The 
 
 Pappa Hammer uses dedicated eight-frame idle, run, and attack animation sheets. Every equipped slot recolors and details the correct moving part through 15 frame-matched paper-doll masks, so hats, scarves, coats, hammers, and boots remain attached throughout all three animations. The complete five-piece Hammer Choir set now upgrades into three dedicated production spritesheets with a genuinely new violet longcoat, shoulder armor, hat, scarf, reinforced boots, musical insignia, and square great hammer. The same animated full-set identity appears in the living Gear Locker preview and during expeditions.
 
-The composed hero keeps the original 512px frame resolution for crisp Retina rendering. Equipment colors are applied as material accents rather than a heavy full-body tint, while Epic, Mythic, and Legendary loadouts add increasingly distinct patterns, trim, inventory presentation, and restrained in-game auras. The runtime masks remain memory-optimized for iPhone Safari.
+The composed hero keeps the original 512px frame resolution for crisp Retina rendering. Equipment colors are applied as material accents rather than a heavy full-body tint, while Epic and Legendary loadouts add increasingly distinct patterns, trim, inventory presentation, and restrained in-game auras. The runtime masks remain memory-optimized for iPhone Safari.
 
 Boss victories now use a staged loot ritual instead of immediately ending the expedition. Each recovered piece is shown with its real art, rarity, stats, sale value, and current unsecured haul before the player makes the central decision: bank it or risk it. Legendary equipment creates a distinct reveal and HUD state so finding one changes the emotional temperature of the run immediately.
 
@@ -153,7 +153,7 @@ Open `http://127.0.0.1:4175` on the computer, or use the computer's local IP add
 npm test
 ```
 
-The automated release suite covers DOM/CSS integrity, JavaScript syntax, all 20 sets and 100 set pieces, five gear slots, unique-item migration, RNG item rolls, fixed set bonuses, boss-only equipment, Pappa levels, the rotating Gear Locker, relic fusion, safe extraction, the boss-loot ritual, a two-champion Go Deeper chain, extraction ambushes, both full boss paths, permanent trophies, career progression, settings, and developer tools.
+The automated release suite covers DOM/CSS integrity, JavaScript syntax, all 21 sets and 105 set pieces, five gear slots, unique-item migration, RNG item rolls, fixed set bonuses, boss-only equipment, Pappa levels, the rotating Gear Locker, relic fusion, safe extraction, the boss-loot ritual, a two-champion Go Deeper chain, extraction ambushes, both full boss paths, permanent trophies, career progression, settings, and developer tools.
 
 Run the Chromium browser test with:
 

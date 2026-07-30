@@ -19,22 +19,18 @@ test('all expedition maps render, remain playable, and respect environment colli
     const state=await page.evaluate(id=>window.__riskTest.openMap(id),map.id);
     expect(state.map).toBe(map.id);
     expect(state.decor).toBeGreaterThan(10);
-    if(map.id==='guild'){
-      expect(state.procedural).toBe(true);
-      expect(state.seed).toBeTruthy();
-      expect(state.validation.valid).toBe(true);
-      expect(state.obstacles.length).toBeGreaterThanOrEqual(28);
-      expect(state.collisionCount).toBe(state.obstacles.length);
-      expect(state.player.x).toBeLessThan(220);
-      expect(state.pathRows).toHaveLength(5);
-      expect(state.moduleKinds).toContain('entrance');
-      expect(state.moduleKinds).toContain('boss');
-      expect(Math.hypot(state.bossAnchor.x-state.player.x,state.bossAnchor.y-state.player.y)).toBeGreaterThan(1500);
-    }else{
-      expect(state.obstacles).toHaveLength(14);
-      expect(state.collisionCount).toBeGreaterThanOrEqual(14);
-      expect(state.player).toEqual({x:1200,y:800});
-    }
+    expect(state.procedural).toBe(true);
+    expect(state.seed).toBeTruthy();
+    expect(state.validation.valid).toBe(true);
+    expect(state.obstacles.length).toBeGreaterThanOrEqual(28);
+    expect(state.collisionCount).toBe(state.obstacles.length);
+    expect(state.player.x).toBeLessThan(220);
+    expect(state.pathRows).toHaveLength(5);
+    expect(state.routePoints).toHaveLength(5);
+    expect(state.routePoints.every((point,index)=>index===0||point.x>state.routePoints[index-1].x)).toBe(true);
+    expect(state.moduleKinds).toContain('entrance');
+    expect(state.moduleKinds).toContain('boss');
+    expect(Math.hypot(state.bossAnchor.x-state.player.x,state.bossAnchor.y-state.player.y)).toBeGreaterThan(1500);
 
     await page.waitForTimeout(120);
     const pixels=await page.locator('#world').evaluate(canvas=>{
@@ -53,9 +49,8 @@ test('all expedition maps render, remain playable, and respect environment colli
 
     if(map.customAssets){
       expect(state.obstacles.every(obstacle=>obstacle.assetId)).toBe(true);
-      expect(state.collisionCount).toBeGreaterThan(14);
-      const moved=await page.evaluate(point=>window.__riskTest.movePlayer(point.x,point.y),map.solidPoint);
-      expect(moved.player).not.toEqual(map.solidPoint);
+      const obstacle=state.obstacles[0],moved=await page.evaluate(point=>window.__riskTest.movePlayer(point.x,point.y),{x:obstacle.x,y:obstacle.y});
+      expect(moved.player).not.toEqual({x:Math.round(obstacle.x),y:Math.round(obstacle.y)});
     }else{
       expect(state.obstacles.every(obstacle=>!obstacle.assetId)).toBe(true);
     }

@@ -84,6 +84,54 @@ test('Dash carries an active Hammerstorm and its vortex without duplicate activa
   expect(pageErrors).toEqual([]);
 });
 
+test('manual movement owns Hammerstorm until input is released',async({page})=>{
+  const pageErrors=[];
+  page.on('pageerror',error=>pageErrors.push(error.message));
+  await page.setViewportSize({width:390,height:844});
+  await openPlaytest(page);
+
+  let state=await page.evaluate(()=>window.__riskTest.spawnHammerstormPack(24,{durable:true}));
+  const startX=state.player.x;
+  await page.keyboard.down('ArrowLeft');
+  expect((await page.evaluate(()=>window.__riskTest.triggerHammerstorm())).started).toBe(true);
+
+  state=await page.evaluate(()=>window.__riskTest.advanceHammerstorm(.12));
+  expect(state.player.x).toBeLessThan(startX-3);
+  expect(state.spin.manual).toBe(true);
+  expect(state.spin.time).toBeGreaterThan(0);
+  expect(state.spin.autoRemaining).toBeGreaterThan(0);
+  const manualX=state.player.x;
+  const hitsWhileSteering=state.spin.hits;
+
+  await page.keyboard.up('ArrowLeft');
+  state=await page.evaluate(()=>window.__riskTest.advanceHammerstorm(.12));
+  expect(state.player.x).toBeGreaterThan(manualX);
+  expect(state.spin.manual).toBe(false);
+  expect(state.spin.autoRemaining).toBeLessThan(.18);
+  expect(state.spin.hits).toBeGreaterThanOrEqual(hitsWhileSteering);
+
+  state=await page.evaluate(()=>window.__riskTest.advanceHammerstorm(.2));
+  expect(state.spin.autoRemaining).toBe(0);
+  expect(Number.isFinite(state.player.x)).toBe(true);
+  expect(Number.isFinite(state.player.y)).toBe(true);
+  await page.evaluate(()=>window.__riskTest.releaseHammerstorm());
+  expect(pageErrors).toEqual([]);
+});
+
+test('Hammerstorm dead-zone ignores tiny joystick drift',async({page})=>{
+  await page.setViewportSize({width:390,height:844});
+  await openPlaytest(page);
+  let state=await page.evaluate(()=>window.__riskTest.spawnHammerstormPack(20,{durable:true}));
+  const startX=state.player.x;
+  await page.evaluate(()=>window.__riskTest.setMovementInput(-.08,0));
+  expect((await page.evaluate(()=>window.__riskTest.triggerHammerstorm())).started).toBe(true);
+  state=await page.evaluate(()=>window.__riskTest.advanceHammerstorm(.09));
+  expect(state.spin.manual).toBe(false);
+  expect(state.spin.leap).toBeGreaterThan(0);
+  expect(state.player.x).toBeGreaterThan(startX);
+  await page.evaluate(()=>{window.__riskTest.clearMovementInput();window.__riskTest.releaseHammerstorm()});
+});
+
 test('touch Hammerstorm help appears once for five seconds and stays seen after reload',async({page})=>{
   const pageErrors=[];
   page.on('pageerror',error=>pageErrors.push(error.message));

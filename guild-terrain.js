@@ -9,6 +9,33 @@
   const GRID={cols:5,rows:3,marginX:80,marginY:80};
   GRID.cellW=(WORLD.w-GRID.marginX*2)/GRID.cols;
   GRID.cellH=(WORLD.h-GRID.marginY*2)/GRID.rows;
+  const BIOMES={
+    guild:{
+      id:'guild',pathMode:'frontier',obstacleScale:1,decorPath:4,decorEdge:3,
+      pathKinds:['open','crossroads','courtyard','passage','fork'],
+      edgeKinds:['edge','blocked','open','courtyard']
+    },
+    foundry:{
+      id:'foundry',pathMode:'corridor',obstacleScale:1.02,decorPath:3,decorEdge:3,
+      pathKinds:['passage','fork','crossroads','courtyard'],
+      edgeKinds:['blocked','edge','passage','courtyard']
+    },
+    moonfall:{
+      id:'moonfall',pathMode:'gardens',obstacleScale:.86,decorPath:5,decorEdge:4,
+      pathKinds:['open','courtyard','crossroads','fork'],
+      edgeKinds:['open','courtyard','edge','blocked']
+    },
+    skyglass:{
+      id:'skyglass',pathMode:'bridges',obstacleScale:.8,decorPath:4,decorEdge:4,
+      pathKinds:['passage','open','fork','crossroads'],
+      edgeKinds:['edge','open','blocked','passage']
+    },
+    summit:{
+      id:'summit',pathMode:'ascent',obstacleScale:.92,decorPath:3,decorEdge:3,
+      pathKinds:['courtyard','passage','crossroads','fork'],
+      edgeKinds:['blocked','edge','courtyard','passage']
+    }
+  };
 
   const MODULES={
     open:{
@@ -124,10 +151,13 @@
     return null;
   }
 
-  function buildPath(rng){
-    const rows=[Math.floor(rng()*GRID.rows)];
+  function buildPath(rng,profile){
+    let start=profile.pathMode==='ascent'?GRID.rows-1:Math.floor(rng()*GRID.rows),rows=[start];
     for(let col=1;col<GRID.cols;col++){
-      const previous=rows[col-1],moves=[0,0,-1,1].filter(move=>previous+move>=0&&previous+move<GRID.rows);
+      const previous=rows[col-1];
+      let moves=profile.pathMode==='corridor'?[0,0,0,-1,1]:profile.pathMode==='gardens'?[0,-1,1,-1,1]:profile.pathMode==='bridges'?[0,0,-1,1,-1,1]:profile.pathMode==='ascent'?[0,-1,-1,1]:[0,0,-1,1];
+      moves=moves.filter(move=>previous+move>=0&&previous+move<GRID.rows);
+      if(profile.pathMode==='ascent'&&col>=2&&previous>0)moves.push(-1,-1);
       rows.push(previous+choose(rng,moves));
     }
     if(rows.every(row=>row===rows[0])){
@@ -138,16 +168,16 @@
     return rows;
   }
 
-  function addModuleObstacles(layout,module){
+  function addModuleObstacles(layout,module,profile){
     const definition=MODULES[module.kind]||MODULES.open;
     for(let index=0;index<definition.obstacles.length;index++){
-      const entry=definition.obstacles[index],wide=entry[3]<entry[2],w=Math.max(42,entry[2]*GRID.cellW),h=Math.max(36,entry[3]*GRID.cellH);
+      const entry=definition.obstacles[index],wide=entry[3]<entry[2],bossScale=module.kind==='boss'?.82:1,scale=profile.obstacleScale*bossScale,w=Math.max(38,entry[2]*GRID.cellW*scale),h=Math.max(34,entry[3]*GRID.cellH*scale);
       layout.obstacles.push({
         x:module.x+entry[0]*GRID.cellW,
         y:module.y+entry[1]*GRID.cellH,
         w,h,
         style:(module.col*3+module.row+index)%4,
-        mapId:'guild',
+        mapId:profile.id,
         moduleId:module.id,
         moduleKind:module.kind,
         wide
@@ -155,8 +185,8 @@
     }
   }
 
-  function addModuleDecor(layout,module,rng){
-    const count=module.path?4:3;
+  function addModuleDecor(layout,module,rng,profile){
+    const count=module.path?profile.decorPath:profile.decorEdge;
     const spots=[
       [-.39,-.35], [.39,-.35], [-.39,.35], [.39,.35],
       [0,-.39], [0,.39]
@@ -169,7 +199,7 @@
         type:(module.col+module.row+index)%4,
         variant:(module.col*2+index)%3,
         rot:rng()*Math.PI*2,
-        mapId:'guild',
+        mapId:profile.id,
         moduleId:module.id,
         moduleKind:module.kind
       });
@@ -245,10 +275,11 @@
     return{valid:errors.length===0,errors,connectivity:connectivityResult};
   }
 
-  function generate(seed){
+  function generate(seed,mapId){
     seed=normalizeSeed(seed);
-    const rng=rngFor(seed),pathRows=buildPath(rng),layout={
+    const profile=BIOMES[mapId]||BIOMES.guild,rng=rngFor(seed),pathRows=buildPath(rng,profile),layout={
       seed,
+      mapId:profile.id,
       world:{w:WORLD.w,h:WORLD.h},
       grid:Object.assign({},GRID),
       pathRows,
@@ -261,14 +292,13 @@
       bossAnchor:null,
       validation:null
     };
-    const pathKinds=['open','crossroads','courtyard','passage','fork'];
     for(let col=0;col<GRID.cols;col++)for(let row=0;row<GRID.rows;row++){
-      const center=moduleCenter(col,row),path=row===pathRows[col],kind=col===0&&path?'entrance':col===GRID.cols-1&&path?'boss':path?choose(rng,pathKinds):choose(rng,['edge','blocked','open','courtyard']);
+      const center=moduleCenter(col,row),path=row===pathRows[col],kind=col===0&&path?'entrance':col===GRID.cols-1&&path?'boss':path?choose(rng,profile.pathKinds):choose(rng,profile.edgeKinds);
       const module={id:'m'+col+'-'+row,col,row,x:center.x,y:center.y,path,kind};
       layout.modules.push(module);
       if(path)layout.routePoints.push({x:center.x,y:center.y,col,row,moduleId:module.id});
-      addModuleObstacles(layout,module);
-      addModuleDecor(layout,module,rng);
+      addModuleObstacles(layout,module,profile);
+      addModuleDecor(layout,module,rng,profile);
     }
     const first=layout.routePoints[0],last=layout.routePoints[layout.routePoints.length-1];
     layout.entrance={x:132,y:first.y,col:0,row:first.row,moduleId:first.moduleId};
@@ -282,6 +312,7 @@
   return{
     WORLD,
     GRID,
+    BIOMES,
     MODULES,
     normalizeSeed,
     generate,

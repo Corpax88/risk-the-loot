@@ -107,7 +107,7 @@
     moduleOverlay:$('moduleOverlay'),moduleEyebrow:$('moduleEyebrow'),moduleTitle:$('moduleTitle'),moduleChoices:$('moduleChoices'),moduleSkip:$('moduleSkip'),
     joystick:$('joystick'),knob:$('joystickKnob'),spin:$('spinButton'),spinPackCount:$('spinPackCount'),dash:$('dashButton'),
     settingsOverlay:$('settingsOverlay'),settingsPanel:document.querySelector('.settingsPanel'),closeSettings:$('closeSettings'),soundToggle:$('soundToggle'),shakeToggle:$('shakeToggle'),particlesToggle:$('particlesToggle'),resume:$('resumeButton'),abandon:$('abandonButton'),
-    devButton:$('devButton'),devPanel:$('devPanel'),devScrap:$('devScrap'),devRig:$('devRig'),devBlackHole:$('devBlackHole'),devHeal:$('devHeal'),devCache:$('devCache'),devLoot:$('devLoot'),devLevel:$('devLevel'),devWarden:$('devWarden'),devTyrant:$('devTyrant'),devSchematic:$('devSchematic'),devReset:$('devReset'),
+    devButton:$('devButton'),devPanel:$('devPanel'),devScrap:$('devScrap'),devGear:$('devGear'),devGearPanel:$('devGearPanel'),devGearSelect:$('devGearSelect'),devGearSpawn:$('devGearSpawn'),devGearEquip:$('devGearEquip'),devHeal:$('devHeal'),devCache:$('devCache'),devLevel:$('devLevel'),devWarden:$('devWarden'),devTyrant:$('devTyrant'),devSchematic:$('devSchematic'),devReset:$('devReset'),
     helpTooltip:$('helpTooltip'),helpTooltipTitle:$('helpTooltipTitle'),helpTooltipText:$('helpTooltipText')
   };
   const gearHoverPreview=ui.gearHoverPreview;
@@ -761,11 +761,11 @@
     particlesToggle:['Particles','Turn decorative combat particles on or off.'],
     devButton:['Playtest Tools','Open shortcuts for testing progression, gear drops and boss fights.'],
     devScrap:['Add Coins','Adds test coins to the current expedition or workshop bank.'],
-    devRig:['Equip Gear 2.0 Set','Creates and equips the complete Hammer Choir set so its Resonant Slam can be tested immediately.'],
-    devBlackHole:['Equip Black Hole Set','Creates and equips the complete Legendary Black Hole set so its Gravity Well and cosmic visuals can be tested immediately.'],
+    devGear:['Dev Gear','Choose any registered item or complete set, then add it to the bag or equip it immediately. New gear appears here automatically.'],
+    devGearSpawn:['Add Gear to Bag','Create the selected item or complete set as secured test gear without equipping it.'],
+    devGearEquip:['Equip Dev Gear','Create and immediately equip the selected item or every piece of the selected set.'],
     devHeal:['Full Heal','Restore Pappa Hammer to full health during an expedition.'],
     devCache:['Rare Cache','Drop a relic cache beside Pappa Hammer during an expedition.'],
-    devLoot:['Legendary Loot','Drop test Legendary boss gear beside Pappa Hammer.'],
     devLevel:['Pappa Level','Immediately raise Pappa Hammer by one level to test maps, bosses and stronger gear drops.'],
     devWarden:['Fight Vault Warden','Jump directly to the Moonlit Path boss encounter.'],
     devTyrant:['Fight Champion','Jump directly to the Crimson Path boss encounter.'],
@@ -2219,20 +2219,33 @@
   function loop(now){let dt=Math.min(.033,(now-last)/1000||0);last=now;if(hitStop>0)hitStop=Math.max(0,hitStop-dt);else update(dt);draw();drawMiniMap();requestAnimationFrame(loop)}
 
   function syncSettings(){for(const pair of [[ui.soundToggle,'sound'],[ui.shakeToggle,'shake'],[ui.particlesToggle,'particles']]){let on=save.settings[pair[1]];pair[0].classList.toggle('off',!on);pair[0].setAttribute('aria-checked',String(on));pair[0].querySelector('b').textContent=on?'ON':'OFF'}}
-  function syncDevTools(){let inRun=mode==='run',next=SCHEMATIC_IDS.find(id=>schematicLevel(id)<BOSS_SCHEMATICS[id].max),lagoonBoss=activeMap().boss==='leviathan';ui.devScrap.textContent=inRun?'+500 RUN COINS':'+500 BANK COINS';ui.devHeal.disabled=!inRun;ui.devCache.disabled=!inRun;ui.devLoot.disabled=!inRun;ui.devWarden.textContent=lagoonBoss?'FIGHT SKYGLASS LEVIATHAN':'FIGHT VAULT WARDEN';ui.devTyrant.hidden=lagoonBoss;ui.devSchematic.disabled=!next;ui.devSchematic.textContent=next?'NEXT TROPHY':'TROPHIES MAX'}
-  function openSettings(){cancelSkillGesture('game paused');settingsWasRun=mode==='run';if(settingsWasRun)paused=true;abandonArmed=false;devResetArmed=false;ui.abandon.textContent='ABANDON EXPEDITION';ui.abandon.classList.remove('confirm');ui.devReset.textContent='HARD RESET SAVE';ui.devReset.classList.remove('confirm');ui.devPanel.classList.remove('show');ui.devButton.setAttribute('aria-expanded','false');ui.settingsPanel.classList.toggle('baseMode',!settingsWasRun);syncSettings();syncDevTools();ui.settingsOverlay.classList.add('show')}
+  function syncDevTools(){let inRun=mode==='run',next=SCHEMATIC_IDS.find(id=>schematicLevel(id)<BOSS_SCHEMATICS[id].max),lagoonBoss=activeMap().boss==='leviathan';ui.devScrap.textContent=inRun?'+500 RUN COINS':'+500 BANK COINS';ui.devHeal.disabled=!inRun;ui.devCache.disabled=!inRun;ui.devWarden.textContent=lagoonBoss?'FIGHT SKYGLASS LEVIATHAN':'FIGHT VAULT WARDEN';ui.devTyrant.hidden=lagoonBoss;ui.devSchematic.disabled=!next;ui.devSchematic.textContent=next?'NEXT TROPHY':'TROPHIES MAX';renderDevGearOptions()}
+  function openSettings(){cancelSkillGesture('game paused');settingsWasRun=mode==='run';if(settingsWasRun)paused=true;abandonArmed=false;devResetArmed=false;ui.abandon.textContent='ABANDON EXPEDITION';ui.abandon.classList.remove('confirm');ui.devReset.textContent='HARD RESET SAVE';ui.devReset.classList.remove('confirm');ui.devPanel.classList.remove('show');ui.devButton.setAttribute('aria-expanded','false');closeDevGear();ui.settingsPanel.classList.toggle('baseMode',!settingsWasRun);syncSettings();syncDevTools();ui.settingsOverlay.classList.add('show')}
   function closeSettings(){ui.settingsOverlay.classList.remove('show');paused=false;abandonArmed=false;devResetArmed=false;last=performance.now()}
   function toggleSetting(key){save.settings[key]=!save.settings[key];persist();syncSettings();if(key==='sound'){if(save.settings.sound){ensureAudio();sound('pickup')}else if(audio.timer){clearInterval(audio.timer);audio.timer=null}}}
   function abandonRun(){if(!settingsWasRun)return;if(!abandonArmed){abandonArmed=true;ui.abandon.textContent='CONFIRM: LOSE RUN CARGO';ui.abandon.classList.add('confirm');return}returnBase(false,'EXPEDITION ABANDONED')}
-  function toggleDevPanel(){let open=ui.devPanel.classList.toggle('show');ui.devButton.setAttribute('aria-expanded',String(open));devResetArmed=false;ui.devReset.textContent='HARD RESET SAVE';ui.devReset.classList.remove('confirm');syncDevTools()}
+  function toggleDevPanel(){let open=ui.devPanel.classList.toggle('show');ui.devButton.setAttribute('aria-expanded',String(open));if(!open)closeDevGear();devResetArmed=false;ui.devReset.textContent='HARD RESET SAVE';ui.devReset.classList.remove('confirm');syncDevTools()}
   function devFeedback(text){if(mode==='run')runNotice(text,'#f2c14f');else notice(text,'#f2c14f');sound('upgrade')}
   function devAddScrap(){if(mode==='run'){runScrap+=500;updateHud();devFeedback('+500 RUN COINS')}else{save.scrap+=500;persist();refreshBase();devFeedback('+500 BANK COINS')}}
-  function devEquipSet(setId,feedback){let set=SET_BY_ID[setId];if(!set)return;for(const slot of GEAR_SLOTS){let item=SET_ITEMS.find(entry=>entry.setId===set.id&&entry.slot===slot),gear=rollGearInstance(item,Math.max(set.minLevel||1,save.level),1.08);save.gear.push(gear);save.lootFound[item.id]=(save.lootFound[item.id]||0)+1;save.equipped[slot]=gear.uid}paperDollKey='';persist();refreshBase();if(mode==='run'&&player){applyCargoEffects();player.hp=player.maxHp;updateHud()}devFeedback(feedback)}
-  function devUpgradeRig(){devEquipSet('hammerChoir','RESONANT SLAM MASTERED')}
-  function devEquipBlackHole(){devEquipSet('blackHole','GRAVITY WELL MASTERED')}
+  function renderDevGearOptions(){
+    let selected=ui.devGearSelect.value,sets=SET_DEFINITIONS.slice().sort((a,b)=>LOOT_RARITIES[b.rarity].rank-LOOT_RARITIES[a.rarity].rank||a.name.localeCompare(b.name)),items=LOOT_ITEMS.slice().sort((a,b)=>LOOT_RARITIES[b.rarity].rank-LOOT_RARITIES[a.rarity].rank||a.slot.localeCompare(b.slot)||a.name.localeCompare(b.name));
+    ui.devGearSelect.innerHTML='<option value="">SELECT GEAR</option>';
+    let setGroup=document.createElement('optgroup');setGroup.label='COMPLETE SETS';for(const set of sets){let option=document.createElement('option');option.value='set:'+set.id;option.textContent=LOOT_RARITIES[set.rarity].name.toUpperCase()+' \u00B7 '+set.name+' (5/5)';setGroup.appendChild(option)}ui.devGearSelect.appendChild(setGroup);
+    let itemGroup=document.createElement('optgroup');itemGroup.label='INDIVIDUAL ITEMS';for(const item of items){let option=document.createElement('option');option.value='item:'+item.id;option.textContent=LOOT_RARITIES[item.rarity].name.toUpperCase()+' \u00B7 '+GEAR_SLOT_META[item.slot].name.toUpperCase()+' \u00B7 '+item.name;itemGroup.appendChild(option)}ui.devGearSelect.appendChild(itemGroup);
+    if(selected&&ui.devGearSelect.querySelector('option[value="'+CSS.escape(selected)+'"]'))ui.devGearSelect.value=selected;
+    else{let equipped=equippedFullSetId();ui.devGearSelect.value=equipped?'set:'+equipped:'set:hammerChoir'}
+  }
+  function toggleDevGear(){let open=ui.devGearPanel.hidden;ui.devGearPanel.hidden=!open;ui.devGear.setAttribute('aria-expanded',String(open));if(open)renderDevGearOptions()}
+  function closeDevGear(){ui.devGearPanel.hidden=true;ui.devGear.setAttribute('aria-expanded','false')}
+  function devCreateGear(item){let gear=rollGearInstance(item,Math.max(item.minLevel||1,save.level),1.08);save.gear.push(gear);save.lootFound[item.id]=(save.lootFound[item.id]||0)+1;return gear}
+  function devGrantGear(equip){
+    let [kind,id]=(ui.devGearSelect.value||'').split(':'),items=kind==='set'?SET_ITEMS.filter(item=>item.setId===id):kind==='item'?[LOOT_BY_ID[id]].filter(Boolean):[];if(!items.length){devFeedback('SELECT GEAR FIRST');return}
+    for(const item of items){let gear=devCreateGear(item);if(equip)save.equipped[item.slot]=gear.uid}
+    paperDollKey='';paperDollPreviewCache.clear();persist();refreshBase();if(mode==='run'&&player){applyCargoEffects();player.hp=Math.min(player.hp,player.maxHp);updateHud()}
+    let name=kind==='set'&&SET_BY_ID[id]?SET_BY_ID[id].name:items[0].name;devFeedback(name.toUpperCase()+(equip?' EQUIPPED':' ADDED TO BAG'))
+  }
   function devRepair(){if(mode!=='run'||!player)return;player.hp=player.maxHp;player.shields=cargoStats().shields;updateHud();devFeedback('FULL REPAIR')}
   function devDropCache(){if(mode!=='run'||!player)return;closeSettings();spawnCache(player.x+54,player.y,true,false);runNotice('RARE CACHE DROPPED','#f2c14f')}
-  function devDropLegendary(){if(mode!=='run'||!player)return;closeSettings();let gear=rollBossGear(Math.max(16,save.level),'legendary');spawnLoot(player.x+54,player.y,gear,false);runNotice('LEGENDARY BOSS GEAR SIGNAL','#f2c14f')}
   function devAddLevel(){if(save.level>=999)return;save.level++;save.xp=Math.min(save.xp,levelXpNeeded(save.level)-1);persist();refreshBase();if(mode==='run'){updateHud();pulseXpLevel()}devFeedback('PAPPA LEVEL '+save.level)}
   function devFightBoss(routeId){if(mode!=='run')startRun();else closeSettings();postBossDecision=false;postBossIntent=null;routeDecision=false;moduleDecision=false;extracting=0;bossLootChest=null;bossLootRewards=[];bossLootSelected=0;bossExtraction=false;bossDefeated=false;pendingWardenReward=null;activeCache=null;caches=[];route=routeId;if(runStats)runStats.route=routeId;ui.bossLootOverlay.classList.remove('show');ui.routeOverlay.classList.remove('show');ui.moduleOverlay.classList.remove('show');ui.extractOverlay.classList.remove('show');depth=5;elapsed=DEPTH_THRESHOLDS[4]*cyclePacing();updateRouteHud();startBoss();updateHud()}
   function devFightWarden(){devFightBoss('dynamo')}
@@ -2371,6 +2384,9 @@
       },
       gearSetRules(){
         return Object.fromEntries(SET_DEFINITIONS.map(set=>[set.id,{tiers:setBonusTiers(set).slice(),signaturePieces:setSignaturePieces(set)}]))
+      },
+      devGearState(){
+        return{sets:SET_DEFINITIONS.length,items:LOOT_ITEMS.length,options:ui.devGearSelect.options.length,selected:ui.devGearSelect.value,gearCount:save.gear.length,equippedSet:equippedFullSetId(),equipped:Object.fromEntries(GEAR_SLOTS.map(slot=>[slot,equippedItem(slot)&&equippedItem(slot).id||null]))}
       },
       gearSignatureTier(setId,count){
         return gearSignatureProfileFromCounts({[setId]:count})[setId]||0
@@ -2610,7 +2626,7 @@
   window.addEventListener('pointercancel',event=>endSpinGesture(event,'pointer cancelled'),true);
   ui.spin.addEventListener('lostpointercapture',event=>endSpinGesture(event,'capture lost'));
   ui.dash.addEventListener('pointerdown',event=>{event.preventDefault();event.stopPropagation();tryDash()});
-  ui.settingsButton.addEventListener('click',openSettings);ui.closeSettings.addEventListener('click',closeSettings);ui.resume.addEventListener('click',closeSettings);ui.soundToggle.addEventListener('click',()=>toggleSetting('sound'));ui.shakeToggle.addEventListener('click',()=>toggleSetting('shake'));ui.particlesToggle.addEventListener('click',()=>toggleSetting('particles'));ui.abandon.addEventListener('click',abandonRun);ui.devButton.addEventListener('click',toggleDevPanel);ui.devScrap.addEventListener('click',devAddScrap);ui.devRig.addEventListener('click',devUpgradeRig);ui.devBlackHole.addEventListener('click',devEquipBlackHole);ui.devHeal.addEventListener('click',devRepair);ui.devCache.addEventListener('click',devDropCache);ui.devLoot.addEventListener('click',devDropLegendary);ui.devLevel.addEventListener('click',devAddLevel);ui.devWarden.addEventListener('click',devFightWarden);ui.devTyrant.addEventListener('click',devFightTyrant);ui.devSchematic.addEventListener('click',devUnlockSchematic);ui.devReset.addEventListener('click',devHardReset);
+  ui.settingsButton.addEventListener('click',openSettings);ui.closeSettings.addEventListener('click',closeSettings);ui.resume.addEventListener('click',closeSettings);ui.soundToggle.addEventListener('click',()=>toggleSetting('sound'));ui.shakeToggle.addEventListener('click',()=>toggleSetting('shake'));ui.particlesToggle.addEventListener('click',()=>toggleSetting('particles'));ui.abandon.addEventListener('click',abandonRun);ui.devButton.addEventListener('click',toggleDevPanel);ui.devScrap.addEventListener('click',devAddScrap);ui.devGear.addEventListener('click',toggleDevGear);ui.devGearSpawn.addEventListener('click',()=>devGrantGear(false));ui.devGearEquip.addEventListener('click',()=>devGrantGear(true));ui.devHeal.addEventListener('click',devRepair);ui.devCache.addEventListener('click',devDropCache);ui.devLevel.addEventListener('click',devAddLevel);ui.devWarden.addEventListener('click',devFightWarden);ui.devTyrant.addEventListener('click',devFightTyrant);ui.devSchematic.addEventListener('click',devUnlockSchematic);ui.devReset.addEventListener('click',devHardReset);
   window.addEventListener('keydown',e=>{keys[e.code]=true;if(e.code==='Space'&&!e.repeat)tryDash();if((e.code==='KeyQ'||e.code==='KeyF')&&!e.repeat)activateSpinControl();if(e.code==='KeyE'&&!e.repeat)beginExtract();if(e.code==='Escape'&&!e.repeat){if(ui.settingsOverlay.classList.contains('show'))closeSettings();else if(ui.mapOverlay.classList.contains('show'))closeMapAtlas();else if(ui.gearOverlay.classList.contains('show'))closeGearLocker();else if(ui.blueprintOverlay.classList.contains('show'))closeBlueprints();else if(ui.resultOverlay.classList.contains('show'))closeResultPanel();else if(!ui.contractOverlay.classList.contains('show'))openSettings()}if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault()});window.addEventListener('keyup',e=>{keys[e.code]=false;if(e.code==='KeyQ'||e.code==='KeyF')spinHeld=skillGesture.pointerId!=null||!!(keys.KeyQ||keys.KeyF)});window.addEventListener('resize',resize);window.addEventListener('blur',()=>cancelSkillGesture('window blur'));
   document.addEventListener('visibilitychange',()=>{if(document.hidden&&mode==='run'&&!paused)openSettings()});
   function stickMove(e){let r=ui.joystick.getBoundingClientRect(),x=e.clientX-(r.left+r.width/2),y=e.clientY-(r.top+r.height/2),m=r.width*.34,l=Math.hypot(x,y)||1,cl=Math.min(m,l);stick.x=x/l*(cl/m);stick.y=y/l*(cl/m);ui.knob.style.transform='translate('+(stick.x*m)+'px,'+(stick.y*m)+'px)'}

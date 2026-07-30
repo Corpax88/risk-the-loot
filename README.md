@@ -2,7 +2,7 @@
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
 
-Legendary Storm v0.54.0 promotes Stormcaller and every former top-tier set into one clear Legendary class. Four player-facing rarities now drive loot labels, filters, tooltips, inventory effects, and reward presentation, while the original item stats, unlock levels, internal drop bands, and exact rarity odds remain unchanged.
+Legendary Storm v0.54.0 promotes Stormcaller and every former top-tier set into one clear Legendary class. Stormcaller now has dedicated idle, run and attack sheets, five custom item/drop cells, a dark storm-metal full-set transformation, restrained persistent armor arcs and chain-readable departure, travel, impact and kill effects. Four player-facing rarities drive loot labels, filters, tooltips, inventory effects, and reward presentation, while the original item stats, unlock levels, internal drop bands, exact rarity odds and Lightning Dash balance remain unchanged.
 
 Living Legend v0.52.1 removes the obsolete workshop background renderer that was painting the original Pappa underneath Gear 2.0. The menu and Armory now each have one authoritative paper-doll sprite, with the old empty equipment-overlay nodes and render hook removed.
 

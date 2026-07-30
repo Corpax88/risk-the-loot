@@ -77,7 +77,12 @@ test('production gear sets remain the only visible workshop character layer',asy
   await page.goto('/?playwright');
   await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest))).toBe(true);
 
-  for(const setId of ['hammerChoir','blackHole']){
+  const productionSets={
+    hammerChoir:'hammer-choir-idle-v1.png',
+    blackHole:'black-hole-hammer-idle-v1.png',
+    stormrunner:'stormcaller-hammer-idle-v1.png'
+  };
+  for(const [setId,asset] of Object.entries(productionSets)){
     await page.evaluate(id=>window.__riskTest.previewGearSet(id),setId);
     await page.locator('#closeGear').click();
     const layers=await page.locator('.pappaHammerBase').evaluate(element=>
@@ -88,7 +93,7 @@ test('production gear sets remain the only visible workshop character layer',asy
     );
     expect(layers).toHaveLength(1);
     expect(layers[0].className).toBe('pappaHammerBaseSprite');
-    expect(layers[0].background).toContain(setId==='blackHole'?'black-hole-hammer-idle-v1.png':'hammer-choir-idle-v1.png');
+    expect(layers[0].background).toContain(asset);
   }
 
   await page.screenshot({path:testInfo.outputPath('black-hole-workshop-desktop.png'),fullPage:true});

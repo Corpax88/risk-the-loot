@@ -2648,3 +2648,181 @@ button:focus-visible{outline-color:#f4ead6}
   max-width:72px;
   max-height:72px;
 }
+
+/* Stormcaller legendary identity */
+.gearArt.stormcallerSprite{
+  background-image:url('assets/stormcaller-gear-icons-v1.png');
+  background-size:500% 100%;
+  filter:
+    drop-shadow(0 4px 3px #000f)
+    drop-shadow(0 0 7px #187bc8aa)
+    drop-shadow(0 0 3px #dffcff);
+}
+.gearBagSlot:hover .gearArt.stormcallerSprite,
+.gearBagSlot:focus-visible .gearArt.stormcallerSprite,
+.gearBagSlot.selected .gearArt.stormcallerSprite{
+  filter:
+    drop-shadow(0 5px 4px #000f)
+    drop-shadow(0 0 10px #2388d8cc)
+    drop-shadow(0 0 4px #fff);
+}
+.gearHoverPreview:has(.stormcallerSprite),
+.gearDetailCard:has(.stormcallerSprite){
+  --gear-glow:#63ddff;
+}
+.gearHoverPreview:has(.stormcallerSprite) .gearHoverArt,
+.gearDetailCard:has(.stormcallerSprite) .gearDetailArt{
+  background:
+    radial-gradient(circle at 50% 52%,#2a8ee02b 0 16%,transparent 42%),
+    linear-gradient(155deg,#101c2d,#050910 72%);
+}
+.gearSignature.set-stormrunner{
+  border-color:#2d6fa5;
+  border-left-color:#dffcff;
+  background:
+    linear-gradient(118deg,#123b62a8 0 2px,transparent 2px 44%,#4bbcf010 44% 46%,transparent 46%),
+    linear-gradient(110deg,#0d2740,#060b13);
+  box-shadow:inset 0 0 18px #2388d812;
+}
+.gearSignature.set-stormrunner.active{
+  box-shadow:inset 0 0 22px #2388d823,0 0 9px #63ddff24;
+}
+
+.gearCharacterStage[data-set-id="stormrunner"]{
+  background:
+    radial-gradient(circle at 50% 42%,#1c72b84d 0 9%,#0b27422e 29%,transparent 52%),
+    linear-gradient(180deg,#101925 0 68%,#050910 100%);
+}
+.gearCharacterStage[data-set-id="stormrunner"] .gearCharacterHalo:before{
+  inset:7px;
+  border:1px solid #63ddff8c;
+  border-style:solid dashed;
+  box-shadow:inset 0 0 26px #2388d81f,0 0 14px #63ddff24;
+  animation:stormcallerOrbit 6.5s linear infinite;
+}
+.gearCharacterStage[data-set-id="stormrunner"] .gearCharacterHalo:after{
+  inset:25px;
+  border-color:#dffcff68;
+  border-style:dotted;
+  box-shadow:0 0 9px #2388d839;
+  animation:stormcallerOrbit 3.9s linear infinite reverse;
+}
+.gearCharacterStage[data-set-id="stormrunner"] .gearCharacterHero{
+  width:min(500px,105%);
+  height:auto;
+  aspect-ratio:1;
+  bottom:8px;
+  filter:
+    drop-shadow(0 7px 7px #000d)
+    drop-shadow(0 0 7px #2388d84f);
+}
+.gearCharacterStage[data-set-id="stormrunner"] .gearPreviewName{
+  border-color:#63ddff;
+  background:#06101be8;
+  color:#dffcff;
+  box-shadow:0 0 10px #2388d839;
+}
+
+.pappaHammerBase[data-set-id="stormrunner"]:before{
+  content:"";
+  position:absolute;
+  z-index:0;
+  left:19%;
+  right:19%;
+  bottom:3%;
+  height:28%;
+  border:1px solid #63ddff62;
+  border-radius:50%;
+  background:radial-gradient(ellipse,#237fc329 0 16%,#0b294045 30%,transparent 68%);
+  box-shadow:inset 0 0 18px #2388d825,0 0 12px #63ddff1f;
+  animation:stormcallerFloorCharge 3.2s ease-in-out infinite;
+  pointer-events:none;
+}
+.pappaHammerBase[data-set-id="stormrunner"] .pappaHammerBaseSprite{
+  filter:drop-shadow(0 6px 6px #000b) drop-shadow(0 0 6px #2388d850);
+}
+.pappaHammerBase[data-set-id="stormrunner"] .pappaHammerBaseVisual:after{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  inset:18% 17% 13%;
+  border-radius:48%;
+  background:
+    linear-gradient(118deg,transparent 0 39%,#dffcff 39.5% 40%,transparent 40.5% 100%),
+    linear-gradient(58deg,transparent 0 61%,#63ddff 61.5% 62%,transparent 62.5% 100%);
+  opacity:.18;
+  filter:drop-shadow(0 0 5px #2388d8);
+  animation:stormcallerArcFlicker 3.6s steps(1,end) infinite;
+  pointer-events:none;
+}
+
+.gearCharacterStage.stormcallerAwaken{
+  animation:stormcallerStageAwaken 1.05s cubic-bezier(.16,.8,.22,1);
+}
+.gearCharacterStage.stormcallerAwaken:before{
+  content:"";
+  position:absolute;
+  z-index:4;
+  inset:6%;
+  border:2px solid #dffcff;
+  border-radius:50%;
+  box-shadow:inset 0 0 28px #2388d83b,0 0 18px #63ddff80;
+  pointer-events:none;
+  animation:stormcallerAwakenRing 1.05s ease-out both;
+}
+.gearCharacterStage.stormcallerAwaken .gearCharacterHero{
+  animation:pappaHammerFrames 1.65s step-end infinite,stormcallerHeroAwaken 1.05s cubic-bezier(.16,.8,.22,1);
+}
+.pappaHammerBase.stormcallerAwaken:before{
+  animation:stormcallerAwakenRing 1.05s ease-out both;
+}
+
+@keyframes stormcallerOrbit{
+  to{transform:rotate(360deg)}
+}
+@keyframes stormcallerFloorCharge{
+  0%,100%{opacity:.5;transform:scale(.96)}
+  50%{opacity:.9;transform:scale(1.04)}
+}
+@keyframes stormcallerArcFlicker{
+  0%,14%,48%,100%{opacity:.11}
+  15%,18%,49%,52%,76%{opacity:.35}
+  19%,53%,75%,77%{opacity:.18}
+}
+@keyframes stormcallerStageAwaken{
+  0%{filter:brightness(1)}
+  18%{filter:brightness(1.42)}
+  38%{filter:brightness(1.08)}
+  58%{filter:brightness(1.22)}
+  100%{filter:brightness(1)}
+}
+@keyframes stormcallerAwakenRing{
+  0%{opacity:0;transform:scale(.45) rotate(-18deg)}
+  28%{opacity:1}
+  100%{opacity:0;transform:scale(1.18) rotate(14deg)}
+}
+@keyframes stormcallerHeroAwaken{
+  0%{filter:brightness(1);transform:translateX(-50%) scale(.94)}
+  24%{filter:brightness(1.45) drop-shadow(0 0 14px #dffcff);transform:translateX(-50%) scale(1.035)}
+  100%{filter:brightness(1) drop-shadow(0 0 7px #2388d84f);transform:translateX(-50%) scale(1)}
+}
+
+@media(max-width:620px){
+  .gearCharacterStage[data-set-id="stormrunner"] .gearCharacterHero{
+    width:88%;
+    bottom:2px;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .gearCharacterStage[data-set-id="stormrunner"] .gearCharacterHalo:before,
+  .gearCharacterStage[data-set-id="stormrunner"] .gearCharacterHalo:after,
+  .pappaHammerBase[data-set-id="stormrunner"]:before,
+  .pappaHammerBase[data-set-id="stormrunner"] .pappaHammerBaseVisual:after,
+  .gearCharacterStage.stormcallerAwaken,
+  .gearCharacterStage.stormcallerAwaken:before,
+  .gearCharacterStage.stormcallerAwaken .gearCharacterHero,
+  .pappaHammerBase.stormcallerAwaken:before{
+    animation:none!important;
+  }
+}

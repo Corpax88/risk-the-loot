@@ -126,7 +126,7 @@ Eksempel: Hammer Choir har Focus A = DMG og Focus B = IMPACT. Hammer Choir Crown
 | Moonlit Scout | Rare / Lv 2 | CRIT / DASH | 2p: +2.5% CRIT; 3p: -5.5% DASH; 5p: +5% MOVE, +3.5% CRIT | Moonstep: Dash garanterer neste crit / Dash garanterer de neste to crits | Gear 2.0 set-atlas + drop-atlas + layers |
 | Coinseeker | Rare / Lv 3 | VALUE / REACH | 2p: +5% VALUE; 3p: +18 REACH; 5p: +8% VALUE, +3.5% MOVE | Gilded Bounty: +30% coins / +60% coins og ekstra elite bounty | Gear 2.0 set-atlas + drop-atlas + layers |
 | Tower Bulwark | Epic / Lv 4 | ARMOR / HP | 2p: +3% ARMOR; 3p: +24 HP; 5p: +4.5% ARMOR, +1.8 DMG | Last Bastion: blokker ett hit hvert 8. sekund / 6 sekunder og svar med hammer burst | Gear 2.0 set-atlas + drop-atlas + layers |
-| Stormrunner | Epic / Lv 4 | MOVE / DASH | 2p: +4.5% MOVE; 3p: -6% DASH; 5p: +5.5% IMPACT, +4% MOVE | Gale Step: Dash lager fysisk impact wake / bredere, sterkere wake med mer launch | Gear 2.0 set-atlas + drop-atlas + layers |
+| **Stormcaller** | Legendary / Lv 4 | MOVE / DASH | 2p: +4.5% MOVE; 3p: -6% DASH; 5p: +5.5% IMPACT, +4% MOVE | I Am the Lightning: Dash lager en kort storm trail / tap-baserte chain-dashes, storm armor og sikre hopp gjennom fiender | **Tre fullfigur-sheets, eget ikon/drop-atlas og dedikert lightning-VFX** |
 | **Hammer Choir** | Epic / Lv 5 | DMG / IMPACT | 2p: +3.5% IMPACT; 3p: +2.7 DMG; 5p: +4% CRIT, +4.5% IMPACT | Resonant Slam: hvert fjerde strike gir shockwave / hvert tredje gir stor, sterk shockwave | **Tre fullfigur-sheets: idle, run og attack (8 frames hver), pluss Gear 2.0 atlas/layers** |
 | Lantern Guard | Epic / Lv 5 | HP / REACH | 2p: +20 HP; 3p: +20 REACH; 5p: +3.5% ARMOR, +4.5% VALUE | Guiding Light: ny floor gir en guard charge / to charges og litt healing | Gear 2.0 set-atlas + drop-atlas + layers |
 | Grand Wayfarer | Epic / Lv 6 | MOVE / HP | 2p: +3.5% MOVE, +10 HP; 3p: +2 DMG; 5p: +3% CRIT, +5% VALUE | Long Road: bevegelse lader neste strike opptil +25% / raskere lading, opptil +45% | Gear 2.0 set-atlas + drop-atlas + layers |
@@ -146,7 +146,7 @@ Eksempel: Hammer Choir har Focus A = DMG og Focus B = IMPACT. Hammer Choir Crown
 
 ### Fullstendig samme asset-type som Hammer Choir
 
-To sett bruker na den ferdigtegnede fullfigur-pipelinen.
+Tre sett bruker na den ferdigtegnede fullfigur-pipelinen.
 
 Hammer Choir har:
 
@@ -168,6 +168,17 @@ Black Hole har:
 - Fullfigur-sheetene og VFX-sheetet er 2048 x 1024 med 8 frames.
 - Nar hele settet er equipped, brukes den morkebla cosmic fullfigur-animasjonen. Gravity Well bruker det egne VFX-sheetet i kamp.
 
+Stormcaller har:
+
+- `assets/stormcaller-hammer-idle-v1.png`
+- `assets/stormcaller-hammer-run-v1.png`
+- `assets/stormcaller-hammer-attack-v1.png`
+- `assets/stormcaller-gear-icons-v1.png`
+- `assets/stormcaller-gear-drops-v1.png`
+- Fullfigur-sheetene er 2048 x 1024 med 8 frames.
+- Nar hele settet er equipped, brukes den morke storm-metal-transformasjonen med kontinuerlig elektrisk aura.
+- Chain-dash bruker egne avreise-, trail-, afterimage-, impact- og kill-effekter som skalerer med chain-tempo.
+
 ### Hva de andre settene faktisk har
 
 Alle 21 sett har:
@@ -178,7 +189,7 @@ Alle 21 sett har:
 - Gear 2.0 paper-doll rendering for Hat, Scarf, Coat, Hammer og Boots.
 - Rendering i Idle, Run, Attack, Character Preview og Inventory.
 
-De 16 Rare/Epic/Legendary-settene bruker:
+Settene uten dedikerte fullfigur-sheets bruker:
 
 - `assets/set-gear-atlas.png`
 - `assets/set-gear-drops.png`

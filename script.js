@@ -19,6 +19,11 @@
       idle:loadImage('assets/black-hole-hammer-idle-v1.png'),
       run:loadImage('assets/black-hole-hammer-run-v1.png'),
       attack:loadImage('assets/black-hole-hammer-attack-v1.png')
+    },
+    stormrunner:{
+      idle:loadImage('assets/stormcaller-hammer-idle-v1.png'),
+      run:loadImage('assets/stormcaller-hammer-run-v1.png'),
+      attack:loadImage('assets/stormcaller-hammer-attack-v1.png')
     }
   };
   const blackHoleVfxSprites={
@@ -32,6 +37,8 @@
   };
   const blackHoleGearAtlas=loadImage('assets/black-hole-gear-icons-v1.png');
   const blackHoleDropAtlas=loadImage('assets/black-hole-gear-drops-v1.png');
+  const stormcallerGearAtlas=loadImage('assets/stormcaller-gear-icons-v1.png');
+  const stormcallerDropAtlas=loadImage('assets/stormcaller-gear-drops-v1.png');
   const enemyAtlas=typeof Image==='function'?new Image():document.createElement('img');
   enemyAtlas.src='assets/pappa-hammer-enemies.png';
   const bossAtlas=typeof Image==='function'?new Image():document.createElement('img');
@@ -331,7 +338,7 @@
     moonlitScout:{finish:'moon',hat:'crescent',scarf:'veil',coat:'scout',hammer:'moon',boots:'swift',secondary:'#111a34',metal:'#d9e0f0'},
     coinseeker:{finish:'gilded',hat:'goggles',scarf:'purse',coat:'seeker',hammer:'coin',boots:'trail',secondary:'#243125',metal:'#e1b34c'},
     towerBulwark:{finish:'iron',hat:'battlement',scarf:'guard',coat:'fortress',hammer:'tower',boots:'plate',secondary:'#151d31',metal:'#aebff0'},
-    stormrunner:{finish:'storm',hat:'fins',scarf:'wind',coat:'runner',hammer:'turbine',boots:'swift',secondary:'#102a34',metal:'#9ed9e5'},
+    stormrunner:{finish:'storm',hat:'fins',scarf:'wind',coat:'runner',hammer:'turbine',boots:'swift',secondary:'#060d18',metal:'#d7f6ff',legendary:'stormcaller',slotColors:{hat:'#09111d',scarf:'#0b1d35',coat:'#080f19',hammer:'#07101d',boots:'#09121e'}},
     hammerChoir:{finish:'velvet',hat:'choir',scarf:'choir',coat:'choir',hammer:'choir',boots:'choir',secondary:'#251e38',metal:'#d7c1ff'},
     lanternGuard:{finish:'lantern',hat:'lantern',scarf:'guard',coat:'lantern',hammer:'lantern',boots:'guard',secondary:'#2b2418',metal:'#ffe09a'},
     grandWayfarer:{finish:'canvas',hat:'wayfarer',scarf:'trail',coat:'wayfarer',hammer:'compass',boots:'trail',secondary:'#17263d',metal:'#e4d9c3'},
@@ -381,7 +388,10 @@
   const SET_BY_ID=Object.fromEntries(SET_DEFINITIONS.map(set=>[set.id,set]));
   const SET_GEAR_ROW=Object.fromEntries(SET_DEFINITIONS.filter(set=>set.rarity!=='legendary').map((set,row)=>[set.id,row]));
   const SET_SLOT_NAMES={hat:'Crown',scarf:'Oathwrap',coat:'Longcoat',hammer:'Great Hammer',boots:'Striders'};
-  const SET_SPECIAL_SLOT_NAMES={blackHole:{hat:'Event Horizon Hat',scarf:'Gravity Veil',coat:'Constellation Longcoat',hammer:'Black Hole Hammer',boots:'Voidstep Boots'}};
+  const SET_SPECIAL_SLOT_NAMES={
+    blackHole:{hat:'Event Horizon Hat',scarf:'Gravity Veil',coat:'Constellation Longcoat',hammer:'Black Hole Hammer',boots:'Voidstep Boots'},
+    stormrunner:{hat:'Tempest Crown',scarf:'Thunder Veil',coat:'Stormplate Mantle',hammer:'Skybreaker Hammer',boots:'Flashstep Greaves'}
+  };
   const SET_SLOT_BASE={hat:{hp:5,crit:.008},scarf:{speed:.014,fire:.014},coat:{hp:12,armor:.01},hammer:{damage:1.5,crit:.007},boots:{speed:.02,dash:.02}};
   const SET_FOCUS_BASE={hp:7,damage:1.1,magnet:8,speed:.012,fire:.014,armor:.009,loot:.018,dash:.016,crit:.012};
   const SET_RARITY_POWER={rare:1,epic:1.28,legendary:2.2};
@@ -389,7 +399,7 @@
   const SET_ITEMS=SET_DEFINITIONS.flatMap((set,setIndex)=>GEAR_SLOTS.map((slot,slotIndex)=>gearDef(set.id+'-'+slot,(SET_SPECIAL_SLOT_NAMES[set.id]&&SET_SPECIAL_SLOT_NAMES[set.id][slot])||(set.name+' '+SET_SLOT_NAMES[slot]),slot,set.rarity,Math.round((set.valueBase||(set.rarity==='legendary'?360:set.rarity==='epic'?92:55))*(1+slotIndex*.06)),fixedSetPieceStats(set,slot,slotIndex),set.color,set.accent,setIndex%6,{setId:set.id,minLevel:set.minLevel,setPiece:true,mark:set.mark,dropBand:set.dropBand||set.rarity})));
   const LOOT_ITEMS=[...LEGACY_LOOT_ITEMS,...SET_ITEMS];
   const gearVisualCounts={};
-  for(const item of LOOT_ITEMS){let variant=gearVisualCounts[item.slot]||0;gearVisualCounts[item.slot]=variant+1;item.visual.variant=variant;item.visual.atlasColumn=variant%GEAR_ATLAS_COLUMNS;item.visual.atlasRow=GEAR_ATLAS_ROW[item.slot];item.visual.mark=item.mark||GEAR_SLOT_META[item.slot].icon;item.visual.key=item.id;let setGearRow=SET_GEAR_ROW[item.setId],legendaryRow=LEGENDARY_SET_ROW[item.setId],legacyCell=LEGENDARY_LEGACY_CELL[item.id];if(item.setId==='blackHole')item.visual.blackHoleColumn=LEGENDARY_SLOT_COLUMN[item.slot];if(setGearRow!=null){item.visual.setGearRow=setGearRow;item.visual.setGearColumn=LEGENDARY_SLOT_COLUMN[item.slot]}if(item.rarity==='legendary'&&(legendaryRow!=null||legacyCell)){item.visual.legendaryRow=legacyCell?legacyCell.row:legendaryRow;item.visual.legendaryColumn=legacyCell?legacyCell.column:LEGENDARY_SLOT_COLUMN[item.slot]}}
+  for(const item of LOOT_ITEMS){let variant=gearVisualCounts[item.slot]||0;gearVisualCounts[item.slot]=variant+1;item.visual.variant=variant;item.visual.atlasColumn=variant%GEAR_ATLAS_COLUMNS;item.visual.atlasRow=GEAR_ATLAS_ROW[item.slot];item.visual.mark=item.mark||GEAR_SLOT_META[item.slot].icon;item.visual.key=item.id;let setGearRow=SET_GEAR_ROW[item.setId],legendaryRow=LEGENDARY_SET_ROW[item.setId],legacyCell=LEGENDARY_LEGACY_CELL[item.id];if(item.setId==='blackHole')item.visual.blackHoleColumn=LEGENDARY_SLOT_COLUMN[item.slot];if(item.setId==='stormrunner')item.visual.stormcallerColumn=LEGENDARY_SLOT_COLUMN[item.slot];if(setGearRow!=null){item.visual.setGearRow=setGearRow;item.visual.setGearColumn=LEGENDARY_SLOT_COLUMN[item.slot]}if(item.rarity==='legendary'&&(legendaryRow!=null||legacyCell)){item.visual.legendaryRow=legacyCell?legacyCell.row:legendaryRow;item.visual.legendaryColumn=legacyCell?legacyCell.column:LEGENDARY_SLOT_COLUMN[item.slot]}}
   const LOOT_BY_RARITY=Object.keys(LOOT_RARITIES).reduce((groups,rarity)=>{groups[rarity]=LOOT_ITEMS.filter(item=>item.rarity===rarity);return groups},{}),LOOT_BY_ID=Object.fromEntries(LOOT_ITEMS.map(item=>[item.id,item])),RELIC_POWER_CAP=4;
   const SYNERGIES=[
     {id:'shrapnel',name:'GRAND SLAM',needs:['burst','volatile'],desc:'Every third strike detonates on impact.'},
@@ -402,7 +412,7 @@
   const SKILL_GESTURE_DEBUG=false,skillGesture={pointerId:null,pointerType:'',dashAreaEntered:false};
   let spinHeld=false,spinControlLightning=false;
   let gearUidCounter=0,gearTurnAngle=0,gearTurnDrag=null;
-  let save=loadSave(),mode='base',paused=false,settingsWasRun=false,abandonArmed=false,devResetArmed=false;
+  let save=loadSave(),mode='base',paused=false,testFrameFrozen=false,settingsWasRun=false,abandonArmed=false,devResetArmed=false;
   let W=960,H=540,dpr=1,miniW=132,miniH=92,miniDpr=1,last=0,elapsed=0,runTime=0,spawnClock=0,hazardClock=0,shake=0,flash=0,depthPulse=0,extracting=0,runScrap=0,depth=1,riskTier=0,routeDecision=false,route=null,zoneEventTriggered=false,hitStop=0;
   let player,enemies=[],pendingStrikes=[],enemyBullets=[],lootDrops=[],particles=[],effects=[],hazards=[],decor=[],obstacles=[],collisionMap=[],caches=[],cargo=[],lootBag={},guildTerrain=null,currentMapSeed=0,guildSpawnCursor=0;
   let waveDirector={number:0,phase:'idle',timer:0,spawnClock:0,queue:[],anchors:[],packId:0,kills:0,startCount:0,targetPopulation:0,clearRewarded:false};
@@ -645,7 +655,17 @@
   function equippedSetCounts(){let counts={};for(const slot of GEAR_SLOTS){let def=equippedItem(slot);if(def&&def.setId)counts[def.setId]=(counts[def.setId]||0)+1}return counts}
   function equippedRarityProfile(){let gear=GEAR_SLOTS.map(equippedGear).filter(Boolean).sort((a,b)=>LOOT_RARITIES[gearDefinition(b).rarity].rank-LOOT_RARITIES[gearDefinition(a).rarity].rank||gearScore(b)-gearScore(a))[0],item=gearDefinition(gear),rarity=item&&LOOT_RARITIES[item.rarity],setId=equippedFullSetId(),set=setId&&SET_BY_ID[setId];return rarity?{rank:rarity.rank,color:set?set.accent:rarity.color,glow:set?paperDollMix(set.accent,'#ffffff',.16):rarity.glow,name:rarity.name,setId}:{rank:0,color:'#596a84',glow:'#596a84',name:'FIELD',setId:null}}
   function applyLoadoutRarity(element,profile){if(!element)return;for(let rank=0;rank<=4;rank++)element.classList.remove('loadoutRarity'+rank);element.classList.add('loadoutRarity'+profile.rank);element.style.setProperty('--loadout-color',profile.color);element.style.setProperty('--loadout-glow',profile.glow)}
-  function applyLoadoutSetVisual(element,setId){if(!element)return;element.classList.remove('loadoutCompleteSet','loadoutLegendarySet');if(element.removeAttribute)element.removeAttribute('data-set-mark');else if(element.dataset)delete element.dataset.setMark;let set=setId&&SET_BY_ID[setId];if(!set)return;element.classList.add('loadoutCompleteSet');if(set.rarity==='legendary')element.classList.add('loadoutLegendarySet');if(element.dataset)element.dataset.setMark=set.mark;element.style.setProperty('--set-color',set.color);element.style.setProperty('--set-accent',set.accent)}
+  function applyLoadoutSetVisual(element,setId){
+    if(!element)return;
+    element.classList.remove('loadoutCompleteSet','loadoutLegendarySet');
+    if(element.removeAttribute){element.removeAttribute('data-set-mark');element.removeAttribute('data-set-id')}
+    else if(element.dataset){delete element.dataset.setMark;delete element.dataset.setId}
+    let set=setId&&SET_BY_ID[setId];if(!set)return;
+    element.classList.add('loadoutCompleteSet');
+    if(set.rarity==='legendary')element.classList.add('loadoutLegendarySet');
+    if(element.dataset){element.dataset.setMark=set.mark;element.dataset.setId=set.id}
+    element.style.setProperty('--set-color',set.color);element.style.setProperty('--set-accent',set.accent)
+  }
   function setBonusTiers(set){return set&&set.tiers||[2,3,5]}
   function setSignaturePieces(set){return set&&set.signaturePieces||3}
   function activeSetBonuses(){let counts=equippedSetCounts(),active=[];for(const set of SET_DEFINITIONS){let count=counts[set.id]||0;for(const tier of setBonusTiers(set))if(count>=tier&&set.bonus[tier])active.push({set,count,tier,stats:set.bonus[tier]})}return active}
@@ -659,7 +679,7 @@
   function gearSignatureMarkup(set,count){
     let signature=set&&GEAR_SIGNATURES[set.id];if(!signature)return '';
     let awakens=setSignaturePieces(set),tier=count>=5?2:count>=awakens?1:0,next=tier===2?'MASTERED':tier===1?'5 PIECES TO MASTER':awakens+' PIECES TO AWAKEN',effect=tier===2?signature.mastery:signature.unlock;
-    return '<section class="gearSignature '+(tier?'active':'locked')+'" style="--signature-color:'+signature.color+'"><header><small>'+signature.role+' SIGNATURE</small><b>'+signature.name+'</b><em>'+next+'</em></header><p>'+effect+'</p></section>'
+    return '<section class="gearSignature set-'+set.id+' '+(tier?'active':'locked')+'" style="--signature-color:'+signature.color+'"><header><small>'+signature.role+' SIGNATURE</small><b>'+signature.name+'</b><em>'+next+'</em></header><p>'+effect+'</p></section>'
   }
   function setBonusStats(){let total={};for(const bonus of activeSetBonuses())for(const key of Object.keys(bonus.stats))total[key]=(total[key]||0)+bonus.stats[key];return total}
   function gearStats(){let total={hp:0,damage:0,magnet:0,speed:0,fire:0,armor:0,loot:0,dash:0,crit:0};for(const slot of GEAR_SLOTS){let gear=equippedGear(slot);if(!gear)continue;for(const key of Object.keys(gear.stats||{}))total[key]=(total[key]||0)+gear.stats[key]}let bonuses=setBonusStats();for(const key of Object.keys(bonuses))total[key]=(total[key]||0)+bonuses[key];total.armor=Math.min(.45,total.armor);total.crit=Math.min(.5,total.crit);total.fire=Math.min(.45,total.fire);total.speed=Math.min(.4,total.speed);total.dash=Math.min(.45,total.dash);return total}
@@ -679,7 +699,17 @@
   function currentBoss(){let map=activeMap();if(map.boss)return BOSSES[map.boss];let config=routeConfig()||ROUTES.dynamo;return BOSSES[config.boss]}
   function bossRewardOptions(){let ids=currentBoss().kind==='tyrant'?TYRANT_SCHEMATIC_IDS:WARDEN_SCHEMATIC_IDS,choices=ids.filter(id=>schematicLevel(id)<BOSS_SCHEMATICS[id].max);return choices.length?choices:['dividend']}
   function lootMultiplier(nextTier){let salvage=1+Math.min(.6,save.salvage*.035),gear=1+gearStats().loot,recycler=1+schematicLevel('recycler')*.05,routeBonus=routeConfig()?routeConfig().scrap:1,mapBonus=activeMap().coinValue;return (1+(depth-1)*.11)*(1+(nextTier==null?riskTier:nextTier)*.32)*salvage*gear*recycler*routeBonus*mapBonus}
-  function gearArtMarkup(gear,size){let item=gearDefinition(gear);if(!item)return '';let visual=item.visual,rarity=LOOT_RARITIES[item.rarity],blackHole=Number.isInteger(visual.blackHoleColumn),legendary=!blackHole&&Number.isInteger(visual.legendaryRow)&&Number.isInteger(visual.legendaryColumn),setSprite=!blackHole&&!legendary&&Number.isInteger(visual.setGearRow)&&Number.isInteger(visual.setGearColumn),set=item.setId&&SET_BY_ID[item.setId],classes=['gearArt',item.slot];if(size)classes.push(size);if(item.setId)classes.push('setItem');if(blackHole)classes.push('blackHoleSprite','legendarySprite','legendary-blackHole');if(setSprite)classes.push('setGearSprite');if(legendary)classes.push('legendarySprite','legendary-'+(item.setId||'legacy'));let columns=blackHole?5:legendary?LEGENDARY_GEAR_COLUMNS:setSprite?SET_GEAR_COLUMNS:GEAR_ATLAS_COLUMNS,rows=blackHole?1:legendary?LEGENDARY_GEAR_ROWS:setSprite?SET_GEAR_ROWS:GEAR_ATLAS_ROWS,column=blackHole?visual.blackHoleColumn:legendary?visual.legendaryColumn:setSprite?visual.setGearColumn:visual.atlasColumn,row=blackHole?0:legendary?visual.legendaryRow:setSprite?visual.setGearRow:visual.atlasRow,x=column/(columns-1)*100,y=rows===1?0:row/(rows-1)*100,mark=String(item.mark||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;');return '<span class="'+classes.join(' ')+'" aria-hidden="true" data-mark="'+mark+'" style="--gear-x:'+x.toFixed(3)+'%;--gear-y:'+y.toFixed(3)+'%;--gear-rarity:'+rarity.color+';--gear-item-color:'+(visual.color||rarity.color)+';--legendary-accent:'+(set?set.accent:rarity.glow)+'"></span>'}
+  function gearArtMarkup(gear,size){
+    let item=gearDefinition(gear);if(!item)return '';
+    let visual=item.visual,rarity=LOOT_RARITIES[item.rarity],stormcaller=Number.isInteger(visual.stormcallerColumn),blackHole=!stormcaller&&Number.isInteger(visual.blackHoleColumn),dedicated=stormcaller||blackHole,legendary=!dedicated&&Number.isInteger(visual.legendaryRow)&&Number.isInteger(visual.legendaryColumn),setSprite=!dedicated&&!legendary&&Number.isInteger(visual.setGearRow)&&Number.isInteger(visual.setGearColumn),set=item.setId&&SET_BY_ID[item.setId],classes=['gearArt',item.slot];
+    if(size)classes.push(size);if(item.setId)classes.push('setItem');
+    if(stormcaller)classes.push('stormcallerSprite','legendarySprite','legendary-stormrunner');
+    if(blackHole)classes.push('blackHoleSprite','legendarySprite','legendary-blackHole');
+    if(setSprite)classes.push('setGearSprite');
+    if(legendary)classes.push('legendarySprite','legendary-'+(item.setId||'legacy'));
+    let columns=dedicated?5:legendary?LEGENDARY_GEAR_COLUMNS:setSprite?SET_GEAR_COLUMNS:GEAR_ATLAS_COLUMNS,rows=dedicated?1:legendary?LEGENDARY_GEAR_ROWS:setSprite?SET_GEAR_ROWS:GEAR_ATLAS_ROWS,column=stormcaller?visual.stormcallerColumn:blackHole?visual.blackHoleColumn:legendary?visual.legendaryColumn:setSprite?visual.setGearColumn:visual.atlasColumn,row=dedicated?0:legendary?visual.legendaryRow:setSprite?visual.setGearRow:visual.atlasRow,x=column/(columns-1)*100,y=rows===1?0:row/(rows-1)*100,mark=String(item.mark||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+    return '<span class="'+classes.join(' ')+'" aria-hidden="true" data-mark="'+mark+'" style="--gear-x:'+x.toFixed(3)+'%;--gear-y:'+y.toFixed(3)+'%;--gear-rarity:'+rarity.color+';--gear-item-color:'+(visual.color||rarity.color)+';--legendary-accent:'+(set?set.accent:rarity.glow)+'"></span>'
+  }
   function formatGearStats(gear){let def=gearDefinition(gear),s=gear&&gear.stats||(def&&def.stats)||{},parts=[];if(s.hp)parts.push('+'+s.hp+' HP');if(s.damage)parts.push('+'+s.damage+' DMG');if(s.magnet)parts.push('+'+s.magnet+' REACH');if(s.speed)parts.push('+'+Math.round(s.speed*100)+'% MOVE');if(s.fire)parts.push('+'+Math.round(s.fire*100)+'% IMPACT');if(s.armor)parts.push('+'+Math.round(s.armor*100)+'% ARMOR');if(s.loot)parts.push('+'+Math.round(s.loot*100)+'% VALUE');if(s.dash)parts.push('-'+Math.round(s.dash*100)+'% DASH');if(s.crit)parts.push('+'+Math.round(s.crit*100)+'% CRIT');return parts}
   function gearQualityLabel(gear){let quality=Math.round((gear&&gear.quality||1)*100);return quality>=116?'PERFECT '+quality+'%':quality>=106?'SUPERIOR '+quality+'%':quality>=96?'SOLID '+quality+'%':'ROUGH '+quality+'%'}
   function bossGearOdds(level,nextRisk,chosenMap,chosenRoute){level=Math.max(1,Math.floor(level||save.level));let tier=nextRisk==null?riskTier:nextRisk,map=chosenMap||activeMap(),path=chosenRoute===undefined?routeConfig():chosenRoute,routeRare=path?path.lootRare:0,mapRare=map.rarityBonus||0,apex=level>=16?Math.min(.24,.012+(level-16)*.007+tier*.005+routeRare*.2+mapRare*.38):0,elevated=level>=8?Math.min(.48,.08+(level-8)*.014+tier*.01+routeRare*.55+mapRare*.72):0,epic=level>=4?Math.min(.62,.2+(level-4)*.018+tier*.012+routeRare*.45+mapRare):0;epic=Math.min(epic,Math.max(0,.92-apex-elevated));return {rare:Math.max(.08,1-apex-elevated-epic),epic,legendary:apex+elevated,apex,elevated,high:apex+elevated+epic}}
@@ -916,8 +946,33 @@
   function gearSlotFeedback(slot,rarity){
     let slots=ui.gearLoadoutSlots.querySelectorAll?[...ui.gearLoadoutSlots.querySelectorAll('.gearLoadoutSlot[data-slot="'+slot+'"]')]:[],count=mobileArmory()?4:8;for(const target of slots){target.classList.remove('equipPop');void target.offsetWidth;target.classList.add('equipPop');target.style.setProperty('--gear-color',rarity.color);let burst=document.createElement('span');burst.className='gearSlotParticles';for(let index=0;index<count;index++){let particle=document.createElement('i'),angle=index/count*Math.PI*2,distance=22+(index%3)*7;particle.style.setProperty('--dx',Math.cos(angle)*distance+'px');particle.style.setProperty('--dy',Math.sin(angle)*distance+'px');burst.appendChild(particle)}target.appendChild(burst);setTimeout(()=>{target.classList.remove('equipPop');burst.remove()},520)}
   }
-  function playGearEquipEffect(gear,awakened){let item=gearDefinition(gear),rarity=item&&LOOT_RARITIES[item.rarity],signature=item&&item.setId&&GEAR_SIGNATURES[item.setId];if(!rarity||!ui.gearCharacterStage)return;ui.gearCharacterStage.style.setProperty('--equip-color',signature&&awakened?signature.color:rarity.color);ui.gearCharacterStage.classList.remove('equipBurst','equipRank2','equipRank4','signatureAwaken');void ui.gearCharacterStage.offsetWidth;ui.gearCharacterStage.classList.add('equipBurst','equipRank'+Math.max(2,rarity.rank));gearSlotFeedback(item.slot,rarity);if(awakened)ui.gearCharacterStage.classList.add('signatureAwaken');setTimeout(()=>ui.gearCharacterStage.classList.remove('equipBurst','equipRank2','equipRank4','signatureAwaken'),awakened?1100:760)}
-  function equipGear(uid){let gear=save.gear.find(entry=>entry.uid===uid),item=gearDefinition(gear);if(!gear||!item)return false;let equipping=save.equipped[item.slot]!==uid,beforeTier=item.setId?gearSignatureTier(item.setId):0;save.equipped[item.slot]=equipping?uid:null;let afterTier=item.setId?gearSignatureTier(item.setId):0,awakened=equipping&&afterTier>beforeTier;selectedGearUid=uid;gearTapUid=null;paperDollKey='';paperDollPreviewCache.clear();persist();refreshEquippedGearUI();if(equipping)playGearEquipEffect(gear,awakened);let rarity=LOOT_RARITIES[item.rarity];sound(awakened||equipping&&rarity.rank===4?'legendary':equipping&&rarity.rank>=2?'rare':'upgrade');return equipping}
+  function playGearEquipEffect(gear,awakened,fullSetActivated){
+    let item=gearDefinition(gear),rarity=item&&LOOT_RARITIES[item.rarity],signature=item&&item.setId&&GEAR_SIGNATURES[item.setId];if(!rarity||!ui.gearCharacterStage)return;
+    ui.gearCharacterStage.style.setProperty('--equip-color',signature&&awakened?signature.color:rarity.color);
+    ui.gearCharacterStage.classList.remove('equipBurst','equipRank2','equipRank4','signatureAwaken','stormcallerAwaken');
+    if(ui.pappaHammerBase)ui.pappaHammerBase.classList.remove('stormcallerAwaken');
+    void ui.gearCharacterStage.offsetWidth;
+    ui.gearCharacterStage.classList.add('equipBurst','equipRank'+Math.max(2,rarity.rank));
+    gearSlotFeedback(item.slot,rarity);
+    if(awakened)ui.gearCharacterStage.classList.add('signatureAwaken');
+    if(fullSetActivated&&item.setId==='stormrunner'){
+      ui.gearCharacterStage.classList.add('stormcallerAwaken');
+      if(ui.pappaHammerBase)ui.pappaHammerBase.classList.add('stormcallerAwaken')
+    }
+    setTimeout(()=>{
+      ui.gearCharacterStage.classList.remove('equipBurst','equipRank2','equipRank4','signatureAwaken','stormcallerAwaken');
+      if(ui.pappaHammerBase)ui.pappaHammerBase.classList.remove('stormcallerAwaken')
+    },fullSetActivated?1150:awakened?1100:760)
+  }
+  function equipGear(uid){
+    let gear=save.gear.find(entry=>entry.uid===uid),item=gearDefinition(gear);if(!gear||!item)return false;
+    let equipping=save.equipped[item.slot]!==uid,beforeTier=item.setId?gearSignatureTier(item.setId):0,beforeFull=equippedFullSetId();
+    save.equipped[item.slot]=equipping?uid:null;
+    let afterTier=item.setId?gearSignatureTier(item.setId):0,afterFull=equippedFullSetId(),awakened=equipping&&afterTier>beforeTier,fullSetActivated=equipping&&afterFull===item.setId&&beforeFull!==afterFull;
+    selectedGearUid=uid;gearTapUid=null;paperDollKey='';paperDollPreviewCache.clear();persist();refreshEquippedGearUI();
+    if(equipping)playGearEquipEffect(gear,awakened,fullSetActivated);
+    let rarity=LOOT_RARITIES[item.rarity];sound(awakened||equipping&&rarity.rank===4?'legendary':equipping&&rarity.rank>=2?'rare':'upgrade');return equipping
+  }
   function unequipGearSlot(slot){let gear=equippedGear(slot);if(!gear)return false;save.equipped[slot]=null;selectedGearUid=gear.uid;gearTapUid=null;paperDollKey='';paperDollPreviewCache.clear();persist();refreshEquippedGearUI();sound('upgrade');return true}
   function sellGear(uid){let index=save.gear.findIndex(entry=>entry.uid===uid),gear=save.gear[index],item=gearDefinition(gear);if(index<0||!item||gearIsEquipped(gear))return;let value=gearUnitValue(gear);save.gear.splice(index,1);if(selectedGearUid===uid)selectedGearUid=null;save.scrap+=value;persist();refreshBase();renderGearLocker();notice(item.name.toUpperCase()+' SOLD  +$'+value,LOOT_RARITIES[item.rarity].color);sound('pickup')}
   function renderSellFilteredButton(summary){let armed=sellFilterArmedKey===gearFilter+'|'+gearRarityFilter+'|'+summary.count+'|'+summary.value&&performance.now()<=sellFilterArmedUntil;ui.sellFilteredGear.disabled=!summary.count;ui.sellFilteredGear.classList.toggle('armed',armed);ui.sellFilteredLabel.textContent=armed?'CONFIRM SALE':'SELL FILTERED';ui.sellFilteredSummary.textContent=summary.count?summary.count+' ITEM'+(summary.count===1?'':'S')+'  \u00B7  $'+summary.value:'NOTHING SELLABLE'}
@@ -1122,7 +1177,7 @@
   }
   function startRun(seedOverride){
     cargo=[];if(save.starter)cargo.push({id:save.starter,rare:false,starter:true,power:starterPower(save.starter),recoveries:0,rareRecoveries:0});
-    player={x:WORLD.w/2,y:WORLD.h/2,r:18,hp:maxHp(),maxHp:maxHp(),speed:255,fire:0,inv:0,angle:0,facing:1,dashCd:0,dashTime:0,dashX:1,dashY:0,lastX:1,lastY:0,shields:baseShields(),guardCd:0,recoil:0,attackAnim:0,attackDuration:.24,animClock:0,volley:0,burstCharge:0,thermalCharges:0,ramHits:new Set(),signatureCrits:0,phantomStrike:0,travelCharge:0,fateSaved:false,vaultWardAwarded:0,spinCd:0,spinTime:0,spinLeap:0,spinLeapMax:0,spinAutoRemaining:0,spinAutoDuration:0,spinManual:false,spinAngle:0,spinPulse:0,spinHits:0,spinKills:0,spinCoins:0,spinPack:0,spinPeakPack:0,spinHeal:0,spinLifeTargets:new Set(),blackHoleAge:0,blackHolePulse:0,lightningPhase:'idle',lightningTime:0,lightningRate:0,lightningQueue:0,lightningTarget:null,lightningStartX:0,lightningStartY:0,lightningEndX:0,lightningEndY:0,lightningHistoryTargets:Array(LIGHTNING_DASH.targetHistorySize).fill(null),lightningHistoryTimes:Array(LIGHTNING_DASH.targetHistorySize).fill(0),lightningHistoryCursor:0,lightningBossSide:1,lightningImpacts:0,lightningPresses:0,lightningChainHits:0,lightningKills:0,lightningTempo:0,lightningLastTap:-99,stormAwakening:gearSignatureProfile().stormrunner===2?LIGHTNING_DASH.overchargeDuration:0};
+    player={x:WORLD.w/2,y:WORLD.h/2,r:18,hp:maxHp(),maxHp:maxHp(),speed:255,fire:0,inv:0,angle:0,facing:1,dashCd:0,dashTime:0,dashX:1,dashY:0,lastX:1,lastY:0,shields:baseShields(),guardCd:0,recoil:0,attackAnim:0,attackDuration:.24,animClock:0,volley:0,burstCharge:0,thermalCharges:0,ramHits:new Set(),signatureCrits:0,phantomStrike:0,travelCharge:0,fateSaved:false,vaultWardAwarded:0,spinCd:0,spinTime:0,spinLeap:0,spinLeapMax:0,spinAutoRemaining:0,spinAutoDuration:0,spinManual:false,spinAngle:0,spinPulse:0,spinHits:0,spinKills:0,spinCoins:0,spinPack:0,spinPeakPack:0,spinHeal:0,spinLifeTargets:new Set(),blackHoleAge:0,blackHolePulse:0,lightningPhase:'idle',lightningTime:0,lightningRate:0,lightningQueue:0,lightningTarget:null,lightningStartX:0,lightningStartY:0,lightningEndX:0,lightningEndY:0,lightningHistoryTargets:Array(LIGHTNING_DASH.targetHistorySize).fill(null),lightningHistoryTimes:Array(LIGHTNING_DASH.targetHistorySize).fill(0),lightningHistoryCursor:0,lightningBossSide:1,lightningImpacts:0,lightningPresses:0,lightningChainHits:0,lightningKills:0,lightningTempo:0,lightningLastTap:-99,stormAwakening:gearSignatureProfile().stormrunner===2?LIGHTNING_DASH.overchargeDuration:0,stormStepFx:0};
     enemies=[];pendingStrikes=[];enemyBullets=[];lootDrops=[];particles=[];effects=[];hazards=[];decor=[];obstacles=[];collisionMap=[];caches=[];lootBag={};elapsed=0;runTime=0;spawnClock=.28;hazardClock=3.5;runScrap=0;depth=1;riskTier=0;routeDecision=false;route=null;moduleDecision=false;depthPulse=0;extracting=0;shake=0;flash=0;hitStop=0;paused=false;bossActive=false;bossDefeated=false;bossEntity=null;bossLootChest=null;pendingWardenReward=null;expeditionCycle=0;bossRunClears=0;postBossDecision=false;postBossIntent=null;bossLootRewards=[];bossLootSelected=0;bossLootResolved=[];bossLootPhase='idle';runGearEquipBackups={};bossExtraction=false;zoneEventTriggered=false;runStats={damage:0,kills:0,elites:0,risks:0,items:0,legendary:0,bosses:0,modules:[],warden:null,route:null,boss:null,map:save.selectedMap};
     buildArenaObstacles(seedOverride);buildAdventureDecor();rebuildCollisionMap();if(guildTerrain){let entrance=openArenaPosition(guildTerrain.entrance.x,guildTerrain.entrance.y,player.r+5);player.x=entrance.x;player.y=entrance.y;player.lastX=1;player.lastY=0;player.angle=0}resetWaveDirector(.34);triggerFloorSignatures();
     let firstCache=guildRoutePosition(1);spawnCache(firstCache?firstCache.x:player.x+190,firstCache?firstCache.y:player.y+25,false,false);ui.extractOverlay.classList.remove('show');ui.bossLootOverlay.classList.remove('show');ui.routeOverlay.classList.remove('show');ui.moduleOverlay.classList.remove('show');ui.resultOverlay.classList.remove('show');ui.lootToast.classList.remove('show','legendary');ui.bossHud.classList.remove('show','tyrant');ui.cargoHud.classList.remove('bossHidden');ui.depthRoute.classList.remove('bossHidden','furnace','dynamo');ui.expedition.classList.remove('legendaryCargo');ui.extract.classList.remove('hotLoot');ui.routeLabel.textContent=activeMap().short;ui.settingsOverlay.classList.remove('show');setView('run');applyCargoEffects(cargo[0]);updateCargoHud();updateZoneHud();updateRouteHud();updateMapSeedDebug();updateHud();save.stats.runs++;persist();let firstZone=zoneAt(1),lightningAwake=player.stormAwakening>0;runNotice(lightningAwake?'I AM THE LIGHTNING':save.starter?MODULES[save.starter].name.toUpperCase()+' READY':firstZone.name,lightningAwake?'#79e7f2':firstZone.accent);sound(lightningAwake?'lightningDash':'start',lightningAwake?1:0)
@@ -1262,11 +1317,12 @@
     if(!player)return;player.lightningPhase='idle';player.lightningTime=0;player.lightningTarget=null;player.lightningImpactDone=false;if(clearQueue)player.lightningQueue=0
   }
   function lightningTravelEffects(){
-    let dx=player.lightningEndX-player.lightningStartX,dy=player.lightningEndY-player.lightningStartY;
-    spawnLightningEffect({kind:'lightningTrail',x:player.lightningStartX,y:player.lightningStartY,tx:player.lightningEndX,ty:player.lightningEndY,r:0,maxR:0,life:.19,max:.19,color:'#79e7f2',seed:player.lightningPresses*.73});
-    spawnLightningEffect({kind:'lightningAfterimage',x:player.lightningStartX,y:player.lightningStartY,r:0,maxR:0,life:.15,max:.15,color:'#e9fdff',facing:player.facing});
-    spawnLightningEffect({kind:'lightningAfterimage',x:player.lightningStartX+dx*.4,y:player.lightningStartY+dy*.4,r:0,maxR:0,life:.11,max:.11,color:'#79e7f2',facing:player.facing});
-    if(!mobileArmory())spawnLightningEffect({kind:'lightningAfterimage',x:player.lightningStartX+dx*.72,y:player.lightningStartY+dy*.72,r:0,maxR:0,life:.08,max:.08,color:'#ffffff',facing:player.facing})
+    let dx=player.lightningEndX-player.lightningStartX,dy=player.lightningEndY-player.lightningStartY,intensity=Math.min(1,.28+(player.lightningTempo||0)*.72);
+    spawnLightningEffect({kind:'lightningDeparture',x:player.lightningStartX,y:player.lightningStartY,r:4,maxR:28+intensity*9,life:.13,max:.13,color:'#dffcff',seed:player.lightningPresses*.41,intensity});
+    spawnLightningEffect({kind:'lightningTrail',x:player.lightningStartX,y:player.lightningStartY,tx:player.lightningEndX,ty:player.lightningEndY,r:0,maxR:0,life:.19,max:.19,color:'#79e7f2',seed:player.lightningPresses*.73,intensity});
+    spawnLightningEffect({kind:'lightningAfterimage',x:player.lightningStartX,y:player.lightningStartY,r:0,maxR:0,life:.15,max:.15,color:'#e9fdff',facing:player.facing,intensity});
+    spawnLightningEffect({kind:'lightningAfterimage',x:player.lightningStartX+dx*.4,y:player.lightningStartY+dy*.4,r:0,maxR:0,life:.11,max:.11,color:'#79e7f2',facing:player.facing,intensity});
+    if(!mobileArmory())spawnLightningEffect({kind:'lightningAfterimage',x:player.lightningStartX+dx*.72,y:player.lightningStartY+dy*.72,r:0,maxR:0,life:.08,max:.08,color:'#ffffff',facing:player.facing,intensity})
   }
   function lightningDamageScale(enemy){return enemy.boss?LIGHTNING_DASH.bossDamageMultiplier:enemy.elite?LIGHTNING_DASH.eliteDamageMultiplier:1}
   function lightningChainTargets(primary){
@@ -1276,21 +1332,23 @@
   function strikeWithLightning(enemy,damage,originX,originY){
     if(!enemy||enemy.dead)return false;let dx=enemy.x-originX,dy=enemy.y-originY,length=Math.hypot(dx,dy)||1;
     enemy.knockVx=dx/length*(enemy.boss?LIGHTNING_DASH.knockback*.18:LIGHTNING_DASH.knockback);enemy.knockVy=dy/length*(enemy.boss?LIGHTNING_DASH.knockback*.18:LIGHTNING_DASH.knockback);enemy.knockTime=enemy.boss?.05:.22;enemy.lightningLaunched=true;
-    let wasAlive=!enemy.dead;damageEnemy(enemy,playerDamageAgainst(enemy,damage*lightningDamageScale(enemy)),enemy.x,enemy.y,true);if(wasAlive&&enemy.dead)player.lightningKills++;return true
+    let wasAlive=!enemy.dead;damageEnemy(enemy,playerDamageAgainst(enemy,damage*lightningDamageScale(enemy)),enemy.x,enemy.y,true);
+    if(wasAlive&&enemy.dead){player.lightningKills++;spawnLightningEffect({kind:'lightningKill',x:enemy.x,y:enemy.y,r:5,maxR:38,life:.2,max:.2,color:'#dffcff',seed:player.lightningKills*.81,intensity:Math.min(1,.35+(player.lightningTempo||0)*.65)})}
+    return true
   }
   function resolveLightningImpact(stats){
     if(player.lightningImpactDone)return;player.lightningImpactDone=true;
-    let target=player.lightningTarget;
+    let target=player.lightningTarget,impactChains=0;
     if(target&&!target.dead){
       let distance=Math.hypot(target.x-player.x,target.y-player.y),reach=target.r+player.r+54;
       if(distance<=reach&&!lineBlockedByCover(player.x,player.y,target.x,target.y,3)){
-        let critical=Math.random()<stats.crit,overcharge=player.stormAwakening>0?LIGHTNING_DASH.overchargeDamage:1,damage=shotDamage()*stats.damage*LIGHTNING_DASH.damageMultiplier*overcharge*(critical?1.8:1),chainTargets=lightningChainTargets(target),fromX=target.x,fromY=target.y;
+        let critical=Math.random()<stats.crit,overcharge=player.stormAwakening>0?LIGHTNING_DASH.overchargeDamage:1,damage=shotDamage()*stats.damage*LIGHTNING_DASH.damageMultiplier*overcharge*(critical?1.8:1),chainTargets=lightningChainTargets(target),fromX=target.x,fromY=target.y;impactChains=chainTargets.length;
         strikeWithLightning(target,damage,player.lightningStartX,player.lightningStartY);player.lightningImpacts++;if(critical)effects.push({kind:'spinCrit',x:target.x,y:target.y,r:4,maxR:42,life:.22,max:.22,color:'#ffffff'});
-        for(let index=0;index<chainTargets.length;index++){let chained=chainTargets[index],chainDamage=damage*LIGHTNING_DASH.chainDamageMultiplier*(1-index*.11);spawnLightningEffect({kind:'lightningChain',x:fromX,y:fromY,tx:chained.x,ty:chained.y,r:0,maxR:0,life:.17,max:.17,color:'#bff8ff',seed:(player.lightningPresses+index)*1.17});if(strikeWithLightning(chained,chainDamage,fromX,fromY)){player.lightningChainHits++;fromX=chained.x;fromY=chained.y}}
+        for(let index=0;index<chainTargets.length;index++){let chained=chainTargets[index],chainDamage=damage*LIGHTNING_DASH.chainDamageMultiplier*(1-index*.11);spawnLightningEffect({kind:'lightningChain',x:fromX,y:fromY,tx:chained.x,ty:chained.y,r:0,maxR:0,life:.17,max:.17,color:'#bff8ff',seed:(player.lightningPresses+index)*1.17,intensity:Math.min(1,.32+(player.lightningTempo||0)*.68)});if(strikeWithLightning(chained,chainDamage,fromX,fromY)){player.lightningChainHits++;fromX=chained.x;fromY=chained.y}}
         player.inv=Math.max(player.inv,LIGHTNING_DASH.invulnerability)
       }
     }
-    let intensity=Math.min(1,(player.lightningTempo||0)+(player.lightningChainHits?0.18:0));spawnLightningEffect({kind:'lightningImpact',x:player.x,y:player.y,r:5,maxR:54,life:.2,max:.2,color:'#ffffff'});if(save.settings.particles)for(let index=0;index<(mobileArmory()?9:14);index++){let angle=index*Math.PI/7+(runTime%1),speed=82+index*8;spawnParticle({x:player.x,y:player.y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,life:.2,max:.2,r:2.2+(index%3)*.45,color:index%3?'#79e7f2':'#ffffff'})}shake=Math.max(shake,3.8+intensity*1.6);hitStop=Math.max(hitStop,LIGHTNING_DASH.impactPause);sound('lightningImpact',intensity)
+    let intensity=Math.min(1,(player.lightningTempo||0)+(impactChains?0.18:0));spawnLightningEffect({kind:'lightningImpact',x:player.x,y:player.y,r:5,maxR:54+impactChains*3,life:.2,max:.2,color:'#ffffff',intensity,seed:player.lightningPresses*.57});if(save.settings.particles)for(let index=0;index<(mobileArmory()?9:14);index++){let angle=index*Math.PI/7+(runTime%1),speed=82+index*8;spawnParticle({x:player.x,y:player.y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,life:.2,max:.2,r:2.2+(index%3)*.45,color:index%3?'#79e7f2':'#ffffff'})}shake=Math.max(shake,3.8+intensity*1.6);hitStop=Math.max(hitStop,LIGHTNING_DASH.impactPause);sound('lightningImpact',intensity)
   }
   function retargetLightningDash(move){
     let target=selectLightningTarget(move);if(!target)return false;setLightningDestination(target);player.lightningPhase='travel';lightningTravelEffects();return true
@@ -1820,13 +1878,22 @@
     dx=player.x-e.x;dy=player.y-e.y;l=Math.hypot(dx,dy)||1;if(player.lightningPhase!=='travel'&&!knocked&&e.spawnGrace<=0&&l<e.r+player.r+3&&e.attack<=0){let rushing=e.dashTime>0;e.attack=.5;if(rushing){finishEnemyDash(e,e.type==='brute'?TANK_RUSH_RECOVERY:.28,e.type==='brute'?'#c83f46':'#8f9dff');effects.push({kind:'tankImpact',x:e.x,y:e.y,angle:e.angle,r:12,maxR:58,life:.22,max:.22,color:e.type==='brute'?'#c83f46':'#8f9dff'});shake=Math.max(shake,e.type==='brute'?6:4)}let rushDamage=e.type==='brute'?.45:e.type==='lancer'?.62:.5;if(damagePlayer(e.damage*(rushing?rushDamage:1)))return true}return false
   }
 
+  function updateStormcallerMovementFx(dt,moved,stats){
+    player.stormStepFx=Math.max(0,(player.stormStepFx||0)-dt);
+    if(!usesLightningDash(stats)||!save.settings.particles||moved<.35&&player.lightningPhase!=='travel')return;
+    if(player.stormStepFx>0)return;
+    let lightningTravel=player.lightningPhase==='travel',fast=lightningTravel||player.dashTime>0,cadence=fast?.035:mobileArmory()?.095:.07,phase=(player.animClock||0)*13,x=player.x-player.lastX*8,y=player.y+player.r*.72;
+    player.stormStepFx=cadence;
+    spawnParticle({x:x+Math.sin(phase)*5,y,vx:-player.lastX*(fast?72:24)+Math.sin(phase*1.7)*16,vy:-28-Math.abs(Math.cos(phase))*24,life:fast?.18:.24,max:fast?.18:.24,r:fast?2.5:1.8,color:Math.sin(phase)>.1?'#ffffff':'#62dfff'})
+  }
+
   function update(dt){
-    if(mode!=='run'||paused)return;if(postBossDecision||routeDecision||moduleDecision)return;runTime+=dt;if(!bossActive&&!bossDefeated)elapsed+=dt;let nextDepth=depthForElapsed(elapsed);if(nextDepth>depth){if(nextDepth===3&&!route){if(!extracting){showRouteDecision();return}}else{enterDepth(nextDepth);if(postBossDecision||bossActive)return}}if(!bossActive&&!bossDefeated&&!zoneEventTriggered&&zoneProgress()>=.58)triggerZoneEvent();
+    if(mode!=='run'||paused||testFrameFrozen)return;if(postBossDecision||routeDecision||moduleDecision)return;runTime+=dt;if(!bossActive&&!bossDefeated)elapsed+=dt;let nextDepth=depthForElapsed(elapsed);if(nextDepth>depth){if(nextDepth===3&&!route){if(!extracting){showRouteDecision();return}}else{enterDepth(nextDepth);if(postBossDecision||bossActive)return}}if(!bossActive&&!bossDefeated&&!zoneEventTriggered&&zoneProgress()>=.58)triggerZoneEvent();
     let playerBeforeX=player.x,playerBeforeY=player.y;
     let move=movement(),stats=cargoStats();player.inv=Math.max(0,player.inv-dt);player.fire-=dt;player.guardCd=Math.max(0,(player.guardCd||0)-dt);player.recoil=Math.max(0,player.recoil-dt);player.attackAnim=Math.max(0,(player.attackAnim||0)-dt);player.animClock=(player.animClock||0)+dt;player.dashCd=Math.max(0,player.dashCd-dt);let lightningMotion=updateLightningDash(dt,stats,move),spinMotion=lightningMotion||updateHammerSpin(dt,stats,move);
     if(!spinMotion&&!updateDashMotion(dt,stats)){player.x+=move.x*player.speed*stats.speed*dt;player.y+=move.y*player.speed*stats.speed*dt;if(move.x||move.y){player.lastX=move.x;player.lastY=move.y;player.angle=Math.atan2(move.y,move.x);if(Math.abs(move.x)>.08)player.facing=move.x<0?-1:1}}player.x=Math.max(player.r,Math.min(WORLD.w-player.r,player.x));player.y=Math.max(player.r,Math.min(WORLD.h-player.r,player.y));
     if(stats.signature.grandWayfarer&&(move.x||move.y||player.dashTime>0))player.travelCharge=Math.min(1,(player.travelCharge||0)+dt/(stats.signature.grandWayfarer===2?1.7:2.4));
-    if(spinMotion!=='leap'){let playerWantedX=player.x,playerWantedY=player.y;player.x=playerBeforeX;player.y=playerBeforeY;let playerCoverHit=moveAroundCover(player,playerWantedX-playerBeforeX,playerWantedY-playerBeforeY);if(playerCoverHit&&player.dashTime>0){player.dashTime=0;effects.push({kind:'coverImpact',x:player.x,y:player.y,r:4,maxR:28,life:.2,max:.2,color:'#ffc928'});shake=Math.max(shake,2);sound('hit')}}if(updateHazards(dt))return;
+    if(spinMotion!=='leap'){let playerWantedX=player.x,playerWantedY=player.y;player.x=playerBeforeX;player.y=playerBeforeY;let playerCoverHit=moveAroundCover(player,playerWantedX-playerBeforeX,playerWantedY-playerBeforeY);if(playerCoverHit&&player.dashTime>0){player.dashTime=0;effects.push({kind:'coverImpact',x:player.x,y:player.y,r:4,maxR:28,life:.2,max:.2,color:'#ffc928'});shake=Math.max(shake,2);sound('hit')}}updateStormcallerMovementFx(dt,Math.hypot(player.x-playerBeforeX,player.y-playerBeforeY),stats);if(updateHazards(dt))return;
     updateWaveDirector(dt);
     let target=nearestEnemy(MELEE.reach+32);if(target&&player.fire<=0&&!spinMotion)fireAt(target);
     for(const strike of pendingStrikes){strike.delay-=dt;if(strike.delay<=0&&!strike.released){strike.released=true;releaseHammerStrike(strike)}}pendingStrikes=pendingStrikes.filter(strike=>!strike.released);
@@ -1853,7 +1920,23 @@
     else{ctx.fillStyle='#101317';roundedRect(-16,-13,31,34,9);ctx.fill();ctx.fillStyle='#172b4b';roundedRect(-13,-9,27,28,8);ctx.fill();ctx.fillStyle='#b52d31';ctx.beginPath();ctx.moveTo(-13,-7);ctx.lineTo(10,-10);ctx.lineTo(4,2);ctx.closePath();ctx.fill();ctx.fillStyle='#080a0d';ctx.fillRect(-18,-20,36,7);roundedRect(-12,-29,24,12,4);ctx.fill();ctx.strokeStyle='#e8dfce';ctx.lineWidth=2;ctx.strokeRect(-8,-15,7,6);ctx.strokeRect(1,-15,7,6);ctx.fillStyle='#d0a35a';ctx.fillRect(13,-3,30,6);roundedRect(38,-12,19,24,4);ctx.fill()}
     ctx.restore()
   }
-  function drawEquippedRarityAura(){let profile=equippedRarityProfile(),rank=profile.rank;if(rank<2)return;let blackHole=equippedFullSetId()==='blackHole',color=blackHole?'#4bbcff':profile.color,t=performance.now()/1000,pulse=.5+Math.sin(t*(rank===4?2.4:3.2))*.5;ctx.save();ctx.globalAlpha=rank===2?.26:.38;ctx.strokeStyle=color;ctx.lineWidth=rank===4?2.2:1.6;ctx.setLineDash(rank===2?[7,8]:[10,5]);ctx.lineDashOffset=-t*(rank+1)*7;ctx.beginPath();ctx.ellipse(0,31,27+rank*2+pulse*2,8+rank,0,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);if(rank===4){ctx.globalAlpha=.18+pulse*.12;for(let i=0;i<rank;i++){let angle=t*.5+i*Math.PI*2/rank,x=Math.cos(angle)*(25+rank*2),y=-4+Math.sin(angle)*17;ctx.save();ctx.translate(x,y);ctx.rotate(angle+Math.PI/4);ctx.strokeRect(-2.5,-2.5,5,5);ctx.restore()}ctx.globalAlpha=.34;ctx.fillStyle=blackHole?'#e9f9ff':'#fff1bf';ctx.font='900 8px Georgia,serif';ctx.textAlign='center';ctx.textBaseline='middle';for(let i=0;i<3;i++){let angle=-t*.7+i*Math.PI*2/3;ctx.fillText('\u2726',Math.cos(angle)*32,-4+Math.sin(angle)*22)}}ctx.restore()}
+  function drawStormcallerAura(){
+    let t=runTime||performance.now()/1000,active=player&&player.lightningPhase!=='idle',tempo=player?Math.min(1,player.lightningTempo||0):0,reduced=!save.settings.particles,energy=active?.72+tempo*.28:.38+Math.sin(t*2.7)*.06,arcCount=reduced?1:active?4:2;
+    ctx.save();
+    ctx.globalCompositeOperation='lighter';
+    ctx.globalAlpha=.18+energy*.16;
+    ctx.fillStyle='#092c58';
+    ctx.beginPath();ctx.ellipse(0,30,37+tempo*5,11+tempo*2,0,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='#63ddff';ctx.shadowColor='#2f9dff';ctx.shadowBlur=reduced?4:9;ctx.lineWidth=1.2+energy;
+    ctx.setLineDash([3,7]);ctx.lineDashOffset=-t*(18+tempo*24);ctx.beginPath();ctx.ellipse(0,30,31+tempo*4,8.5+tempo,0,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);
+    for(let arc=0;arc<arcCount;arc++){
+      let phase=t*(1.2+arc*.16)+arc*2.17,startX=Math.cos(phase)*23,startY=-4+Math.sin(phase*.82)*24,endX=Math.cos(phase+2.1)*(28+tempo*5),endY=-5+Math.sin(phase*1.13+1.3)*27,midX=(startX+endX)*.5+Math.sin(phase*3.1)*7,midY=(startY+endY)*.5+Math.cos(phase*2.4)*6;
+      ctx.globalAlpha=.2+energy*(arc%2?.34:.5);ctx.strokeStyle=arc%3?'#63ddff':'#ffffff';ctx.lineWidth=arc%3?1.15:1.7;ctx.beginPath();ctx.moveTo(startX,startY);ctx.lineTo(midX,midY);ctx.lineTo(endX,endY);ctx.stroke()
+    }
+    if(!reduced){ctx.fillStyle='#e9fdff';ctx.shadowBlur=6;for(let spark=0;spark<(active?5:3);spark++){let phase=t*(.9+spark*.12)+spark*1.73,x=Math.cos(phase)*(24+(spark%2)*8),y=-3+Math.sin(phase*1.3)*27,r=spark%2?1.1:1.7;ctx.globalAlpha=.3+energy*.45;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}}
+    ctx.restore()
+  }
+  function drawEquippedRarityAura(){let profile=equippedRarityProfile(),rank=profile.rank;if(rank<2)return;let fullSetId=equippedFullSetId(),blackHole=fullSetId==='blackHole',stormcaller=fullSetId==='stormrunner';if(stormcaller){drawStormcallerAura();return}let color=blackHole?'#4bbcff':profile.color,t=performance.now()/1000,pulse=.5+Math.sin(t*(rank===4?2.4:3.2))*.5;ctx.save();ctx.globalAlpha=rank===2?.26:.38;ctx.strokeStyle=color;ctx.lineWidth=rank===4?2.2:1.6;ctx.setLineDash(rank===2?[7,8]:[10,5]);ctx.lineDashOffset=-t*(rank+1)*7;ctx.beginPath();ctx.ellipse(0,31,27+rank*2+pulse*2,8+rank,0,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);if(rank===4){ctx.globalAlpha=.18+pulse*.12;for(let i=0;i<rank;i++){let angle=t*.5+i*Math.PI*2/rank,x=Math.cos(angle)*(25+rank*2),y=-4+Math.sin(angle)*17;ctx.save();ctx.translate(x,y);ctx.rotate(angle+Math.PI/4);ctx.strokeRect(-2.5,-2.5,5,5);ctx.restore()}ctx.globalAlpha=.34;ctx.fillStyle=blackHole?'#e9f9ff':'#fff1bf';ctx.font='900 8px Georgia,serif';ctx.textAlign='center';ctx.textBaseline='middle';for(let i=0;i<3;i++){let angle=-t*.7+i*Math.PI*2/3;ctx.fillText('\u2726',Math.cos(angle)*32,-4+Math.sin(angle)*22)}}ctx.restore()}
   function drawBlackHoleSheet(image,frame,size,alpha,rotation,scaleX){
     if(!imageReady(image))return false;let width=image.naturalWidth||image.width,height=image.naturalHeight||image.height,cell=width/4;ctx.save();ctx.globalAlpha=alpha;ctx.rotate(rotation||0);ctx.scale(scaleX||1,1);ctx.drawImage(image,(frame%4)*cell,0,cell,height,-size/2,-size/2,size,size);ctx.restore();return true
   }
@@ -1963,7 +2046,12 @@
     if(!chest||!(chest.arrival>0))return;let progress=1-chest.arrival/(chest.arrivalMax||BOSS_LOOT_ORB_ARRIVAL),point=worldToScreen(chest.x,chest.y,cam),x=W/2+(point.x-W/2)*cam.zoom,y=H/2+(point.y-H/2)*cam.zoom,fade=Math.pow(Math.max(0,1-progress),2),white=Math.min(.82,fade*.95),color=chest.color;ctx.save();ctx.globalCompositeOperation='screen';ctx.fillStyle='rgba(255,252,236,'+white+')';ctx.fillRect(-12,-12,W+24,H+24);let glow=ctx.createRadialGradient(x,y,8,x,y,Math.max(W,H)*.72);glow.addColorStop(0,'rgba(255,255,255,'+Math.min(.9,fade*1.2)+')');glow.addColorStop(.15,color+Math.round(Math.min(210,fade*210)).toString(16).padStart(2,'0'));glow.addColorStop(1,color+'00');ctx.fillStyle=glow;ctx.fillRect(0,0,W,H);ctx.globalAlpha=Math.min(.55,fade*.7);ctx.strokeStyle='#fffdf2';ctx.lineWidth=2;for(let i=0;i<16;i++){let angle=i*Math.PI/8+.08,length=Math.max(W,H)*.78,start=52+i%3*11;ctx.beginPath();ctx.moveTo(x+Math.cos(angle)*start,y+Math.sin(angle)*start);ctx.lineTo(x+Math.cos(angle)*length,y+Math.sin(angle)*length);ctx.stroke()}ctx.restore()
   }
   function drawAdventureItemShape(item,r,rarity){let visual=item.visual,variant=visual.variant||0,detail=variant%4;ctx.fillStyle=visual.color;ctx.strokeStyle=visual.accent;ctx.lineWidth=2+rarity.rank*.28;ctx.lineJoin='round';if(item.slot==='hat'){let brim=r*(.82+(variant%3)*.1),crown=r*(.46+(variant%2)*.1),height=r*(.82+(variant%4)*.08);ctx.beginPath();ctx.ellipse(0,r*.25,brim,r*(.22+detail*.025),0,0,Math.PI*2);ctx.fill();ctx.stroke();roundedRect(-crown,-height,crown*2,height+r*.25,detail===2?r*.35:2);ctx.fill();ctx.stroke();ctx.strokeStyle=rarity.color;ctx.beginPath();ctx.moveTo(-crown,-r*.14);ctx.lineTo(crown,-r*.14);if(variant%2)ctx.moveTo(-crown*.7,-height*.72),ctx.lineTo(crown*.72,-height*.52);ctx.stroke()}else if(item.slot==='scarf'){let flip=variant%2?-1:1;ctx.beginPath();ctx.moveTo(-r*.92,-r*.62);ctx.lineTo(r*.55,-r*.34);ctx.lineTo(r*(.68+detail*.08)*flip,r*.82);ctx.lineTo(0,r*(.24+detail*.07));ctx.lineTo(-r*(.66+(3-detail)*.06)*flip,r*.76);ctx.closePath();ctx.fill();ctx.stroke();ctx.strokeStyle=rarity.color;ctx.beginPath();ctx.moveTo(-r*.62,-r*.28);ctx.lineTo(r*.43,r*.02);if(variant>=4)ctx.moveTo(-r*.35,r*.12),ctx.lineTo(r*.25,r*.4);ctx.stroke()}else if(item.slot==='coat'){let shoulder=r*(.82+detail*.05),hem=r*(.58+(variant%2)*.16);ctx.beginPath();ctx.moveTo(-r*.54,-r*.82);ctx.lineTo(-shoulder,-r*.22);ctx.lineTo(-hem,r*.92);ctx.lineTo(0,r*(.52+(variant%3)*.08));ctx.lineTo(hem,r*.92);ctx.lineTo(shoulder,-r*.22);ctx.lineTo(r*.54,-r*.82);ctx.lineTo(0,-r*(.38+(variant%2)*.12));ctx.closePath();ctx.fill();ctx.stroke();ctx.strokeStyle=rarity.color;ctx.beginPath();ctx.moveTo(0,-r*.4);ctx.lineTo(0,r*.58);ctx.moveTo(-r*.45,-r*.42);ctx.lineTo(0,-r*.08);ctx.lineTo(r*.45,-r*.42);if(variant>=4)ctx.moveTo(-hem*.75,r*.48),ctx.lineTo(hem*.75,r*.48);ctx.stroke()}else if(item.slot==='hammer'){let width=r*(1.55+detail*.13),height=r*(.65+(variant%2)*.12);ctx.fillStyle='#5e3d2c';ctx.strokeStyle='#2a1710';ctx.lineWidth=1.5;roundedRect(-r*.13,-r*.1,r*.26,r*1.5,r*.08);ctx.fill();ctx.stroke();ctx.fillStyle=visual.color;ctx.strokeStyle=visual.accent;ctx.lineWidth=2+rarity.rank*.28;roundedRect(-width/2,-r*.82,width,height,variant%3===2?r*.3:2);ctx.fill();ctx.stroke();ctx.strokeStyle=rarity.color;ctx.strokeRect(-width*.28,-r*.69,width*.56,height*.56);if(variant%2){ctx.beginPath();ctx.moveTo(-width*.42,-r*.5);ctx.lineTo(width*.42,-r*.5);ctx.stroke()}}else{let bootHeight=r*(1.05+detail*.08),toe=r*(.38+(variant%3)*.06);for(const x of [-r*.48,r*.45]){ctx.save();ctx.translate(x,0);ctx.rotate(x<0?-.14:.14);roundedRect(-r*.34,-bootHeight*.62,r*.68,bootHeight,variant%2?4:2);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(-r*.34,bootHeight*.25);ctx.lineTo(toe,bootHeight*.25);ctx.lineTo(toe,bootHeight*.48);ctx.lineTo(-r*.18,bootHeight*.48);ctx.closePath();ctx.fill();ctx.stroke();ctx.strokeStyle=rarity.color;ctx.beginPath();ctx.moveTo(-r*.23,-r*.12);ctx.lineTo(r*.24,-r*.12);if(variant>=4)ctx.moveTo(-r*.2,r*.08),ctx.lineTo(r*.26,r*.08);ctx.stroke();ctx.restore()}}let markY=item.slot==='hat'?-r*.43:item.slot==='hammer'?-r*.49:item.slot==='boots'?r*.02:0;ctx.fillStyle=visual.accent;ctx.strokeStyle='rgba(3,7,14,.6)';ctx.lineWidth=2;ctx.font='900 '+Math.max(7,r*.72)+'px Georgia';ctx.textAlign='center';ctx.textBaseline='middle';ctx.strokeText(visual.mark,0,markY);ctx.fillText(visual.mark,0,markY)}
-  function drawAdventureLootSprite(item,r){let visual=item.visual,blackHole=Number.isInteger(visual.blackHoleColumn),legendary=!blackHole&&Number.isInteger(visual.legendaryRow)&&Number.isInteger(visual.legendaryColumn),setSprite=!blackHole&&!legendary&&Number.isInteger(visual.setGearRow)&&Number.isInteger(visual.setGearColumn),atlas=blackHole?blackHoleDropAtlas:legendary?legendaryDropAtlas:setSprite?setGearDropAtlas:gearDropAtlas,cell=blackHole?80:legendary?LEGENDARY_DROP_CELL:setSprite?SET_GEAR_DROP_CELL:GEAR_DROP_CELL;if(!imageReady(atlas))return false;let column=blackHole?visual.blackHoleColumn:legendary?visual.legendaryColumn:setSprite?visual.setGearColumn:visual.atlasColumn,row=blackHole?0:legendary?visual.legendaryRow:setSprite?visual.setGearRow:visual.atlasRow,size=r*(blackHole?4.3:legendary?4.15:setSprite?3.85:3.65);ctx.drawImage(atlas,column*cell,row*cell,cell,cell,-size/2,-size/2,size,size);return true}
+  function drawAdventureLootSprite(item,r){
+    let visual=item.visual,stormcaller=Number.isInteger(visual.stormcallerColumn),blackHole=!stormcaller&&Number.isInteger(visual.blackHoleColumn),dedicated=stormcaller||blackHole,legendary=!dedicated&&Number.isInteger(visual.legendaryRow)&&Number.isInteger(visual.legendaryColumn),setSprite=!dedicated&&!legendary&&Number.isInteger(visual.setGearRow)&&Number.isInteger(visual.setGearColumn),atlas=stormcaller?stormcallerDropAtlas:blackHole?blackHoleDropAtlas:legendary?legendaryDropAtlas:setSprite?setGearDropAtlas:gearDropAtlas,cell=dedicated?80:legendary?LEGENDARY_DROP_CELL:setSprite?SET_GEAR_DROP_CELL:GEAR_DROP_CELL;
+    if(!imageReady(atlas))return false;
+    let column=stormcaller?visual.stormcallerColumn:blackHole?visual.blackHoleColumn:legendary?visual.legendaryColumn:setSprite?visual.setGearColumn:visual.atlasColumn,row=dedicated?0:legendary?visual.legendaryRow:setSprite?visual.setGearRow:visual.atlasRow,size=r*(stormcaller?4.45:blackHole?4.3:legendary?4.15:setSprite?3.85:3.65);
+    ctx.drawImage(atlas,column*cell,row*cell,cell,cell,-size/2,-size/2,size,size);return true
+  }
   function drawAdventureLoot(drop,cam){let item=drop.item,rarity=LOOT_RARITIES[item.rarity],rank=rarity.rank,p=worldToScreen(drop.x,drop.y,cam),bob=Math.sin(performance.now()/210+drop.spin)*2.2,r=drop.r;ctx.save();ctx.translate(p.x,p.y+bob);if(rank===4){ctx.globalAlpha=.24;let beam=ctx.createLinearGradient(0,-76,0,20);beam.addColorStop(0,'#f2c14f00');beam.addColorStop(.7,'#f2c14f99');beam.addColorStop(1,'#f2c14f00');ctx.fillStyle=beam;ctx.fillRect(-7,-76,14,96);ctx.globalAlpha=1}ctx.fillStyle='rgba(3,7,14,.32)';ctx.beginPath();ctx.ellipse(0,r*1.18,r*1.15,r*.32,0,0,Math.PI*2);ctx.fill();ctx.rotate(Math.sin(drop.spin)*.08+(item.visual.variant-3)*.01);ctx.shadowColor=rarity.glow;ctx.shadowBlur=rank*3;if(!drawAdventureLootSprite(item,r))drawAdventureItemShape(item,r,rarity);ctx.shadowBlur=0;if(rank>=2){ctx.strokeStyle=rarity.color;ctx.globalAlpha=.72;ctx.lineWidth=1.4;ctx.beginPath();ctx.arc(0,0,r*1.52,-drop.spin,Math.PI-drop.spin);ctx.stroke()}if(rank===4){ctx.globalAlpha=1;ctx.fillStyle='#fff5d6';ctx.font='900 7px Georgia';ctx.textAlign='center';for(let i=0;i<4;i++){let a=drop.spin*.25+i*Math.PI/2;ctx.fillText('\u2726',Math.cos(a)*r*1.78,Math.sin(a)*r*1.64)}}ctx.restore()}
   function drawTankTelegraph(e,p){
     let locked=e.aimX||e.aimY,nx=locked?e.aimX:Math.cos(e.angle),ny=locked?e.aimY:Math.sin(e.angle),angle=Math.atan2(ny,nx),progress=1-Math.min(1,e.charge/TANK_RUSH_WINDUP),start=e.r*.55,length=e.dashDistance||Math.min(TANK_RUSH_RANGE,e.lockDistance||TANK_RUSH_RANGE)+TANK_RUSH_OVERSHOOT,half=e.r+(player?player.r*.78:12),pulse=.72+Math.sin(performance.now()/70)*.16;
@@ -2208,9 +2296,11 @@
     for(const fx of effects){
       let q=worldToScreen(fx.x,fx.y,cam),progress=1-fx.life/fx.max,alpha=Math.max(0,fx.life/fx.max),radius=fx.r+(fx.maxR-fx.r)*progress;ctx.save();ctx.globalAlpha=alpha;ctx.translate(q.x,q.y);
       if(fx.kind==='hammerSwing'){ctx.rotate(fx.angle||0);ctx.strokeStyle=fx.color;ctx.lineCap='round';ctx.lineWidth=Math.max(1,5*(1-progress));ctx.beginPath();ctx.arc(0,0,radius,-1.02,1.02);ctx.stroke();ctx.globalAlpha=alpha*.65;ctx.strokeStyle='#f4ead6';ctx.lineWidth=Math.max(1,2.4*(1-progress));ctx.beginPath();ctx.arc(0,0,radius*.72,-.88,.88);ctx.stroke()}
-      else if(fx.kind==='lightningTrail'||fx.kind==='lightningChain'){let target=worldToScreen(fx.tx,fx.ty,cam),dx=target.x-q.x,dy=target.y-q.y,length=Math.hypot(dx,dy)||1,nx=-dy/length,ny=dx/length,chain=fx.kind==='lightningChain',segments=chain?5:7,amplitude=chain?9:14,seed=fx.seed||0,drawBolt=(width,color,blur,scale)=>{ctx.strokeStyle=color;ctx.shadowColor=color;ctx.shadowBlur=blur;ctx.lineWidth=Math.max(1,width*(1-progress));ctx.beginPath();ctx.moveTo(0,0);for(let segment=1;segment<segments;segment++){let t=segment/segments,edge=Math.sin(t*Math.PI),offset=Math.sin(seed+segment*2.37)*amplitude*edge*scale;ctx.lineTo(dx*t+nx*offset,dy*t+ny*offset)}ctx.lineTo(dx,dy);ctx.stroke()};ctx.lineCap='round';drawBolt(chain?8:12,'#2da9e8',16,1);ctx.globalAlpha=alpha*.96;drawBolt(chain?2.8:3.8,'#ffffff',7,.72)}
-      else if(fx.kind==='lightningAfterimage'){ctx.globalAlpha=alpha*.32;ctx.scale((fx.facing||1)*(.97+progress*.03),.97+progress*.03);ctx.shadowColor=fx.color;ctx.shadowBlur=13;drawPappaHammer()}
-      else if(fx.kind==='lightningImpact'){ctx.strokeStyle=fx.color;ctx.shadowColor='#79e7f2';ctx.shadowBlur=15;ctx.lineWidth=Math.max(1,6*(1-progress));ctx.beginPath();ctx.arc(0,0,radius,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=alpha*.72;ctx.lineWidth=Math.max(1,2.5*(1-progress));ctx.beginPath();ctx.arc(0,0,radius*.62,0,Math.PI*2);ctx.stroke();ctx.rotate(progress*.85);for(let ray=0;ray<10;ray++){ctx.rotate(Math.PI/5);ctx.beginPath();ctx.moveTo(radius*.18,0);ctx.lineTo(radius*(ray%2?.82:1.12),0);ctx.stroke()}}
+      else if(fx.kind==='lightningTrail'||fx.kind==='lightningChain'){let target=worldToScreen(fx.tx,fx.ty,cam),dx=target.x-q.x,dy=target.y-q.y,length=Math.hypot(dx,dy)||1,nx=-dy/length,ny=dx/length,chain=fx.kind==='lightningChain',intensity=fx.intensity||0,segments=chain?5:7,amplitude=(chain?9:14)*(1+intensity*.18),seed=fx.seed||0,drawBolt=(width,color,blur,scale)=>{ctx.strokeStyle=color;ctx.shadowColor=color;ctx.shadowBlur=blur;ctx.lineWidth=Math.max(1,width*(1-progress));ctx.beginPath();ctx.moveTo(0,0);for(let segment=1;segment<segments;segment++){let t=segment/segments,edge=Math.sin(t*Math.PI),offset=Math.sin(seed+segment*2.37)*amplitude*edge*scale;ctx.lineTo(dx*t+nx*offset,dy*t+ny*offset)}ctx.lineTo(dx,dy);ctx.stroke()};ctx.lineCap='round';drawBolt((chain?7:10)+intensity*2.2,'#2388d8',12+intensity*7,1);ctx.globalAlpha=alpha*.96;drawBolt((chain?2.4:3.2)+intensity*.75,'#f4fdff',6+intensity*3,.72)}
+      else if(fx.kind==='lightningAfterimage'){ctx.globalAlpha=alpha*(.25+(fx.intensity||0)*.13);ctx.scale((fx.facing||1)*(.97+progress*.03),.97+progress*.03);ctx.shadowColor=fx.color;ctx.shadowBlur=10+(fx.intensity||0)*6;drawPappaHammer()}
+      else if(fx.kind==='lightningDeparture'){let intensity=fx.intensity||0;ctx.rotate((fx.seed||0)+progress*.7);ctx.strokeStyle='#63ddff';ctx.shadowColor='#2388d8';ctx.shadowBlur=8+intensity*7;ctx.lineWidth=Math.max(1,3.2*(1-progress));for(let ray=0;ray<6;ray++){ctx.rotate(Math.PI/3);ctx.beginPath();ctx.moveTo(radius*.1,0);ctx.lineTo(radius*(ray%2?.72:1),0);ctx.stroke()}ctx.globalAlpha=alpha*.8;ctx.strokeStyle='#f4fdff';ctx.beginPath();ctx.arc(0,0,radius*.55,0,Math.PI*2);ctx.stroke()}
+      else if(fx.kind==='lightningImpact'){let intensity=fx.intensity||0;ctx.strokeStyle=fx.color;ctx.shadowColor='#39aaff';ctx.shadowBlur=12+intensity*7;ctx.lineWidth=Math.max(1,(5+intensity*2)*(1-progress));ctx.beginPath();ctx.arc(0,0,radius,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=alpha*.7;ctx.lineWidth=Math.max(1,(2.2+intensity)*(1-progress));ctx.beginPath();ctx.arc(0,0,radius*.62,0,Math.PI*2);ctx.stroke();ctx.rotate((fx.seed||0)+progress*.85);for(let ray=0;ray<10;ray++){ctx.rotate(Math.PI/5);ctx.beginPath();ctx.moveTo(radius*.18,0);ctx.lineTo(radius*(ray%2?.78:1.08),0);ctx.stroke()}}
+      else if(fx.kind==='lightningKill'){let intensity=fx.intensity||0;ctx.rotate((fx.seed||0)-progress*.55);ctx.strokeStyle='#dffcff';ctx.shadowColor='#2388d8';ctx.shadowBlur=10+intensity*7;ctx.lineCap='round';ctx.lineWidth=Math.max(1,(3.2+intensity)*(1-progress));for(let ray=0;ray<8;ray++){ctx.rotate(Math.PI/4);ctx.beginPath();ctx.moveTo(radius*.2,0);ctx.lineTo(radius*(ray%2?.72:1.08),0);ctx.stroke()}ctx.globalAlpha=alpha*.42;ctx.fillStyle='#1e78c7';ctx.beginPath();ctx.arc(0,0,radius*.36,0,Math.PI*2);ctx.fill()}
       else if(fx.kind==='lightningCharge'){ctx.strokeStyle=fx.color;ctx.shadowColor='#79e7f2';ctx.shadowBlur=8;ctx.lineWidth=Math.max(1,3*(1-progress));ctx.setLineDash([4,4]);ctx.lineDashOffset=-progress*14;ctx.beginPath();ctx.arc(0,0,radius,0,Math.PI*2);ctx.stroke();ctx.setLineDash([])}
       else if(fx.kind==='hitSpark'){ctx.rotate(fx.angle||0);ctx.strokeStyle=fx.color;ctx.lineCap='round';ctx.shadowColor=fx.color;ctx.shadowBlur=5;ctx.lineWidth=Math.max(1,3.5*(1-progress));for(let ray=0;ray<6;ray++){ctx.rotate(Math.PI/3);ctx.beginPath();ctx.moveTo(radius*.18,0);ctx.lineTo(radius,0);ctx.stroke()}}
       else if(fx.kind==='lunarArc'){let target=worldToScreen(fx.tx,fx.ty,cam);ctx.strokeStyle=fx.color;ctx.lineWidth=Math.max(1,4*(1-progress));ctx.shadowColor=fx.color;ctx.shadowBlur=8;ctx.beginPath();ctx.moveTo(0,0);ctx.quadraticCurveTo((target.x-q.x)*.48-10,(target.y-q.y)*.48-14,target.x-q.x,target.y-q.y);ctx.stroke()}
@@ -2280,6 +2370,10 @@
     let local=/^(localhost|127\.0\.0\.1)$/.test(location.hostname),enabled=/(?:^|[?&])playwright(?:[=&]|$)/.test(location.search||'');
     if(!local||!enabled)return;
     window.__riskTest={
+      freezeFrame(value){
+        testFrameFrozen=!!value;
+        return testFrameFrozen
+      },
       openMap(mapId){
         let map=EXPEDITION_MAPS[mapId];if(!map)return false;
         save.level=Math.max(save.level,map.minLevel);save.selectedMap=mapId;save.seenIntro=true;
@@ -2524,6 +2618,19 @@
         }
         paperDollKey='';refreshPaperDoll();refreshBase();openGearLocker();setGearView('loadout');renderGearLocker();
         return this.gearVisualState()
+      },
+      previewGearSetPieces(setId,count){
+        let set=SET_BY_ID[setId];if(!set)return null;
+        count=Math.max(0,Math.min(GEAR_SLOTS.length,Math.floor(Number(count)||0)));
+        let removed=new Set(save.gear.filter(gear=>{let item=gearDefinition(gear);return item&&item.setId===setId}).map(gear=>gear.uid));
+        save.gear=save.gear.filter(gear=>!removed.has(gear.uid));
+        for(const slot of GEAR_SLOTS)save.equipped[slot]=null;
+        for(let index=0;index<GEAR_SLOTS.length;index++){
+          let slot=GEAR_SLOTS[index],item=SET_ITEMS.find(entry=>entry.setId===setId&&entry.slot===slot),gear=rollGearInstance(item,Math.max(set.minLevel,save.level),1.08);
+          save.gear.push(gear);if(index<count)save.equipped[slot]=gear.uid
+        }
+        paperDollKey='';paperDollPreviewCache.clear();refreshPaperDoll();refreshBase();openGearLocker();renderGearLocker();
+        return{visual:this.gearVisualState(),inventory:this.equipmentInventory()}
       },
       previewGearRarity(rarityId){
         let pool=LOOT_BY_RARITY[rarityId]||[];if(!pool.length)return null;

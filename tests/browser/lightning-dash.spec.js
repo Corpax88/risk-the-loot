@@ -53,13 +53,52 @@ test('rapid tapping is rate limited, queued and never duplicates an impact',asyn
 
   const rapidResults=await page.evaluate(()=>Array.from({length:6},()=>window.__riskTest.pressLightning()));
   const accepted=rapidResults.map(result=>result.accepted);
-  expect(accepted.filter(Boolean)).toHaveLength(4);
+  expect(accepted.filter(Boolean)).toHaveLength(5);
   let state=await page.evaluate(()=>window.__riskTest.lightningDashState());
-  expect(state.queue).toBe(3);
+  expect(state.queue).toBe(4);
+  expect(state.attackRate).toBe(10);
   state=await page.evaluate(()=>window.__riskTest.advanceLightning(.9));
-  expect(state.impacts).toBe(4);
+  expect(state.impacts).toBe(5);
   expect(state.queue).toBe(0);
   expect(state.phase).toBe('idle');
+});
+
+test('one overcharged tap erases an early pack and visibly branches through the group',async({page})=>{
+  await openPlaytest(page);
+  await equipLightning(page,4);
+  await page.evaluate(()=>window.__riskTest.setLightningTargets([
+    {id:'a',x:90,y:0,hp:18},{id:'b',x:125,y:32,hp:18},
+    {id:'c',x:155,y:-28,hp:18},{id:'d',x:188,y:20,hp:18}
+  ]));
+
+  expect((await page.evaluate(()=>window.__riskTest.pressLightning())).accepted).toBe(true);
+  const state=await page.evaluate(()=>window.__riskTest.advanceLightning(.16));
+  expect(state.impacts).toBe(1);
+  expect(state.chainHits).toBe(3);
+  expect(state.kills).toBe(4);
+  expect(state.enemies).toHaveLength(0);
+  expect(state.effects).toContain('lightningChain');
+  expect(state.effects).toContain('enemyLaunch');
+});
+
+test('aggressive taps grant jump safety and Stormcaller armor reduces incoming damage',async({page})=>{
+  await openPlaytest(page);
+  await equipLightning(page,2);
+  await page.evaluate(()=>window.__riskTest.setLightningTargets([
+    {id:'a',x:100,y:0,hp:1e7},{id:'b',x:150,y:25,hp:1e7}
+  ]));
+
+  await page.evaluate(()=>window.__riskTest.pressLightning());
+  let state=await page.evaluate(()=>window.__riskTest.advanceLightning(.02));
+  expect(state.player.inv).toBeGreaterThan(0);
+  const guarded=await page.evaluate(()=>window.__riskTest.damagePlayerForTest(40));
+  expect(guarded.guard).toBe(.35);
+  expect(guarded.applied).toBeLessThan(40);
+
+  await page.evaluate(()=>window.__riskTest.unequipLightningPiece('hat'));
+  const unguarded=await page.evaluate(()=>window.__riskTest.damagePlayerForTest(40));
+  expect(unguarded.guard).toBe(0);
+  expect(unguarded.applied).toBeGreaterThan(guarded.applied);
 });
 
 test('movement direction owns target selection and tiny drift does not',async({page})=>{

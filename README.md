@@ -1,6 +1,8 @@
-# RISK THE LOOT! v0.52.1
+# RISK THE LOOT! v0.53.0
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
+
+I Am the Lightning v0.53.0 turns the complete Stormcaller set into a living storm. The opening ten seconds are overcharged, nearby packs are struck by branching chain lightning, rapid taps build toward an achievable ten strikes per second, and storm armor plus jump invulnerability reward diving directly into crowds. Brighter multi-bolt trails, explosive enemy launches, sharper impact sparks, controlled shake and layered escalating audio make every chain feel heavy without increasing mobile particle limits.
 
 Living Legend v0.52.1 removes the obsolete workshop background renderer that was painting the original Pappa underneath Gear 2.0. The menu and Armory now each have one authoritative paper-doll sprite, with the old empty equipment-overlay nodes and render hook removed.
 

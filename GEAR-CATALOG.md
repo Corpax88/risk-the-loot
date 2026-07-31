@@ -1,4 +1,4 @@
-# Risk the Loot - Gear Catalog v0.58.0
+# Risk the Loot - Gear Catalog v0.58.1
 
 Denne katalogen er generert fra de aktive definisjonene i `script.js`.
 

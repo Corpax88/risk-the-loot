@@ -1,6 +1,8 @@
-# RISK THE LOOT! v0.58.0
+# RISK THE LOOT! v0.58.1
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
+
+Spin Stability v0.58.1 coalesces rapid normal-Spin input into one authoritative attack, removes a synchronous paper-doll canvas serialization from the touch path, reuses hot-path combat buffers and pooled effects, and replaces dense-pack filter work with bounded hit feedback. A 30-second desktop and iPhone regression test verifies bounded attacks, effects, listeners, timers and recovery while preserving Hammerstorm damage and slide-over Dash.
 
 Level 100 Progression expands Pappa's complete progression from Level 1 to a hard Level 100 cap. One shared module owns the XP curve, cap, map milestones, set unlocks, player growth, enemy and champion scaling, item levels and gear-value growth. The deterministic XP requirement is `10 + step + floor(step^2 / 100)`, where `step = level - 1`; reaching Level 100 requires exactly 8,986 boss XP. The cap displays `MAX LEVEL`, discards overflow safely and never creates Level 101 gear or progression. This playtest schema intentionally resets older saves.
 

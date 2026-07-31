@@ -2519,6 +2519,25 @@
   function devFightTyrant(){devFightBoss('furnace')}
   function devUnlockSchematic(){let id=SCHEMATIC_IDS.find(key=>schematicLevel(key)<BOSS_SCHEMATICS[key].max);if(!id)return;save.schematics[id]++;persist();refreshBase();syncDevTools();devFeedback(BOSS_SCHEMATICS[id].name.toUpperCase()+' +1')}
   function devHardReset(){if(!devResetArmed){devResetArmed=true;ui.devReset.textContent='CONFIRM: DELETE ALL PROGRESS';ui.devReset.classList.add('confirm');return}localStorage.removeItem(SAVE_KEY);window.location.reload()}
+  function installInventoryV2Bridge(){
+    function snapshot(previewUid){
+      let previewGear=previewUid&&save.gear.find(entry=>entry.uid===previewUid),counts=equippedSetCounts(),copies=gearCopyCounts();
+      let gear=save.gear.map((entry,index)=>{
+        let item=gearDefinition(entry),rarity=item&&LOOT_RARITIES[item.rarity],set=item&&item.setId&&SET_BY_ID[item.setId],comparison=gearComparisonData(entry),candidateCount=set&&comparison?(comparison.candidate.counts[set.id]||0):0,next=set?nextSetMilestone(set,candidateCount):null;
+        return item?{uid:entry.uid,itemId:entry.itemId,name:item.name,slot:item.slot,slotName:GEAR_SLOT_META[item.slot].name,rarity:item.rarity,rarityName:rarity.name,rarityRank:rarity.rank,color:rarity.color,glow:rarity.glow,level:entry.level,power:Math.round(gearScore(entry)*10)/10,value:gearUnitValue(entry),quality:gearQualityLabel(entry),stats:formatGearStats(entry),equipped:gearIsEquipped(entry),newest:index,copies:copies[entry.itemId]||1,art:gearArtMarkup(entry,'bag'),set:set?{id:set.id,name:set.name,mark:set.mark,color:(GEAR_SIGNATURES[set.id]&&GEAR_SIGNATURES[set.id].color)||set.accent,current:counts[set.id]||0,candidate:candidateCount,next:next?{tier:next.tier,label:next.label,effect:next.effect}:null}:null,comparison:comparison?{wornUid:comparison.worn&&comparison.worn.uid||null,wornName:comparison.wornItem&&comparison.wornItem.name||'EMPTY '+GEAR_SLOT_META[item.slot].name,rows:comparison.rows.map(row=>({id:row.id,label:row.label,type:row.type,current:row.current,candidate:row.candidate,delta:row.delta,tone:row.tone}))}:null}:null
+      }).filter(Boolean);
+      let equipped=Object.fromEntries(GEAR_SLOTS.map(slot=>[slot,gear.find(entry=>entry.uid===save.equipped[slot])||null])),stats=gearStats(),fallback=ui.gearCharacterHero&&ui.gearCharacterHero.style.backgroundImage||'';
+      return{version:1,gear,equipped,slots:GEAR_SLOTS.map(slot=>({id:slot,name:GEAR_SLOT_META[slot].name,icon:GEAR_SLOT_META[slot].icon})),characterImage:previewGear?paperDollPreviewImage(previewGear):fallback,level:save.level,summary:{count:gear.length,value:inventoryValue(),hp:maxHp(),damage:shotDamage(),crit:Math.round(stats.crit*1000)/10,armor:Math.round(stats.armor*1000)/10},fullSetId:equippedFullSetId()}
+    }
+    window.RiskLootInventoryV2Bridge=Object.freeze({
+      snapshot,
+      equip(uid){let changed=equipGear(uid);return{changed,snapshot:snapshot()}},
+      unequip(slot){let changed=unequipGearSlot(slot);return{changed,snapshot:snapshot()}},
+      openLegacy(){openGearLocker();return true},
+      closeLegacy(){if(ui.gearOverlay.classList.contains('show'))closeGearLocker();return true},
+      legacyOpen(){return ui.gearOverlay.classList.contains('show')}
+    })
+  }
   function installPlaywrightBridge(){
     let local=/^(localhost|127\.0\.0\.1)$/.test(location.hostname),enabled=/(?:^|[?&])playwright(?:[=&]|$)/.test(location.search||'');
     if(!local||!enabled)return;
@@ -2973,5 +2992,5 @@
   let lastTouchEnd=0,lastTouchTarget=null;document.addEventListener('touchend',e=>{let now=Date.now(),button=e.target.closest&&e.target.closest('button');if(now-lastTouchEnd<340&&e.target===lastTouchTarget){e.preventDefault();if(button&&!button.disabled)button.click()}lastTouchEnd=now;lastTouchTarget=e.target},{passive:false});for(const event of ['gesturestart','gesturechange','gestureend','dblclick'])document.addEventListener(event,e=>e.preventDefault(),{passive:false});document.addEventListener('contextmenu',e=>e.preventDefault());
 
   for(const pose of PAPER_DOLL_POSES){pappaHammerSprites[pose].addEventListener('load',refreshPaperDoll);for(const slot of GEAR_SLOTS)paperDollMasks[pose][slot].addEventListener('load',refreshPaperDoll);for(const setId of Object.keys(paperDollSetSprites))paperDollSetSprites[setId][pose].addEventListener('load',refreshPaperDoll)}
-  installPlaywrightBridge();bindContextHelp();syncRequestedQuality();persist();refreshBase();updateCargoHud();syncSettings();setView('base');requestAnimationFrame(loop);
+  installInventoryV2Bridge();installPlaywrightBridge();bindContextHelp();syncRequestedQuality();persist();refreshBase();updateCargoHud();syncSettings();setView('base');requestAnimationFrame(loop);
 })();

@@ -543,7 +543,7 @@
     layer.fillStyle='#080b11';layer.beginPath();layer.arc(x+1,y+1,r+1,0,Math.PI*2);layer.fill();layer.fillStyle=color;layer.beginPath();layer.arc(x,y,r,0,Math.PI*2);layer.fill();layer.fillStyle=paperDollMix(color,'#ffffff',.58);layer.beginPath();layer.arc(x-r*.28,y-r*.3,Math.max(1,r*.27),0,Math.PI*2);layer.fill()
   }
   function paperDollGem(layer,x,y,r,profile){
-    layer.save();layer.shadowColor=profile.accent;layer.shadowBlur=profile.rank===4?10:5;layer.fillStyle=paperDollMix(profile.accent,'#ffffff',.34);layer.strokeStyle=profile.shadow;layer.lineWidth=2;layer.beginPath();layer.moveTo(x,y-r);layer.lineTo(x+r*.78,y);layer.lineTo(x,y+r);layer.lineTo(x-r*.78,y);layer.closePath();layer.fill();layer.stroke();layer.restore()
+    layer.save();layer.fillStyle=paperDollMix(profile.accent,'#ffffff',.34);layer.strokeStyle=profile.shadow;layer.lineWidth=2;layer.beginPath();layer.moveTo(x,y-r);layer.lineTo(x+r*.78,y);layer.lineTo(x,y+r);layer.lineTo(x-r*.78,y);layer.closePath();layer.fill();layer.stroke();layer.restore()
   }
   function drawPaperDollMaterial(layer,item,slot,b){
     if(!b)return;let profile=paperDollProfile(item),x=b.x,y=b.y,w=b.w,h=b.h,rank=profile.rank;
@@ -560,12 +560,12 @@
     depth.addColorStop(0,'rgba(255,255,255,.2)');
     depth.addColorStop(.45,'rgba(255,255,255,0)');
     depth.addColorStop(1,'rgba(0,0,0,.34)');
-    layer.globalCompositeOperation='overlay';layer.globalAlpha=.34;layer.fillStyle=depth;layer.fillRect(x-3,y-3,w+6,h+6);
+    layer.globalCompositeOperation='source-atop';layer.globalAlpha=.34;layer.fillStyle=depth;layer.fillRect(x-3,y-3,w+6,h+6);
     if(rank>=2){
       let finish=layer.createRadialGradient(x+w*.5,y+h*.42,1,x+w*.5,y+h*.42,Math.max(8,Math.min(w,h)*.55));
       finish.addColorStop(0,paperDollRgba(profile.accent,rank===4?.24:.12));
       finish.addColorStop(1,paperDollRgba(profile.accent,0));
-      layer.globalCompositeOperation='screen';layer.globalAlpha=1;layer.fillStyle=finish;layer.fillRect(x,y,w,h)
+      layer.globalCompositeOperation='source-atop';layer.globalAlpha=1;layer.fillStyle=finish;layer.fillRect(x,y,w,h)
     }
     layer.restore()
   }
@@ -660,10 +660,7 @@
       if(profile.hammer==='lantern'){paperDollGem(layer,px+pw*.51,py+ph*.5,7,profile);layer.strokeStyle=metal;layer.lineWidth=2;layer.beginPath();layer.arc(px+pw*.51,py+ph*.5,11,0,Math.PI*2);layer.stroke()}
       drawPaperDollMark(layer,item,px+pw*.52,py+ph*.5,10+rank)
     }else if(slot==='boots'){
-      for(const bx of [x+w*.18,x+w*.79]){
-        let bootW=w*.16,baseY=y+h*.72;layer.strokeStyle=dark;layer.lineWidth=4;layer.beginPath();layer.moveTo(bx-bootW*.55,baseY);layer.quadraticCurveTo(bx,baseY+h*.1,bx+bootW*.62,baseY-h*.01);layer.stroke();layer.strokeStyle=metal;layer.lineWidth=2.5;layer.stroke();
-        if(['plate','vault','reaver'].includes(profile.boots))paperDollRivet(layer,bx,baseY-h*.035,2.1,metal)
-      }
+      for(const bx of [x+w*.18,x+w*.79])if(['plate','vault','reaver'].includes(profile.boots))paperDollRivet(layer,bx,y+h*.54,2.1,metal);
       if(['trail','guard','forge','royal'].includes(profile.boots)){layer.strokeStyle=metal;layer.lineWidth=2;for(const bx of [x+w*.18,x+w*.79]){layer.beginPath();layer.moveTo(bx-w*.045,y+h*.58);layer.lineTo(bx+w*.04,y+h*.58);layer.moveTo(bx-w*.035,y+h*.63);layer.lineTo(bx+w*.05,y+h*.63);layer.stroke()}}
       if(['swift','phantom','fate'].includes(profile.boots)){layer.strokeStyle=accent;layer.lineWidth=2.5;for(const bx of [x+w*.18,x+w*.79]){layer.beginPath();layer.moveTo(bx-w*.02,y+h*.67);layer.lineTo(bx-w*.07,y+h*.56);layer.moveTo(bx+w*.005,y+h*.68);layer.lineTo(bx-w*.045,y+h*.61);layer.stroke()}}
       if(profile.boots==='reaver'){layer.fillStyle=metal;for(const bx of [x+w*.18,x+w*.79]){layer.beginPath();layer.moveTo(bx+w*.055,y+h*.7);layer.lineTo(bx+w*.1,y+h*.65);layer.lineTo(bx+w*.08,y+h*.75);layer.closePath();layer.fill()}}
@@ -673,7 +670,7 @@
   function composePaperDollPose(pose,resolveItem){
     let resolver=resolveItem||equippedItem;
     let source=pappaHammerSprites[pose],out=document.createElement('canvas'),scratch=document.createElement('canvas');out.width=PAPER_DOLL_CELL*4;out.height=PAPER_DOLL_CELL*2;scratch.width=scratch.height=PAPER_DOLL_CELL;let outCtx=out.getContext('2d'),layer=scratch.getContext('2d');if(!outCtx||!layer)return source;outCtx.imageSmoothingEnabled=layer.imageSmoothingEnabled=true;outCtx.imageSmoothingQuality=layer.imageSmoothingQuality='high';
-    for(let frame=0;frame<8;frame++){let sx=frame%4*512,sy=Math.floor(frame/4)*512,dx=frame%4*PAPER_DOLL_CELL,dy=Math.floor(frame/4)*PAPER_DOLL_CELL;outCtx.drawImage(source,sx,sy,512,512,dx,dy,PAPER_DOLL_CELL,PAPER_DOLL_CELL);for(const renderLayer of PAPER_DOLL_RENDER_LAYERS){let slot=renderLayer.slot,item=resolver(slot);if(!item)continue;let mask=paperDollMaskFrame(pose,slot,frame);layer.clearRect(0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);layer.globalCompositeOperation='source-over';layer.globalAlpha=1;layer.drawImage(source,sx,sy,512,512,0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);layer.globalCompositeOperation='destination-in';layer.drawImage(mask.canvas,0,0);layer.globalCompositeOperation='source-over';drawPaperDollMaterial(layer,item,slot,mask.bounds);outCtx.drawImage(scratch,dx,dy)}}return out
+    for(let frame=0;frame<8;frame++){let sx=frame%4*512,sy=Math.floor(frame/4)*512,dx=frame%4*PAPER_DOLL_CELL,dy=Math.floor(frame/4)*PAPER_DOLL_CELL;outCtx.drawImage(source,sx,sy,512,512,dx,dy,PAPER_DOLL_CELL,PAPER_DOLL_CELL);for(const renderLayer of PAPER_DOLL_RENDER_LAYERS){let slot=renderLayer.slot,item=resolver(slot);if(!item)continue;let mask=paperDollMaskFrame(pose,slot,frame);layer.clearRect(0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);layer.globalCompositeOperation='source-over';layer.globalAlpha=1;layer.drawImage(source,sx,sy,512,512,0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);layer.globalCompositeOperation='destination-in';layer.drawImage(mask.canvas,0,0);layer.globalCompositeOperation='source-over';drawPaperDollMaterial(layer,item,slot,mask.bounds);drawPaperDollGeometry(layer,slot,item,mask.bounds,pose,frame);outCtx.drawImage(scratch,dx,dy)}}return out
   }
   function applyPaperDollAtlases(next,key){paperDollAtlases=next;paperDollKey=key;let preview=next.idle&&typeof next.idle.toDataURL==='function'?'url("'+next.idle.toDataURL('image/png')+'")':'url("'+next.idle.src+'")';ui.pappaHammerBaseSprite.style.backgroundImage=preview;ui.gearCharacterHero.style.backgroundImage=preview;ui.gearCharacterHero.dataset.gearVisualKey=paperDollLoadoutKey()}
   function refreshPaperDoll(){
@@ -1030,19 +1027,19 @@
   function playGearEquipEffect(gear,awakened,fullSetActivated){
     let item=gearDefinition(gear),rarity=item&&LOOT_RARITIES[item.rarity],set=item&&item.setId&&SET_BY_ID[item.setId],signature=item&&item.setId&&GEAR_SIGNATURES[item.setId],legendary=item&&item.rarity==='legendary';if(!rarity||!ui.gearCharacterStage)return;
     ui.gearCharacterStage.style.setProperty('--equip-color',signature&&awakened?signature.color:rarity.color);
-    ui.gearCharacterStage.classList.remove('equipBurst','equipLegendary','equipRank2','equipRank4','signatureAwaken','stormcallerAwaken');
+    ui.gearCharacterStage.classList.remove('equipBurst','equipLegendary','equipRank2','equipRank4','signatureAwaken','stormcallerAwaken','fullSetMorph');
     if(ui.pappaHammerBase)ui.pappaHammerBase.classList.remove('stormcallerAwaken');
+    if(fullSetActivated){
+      ui.gearCharacterStage.classList.add('fullSetMorph');
+      setTimeout(()=>ui.gearCharacterStage.classList.remove('fullSetMorph'),420);
+      return
+    }
     ui.gearCharacterStage.classList.add('equipBurst');
     if(legendary)ui.gearCharacterStage.classList.add('equipLegendary','equipRank4');
     gearSlotFeedback(item.slot,rarity,legendary);
     if(awakened&&legendary)ui.gearCharacterStage.classList.add('signatureAwaken');
-    if(fullSetActivated&&item.setId==='stormrunner'){
-      ui.gearCharacterStage.classList.add('stormcallerAwaken');
-      if(ui.pappaHammerBase)ui.pappaHammerBase.classList.add('stormcallerAwaken')
-    }
-    if(fullSetActivated&&set&&ui.gearSetAwaken){ui.gearSetAwaken.style.setProperty('--set-color',signature?signature.color:set.accent);ui.gearSetAwaken.innerHTML='<small>FULL SET AWAKENED</small><b>'+escapeMarkup(set.name)+'</b><em>'+escapeMarkup(signature?signature.name:'SET MASTERY')+'</em>';ui.gearSetAwaken.classList.remove('show');requestAnimationFrame(()=>ui.gearSetAwaken.classList.add('show'));ui.gearSetAwaken.setAttribute('aria-hidden','false')}
     setTimeout(()=>{
-      ui.gearCharacterStage.classList.remove('equipBurst','equipLegendary','equipRank2','equipRank4','signatureAwaken','stormcallerAwaken');
+      ui.gearCharacterStage.classList.remove('equipBurst','equipLegendary','equipRank2','equipRank4','signatureAwaken','stormcallerAwaken','fullSetMorph');
       if(ui.pappaHammerBase)ui.pappaHammerBase.classList.remove('stormcallerAwaken');if(ui.gearSetAwaken){ui.gearSetAwaken.classList.remove('show');ui.gearSetAwaken.setAttribute('aria-hidden','true')}
     },fullSetActivated?1650:awakened?1100:760)
   }
@@ -2781,8 +2778,9 @@
         let removed=new Set(save.gear.filter(gear=>{let item=gearDefinition(gear);return item&&item.setId===setId}).map(gear=>gear.uid));
         save.gear=save.gear.filter(gear=>!removed.has(gear.uid));
         for(const slot of GEAR_SLOTS)save.equipped[slot]=null;
-        for(let index=0;index<GEAR_SLOTS.length;index++){
-          let slot=GEAR_SLOTS[index],item=SET_ITEMS.find(entry=>entry.setId===setId&&entry.slot===slot),gear=rollGearInstance(item,Math.max(set.minLevel,save.level),1.08);
+        let progressionSlots=['hat','scarf','coat','boots','hammer'];
+        for(let index=0;index<progressionSlots.length;index++){
+          let slot=progressionSlots[index],item=SET_ITEMS.find(entry=>entry.setId===setId&&entry.slot===slot),gear=rollGearInstance(item,Math.max(set.minLevel,save.level),1.08);
           save.gear.push(gear);if(index<count)save.equipped[slot]=gear.uid
         }
         paperDollKey='';paperDollPreviewCache.clear();refreshPaperDoll();refreshBase();openGearLocker();renderGearLocker();
@@ -2875,7 +2873,7 @@
       },
       gearVisualCoverage(){
         let missing=LOOT_ITEMS.filter(item=>item.setId?!SET_VISUAL_PROFILES[item.setId]:!FIELD_VISUAL_PROFILES.length).map(item=>item.id);
-        return{items:LOOT_ITEMS.length,setItems:SET_ITEMS.length,legacyItems:LEGACY_LOOT_ITEMS.length,sets:SET_DEFINITIONS.length,profiles:Object.keys(SET_VISUAL_PROFILES).length,missing,usesStripePattern:/drawPaperDollPattern|drawPaperDollGeometry/.test(String(composePaperDollPose)),usesLegacyGearOverlay:/drawPappaGearBack|drawPappaGearFront/.test(String(drawPappaHammer))}
+        return{items:LOOT_ITEMS.length,setItems:SET_ITEMS.length,legacyItems:LEGACY_LOOT_ITEMS.length,sets:SET_DEFINITIONS.length,profiles:Object.keys(SET_VISUAL_PROFILES).length,missing,usesPieceGeometry:String(composePaperDollPose).includes('drawPaperDollGeometry'),usesStripePattern:String(composePaperDollPose).includes('drawPaperDollPattern'),usesLegacyGearOverlay:/drawPappaGearBack|drawPappaGearFront/.test(String(drawPappaHammer))}
       },
       gearMaskBounds(pose,frame){
         if(!PAPER_DOLL_POSES.includes(pose)||frame<0||frame>7)return null;

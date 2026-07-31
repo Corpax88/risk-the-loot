@@ -36,7 +36,7 @@ test('Stormcaller pieces use dedicated icons and the full set uses its productio
   });
 });
 
-test('equipping the final Stormcaller piece gives a short local activation',async({page})=>{
+test('equipping the final Stormcaller piece morphs naturally into its production skin',async({page})=>{
   await openTestGame(page);
   const setup=await page.evaluate(()=>window.__riskTest.previewGearSetPieces('stormrunner',4));
   const finalPiece=setup.inventory.find(item=>item.itemId.startsWith('stormrunner-')&&!item.equipped);
@@ -47,11 +47,12 @@ test('equipping the final Stormcaller piece gives a short local activation',asyn
   await page.evaluate(()=>document.querySelector('#gearDetail .equipGear').click());
   const stage=page.locator('#gearCharacterStage');
   await expect(stage).toHaveAttribute('data-set-id','stormrunner');
-  await expect(stage).toHaveClass(/stormcallerAwaken/);
+  await expect(stage).toHaveClass(/fullSetMorph/);
+  await expect(stage).not.toHaveClass(/stormcallerAwaken|signatureAwaken|equipLegendary/);
   await stage.screenshot({
     path:path.join('test-results','stormcaller','full-set-activation.png')
   });
-  await expect(stage).not.toHaveClass(/stormcallerAwaken/,{timeout:2500});
+  await expect(stage).not.toHaveClass(/fullSetMorph/,{timeout:1200});
 });
 
 test('Stormcaller chain VFX communicate departure, travel, impact and kills',async({page})=>{

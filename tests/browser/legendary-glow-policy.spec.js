@@ -29,7 +29,8 @@ test('Common, Rare and Epic gear use solid presentation without emitted glow',as
 
   const {item,feedback}=await equipFinalSetPiece(page,'hammerChoir');
   expect(item.rarity).toBe('epic');
-  expect(feedback.classes).toContain('equipBurst');
+  expect(feedback.classes).toContain('fullSetMorph');
+  expect(feedback.classes).not.toContain('equipBurst');
   expect(feedback.classes).not.toContain('equipLegendary');
   expect(feedback.classes).not.toContain('loadoutCompleteSet');
   expect(feedback.particles).toBe(0);
@@ -55,7 +56,7 @@ test('Common, Rare and Epic gear use solid presentation without emitted glow',as
   expect(appearance.heroFilter).not.toContain('77, 163, 255');
 });
 
-test('Legendary gear retains premium preview, particles and full-set glow',async({page})=>{
+test('Legendary gear retains its premium preview while full sets morph without decorative particles',async({page})=>{
   await openGame(page);
   const setup=await page.evaluate(()=>window.__riskTest.previewGearSetPieces('fatebound',4));
   const item=setup.inventory.find(entry=>!entry.equipped);
@@ -73,7 +74,8 @@ test('Legendary gear retains premium preview, particles and full-set glow',async
       particles:document.querySelectorAll('.gearSlotParticles').length
     };
   });
-  expect(feedback.classes).toContain('equipLegendary');
+  expect(feedback.classes).toContain('fullSetMorph');
+  expect(feedback.classes).not.toContain('equipLegendary');
   expect(feedback.classes).toContain('loadoutCompleteSet');
-  expect(feedback.particles).toBeGreaterThan(0);
+  expect(feedback.particles).toBe(0);
 });

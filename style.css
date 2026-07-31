@@ -1355,9 +1355,11 @@ button:focus-visible{outline-color:#f4ead6}
 .gearCharacterStage.equipBurst .gearCharacterHero{animation:pappaHammerFrames 1.65s step-end infinite,equipHeroSettle .52s cubic-bezier(.18,.8,.2,1)}
 .gearCharacterStage.equipLegendary.equipBurst .gearCharacterHero{animation:pappaHammerFrames 1.65s step-end infinite,equipHeroPulse .52s cubic-bezier(.18,.8,.2,1)}
 .gearCharacterStage.equipLegendary.equipBurst .gearCharacterHalo{animation:equipHaloPulse .55s ease-out}
+.gearCharacterStage.fullSetMorph .gearCharacterHero{animation:pappaHammerFrames 1.65s step-end infinite,fullSetMorph .38s cubic-bezier(.2,.72,.25,1)}
 @keyframes equipHeroSettle{0%{transform:translateX(-50%) scale(.985)}48%{transform:translateX(-50%) scale(1.012)}100%{transform:translateX(-50%) scale(1)}}
 @keyframes equipHeroPulse{0%{filter:brightness(1);transform:translateX(-50%) scale(.97)}42%{filter:brightness(1.24) drop-shadow(0 0 12px var(--equip-color));transform:translateX(-50%) scale(1.025)}100%{filter:brightness(1);transform:translateX(-50%) scale(1)}}
 @keyframes equipHaloPulse{0%{opacity:.3;transform:scale(.78)}45%{opacity:1;transform:scale(1.04)}100%{opacity:.68;transform:scale(1)}}
+@keyframes fullSetMorph{0%{opacity:.82;transform:translateX(-50%) scale(.99)}100%{opacity:1;transform:translateX(-50%) scale(1)}}
 
 @media(max-width:900px){
   #gearOverlay{padding:0}

@@ -16,6 +16,7 @@ test('every current gear item has a Gear 2.0 visual profile',async({page})=>{
     sets:21,
     profiles:21,
     missing:[],
+    usesPieceGeometry:true,
     usesStripePattern:false,
     usesLegacyGearOverlay:false
   });

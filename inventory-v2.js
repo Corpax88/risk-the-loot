@@ -79,12 +79,27 @@
   function renderSlots(snapshot){
     ui.slots.innerHTML=snapshot.slots.map(slot=>{
       let item=snapshot.equipped[slot.id];
-      return '<button class="inventoryV2Slot '+(item?'filled':'empty')+'" data-slot="'+slot.id+'" data-uid="'+(item?item.uid:'')+'" style="--item-color:'+(item?item.color:'#74694f')+'" type="button"><i>'+(item?item.art:slot.icon)+'</i><span><small>'+slot.name+'</small><b>'+(item?item.name:'EMPTY')+'</b></span></button>'
+      return '<button class="inventoryV2Slot '+(item?'filled':'empty')+(item&&state.selectedUid===item.uid?' selected':'')+'" data-slot="'+slot.id+'" data-uid="'+(item?item.uid:'')+'" style="--item-color:'+(item?item.color:'#74694f')+'" type="button" aria-label="'+slot.name+(item?' equipped: '+item.name:' empty')+'"><i>'+(item?item.art:slot.icon)+'</i><span><small>'+slot.name+'</small><b>'+(item?item.name:'EMPTY')+'</b></span></button>'
     }).join('')
   }
 
+  function activeBuild(snapshot){
+    let equipped=Object.values(snapshot.equipped).filter(Boolean),groups={};
+    for(let item of equipped)if(item.set){let group=groups[item.set.id]||(groups[item.set.id]={id:item.set.id,name:item.set.name,color:item.set.color,count:0,next:item.set.next});group.count++;if(item.set.next)group.next=item.set.next}
+    let set=Object.values(groups).sort((a,b)=>b.count-a.count||a.name.localeCompare(b.name))[0]||null;
+    return{power:Math.round(equipped.reduce((sum,item)=>sum+item.power,0)*10)/10,set,equipped:equipped.length}
+  }
+
+  function nextBonusText(next){
+    if(!next)return'BUILDING SET';
+    let label=String(next.label||'BONUS').replace(/^NEXT\s+/i,'');
+    return'NEXT '+label+(next.effect?' \u00B7 '+next.effect:'')
+  }
+
   function renderStats(snapshot){
-    ui.stats.innerHTML='<span><small>HP</small><b>'+snapshot.summary.hp+'</b></span><span><small>DAMAGE</small><b>'+snapshot.summary.damage+'</b></span><span><small>CRIT</small><b>'+snapshot.summary.crit+'%</b></span><span><small>ARMOR</small><b>'+snapshot.summary.armor+'%</b></span>'
+    let build=activeBuild(snapshot),set=build.set,setStatus=set?(set.count>=5?'FULL SET ACTIVE':nextBonusText(set.next)):'NO SET ACTIVE';
+    ui.stats.style.setProperty('--set-color',set?set.color:'#d6aa58');
+    ui.stats.innerHTML='<span class="inventoryV2Power"><small>POWER</small><b>'+build.power+'</b></span><span class="inventoryV2BuildIdentity"><small>'+(set?'ACTIVE BUILD':'LOADOUT')+'</small><b>'+(set?set.name:'FIELD GEAR')+'</b><em>'+setStatus+'</em></span><span class="inventoryV2SetCount"><small>SET</small><b>'+(set?set.count+'/5':build.equipped+'/5')+'</b></span>'
   }
 
   function renderGrid(snapshot){
@@ -96,9 +111,9 @@
   function renderDetail(snapshot){
     let item=selected(snapshot);
     if(!item){ui.detail.innerHTML='<div class="inventoryV2NoSelection"><i>&#9670;</i><b>SELECT GEAR</b><span>Inspect an item to compare it with the current loadout.</span></div>';return}
-    let comparison=item.comparison,rows=comparison?comparison.rows.map(row=>'<span class="'+row.tone+'"><small>'+row.label+'</small><b>'+compareFormat(row.candidate,row.type)+'</b><em>'+(row.tone==='same'?'=':(row.delta>0?'+':'')+compareFormat(row.delta,row.type))+'</em></span>').join(''):'',set=item.set;
+    let comparison=item.comparison,rows=comparison?comparison.rows.map(row=>'<span class="'+row.tone+'"><small>'+row.label+'</small><b>'+compareFormat(row.candidate,row.type)+'</b><em>'+(row.tone==='same'?'=':(row.delta>0?'+':'')+compareFormat(row.delta,row.type))+'</em></span>').join(''):'',set=item.set,worn=comparison&&snapshot.gear.find(entry=>entry.uid===comparison.wornUid),powerDelta=Math.round((item.power-(worn?worn.power:0))*10)/10,powerTone=item.equipped?'same':powerDelta>0?'gain':powerDelta<0?'loss':'same',action=item.equipped?'REMOVE':comparison&&comparison.wornUid?'REPLACE':'EQUIP';
     ui.detail.style.setProperty('--item-color',item.color);
-    ui.detail.innerHTML='<div class="inventoryV2InspectArt">'+item.art+'</div><div class="inventoryV2InspectTitle"><small>'+item.rarityName+' &middot; LEVEL '+item.level+' &middot; '+item.slotName+'</small><h2>'+item.name+'</h2><span>'+item.quality+' &middot; '+item.power+' POWER</span></div><div class="inventoryV2Comparison"><header><small>VS EQUIPPED</small><b>'+comparison.wornName+'</b></header>'+rows+'</div>'+(set?'<div class="inventoryV2Set"><span><small>'+set.name+' SET</small><b>'+set.candidate+'/5</b></span><i><em style="width:'+(set.candidate/5*100)+'%"></em></i><p>'+(set.next?set.next.label+' &middot; '+set.next.effect:'FULL SET ACTIVE')+'</p></div>':'')+'<button id="inventoryV2Equip" class="inventoryV2Equip" type="button">'+(item.equipped?'REMOVE':'EQUIP')+'</button>'
+    ui.detail.innerHTML='<div class="inventoryV2InspectArt">'+item.art+'</div><div class="inventoryV2InspectTitle"><small>'+item.rarityName+' &middot; '+item.slotName+'</small><h2>'+item.name+'</h2><span class="inventoryV2SelectionSummary"><b>'+item.power+' POWER</b><em class="'+powerTone+'">'+(item.equipped?'EQUIPPED':(powerDelta>0?'+':'')+powerDelta+' VS WORN')+'</em></span>'+(set?'<span class="inventoryV2SelectionSet">'+set.name+' &middot; '+set.candidate+'/5 &middot; '+(set.candidate>=5?'FULL SET':nextBonusText(set.next))+'</span>':'')+'</div><div class="inventoryV2Comparison"><header><small>VS EQUIPPED</small><b>'+comparison.wornName+'</b></header>'+rows+'</div>'+(set?'<div class="inventoryV2Set"><span><small>'+set.name+' SET</small><b>'+set.candidate+'/5</b></span><i><em style="width:'+(set.candidate/5*100)+'%"></em></i><p>'+(set.next?set.next.label+' &middot; '+set.next.effect:'FULL SET ACTIVE')+'</p></div>':'')+'<button id="inventoryV2Equip" class="inventoryV2Equip" type="button">'+action+'</button>'
   }
 
   function render(previewUid){

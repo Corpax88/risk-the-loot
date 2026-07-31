@@ -19,3 +19,38 @@
 .inventoryV2Overlay .gearArt.legendarySprite{background-size:500% 500%}
 .inventoryV2Overlay .gearArt.blackHoleSprite,.inventoryV2Overlay .gearArt.stormcallerSprite{background-size:500% 100%}
 @media(max-width:720px){.inventoryV2Hero{background-size:400% 200%}}
+
+/* Inventory V2 hierarchy pass: character, build, selection, then bag. */
+.inventoryV2Slot.selected{border-color:var(--item-color);background:color-mix(in srgb,var(--item-color) 12%,#121417);box-shadow:inset 0 0 0 1px var(--item-color)}
+.inventoryV2BuildStats{grid-template-columns:auto minmax(0,1fr) auto;align-items:center}
+.inventoryV2BuildStats span{min-width:0;padding:7px 12px}
+.inventoryV2BuildStats small,.inventoryV2BuildStats b,.inventoryV2BuildStats em{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.inventoryV2BuildStats em{margin-top:3px;color:var(--set-color);font-size:6px;font-style:normal;letter-spacing:.5px}
+.inventoryV2Power,.inventoryV2SetCount{text-align:center}.inventoryV2BuildIdentity{text-align:left}
+.inventoryV2SelectionSummary{display:flex!important;align-items:center;gap:7px}.inventoryV2SelectionSummary b{color:#ead9b8}.inventoryV2SelectionSummary em{font-style:normal}.inventoryV2SelectionSummary .gain{color:#73d89b}.inventoryV2SelectionSummary .loss{color:#ed7979}.inventoryV2SelectionSummary .same{color:#8e887e}.inventoryV2SelectionSet{display:block!important;color:var(--item-color)!important}
+
+@media(max-width:720px){
+  .inventoryV2Shell{grid-template-rows:44px minmax(0,1fr)}
+  .inventoryV2Topbar{padding:4px max(8px,env(safe-area-inset-right)) 4px max(8px,env(safe-area-inset-left))}
+  .inventoryV2Topbar b{font-size:13px}.inventoryV2Legacy,.inventoryV2Close{min-height:32px}.inventoryV2Legacy{padding:0 7px}
+  .inventoryV2Workspace{grid-template-rows:clamp(210px,32vh,238px) 68px minmax(0,1fr)}
+  .inventoryV2Character{grid-row:1;padding:3px 7px 5px;grid-template-rows:minmax(0,1fr) 45px 43px}
+  .inventoryV2Hero{inset:-7% -1% -1%}
+  .inventoryV2Slots{gap:4px;padding-top:2px}
+  .inventoryV2Slot{height:43px;grid-template-columns:1fr;grid-template-rows:27px 11px;padding:2px;border-color:#302f2b;background:#0e1012}
+  .inventoryV2Slot>i{width:auto;height:27px}.inventoryV2Slot span{display:block;min-width:0;text-align:center}.inventoryV2Slot span small{font-size:4px;letter-spacing:.55px;color:#aaa087}.inventoryV2Slot span b{display:none}
+  .inventoryV2Slot.filled{box-shadow:inset 0 -2px var(--item-color)}.inventoryV2Slot.selected{box-shadow:inset 0 -2px var(--item-color),inset 0 0 0 1px var(--item-color)}
+  .inventoryV2BuildStats{height:41px;margin-top:2px;grid-template-columns:64px minmax(0,1fr) 52px}
+  .inventoryV2BuildStats span{padding:4px 7px}.inventoryV2BuildStats small{font-size:4px}.inventoryV2BuildStats b{margin-top:2px;font-size:8px}.inventoryV2BuildStats em{margin-top:2px;font-size:4.5px}
+  .inventoryV2Collection{grid-row:3}.inventoryV2CollectionHeader{padding:5px 7px}.inventoryV2CollectionHeader>span b{font-size:7px}
+  .inventoryV2Controls select,.inventoryV2Controls button{max-width:82px;height:28px;min-height:28px;padding:0 4px;font-size:5.5px}
+  .inventoryV2Grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:6px;scroll-padding-bottom:6px}
+  .inventoryV2Card{aspect-ratio:.88;padding:3px;border-radius:4px}.inventoryV2Card:hover{transform:none}.inventoryV2CardArt{padding:2%}.inventoryV2CardCopy{padding:3px 2px 1px}.inventoryV2CardCopy b{font-size:6.5px}.inventoryV2CardCopy small,.inventoryV2CardCopy em{font-size:4px}.inventoryV2EquippedMark{right:3px;top:3px;width:16px;height:16px;font-size:6px}
+  .inventoryV2Detail{position:static;grid-row:2;width:auto;height:auto;min-height:0;display:grid;grid-template-columns:52px minmax(0,1fr) 88px;gap:7px;align-items:center;padding:5px 7px;overflow:hidden;border:0;border-top:1px solid #4b402c;border-bottom:1px solid #4b402c;border-radius:0;background:#0e1013;box-shadow:none}
+  .inventoryV2InspectArt{height:52px;background:radial-gradient(circle,#211e18,#0e1013 70%)}.inventoryV2InspectTitle h2{font-size:10px}.inventoryV2SelectionSummary{gap:5px}.inventoryV2SelectionSet{margin-top:2px}.inventoryV2Equip{height:48px;min-height:48px;font-size:8px}
+}
+@media(max-width:380px){
+  .inventoryV2Workspace{grid-template-rows:205px 66px minmax(0,1fr)}.inventoryV2Character{grid-template-rows:minmax(0,1fr) 43px 41px}
+  .inventoryV2Grid{grid-template-columns:repeat(4,minmax(0,1fr))}.inventoryV2Controls select{max-width:72px}.inventoryV2Controls button{max-width:68px}
+  .inventoryV2Detail{grid-template-columns:48px minmax(0,1fr) 76px}.inventoryV2Equip{font-size:7px}
+}

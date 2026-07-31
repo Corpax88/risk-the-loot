@@ -1010,6 +1010,13 @@ button:focus-visible{outline-color:#f4ead6}
 .xpText{overflow:hidden;color:#c7d0dc;font-size:6px;font-weight:800;letter-spacing:0;text-align:right;white-space:nowrap}
 .xpHud.levelUp{animation:xpLevelUp 1.1s ease-out}
 .xpHud.levelUp .xpLevel{border-color:#f2c14f;box-shadow:0 0 16px #f2c14f99}
+.xpHud.maxLevel{border-color:#d6aa58;background:linear-gradient(180deg,#302717ee,#100d08ee);box-shadow:0 4px 0 #04070c,0 9px 20px #000a,inset 0 0 0 1px #8d7044}
+.xpHud.maxLevel .xpTrack{border-color:#a9803f}
+.xpHud.maxLevel .xpTrack i{width:100%;background:linear-gradient(90deg,#8d6a2d,#ffe29a,#c99b43)}
+.xpHud.maxLevel .xpTrack em{display:none}
+.xpHud.maxLevel .xpText,.xpHud.maxLevel .xpLevel b{color:#ffe6a8}
+.pappaProgress.maxLevel>div i{width:100%;background:linear-gradient(90deg,#8d6a2d,#ffe29a,#c99b43)}
+.pappaProgress.maxLevel>em,.pappaProgress.maxLevel span b{color:#ffe6a8}
 @keyframes xpLevelUp{0%{filter:brightness(1);transform:translateX(-50%) scale(1)}28%{filter:brightness(1.8);transform:translateX(-50%) scale(1.035)}100%{filter:brightness(1);transform:translateX(-50%) scale(1)}}
 
 @media(max-width:720px){

@@ -3,6 +3,7 @@ const fs=require('fs'),assert=require('assert'),child=require('child_process');
 const html=fs.readFileSync('index.html','utf8');
 const css=fs.readFileSync('style.css','utf8');
 const script=fs.readFileSync('script.js','utf8');
+const progression=require('../progression.js');
 const packageJson=JSON.parse(fs.readFileSync('package.json','utf8'));
 const retiredRarity=String.fromCharCode(109,121,116,104,105,99);
 const ignoredAuditDirs=new Set(['.git','node_modules','playwright-report','test-results']);
@@ -18,7 +19,10 @@ for(const match of script.matchAll(/\$\('([^']+)'\)/g)){
 const openBraces=(css.match(/{/g)||[]).length;
 const closeBraces=(css.match(/}/g)||[]).length;
 assert.equal(openBraces,closeBraces,'CSS braces are unbalanced');
-assert(html.includes('style.css?v='+packageJson.version)&&html.includes('script.js?v='+packageJson.version),'release assets do not match package version '+packageJson.version);
+assert(html.includes('style.css?v='+packageJson.version)&&html.includes('progression.js?v='+packageJson.version)&&html.includes('script.js?v='+packageJson.version),'release assets do not match package version '+packageJson.version);
+assert.equal(progression.MAX_PLAYER_LEVEL,100,'shared player level cap is not 100');
+assert.equal(progression.TOTAL_XP_TO_MAX,8986,'Level 100 total XP changed unexpectedly');
+assert(script.includes('const progression=window.RiskLootProgression')&&script.includes('MAX_PLAYER_LEVEL')&&script.includes('applyXp(save.level,save.xp'),'shared progression source is not wired into gameplay');
 for(const file of sourceFiles())assert(!new RegExp(retiredRarity,'i').test(fs.readFileSync(file,'utf8')),'retired rarity survived in '+file);
 assert(/id:'stormrunner',name:'STORMCALLER',rarity:'legendary'/.test(script),'Stormcaller is not classified as Legendary');
 assert(fs.existsSync('guild-terrain.js')&&html.includes('guild-terrain.js?v='+packageJson.version),'Guild Outskirts terrain generator is missing or stale');
@@ -74,7 +78,7 @@ assert(script.includes('TANK_RUSH_RANGE=440')&&script.includes('TANK_RUSH_OVERSH
 assert(script.includes('LANCER_THRUST_RANGE=430')&&script.includes('RUSHER_POUNCE_SPEED=455')&&script.includes('function drawLancerTelegraph'),'Lancer thrust or Rusher pounce identity is missing');
 assert(script.includes('ENEMY_SPAWN_GRACE=.42')&&script.includes('overlapRatio:.58')&&script.includes('clearBreather:.24')&&script.includes('attackDuration:.24'),'Anime Rush combat pacing is missing');
 assert(script.includes('REGULAR_ENEMY_DAMAGE_SCALE=.82')&&script.includes('map.enemyDamage*.45*REGULAR_ENEMY_DAMAGE_SCALE'),'regular-enemy forgiveness scaling is missing');
-assert(script.includes("damage:((isTyrant?20:isLagoon?18:18)+riskTier*1.5)*damageScale*map.bossDamage"),'Champion damage must remain independent from regular-enemy scaling');
+assert(script.includes("damage:((isTyrant?20:isLagoon?18:18)+riskTier*1.5)*levelScale.damage*map.bossDamage"),'Champion damage must remain independent from regular-enemy scaling');
 assert(script.includes('fan=(e.elite||depth>=3)'),'Gunner fan-volley variation is missing');
 assert(!/v0\.[23456]\.\d/.test(html+css+script),'stale release version found');
 assert(script.includes('DEPTH_THRESHOLDS=[0,55,120,195,280]'),'expedition pacing is missing');
@@ -92,8 +96,8 @@ assert(script.includes('e.stagger=.58')&&script.includes('if(e.stagger>0)'),'Cha
 assert(html.includes('id="miniMapCanvas"')&&html.includes('id="miniMapCacheCount"')&&script.includes('function drawMiniMap')&&script.includes('rareCaches=caches.filter'),'rare-cache minimap is missing');
 assert(html.includes('id="xpHud"')&&html.includes('id="xpFill"')&&html.includes('id="xpSpark"')&&script.includes('function syncXpHud')&&script.includes('function pulseXpLevel'),'expedition XP rail or level feedback is missing');
 assert(script.includes('LOOT_ITEMS')&&script.includes('lootDrops')&&script.includes('collectLoot')&&script.includes('drawAdventureItemShape'),'physical loot item system is missing');
-assert(script.includes("SAVE_VERSION=11")&&script.includes('materials:0,legendaryCores:0')&&script.includes('gear:[]')&&script.includes('level:1,xp:0')&&script.includes('equipped:{hat:null,scarf:null,coat:null,hammer:null,boots:null}'),'unique gear save, crafting resources, Pappa level, or migration model is missing');
-assert(html.includes('id="mapOverlay"')&&html.includes('id="mapGrid"')&&script.includes('const EXPEDITION_MAPS=')&&script.includes("minLevel:16")&&script.includes('function renderMapAtlas'),'level-gated Adventure Atlas is missing');
+assert(script.includes("SAVE_VERSION=12")&&script.includes('if(raw.version!==SAVE_VERSION)raw={}')&&script.includes('materials:0,legendaryCores:0')&&script.includes('gear:[]')&&script.includes('level:1,xp:0')&&script.includes('equipped:{hat:null,scarf:null,coat:null,hammer:null,boots:null}'),'Level 100 save reset, unique gear, or progression model is missing');
+assert(html.includes('id="mapOverlay"')&&html.includes('id="mapGrid"')&&script.includes('const EXPEDITION_MAPS=')&&script.includes('MAP_UNLOCK_LEVELS.summit')&&script.includes('function renderMapAtlas'),'level-gated Adventure Atlas is missing');
 assert(script.includes('activeMap().spawnRate')&&script.includes('map.enemyHp')&&script.includes('map.bossHp')&&script.includes('map.rarityBonus'),'map-specific combat and reward profiles are missing');
 assert(script.includes('DREAMWORLD_DECOR_LAYOUT')&&script.includes('function drawDreamworldGround')&&script.includes('function drawDreamworldDecor')&&script.includes('function drawDreamworldCover'),'Dreamworld environment rendering is missing');
 assert(css.includes("assets/environment/dreamworld/dreamworld-ground-tile.png")&&css.includes("assets/environment/dreamworld/props/crescent-arch.png"),'Moonfall map preview is not using the Dreamworld assets');
@@ -109,7 +113,7 @@ assert(script.includes('function lightningChainTargets')&&script.includes('funct
 assert(css.includes('.gearSignature')&&css.includes('.gearDeltaGrid')&&css.includes('.signatureAwaken'),'Gear 2.0 inventory or equip feedback is missing');
 assert(script.includes('function rollBossGear')&&script.includes('function grantBossXp')&&script.includes('function showBossLootRitual')&&script.includes('function drawBossLootChest')&&script.includes('function openBossLootChest')&&script.includes('function resolveBossLoot')&&script.includes('registerRunGear(gear,false,player.x,player.y)'),'boss-only equipment, physical champion cache, loot decision ritual, or Pappa XP is missing');
 assert(script.includes('routeRare*.2')&&script.includes('routeRare*.55')&&script.includes('routeRare*.45'),'Moonlit Path does not improve boss set rarity');
-assert(script.includes("(save.level-1)*.11")&&script.includes("(save.level-1)*.035"),'boss health and damage do not scale with Pappa level');
+assert(script.includes('bossScaleForLevel(save.level)')&&script.includes('enemyScaleForLevel(save.level)'),'enemy or boss scaling is not using the Level 100 progression model');
 assert(/function destroyEnemy\(e\)[\s\S]*?runScrap\+=coins;/.test(script)&&!/function destroyEnemy\(e\)[^}]*spawnLoot\(/.test(script),'ordinary enemies must award coins instead of gear');
 assert(script.includes("const GEAR_SLOTS=['hat','scarf','coat','hammer','boots']")&&script.includes('gearStats')&&script.includes('gearArtMarkup'),'gear slots, stats, or visual equipment are missing');
 assert(script.includes('paperDollMasks')&&script.includes('composePaperDollPose')&&script.includes('paperDollAtlases[pose]'),'animated equipped gear is not wired into Pappa Hammer');
@@ -151,5 +155,6 @@ assert(html.includes('viewport-fit=cover'),'mobile safe-area viewport support is
 assert(css.includes('env(safe-area-inset-bottom)')&&css.includes('@media(max-width:420px){.resultStats'),'mobile safe areas or narrow result layout is missing');
 assert(css.includes('.routeProgress')&&css.includes('.routeOverlay')&&css.includes('.touchControls{display:block}'),'route choice, route progress, or touch controls are missing');
 
+child.execFileSync(process.execPath,['--check','progression.js'],{stdio:'inherit'});
 child.execFileSync(process.execPath,['--check','script.js'],{stdio:'inherit'});
 console.log('Static audit passed: unique ids -> DOM bindings -> CSS balance -> JS syntax');

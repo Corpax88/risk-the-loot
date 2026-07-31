@@ -1,6 +1,8 @@
-# RISK THE LOOT! v0.55.0
+# RISK THE LOOT! v0.58.0
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
+
+Level 100 Progression expands Pappa's complete progression from Level 1 to a hard Level 100 cap. One shared module owns the XP curve, cap, map milestones, set unlocks, player growth, enemy and champion scaling, item levels and gear-value growth. The deterministic XP requirement is `10 + step + floor(step^2 / 100)`, where `step = level - 1`; reaching Level 100 requires exactly 8,986 boss XP. The cap displays `MAX LEVEL`, discards overflow safely and never creates Level 101 gear or progression. This playtest schema intentionally resets older saves.
 
 Mobile Performance v0.55.0 adds bounded visual budgets, pooled combat effects and enemy projectiles, view culling, cached static gear calculations, throttled HUD/minimap rendering, and High/Medium/Low quality profiles. Auto quality uses conservative hysteresis to reduce visual work during sustained slow frames and gradually restore it after recovery. Damage, enemy behavior, input timing, item stats, drop rates and balance remain unchanged.
 
@@ -48,7 +50,7 @@ Champion Loot Orbs make boss rewards physical. A defeated champion is erased by 
 
 Hold for Info gives the full interface one consistent help language. Hover or keyboard focus reveals contextual details on desktop; a deliberate hold does the same on mobile without firing click-based controls. Resources, loadout stats, progression, route choices, results, settings and every action use authored explanations instead of generic browser labels. Equipment uses a richer rarity, stat and current-loadout comparison preview.
 
-The Adventure Atlas turns Pappa Level into visible world progression. Guild Frontier is available immediately; Ashen Foundry, Moonfall Gardens, Skyglass Lagoon and Crown Summit unlock at levels 4, 8, 12 and 16. Every destination has its own five-zone visual identity, enemy mix, combat scaling, coin value and boss-gear luck profile.
+The Adventure Atlas turns Pappa Level into visible world progression. Guild Frontier is available immediately; Ashen Foundry, Moonfall Gardens, Skyglass Lagoon and Crown Summit unlock at levels 15, 35, 60 and 80. Every destination has its own five-zone visual identity, enemy mix, combat scaling, coin value and boss-gear luck profile.
 
 Skyglass Lagoon now ends with the animated Skyglass Leviathan. Its three bespoke phases combine readable crystal fans, rotating tide shards and clearly telegraphed undertow pools.
 
@@ -56,7 +58,7 @@ The expedition view now has a compact world minimap with Pappa's facing, the vis
 
 Dreamworld Expedition gives Moonfall Gardens a complete illustrated environment identity. A seamless indigo arena floor, moonlit ruins, dream trees, lanterns, shrines, crystal growths and physical cover now replace its generic procedural scenery. Assets use bottom-center world anchors, camera culling, restrained glow and front-layer occlusion so Pappa can move behind tall ruins while all existing collision and line-of-sight rules remain intact.
 
-Skyglass Lagoon opens at Pappa Level 12 as the bridge between Moonfall Gardens and Crown Summit. Its seamless star-water floor, floating reef landmarks, jellyfish lanterns, coral gardens, pearl shrines and glass cover establish a brighter celestial-lagoon identity without changing combat rules. Large landmarks remain near the world perimeter, mobile rendering is camera-culled, and every illustrated wall continues to use the existing obstacle rectangle for collision and line of sight.
+Skyglass Lagoon opens at Pappa Level 60 as the bridge between Moonfall Gardens and Crown Summit. Its seamless star-water floor, floating reef landmarks, jellyfish lanterns, coral gardens, pearl shrines and glass cover establish a brighter celestial-lagoon identity without changing combat rules. Large landmarks remain near the world perimeter, mobile rendering is camera-culled, and every illustrated wall continues to use the existing obstacle rectangle for collision and line of sight.
 
 The expedition HUD now uses one compact status row on mobile and desktop. Health, floor, risk, cargo and boss phases remain visible without taking a second gameplay row, while the workshop header shrinks during expeditions. Every button and important status indicator has contextual help: hover or keyboard focus shows it on desktop, and holding reveals the same explanation on mobile without accidentally firing the control.
 
@@ -82,12 +84,13 @@ Every item now has its own inventory and field-drop asset. Mouse hover and keybo
 
 ## Pappa levels and equipment
 
-Pappa Hammer earns boss XP and levels up whenever a champion falls. Every level adds a little base health and damage, but the champions also gain health and damage. Higher levels open stronger equipment pools:
+Pappa Hammer earns boss XP and levels up whenever a champion falls. Levels run from 1 to a hard cap of 100. Every level adds controlled base health and damage, while regular enemies and champions use separate bounded scaling curves. The XP formula is `10 + (level - 1) + floor((level - 1)^2 / 100)` and the exact cumulative requirement for Level 100 is 8,986 XP. Higher levels open stronger equipment pools:
 
 - Rare set gear can drop immediately.
-- Epic set gear begins at Pappa level 4.
-- Legendary set gear begins with Stormcaller at Pappa level 4.
-- Higher Legendary drop bands begin at Pappa levels 8 and 16.
+- Epic set gear begins at Pappa level 12.
+- Legendary set gear begins with Stormcaller at Pappa level 12.
+- Higher Legendary drop bands begin at Pappa levels 30 and 65.
+- Late-game signature sets continue unlocking through Fatebound at Level 92.
 
 The boss catalog contains exactly 105 set items: 21 named sets with a Hat, Scarf, Coat, Hammer, and Boots in each set. Five sets are Rare, four are Epic, and twelve are Legendary. Ordinary enemies only drop coins; equipment is reserved for boss victories.
 
@@ -95,7 +98,7 @@ Every recovered piece is a unique item instance with its own item level, quality
 
 Set milestones are fixed and predictable while individual piece rolls vary. Most sets use 2-piece, 3-piece, and 5-piece bonuses; Riskreaver uses 2-piece, 4-piece, and 5-piece milestones to reserve its aggressive sustain for a committed build.
 
-Equipment uses a fixed anime gear atlas for readable slot silhouettes, while set colors, marks, names, and paper-doll treatments distinguish the 100 boss pieces. Locker cards, equipped slots, recovery reports, pickup notices, and boss drops keep the same item identity. Empty slots automatically equip the strongest matching item after the first successful recovery.
+Equipment uses a fixed anime gear atlas for readable slot silhouettes, while set colors, marks, names, and paper-doll treatments distinguish the 105 boss pieces. Locker cards, equipped slots, recovery reports, pickup notices, and boss drops keep the same item identity. Empty slots automatically equip the strongest matching item after the first successful recovery.
 
 All 20 Legendary set pieces now use dedicated hand-authored sprite art instead of shared silhouettes. Riskreaver, Grand Vault, Crownless King, and Fatebound each have a complete Crown, Oathwrap, Longcoat, Great Hammer, and Striders family with a distinct set identity. The same transparent art appears in the Adventure Bag, equipped slots, item comparison, world drops, pickup reveal, and post-run report. A deterministic atlas builder keeps the full-size and mobile drop sheets aligned.
 
@@ -109,7 +112,7 @@ Boss victories now use a staged loot ritual instead of immediately ending the ex
 
 Choosing **Go Deeper** preserves the complete unsecured bag and starts another five-floor ascent with increased risk, stronger gear levels, improved rarity odds, and additional boss drops. Multiple champion victories stack Boss Seals, but neither seals nor the selected Boss Trophy are banked until extraction succeeds. The post-run report then groups secured equipment by rarity and shows each piece's level, slot, set, stat roll, quality, and value.
 
-Existing saves migrate automatically. Old stacked inventory copies become separate protected gear instances, equipped pieces remain equipped, and old workshop upgrade levels remain as hidden legacy bonuses so progression is not erased.
+Save schema 12 deliberately starts a clean playtest save because the former 24-level progression cannot be translated fairly into the new Level 100 curve. Current schema data is sanitized and all player and item levels are clamped to 1-100.
 
 ## Lucky Relics
 
@@ -155,7 +158,7 @@ Open `http://127.0.0.1:4175` on the computer, or use the computer's local IP add
 npm test
 ```
 
-The automated release suite covers DOM/CSS integrity, JavaScript syntax, all 21 sets and 105 set pieces, five gear slots, unique-item migration, RNG item rolls, fixed set bonuses, boss-only equipment, Pappa levels, the rotating Gear Locker, relic fusion, safe extraction, the boss-loot ritual, a two-champion Go Deeper chain, extraction ambushes, both full boss paths, permanent trophies, career progression, settings, and developer tools.
+The automated release suite covers all 99 XP thresholds, the exact Level 100 cap, multi-level rewards, corrupt progression sanitization, Level 1-100 item generation, mobile three-digit UI, DOM/CSS integrity, JavaScript syntax, all 21 sets and 105 set pieces, five gear slots, RNG item rolls, fixed set bonuses, boss-only equipment, the rotating Gear Locker, relic fusion, safe extraction, the boss-loot ritual, a two-champion Go Deeper chain, extraction ambushes, both full boss paths, permanent trophies, career progression, settings, and developer tools.
 
 Run the Chromium browser test with:
 

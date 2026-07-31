@@ -2,10 +2,10 @@ const {test,expect}=require('@playwright/test');
 
 const maps=[
   {id:'guild',level:1,customAssets:false},
-  {id:'foundry',level:4,customAssets:false},
-  {id:'moonfall',level:8,customAssets:true,solidPoint:{x:135,y:430}},
-  {id:'skyglass',level:12,customAssets:true,solidPoint:{x:125,y:420}},
-  {id:'summit',level:16,customAssets:false}
+  {id:'foundry',level:15,customAssets:false},
+  {id:'moonfall',level:35,customAssets:true,solidPoint:{x:135,y:430}},
+  {id:'skyglass',level:60,customAssets:true,solidPoint:{x:125,y:420}},
+  {id:'summit',level:80,customAssets:false}
 ];
 
 test('all expedition maps render, remain playable, and respect environment collisions',async({page})=>{

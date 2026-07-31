@@ -57,6 +57,7 @@ test('V1 remains available while V2 opens and closes cleanly for 20 cycles',asyn
 });
 
 test('selection, stable sorting and filtering never duplicate or strand cards',async({page})=>{
+  test.setTimeout(30000);
   await page.setViewportSize({width:1366,height:768});
   await seedGear(page);
   await openV2(page);

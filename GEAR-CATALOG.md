@@ -1,4 +1,4 @@
-# Risk the Loot - Gear Catalog v0.54.0
+# Risk the Loot - Gear Catalog v0.58.0
 
 Denne katalogen er generert fra de aktive definisjonene i `script.js`.
 
@@ -32,10 +32,12 @@ Denne katalogen er generert fra de aktive definisjonene i `script.js`.
 
 Tallene nedenfor er **base stats**. Når et item dropper, skaleres hver stat med:
 
-`base x (1 + (itemLevel - 1) x 0.055) x quality x statRoll`
+`base x (1 + 0.014 x (itemLevel - 1) + 0.000015 x (itemLevel - 1)^2) x quality x statRoll`
 
 - Normal `quality` ligger omtrent mellom 0.86 og 1.16.
 - Hver stat far i tillegg omtrent 0.94-1.06 tilfeldig variasjon.
+- Item level er alltid mellom 1 og 100. Level 100 gir en kontrollert statsmultiplikator pa omtrent 2.53.
+- Salgsverdi bruker en egen, litt raskere Level 1-100-kurve: `1 + 0.018 x step + 0.000025 x step^2`.
 - Derfor kan to items med samme navn og level ha forskjellige stats.
 - Set-bonusene og signature-effektene er faste og har ikke RNG.
 
@@ -122,25 +124,25 @@ Eksempel: Hammer Choir har Focus A = DMG og Focus B = IMPACT. Hammer Choir Crown
 |---|---|---|---|---|---|
 | Trailwarden | Rare / Lv 1 | MOVE / REACH | 2p: +4% MOVE, +12 REACH; 3p: +16 HP; 5p: +2.4 DMG, +2.5% CRIT | Trail Momentum: kills reduserer Dash recovery / sterkere reduksjon og elite reset | Gear 2.0 set-atlas + drop-atlas + layers |
 | Iron Guild | Rare / Lv 1 | HP / ARMOR | 2p: +18 HP; 3p: +3.5% ARMOR; 5p: +26 HP, +2 DMG | Iron Will: under 40% HP gir +12% DMG og +6% ARMOR / +20% DMG og +10% ARMOR | Gear 2.0 set-atlas + drop-atlas + layers |
-| Red Banner | Rare / Lv 2 | DMG / IMPACT | 2p: +2 DMG; 3p: +4% IMPACT; 5p: +3.5% CRIT, +2.8 DMG | Banner Breaker: hvert femte impact lager ground fracture / hvert fjerde lager stor shockwave | Gear 2.0 set-atlas + drop-atlas + layers |
-| Moonlit Scout | Rare / Lv 2 | CRIT / DASH | 2p: +2.5% CRIT; 3p: -5.5% DASH; 5p: +5% MOVE, +3.5% CRIT | Moonstep: Dash garanterer neste crit / Dash garanterer de neste to crits | Gear 2.0 set-atlas + drop-atlas + layers |
-| Coinseeker | Rare / Lv 3 | VALUE / REACH | 2p: +5% VALUE; 3p: +18 REACH; 5p: +8% VALUE, +3.5% MOVE | Gilded Bounty: +30% coins / +60% coins og ekstra elite bounty | Gear 2.0 set-atlas + drop-atlas + layers |
-| Tower Bulwark | Epic / Lv 4 | ARMOR / HP | 2p: +3% ARMOR; 3p: +24 HP; 5p: +4.5% ARMOR, +1.8 DMG | Last Bastion: blokker ett hit hvert 8. sekund / 6 sekunder og svar med hammer burst | Gear 2.0 set-atlas + drop-atlas + layers |
-| **Stormcaller** | Legendary / Lv 4 | MOVE / DASH | 2p: +4.5% MOVE; 3p: -6% DASH; 5p: +5.5% IMPACT, +4% MOVE | I Am the Lightning: Dash lager en kort storm trail / tap-baserte chain-dashes, storm armor og sikre hopp gjennom fiender | **Tre fullfigur-sheets, eget ikon/drop-atlas og dedikert lightning-VFX** |
-| **Hammer Choir** | Epic / Lv 5 | DMG / IMPACT | 2p: +3.5% IMPACT; 3p: +2.7 DMG; 5p: +4% CRIT, +4.5% IMPACT | Resonant Slam: hvert fjerde strike gir shockwave / hvert tredje gir stor, sterk shockwave | **Tre fullfigur-sheets: idle, run og attack (8 frames hver), pluss Gear 2.0 atlas/layers** |
-| Lantern Guard | Epic / Lv 5 | HP / REACH | 2p: +20 HP; 3p: +20 REACH; 5p: +3.5% ARMOR, +4.5% VALUE | Guiding Light: ny floor gir en guard charge / to charges og litt healing | Gear 2.0 set-atlas + drop-atlas + layers |
-| Grand Wayfarer | Epic / Lv 6 | MOVE / HP | 2p: +3.5% MOVE, +10 HP; 3p: +2 DMG; 5p: +3% CRIT, +5% VALUE | Long Road: bevegelse lader neste strike opptil +25% / raskere lading, opptil +45% | Gear 2.0 set-atlas + drop-atlas + layers |
-| Crimson Oath | Legendary / Lv 7 | DMG / CRIT | 2p: +3.8 DMG; 3p: +5.5% CRIT; 5p: +5.2 DMG, +6% IMPACT | Blood Echo: crit sprer skade til naere fiender / lengre, sterkere echo og raskere neste strike | Gear 2.0 set-atlas + drop-atlas + layers |
-| Moonbreaker | Legendary / Lv 8 | CRIT / IMPACT | 2p: +4.5% CRIT; 3p: +6.5% IMPACT; 5p: +7% CRIT, +3.5 DMG | Crescent Fracture: crit fracture treffer en ny fiende / kjeder gjennom to fiender | Gear 2.0 set-atlas + drop-atlas + layers |
-| King's Road | Legendary / Lv 9 | HP / VALUE | 2p: +34 HP; 3p: +9% VALUE; 5p: +6% ARMOR, +3.2 DMG | Royal Feast: elite kill healer 5% / healer 9% og gir guard charge | Gear 2.0 set-atlas + drop-atlas + layers |
-| Phantom Court | Legendary / Lv 10 | MOVE / ARMOR | 2p: +6.5% MOVE; 3p: +5.5% ARMOR; 5p: -8% DASH, +5% CRIT | Phantom Veil: Dash gir lengre evade og +25% neste strike / +45% neste strike | Gear 2.0 set-atlas + drop-atlas + layers |
-| Starforge | Legendary / Lv 11 | DMG / ARMOR | 2p: +4.2 DMG; 3p: +5% ARMOR; 5p: +5 DMG, +4.5% CRIT | Starfall: hvert sjette strike blir star impact / hvert fjerde blir sterkere star impact | Gear 2.0 set-atlas + drop-atlas + layers |
-| Grand Voyager | Legendary / Lv 12 | VALUE / MOVE | 2p: +8% VALUE; 3p: +7% MOVE; 5p: +30 REACH, +5.5% IMPACT | Uncharted Fortune: hver floor gir coins / doble coins og bonus cache pa dypere floors | Gear 2.0 set-atlas + drop-atlas + layers |
-| Riskreaver | Legendary / Lv 16 | DMG / CRIT | 2p: +8% MOVE; 4p: +6 DMG, +5% CRIT; 5p: +8 DMG, +8% IMPACT, +5% CRIT | Crowd Hunger: fiender rundt deg oker skade og Hammerstorm-radius / mye sterkere surrounded scaling og begrenset Hammerstorm lifesteal | Dedicated legendary item/drop atlas + Gear 2.0 legendary layers |
-| Grand Vault | Legendary / Lv 18 | HP / ARMOR | 2p: +55 HP; 3p: +8% ARMOR; 5p: +14% VALUE, +45 HP, +4 DMG | Vaultbound: to unsecured boss-items gir guard charge / hvert item gir charge, maks to | Dedicated legendary item/drop atlas + Gear 2.0 legendary layers |
-| Crownless King | Legendary / Lv 20 | DMG / HP | 2p: +5 DMG, +28 HP; 3p: +7% CRIT, +5% ARMOR; 5p: +8% MOVE, +8% IMPACT, +10% VALUE | Kingslayer: elites/bosser under 30% HP tar +20% / under 40% tar +35% | Dedicated legendary item/drop atlas + Gear 2.0 legendary layers |
-| Fatebound | Legendary / Lv 24 | CRIT / MOVE | 2p: +7% CRIT, +5% MOVE; 3p: +8.5% IMPACT, -9% DASH; 5p: +9 DMG, +6% CRIT, +8% VALUE | Fated Strike: hvert syvende strike garanterer crit / hvert femte critter og ett dodsfall avverges per expedition | Dedicated legendary item/drop atlas + Gear 2.0 legendary layers |
-| **Black Hole** | Legendary / Lv 22 | DMG / ARMOR | 2p: +5% ARMOR, +4 DMG; 3p: +6% CRIT, +6% IMPACT; 5p: +8 DMG, +7% IMPACT, +4% CRIT | Gravity Well: hvert femte strike trekker flokken inn / hvert tredje lager en stor, sterk singularitet | **Tre fullfigur-sheets, eget ikon/drop-atlas og animert vortex-VFX** |
+| Red Banner | Rare / Lv 5 | DMG / IMPACT | 2p: +2 DMG; 3p: +4% IMPACT; 5p: +3.5% CRIT, +2.8 DMG | Banner Breaker: hvert femte impact lager ground fracture / hvert fjerde lager stor shockwave | Gear 2.0 set-atlas + drop-atlas + layers |
+| Moonlit Scout | Rare / Lv 5 | CRIT / DASH | 2p: +2.5% CRIT; 3p: -5.5% DASH; 5p: +5% MOVE, +3.5% CRIT | Moonstep: Dash garanterer neste crit / Dash garanterer de neste to crits | Gear 2.0 set-atlas + drop-atlas + layers |
+| Coinseeker | Rare / Lv 8 | VALUE / REACH | 2p: +5% VALUE; 3p: +18 REACH; 5p: +8% VALUE, +3.5% MOVE | Gilded Bounty: +30% coins / +60% coins og ekstra elite bounty | Gear 2.0 set-atlas + drop-atlas + layers |
+| Tower Bulwark | Epic / Lv 12 | ARMOR / HP | 2p: +3% ARMOR; 3p: +24 HP; 5p: +4.5% ARMOR, +1.8 DMG | Last Bastion: blokker ett hit hvert 8. sekund / 6 sekunder og svar med hammer burst | Gear 2.0 set-atlas + drop-atlas + layers |
+| **Stormcaller** | Legendary / Lv 12 | MOVE / DASH | 2p: +4.5% MOVE; 3p: -6% DASH; 5p: +5.5% IMPACT, +4% MOVE | I Am the Lightning: Dash lager en kort storm trail / tap-baserte chain-dashes, storm armor og sikre hopp gjennom fiender | **Tre fullfigur-sheets, eget ikon/drop-atlas og dedikert lightning-VFX** |
+| **Hammer Choir** | Epic / Lv 16 | DMG / IMPACT | 2p: +3.5% IMPACT; 3p: +2.7 DMG; 5p: +4% CRIT, +4.5% IMPACT | Resonant Slam: hvert fjerde strike gir shockwave / hvert tredje gir stor, sterk shockwave | **Tre fullfigur-sheets: idle, run og attack (8 frames hver), pluss Gear 2.0 atlas/layers** |
+| Lantern Guard | Epic / Lv 16 | HP / REACH | 2p: +20 HP; 3p: +20 REACH; 5p: +3.5% ARMOR, +4.5% VALUE | Guiding Light: ny floor gir en guard charge / to charges og litt healing | Gear 2.0 set-atlas + drop-atlas + layers |
+| Grand Wayfarer | Epic / Lv 20 | MOVE / HP | 2p: +3.5% MOVE, +10 HP; 3p: +2 DMG; 5p: +3% CRIT, +5% VALUE | Long Road: bevegelse lader neste strike opptil +25% / raskere lading, opptil +45% | Gear 2.0 set-atlas + drop-atlas + layers |
+| Crimson Oath | Legendary / Lv 25 | DMG / CRIT | 2p: +3.8 DMG; 3p: +5.5% CRIT; 5p: +5.2 DMG, +6% IMPACT | Blood Echo: crit sprer skade til naere fiender / lengre, sterkere echo og raskere neste strike | Gear 2.0 set-atlas + drop-atlas + layers |
+| Moonbreaker | Legendary / Lv 30 | CRIT / IMPACT | 2p: +4.5% CRIT; 3p: +6.5% IMPACT; 5p: +7% CRIT, +3.5 DMG | Crescent Fracture: crit fracture treffer en ny fiende / kjeder gjennom to fiender | Gear 2.0 set-atlas + drop-atlas + layers |
+| King's Road | Legendary / Lv 35 | HP / VALUE | 2p: +34 HP; 3p: +9% VALUE; 5p: +6% ARMOR, +3.2 DMG | Royal Feast: elite kill healer 5% / healer 9% og gir guard charge | Gear 2.0 set-atlas + drop-atlas + layers |
+| Phantom Court | Legendary / Lv 40 | MOVE / ARMOR | 2p: +6.5% MOVE; 3p: +5.5% ARMOR; 5p: -8% DASH, +5% CRIT | Phantom Veil: Dash gir lengre evade og +25% neste strike / +45% neste strike | Gear 2.0 set-atlas + drop-atlas + layers |
+| Starforge | Legendary / Lv 45 | DMG / ARMOR | 2p: +4.2 DMG; 3p: +5% ARMOR; 5p: +5 DMG, +4.5% CRIT | Starfall: hvert sjette strike blir star impact / hvert fjerde blir sterkere star impact | Gear 2.0 set-atlas + drop-atlas + layers |
+| Grand Voyager | Legendary / Lv 50 | VALUE / MOVE | 2p: +8% VALUE; 3p: +7% MOVE; 5p: +30 REACH, +5.5% IMPACT | Uncharted Fortune: hver floor gir coins / doble coins og bonus cache pa dypere floors | Gear 2.0 set-atlas + drop-atlas + layers |
+| Riskreaver | Legendary / Lv 65 | DMG / CRIT | 2p: +8% MOVE; 4p: +6 DMG, +5% CRIT; 5p: +8 DMG, +8% IMPACT, +5% CRIT | Crowd Hunger: fiender rundt deg oker skade og Hammerstorm-radius / mye sterkere surrounded scaling og begrenset Hammerstorm lifesteal | Dedicated legendary item/drop atlas + Gear 2.0 legendary layers |
+| Grand Vault | Legendary / Lv 72 | HP / ARMOR | 2p: +55 HP; 3p: +8% ARMOR; 5p: +14% VALUE, +45 HP, +4 DMG | Vaultbound: to unsecured boss-items gir guard charge / hvert item gir charge, maks to | Dedicated legendary item/drop atlas + Gear 2.0 legendary layers |
+| Crownless King | Legendary / Lv 80 | DMG / HP | 2p: +5 DMG, +28 HP; 3p: +7% CRIT, +5% ARMOR; 5p: +8% MOVE, +8% IMPACT, +10% VALUE | Kingslayer: elites/bosser under 30% HP tar +20% / under 40% tar +35% | Dedicated legendary item/drop atlas + Gear 2.0 legendary layers |
+| Fatebound | Legendary / Lv 92 | CRIT / MOVE | 2p: +7% CRIT, +5% MOVE; 3p: +8.5% IMPACT, -9% DASH; 5p: +9 DMG, +6% CRIT, +8% VALUE | Fated Strike: hvert syvende strike garanterer crit / hvert femte critter og ett dodsfall avverges per expedition | Dedicated legendary item/drop atlas + Gear 2.0 legendary layers |
+| **Black Hole** | Legendary / Lv 86 | DMG / ARMOR | 2p: +5% ARMOR, +4 DMG; 3p: +6% CRIT, +6% IMPACT; 5p: +8 DMG, +7% IMPACT, +4% CRIT | Gravity Well: hvert femte strike trekker flokken inn / hvert tredje lager en stor, sterk singularitet | **Tre fullfigur-sheets, eget ikon/drop-atlas og animert vortex-VFX** |
 
 ## Asset-fasit
 

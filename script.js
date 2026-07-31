@@ -2520,19 +2520,34 @@
   function devUnlockSchematic(){let id=SCHEMATIC_IDS.find(key=>schematicLevel(key)<BOSS_SCHEMATICS[key].max);if(!id)return;save.schematics[id]++;persist();refreshBase();syncDevTools();devFeedback(BOSS_SCHEMATICS[id].name.toUpperCase()+' +1')}
   function devHardReset(){if(!devResetArmed){devResetArmed=true;ui.devReset.textContent='CONFIRM: DELETE ALL PROGRESS';ui.devReset.classList.add('confirm');return}localStorage.removeItem(SAVE_KEY);window.location.reload()}
   function installInventoryV2Bridge(){
+    let v2CharacterKey='',v2CharacterImage='';
+    function v2ImageUrl(source){
+      if(!source)return'';
+      if(typeof source.toDataURL==='function')return'url("'+source.toDataURL('image/png')+'")';
+      return source.src?'url("'+source.src+'")':''
+    }
+    function v2CharacterSource(){
+      let fullSetId=equippedFullSetId(),setReady=paperDollSetReady(fullSetId),layersReady=paperDollAssetsReady(),key=(setReady?'skin:'+fullSetId+':':'paper:')+paperDollLoadoutKey();
+      if(key===v2CharacterKey&&v2CharacterImage)return v2CharacterImage;
+      let source=setReady?paperDollSetSprites[fullSetId].idle:layersReady?composePaperDollPose('idle'):paperDollAtlases.idle||pappaHammerSprites.idle,image=v2ImageUrl(source);
+      if(image&&(setReady||layersReady)){v2CharacterKey=key;v2CharacterImage=image}
+      return image
+    }
     function snapshot(previewUid){
       let previewGear=previewUid&&save.gear.find(entry=>entry.uid===previewUid),counts=equippedSetCounts(),copies=gearCopyCounts();
       let gear=save.gear.map((entry,index)=>{
         let item=gearDefinition(entry),rarity=item&&LOOT_RARITIES[item.rarity],set=item&&item.setId&&SET_BY_ID[item.setId],comparison=gearComparisonData(entry),candidateCount=set&&comparison?(comparison.candidate.counts[set.id]||0):0,next=set?nextSetMilestone(set,candidateCount):null;
         return item?{uid:entry.uid,itemId:entry.itemId,name:item.name,slot:item.slot,slotName:GEAR_SLOT_META[item.slot].name,rarity:item.rarity,rarityName:rarity.name,rarityRank:rarity.rank,color:rarity.color,glow:rarity.glow,level:entry.level,power:Math.round(gearScore(entry)*10)/10,value:gearUnitValue(entry),quality:gearQualityLabel(entry),stats:formatGearStats(entry),equipped:gearIsEquipped(entry),newest:index,copies:copies[entry.itemId]||1,art:gearArtMarkup(entry,'bag'),set:set?{id:set.id,name:set.name,mark:set.mark,color:(GEAR_SIGNATURES[set.id]&&GEAR_SIGNATURES[set.id].color)||set.accent,current:counts[set.id]||0,candidate:candidateCount,next:next?{tier:next.tier,label:next.label,effect:next.effect}:null}:null,comparison:comparison?{wornUid:comparison.worn&&comparison.worn.uid||null,wornName:comparison.wornItem&&comparison.wornItem.name||'EMPTY '+GEAR_SLOT_META[item.slot].name,rows:comparison.rows.map(row=>({id:row.id,label:row.label,type:row.type,current:row.current,candidate:row.candidate,delta:row.delta,tone:row.tone}))}:null}:null
       }).filter(Boolean);
-      let equipped=Object.fromEntries(GEAR_SLOTS.map(slot=>[slot,gear.find(entry=>entry.uid===save.equipped[slot])||null])),stats=gearStats(),fallback=ui.gearCharacterHero&&ui.gearCharacterHero.style.backgroundImage||'';
-      return{version:1,gear,equipped,slots:GEAR_SLOTS.map(slot=>({id:slot,name:GEAR_SLOT_META[slot].name,icon:GEAR_SLOT_META[slot].icon})),characterImage:previewGear?paperDollPreviewImage(previewGear):fallback,level:save.level,summary:{count:gear.length,value:inventoryValue(),hp:maxHp(),damage:shotDamage(),crit:Math.round(stats.crit*1000)/10,armor:Math.round(stats.armor*1000)/10},fullSetId:equippedFullSetId()}
+      let equipped=Object.fromEntries(GEAR_SLOTS.map(slot=>[slot,gear.find(entry=>entry.uid===save.equipped[slot])||null])),stats=gearStats(),characterImage=previewGear?paperDollPreviewImage(previewGear)||v2CharacterSource():v2CharacterSource();
+      let setProgress=Object.entries(counts).filter(([,count])=>count>0).map(([id,count])=>{let set=SET_BY_ID[id],next=set&&nextSetMilestone(set,count);return{id,name:set&&set.name||id,color:(GEAR_SIGNATURES[id]&&GEAR_SIGNATURES[id].color)||set&&set.accent||'#d6aa58',count,next:next?{tier:next.tier,label:next.label,effect:next.effect}:null}});
+      return{version:2,gear,equipped,slots:GEAR_SLOTS.map(slot=>({id:slot,name:GEAR_SLOT_META[slot].name,icon:GEAR_SLOT_META[slot].icon})),characterImage,level:save.level,setProgress,summary:{count:gear.length,value:inventoryValue(),hp:maxHp(),damage:shotDamage(),crit:Math.round(stats.crit*1000)/10,armor:Math.round(stats.armor*1000)/10},fullSetId:equippedFullSetId()}
     }
     window.RiskLootInventoryV2Bridge=Object.freeze({
       snapshot,
       equip(uid){let changed=equipGear(uid);return{changed,snapshot:snapshot()}},
       unequip(slot){let changed=unequipGearSlot(slot);return{changed,snapshot:snapshot()}},
+      flush(){flushEquipPersist();return true},
       openLegacy(){openGearLocker();return true},
       closeLegacy(){if(ui.gearOverlay.classList.contains('show'))closeGearLocker();return true},
       legacyOpen(){return ui.gearOverlay.classList.contains('show')}

@@ -27,7 +27,7 @@ test('mobile Armory keeps Pappa and slots fixed while only inventory scrolls',as
   await openPopulatedArmory(page);
 
   const stage=page.locator('#gearCharacterStage');
-  const browserPanel=page.locator('.gearBagBrowser');
+  const browserPanel=page.locator('#gearGrid');
   const before=await stage.boundingBox();
   expect(before).toBeTruthy();
   const scroll=await browserPanel.evaluate(element=>{
@@ -57,7 +57,7 @@ test('mobile Armory keeps Pappa and slots fixed while only inventory scrolls',as
   await card.scrollIntoViewIfNeeded();
   await card.tap();
   await expect(page.locator('#mobileGearSelectionName')).toHaveText(item.name);
-  await expect(page.locator('#mobileGearEquip')).toHaveText('EQUIP');
+  await expect(page.locator('#mobileGearEquip')).toHaveText('REPLACE');
   await page.locator('#mobileGearEquip').tap();
   await expect.poll(()=>page.evaluate(()=>window.__riskTest.equipmentState().equipped.boots)).toBe(item.uid);
 

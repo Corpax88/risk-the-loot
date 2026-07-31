@@ -8,14 +8,14 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="description" content="Risk everything, recover equippable gear and build Pappa Hammer in this compact extraction roguelite.">
   <title>RISK THE LOOT!</title>
-  <link rel="stylesheet" href="style.css?v=0.55.0">
+  <link rel="stylesheet" href="style.css?v=0.56.0">
 </head>
 <body>
   <main id="game">
     <header class="topbar">
       <div class="brand" tabindex="0" data-help-title="Risk the Loot" data-help="Enter the tower, defeat champions and decide when the gear you carry is valuable enough to extract.">
         <span class="brandMark">R</span>
-        <div><strong>RISK THE LOOT!</strong><small>MOBILE PERFORMANCE v0.55.0</small></div>
+        <div><strong>RISK THE LOOT!</strong><small>FOCUSED ARMORY v0.56.0</small></div>
       </div>
       <div class="resources">
         <div class="resource level" data-help-title="Pappa Level" data-help="Boss victories grant XP. Higher levels unlock stronger gear and tougher champions."><i>LV</i><div><b id="pappaLevel">1</b><span>PAPPA</span></div></div>
@@ -74,39 +74,36 @@
           <button id="closeGear" class="panelClose" aria-label="Close Adventure Bag">&#215;</button>
           <div class="gearWorkspace unifiedEquipmentWorkspace">
             <aside class="gearCharacterPanel unifiedCharacterPanel">
-              <div class="gearCharacterHeading"><span>PAPPA HAMMER LOADOUT</span><b id="gearEquippedCount">0 / 5 EQUIPPED</b></div>
               <div id="gearCharacterStage" class="gearCharacterStage equipmentDropStage" aria-label="Pappa Hammer equipment preview. Drop compatible gear here to equip it." data-help-title="Live Equipment Preview" data-help="Hover gear for a temporary preview. Drop compatible gear onto Pappa Hammer to equip it. Drag left or right on empty space to rotate him.">
                 <div class="gearCharacterHalo"></div>
                 <div class="gearCharacterHero"></div>
                 <div id="gearLoadoutSlots" class="gearLoadoutSlots equipmentOrbitSlots" aria-label="Equipped gear slots"></div>
                 <span id="gearPreviewName" class="gearPreviewName">FIELD LOADOUT</span>
+                <div id="gearSetAwaken" class="gearSetAwaken" aria-live="polite" aria-hidden="true"></div>
               </div>
               <div class="gearTurntable" aria-label="Character rotation controls">
                 <button id="gearTurnLeft" aria-label="Rotate Pappa Hammer left" title="Rotate left">&#8634;</button>
                 <span><small>360&deg; VIEW</small><b id="gearTurnReadout">FRONT &middot; 0&deg;</b></span>
                 <button id="gearTurnRight" aria-label="Rotate Pappa Hammer right" title="Rotate right">&#8635;</button>
               </div>
-              <div class="pappaProgress" tabindex="0" data-help-title="Pappa Experience" data-help="Champions grant XP. Higher Pappa levels unlock new destinations and allow stronger, rarer boss gear to drop."><span><small>PAPPA LEVEL</small><b id="gearPappaLevel">1</b></span><div><i id="gearXpFill"></i></div><em id="gearXpText">0 / 2 BOSS XP</em></div>
-              <div class="gearStatsBlock"><small class="loadoutSectionLabel">COMBINED STATS</small><div id="gearStatsSummary" class="gearStatsSummary"></div></div>
-              <div class="gearSetBlock"><small class="loadoutSectionLabel">ACTIVE SETS</small><div id="gearSetSummary" class="gearSetSummary"></div></div>
+              <div class="gearCharacterReadout">
+                <b id="gearEquippedCount">0 / 5</b>
+                <div class="pappaProgress" tabindex="0" data-help-title="Pappa Experience" data-help="Champions grant XP. Higher Pappa levels unlock new destinations and allow stronger, rarer boss gear to drop."><span><small>LV</small><b id="gearPappaLevel">1</b></span><div><i id="gearXpFill"></i></div><em id="gearXpText">0 / 2 XP</em></div>
+              </div>
+              <div class="gearStatsBlock"><div id="gearStatsSummary" class="gearStatsSummary"></div></div>
+              <div class="gearSetBlock"><div id="gearSetSummary" class="gearSetSummary"></div></div>
             </aside>
             <section class="unifiedGearBrowser">
-              <aside class="gearCategoryPanel">
-                <header><i class="gearBagIcon" aria-hidden="true"></i><span><small>FILTER</small><b>GEAR TYPE</b></span></header>
-                <nav class="gearCategoryRail" aria-label="Gear categories">
-                  <div id="gearFilters" class="gearFilters gearSlotFilters"></div>
-                </nav>
-                <div class="gearCategoryRarity"><small>RARITY FOUND</small><div id="gearRaritySummary" class="gearRaritySummary" aria-label="Inventory rarity counts"></div></div>
-                <div class="equippedProtection"><i>&#128274;</i><span>WORN GEAR IS SAFE</span></div>
-              </aside>
               <section class="gearInventoryPanel equipmentInventoryDrop">
                 <header class="gearInventoryHeading">
-                  <span><small>FIELD BAG</small><b>RECOVERED EQUIPMENT</b></span>
+                  <span><small>ADVENTURE BAG</small><b>GEAR</b></span>
                   <em id="gearInventorySummary">0 ITEMS</em>
                 </header>
                 <div id="mobileGearSelection" class="mobileGearSelection" aria-live="polite">
                   <div id="mobileGearSelectionArt" class="mobileGearSelectionArt" aria-hidden="true"></div>
                   <span><small id="mobileGearSelectionMeta">SELECT GEAR</small><b id="mobileGearSelectionName">TAP AN ITEM TO INSPECT</b><em id="mobileGearSelectionPower"></em></span>
+                  <div id="mobileGearComparison" class="mobileGearComparison"></div>
+                  <div id="mobileGearSet" class="mobileGearSet"></div>
                   <button id="mobileGearEquip" class="mobileGearEquip" disabled>EQUIP</button>
                 </div>
                 <div class="mobileGearControls" aria-label="Inventory controls">
@@ -114,6 +111,10 @@
                   <button id="mobileGearFilter" aria-haspopup="dialog"><i aria-hidden="true">&#9776;</i><span><small>FILTER</small><b id="mobileGearFilterLabel">ALL GEAR</b></span></button>
                 </div>
                 <div class="gearToolbar">
+                  <div class="gearFilterGroup slotGroup">
+                    <small>TYPE</small>
+                    <div id="gearFilters" class="gearFilters gearSlotFilters"></div>
+                  </div>
                   <div class="gearFilterGroup rarityGroup">
                     <small>RARITY</small>
                     <div id="gearRarityFilters" class="gearFilters gearRarityFilters"></div>
@@ -127,6 +128,7 @@
                     </button>
                   </div>
                 </div>
+                <div id="gearRaritySummary" class="gearRaritySummary" aria-label="Inventory rarity counts"></div>
                 <div class="gearBagLayout">
                   <div class="animeBagShell">
                     <div class="animeBagInterior">
@@ -375,12 +377,12 @@
         </div>
         <button id="resumeButton" class="primaryButton settingsResume"><span>RESUME</span><i>&#8250;</i></button>
         <button id="abandonButton" class="dangerButton">ABANDON EXPEDITION</button>
-        <p class="buildStamp">v0.55.0 MOBILE PERFORMANCE</p>
+        <p class="buildStamp">v0.56.0 FOCUSED ARMORY</p>
       </div>
     </div>
     <aside id="helpTooltip" class="helpTooltip" role="tooltip" aria-hidden="true"><strong id="helpTooltipTitle"></strong><span id="helpTooltipText"></span></aside>
   </main>
-  <script src="guild-terrain.js?v=0.55.0"></script>
-  <script src="script.js?v=0.55.0"></script>
+  <script src="guild-terrain.js?v=0.56.0"></script>
+  <script src="script.js?v=0.56.0"></script>
 </body>
 </html>

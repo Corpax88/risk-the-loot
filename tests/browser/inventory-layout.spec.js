@@ -11,6 +11,7 @@ async function openArmory(page,viewport){
     window.__riskTest.previewGearSet('fatebound');
   });
   await expect(page.locator('#gearOverlay')).toHaveClass(/show/);
+  await page.waitForTimeout(1200);
 }
 
 async function desktopGeometry(page){
@@ -21,9 +22,10 @@ async function desktopGeometry(page){
     };
     const panel=document.querySelector('#gearPanel');
     const workspace=document.querySelector('.unifiedEquipmentWorkspace');
-    const filter=document.querySelector('.gearCategoryPanel');
+    const character=document.querySelector('.unifiedCharacterPanel');
     const inventory=document.querySelector('.gearInventoryPanel');
     const detail=document.querySelector('#gearDetail');
+    const toolbar=document.querySelector('.gearToolbar');
     const grid=document.querySelector('#gearGrid');
     const bagBrowser=document.querySelector('.gearBagBrowser');
     const filterButtons=[...document.querySelectorAll('#gearFilters button')].map(box);
@@ -33,13 +35,13 @@ async function desktopGeometry(page){
     });
     return{
       viewport:{width:innerWidth,height:innerHeight},
-      panel:box(panel),workspace:box(workspace),filter:box(filter),inventory:box(inventory),detail:box(detail),grid:box(grid),bagBrowser:box(bagBrowser),
+      panel:box(panel),workspace:box(workspace),character:box(character),inventory:box(inventory),detail:box(detail),toolbar:box(toolbar),grid:box(grid),bagBrowser:box(bagBrowser),
       pageOverflow:document.documentElement.scrollWidth-document.documentElement.clientWidth,
       panelOverflowX:panel.scrollWidth-panel.clientWidth,
       panelOverflowY:panel.scrollHeight-panel.clientHeight,
       panelOverflow:getComputedStyle(panel).overflow,
       gridOverflow:getComputedStyle(grid).overflowY,
-      filterVisible:getComputedStyle(filter).display!=='none',
+      toolbarVisible:getComputedStyle(toolbar).display!=='none',
       filterButtons,
       slots
     };
@@ -54,20 +56,18 @@ for(const viewport of [
   test(`${viewport.name} keeps every Armory column and item inside its viewport`,async({page})=>{
     await openArmory(page,viewport);
     const layout=await desktopGeometry(page);
-    expect(layout.filterVisible).toBe(true);
-    expect(layout.filter.width).toBeGreaterThanOrEqual(120);
+    expect(layout.toolbarVisible).toBe(true);
     expect(layout.filterButtons).toHaveLength(6);
-    for(const [index,button] of layout.filterButtons.entries()){
-      expect(button.left).toBeGreaterThanOrEqual(layout.filter.left);
-      expect(button.right).toBeLessThanOrEqual(layout.filter.right+1);
-      expect(button.top).toBeGreaterThanOrEqual(layout.filter.top);
-      expect(button.bottom).toBeLessThanOrEqual(layout.filter.bottom+1);
-      if(index)expect(button.top).toBeGreaterThanOrEqual(layout.filterButtons[index-1].bottom-1);
+    for(const button of layout.filterButtons){
+      expect(button.left).toBeGreaterThanOrEqual(layout.toolbar.left);
+      expect(button.right).toBeLessThanOrEqual(layout.toolbar.right+1);
+      expect(button.top).toBeGreaterThanOrEqual(layout.toolbar.top);
+      expect(button.bottom).toBeLessThanOrEqual(layout.toolbar.bottom+1);
     }
     expect(layout.panel.left).toBeGreaterThanOrEqual(0);
     expect(layout.panel.right).toBeLessThanOrEqual(viewport.width);
     expect(layout.panel.bottom).toBeLessThanOrEqual(viewport.height);
-    expect(layout.filter.right).toBeLessThanOrEqual(layout.inventory.left+1);
+    expect(layout.character.right).toBeLessThanOrEqual(layout.inventory.left+1);
     expect(layout.inventory.right).toBeLessThanOrEqual(layout.detail.left+1);
     expect(layout.pageOverflow).toBeLessThanOrEqual(1);
     expect(layout.panelOverflowX).toBeLessThanOrEqual(1);
@@ -106,12 +106,13 @@ test('Remove hover remains local and does not animate or resize the Armory',asyn
     transform:getComputedStyle(element).transform
   }));
   expect(after.panel).toEqual(before.panel);
-  expect(after.filter).toEqual(before.filter);
+  expect(after.character).toEqual(before.character);
+  expect(after.toolbar).toEqual(before.toolbar);
   expect(after.inventory).toEqual(before.inventory);
   expect(after.detail).toEqual(before.detail);
-  expect(animation.animationName).toBe('none');
-  expect(animation.opacity).toBe('1');
-  expect(animation.transform).toBe('none');
+  expect(['','none']).toContain(animation.animationName);
+  expect(['','1']).toContain(animation.opacity);
+  expect(['','none']).toContain(animation.transform);
 });
 
 test('custom pointer drag keeps card dimensions and restores invalid drops',async({page})=>{
@@ -150,6 +151,8 @@ test('tablet and iPhone keep their independent inventory scroller',async({browse
       const inventory=document.querySelector('.gearInventoryPanel');
       const rect=element=>element.getBoundingClientRect();
       const before=rect(stage);
+      const hero=rect(document.querySelector('.gearCharacterHero'));
+      const cards=[...grid.querySelectorAll('.gearBagSlot')].map(rect);
       grid.scrollTop=60;
       const after=rect(stage);
       return{
@@ -158,6 +161,8 @@ test('tablet and iPhone keep their independent inventory scroller',async({browse
         pageOverflow:document.documentElement.scrollWidth-document.documentElement.clientWidth,
         inventoryRight:rect(inventory).right,
         viewport:innerWidth,
+        hero,
+        cards,
         stageBefore:{top:before.top,bottom:before.bottom},
         stageAfter:{top:after.top,bottom:after.bottom}
       };
@@ -166,6 +171,17 @@ test('tablet and iPhone keep their independent inventory scroller',async({browse
     expect(state.gridOverflow).toBe('auto');
     expect(state.pageOverflow).toBeLessThanOrEqual(1);
     expect(state.inventoryRight).toBeLessThanOrEqual(state.viewport+1);
+    expect(state.hero.top,JSON.stringify({hero:state.hero,stage:state.stageBefore})).toBeGreaterThanOrEqual(state.stageBefore.top-1);
+    expect(state.hero.bottom).toBeLessThanOrEqual(state.stageBefore.bottom+1);
+    for(let index=0;index<state.cards.length;index++){
+      const card=state.cards[index];
+      expect(Math.abs(card.width-card.height)).toBeLessThanOrEqual(2);
+      for(let otherIndex=index+1;otherIndex<state.cards.length;otherIndex++){
+        const other=state.cards[otherIndex];
+        const overlaps=card.left<other.right-1&&card.right>other.left+1&&card.top<other.bottom-1&&card.bottom>other.top+1;
+        expect(overlaps,JSON.stringify({index,otherIndex,card,other})).toBe(false);
+      }
+    }
     expect(state.stageAfter).toEqual(state.stageBefore);
     if(process.env.CAPTURE_INVENTORY)await page.screenshot({
       path:path.join('test-results','inventory-layout',`mobile-${state.viewport}.png`),

@@ -29,7 +29,8 @@ test('desktop unified equipment supports preview, comparison, sorting and every 
   await source.hover();
   await expect(page.locator('#gearCharacterStage')).toHaveClass(/gearPreviewing/);
   await expect(page.locator('#gearDetail .gearComparison')).toBeVisible();
-  await expect(page.locator('#gearDetail .gearCompareCard')).toHaveCount(2);
+  await expect(page.locator('#gearDetail .gearCompareRows > span')).toHaveCount(5);
+  await expect(page.locator('#gearDetail .gearDecisionSet')).toBeVisible();
   expect((await page.evaluate(()=>window.__riskTest.equipmentState())).previewing).toBe(true);
   await page.mouse.move(2,2);
   await expect.poll(()=>page.evaluate(()=>window.__riskTest.equipmentState().previewing)).toBe(false);
@@ -96,6 +97,9 @@ test('mobile uses tap-select and tap-equip without horizontal overflow',async({b
   let state=await page.evaluate(()=>window.__riskTest.equipmentState());
   expect(state.selectedGearUid).toBe(candidate.uid);
   expect(state.equipped.scarf).not.toBe(candidate.uid);
+  await expect(page.locator('#mobileGearComparison > span')).toHaveCount(5);
+  await expect(page.locator('#mobileGearSet')).not.toBeEmpty();
+  await expect(page.locator('#mobileGearEquip')).toHaveText(/EQUIP|REPLACE/);
   await page.locator('#gearGrid [data-item="'+candidate.uid+'"]').tap();
   await expect.poll(()=>page.evaluate(()=>window.__riskTest.equipmentState().equipped.scarf)).toBe(candidate.uid);
 

@@ -18,7 +18,9 @@ test('Stormcaller pieces use dedicated icons and the full set uses its productio
 
   const three=await page.evaluate(()=>window.__riskTest.previewGearSetPieces('stormrunner',3));
   expect(three.visual.setId).toBeNull();
-  await expect(page.locator('.gearSignature.set-stormrunner.active').first()).toBeVisible();
+  await expect(page.locator('#gearDetail .gearDecisionSet')).toBeVisible();
+  await expect(page.locator('#gearDetail .gearDecisionSet')).toContainText('STORMCALLER SET');
+  await expect(page.locator('#gearDetail .gearDecisionSet')).toContainText('3/5');
 
   await page.evaluate(()=>window.__riskTest.previewGearSetPieces('stormrunner',5));
   await expect.poll(()=>page.evaluate(()=>window.__riskTest.gearVisualState().usesProductionSkin)).toBe(true);

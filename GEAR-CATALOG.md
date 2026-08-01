@@ -4,15 +4,16 @@ Denne katalogen er generert fra de aktive definisjonene i `script.js`.
 
 ## Kort fasit
 
-- Spillet har **145 gear-maler**.
+- Spillet har **150 gear-maler**.
 - 40 er frittstaende field-items.
-- 105 er set-items: 21 sett x 5 slots.
+- 110 er set-items: 22 sett x 5 slots.
 - Slots: Hat, Scarf, Coat, Hammer og Boots.
 - Rarities i aktiv kode: Common, Rare, Epic og Legendary.
 - Det finnes ikke Uncommon gear i den aktive loot-tabellen.
 - Set-bonuser er kumulative. Et 5-piece set mottar ogsa bonusene fra lavere terskler.
 - Vanlige signatures vekkes ved 3 deler og mestres ved 5 deler.
 - Riskreaver vekkes ved 4 deler og mestres ved 5 deler.
+- Handlava vekkes bare av hele Lava Set (5/5).
 
 ## Hva statsa betyr
 
@@ -86,7 +87,7 @@ Tallene nedenfor er **base stats**. Når et item dropper, skaleres hver stat med
 | Legendary | Hammer | RISKREAVER | +20 DMG, +22% IMPACT, +22% CRIT | Dedicated legendary item/drop atlas cell; no full animation sheet |
 | Legendary | Coat | Grand Vault Coat | +90 HP, +15% ARMOR, +10% MOVE | Dedicated legendary item/drop atlas cell; no full animation sheet |
 
-## Hvordan de 105 set-item-statsa bygges
+## Hvordan de 110 set-item-statsa bygges
 
 Hvert sett har disse fem item-navnene:
 
@@ -95,6 +96,8 @@ Hvert sett har disse fem item-navnene:
 3. `[SET] Longcoat`
 4. `[SET] Great Hammer`
 5. `[SET] Striders`
+
+Lava Set bruker egne navn som matcher de dedikerte assetene: `Lava Hat`, `Living Lava Scarf`, `Lava Coat`, `Lava Hammer` og `Lava Boots`.
 
 Alle far en rarity-skalert slot-base:
 
@@ -116,7 +119,7 @@ I tillegg far Crown, Longcoat og Striders settets **Focus A**. Oathwrap og Great
 
 Eksempel: Hammer Choir har Focus A = DMG og Focus B = IMPACT. Hammer Choir Crown, Longcoat og Striders far derfor ekstra DMG, mens Oathwrap og Great Hammer far ekstra IMPACT.
 
-## Alle 21 gear sets
+## Alle 22 gear sets
 
 `Assets` beskriver om settet har samme type assets som Hammer Choir.
 
@@ -138,6 +141,7 @@ Eksempel: Hammer Choir har Focus A = DMG og Focus B = IMPACT. Hammer Choir Crown
 | Phantom Court | Legendary / Lv 40 | MOVE / ARMOR | 2p: +6.5% MOVE; 3p: +5.5% ARMOR; 5p: -8% DASH, +5% CRIT | Phantom Veil: Dash gir lengre evade og +25% neste strike / +45% neste strike | Gear 2.0 set-atlas + drop-atlas + layers |
 | Starforge | Legendary / Lv 45 | DMG / ARMOR | 2p: +4.2 DMG; 3p: +5% ARMOR; 5p: +5 DMG, +4.5% CRIT | Starfall: hvert sjette strike blir star impact / hvert fjerde blir sterkere star impact | Gear 2.0 set-atlas + drop-atlas + layers |
 | Grand Voyager | Legendary / Lv 50 | VALUE / MOVE | 2p: +8% VALUE; 3p: +7% MOVE; 5p: +30 REACH, +5.5% IMPACT | Uncharted Fortune: hver floor gir coins / doble coins og bonus cache pa dypere floors | Gear 2.0 set-atlas + drop-atlas + layers |
+| **Lava Set** | Legendary / Lv 55 | DMG / IMPACT | 2p: +4 DMG; 3p: +6% IMPACT; 5p: +5 DMG, +5% CRIT; Handlava krever hele settet | Handlava (bare 5/5): to levende skjerfarmer prioriterer fiender utenfor hammerrekkevidde, griper og svinger dem inn i andre fiender, kaster mot naere flokker og slipper dem innenfor Spin-rekkevidde | **Eget ikon/drop-atlas og seks Handlava-sheets** |
 | Riskreaver | Legendary / Lv 65 | DMG / CRIT | 2p: +8% MOVE; 4p: +6 DMG, +5% CRIT; 5p: +8 DMG, +8% IMPACT, +5% CRIT | Crowd Hunger: fiender rundt deg oker skade og Hammerstorm-radius / mye sterkere surrounded scaling og begrenset Hammerstorm lifesteal | Dedicated legendary item/drop atlas + Gear 2.0 legendary layers |
 | Grand Vault | Legendary / Lv 72 | HP / ARMOR | 2p: +55 HP; 3p: +8% ARMOR; 5p: +14% VALUE, +45 HP, +4 DMG | Vaultbound: to unsecured boss-items gir guard charge / hvert item gir charge, maks to | Dedicated legendary item/drop atlas + Gear 2.0 legendary layers |
 | Crownless King | Legendary / Lv 80 | DMG / HP | 2p: +5 DMG, +28 HP; 3p: +7% CRIT, +5% ARMOR; 5p: +8% MOVE, +8% IMPACT, +10% VALUE | Kingslayer: elites/bosser under 30% HP tar +20% / under 40% tar +35% | Dedicated legendary item/drop atlas + Gear 2.0 legendary layers |
@@ -181,9 +185,23 @@ Stormcaller har:
 - Nar hele settet er equipped, brukes den morke storm-metal-transformasjonen med kontinuerlig elektrisk aura.
 - Chain-dash bruker egne avreise-, trail-, afterimage-, impact- og kill-effekter som skalerer med chain-tempo.
 
+### Lava Set / Handlava
+
+Lava Set har:
+
+- `assets/lava-gear-icons-v1.png`
+- `assets/lava-gear-drops-v1.png`
+- `assets/handlava-idle-v1.png`
+- `assets/handlava-extend-v1.png`
+- `assets/handlava-grab-v1.png`
+- `assets/handlava-swing-v1.png`
+- `assets/handlava-throw-v1.png`
+- `assets/handlava-retract-v1.png`
+- Handlava er en eksklusiv 5/5-signature. De to armene deler pooler for varme-, trail- og impact-effekter og lar fiender lande naer nok til Hammerstorm-oppfolging.
+
 ### Hva de andre settene faktisk har
 
-Alle 21 sett har:
+Alle 22 sett har:
 
 - En egen `SET_VISUAL_PROFILES`-profil.
 - Egne item-ikoner i atlas.

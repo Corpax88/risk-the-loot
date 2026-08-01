@@ -10,11 +10,11 @@ test('every current gear item has a Gear 2.0 visual profile',async({page})=>{
   await waitForGearBridge(page);
   const coverage=await page.evaluate(()=>window.__riskTest.gearVisualCoverage());
   expect(coverage).toMatchObject({
-    items:145,
-    setItems:105,
+    items:150,
+    setItems:110,
     legacyItems:40,
-    sets:21,
-    profiles:21,
+    sets:22,
+    profiles:22,
     missing:[],
     usesPieceGeometry:true,
     usesStripePattern:false,

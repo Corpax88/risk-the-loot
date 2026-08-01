@@ -78,6 +78,7 @@ for(let risk=1;risk<=20;risk++)assert(getEnemyXpReward({enemyType:'boss',boss:tr
 
 assert.deepEqual(Object.values(MAP_UNLOCK_LEVELS),[1,15,35,60,80],'map milestones are not spread across 100 levels');
 for(const [id,level] of Object.entries(SET_UNLOCK_LEVELS))assert(level>=1&&level<=100,'set unlock outside progression range: '+id);
+assert.equal(SET_UNLOCK_LEVELS.lavaSet,55,'Lava Set must unlock at Level 55');
 
 function assertFinitePositive(value,label){
   if(typeof value==='number')assert(Number.isFinite(value)&&value>0,label+' is invalid');

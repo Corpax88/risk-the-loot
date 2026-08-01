@@ -6,7 +6,7 @@ test('all gear sets awaken and master their own signature',async({page})=>{
 
   const catalog=await page.evaluate(()=>window.__riskTest.gearSignatures());
   const rules=await page.evaluate(()=>window.__riskTest.gearSetRules());
-  expect(Object.keys(catalog)).toHaveLength(22);
+  expect(Object.keys(catalog)).toHaveLength(23);
 
   for(const [setId,signature] of Object.entries(catalog)){
     const rule=rules[setId];
@@ -23,4 +23,8 @@ test('all gear sets awaken and master their own signature',async({page})=>{
   expect(catalog.lavaSet).toMatchObject({name:'HANDLAVA',role:'LIVING VOLCANO'});
   expect(await page.evaluate(()=>window.__riskTest.gearSignatureTier('lavaSet',4))).toBe(0);
   expect(await page.evaluate(()=>window.__riskTest.gearSignatureTier('lavaSet',5))).toBe(2);
+  expect(rules.natureSet.signaturePieces).toBe(5);
+  expect(catalog.natureSet).toMatchObject({name:'ANCIENT PACT',role:'FOREST ALLY'});
+  expect(await page.evaluate(()=>window.__riskTest.gearSignatureTier('natureSet',4))).toBe(0);
+  expect(await page.evaluate(()=>window.__riskTest.gearSignatureTier('natureSet',5))).toBe(2);
 });

@@ -38,7 +38,7 @@ Hammerstorm is always available. Hold the on-screen button, `Q`, or `F` to dive 
 
 Riskreaver remains the dedicated surrounded build. Two pieces improve movement, four pieces awaken damage scaling from nearby enemies, and the complete five-piece set increases that scaling and heals only from unique enemies struck by Hammerstorm. Healing is capped at 12% of maximum health per activation, so aggressive pack dives can recover a mistake without making Pappa immortal.
 
-Gear Wardrobe replaces the old diagonal paper-doll stripes across every current item. All 22 sets now use authored material, trim, silhouette and emblem profiles across idle, run and attack animations, while all 40 legacy items share the same clean layered renderer. Hammer Choir keeps its bespoke production sprite sheets. Riskreaver, Grand Vault, Crownless King and Fatebound use separate legendary palettes, motifs and animated complete-set presentation so top-tier equipment reads immediately on Pappa Hammer.
+Gear Wardrobe replaces the old diagonal paper-doll stripes across every current item. All 23 sets now use authored material, trim, silhouette and emblem profiles across idle, run and attack animations, while all 40 legacy items share the same clean layered renderer. Hammer Choir, Stormcaller, Black Hole, Lava and Nature keep bespoke production sprite sheets. Nature's full set also summons the permanent Ancient Ent control ally. Riskreaver, Grand Vault, Crownless King and Fatebound use separate legendary palettes, motifs and animated complete-set presentation so top-tier equipment reads immediately on Pappa Hammer.
 
 Raider Tactics gives regular enemies distinct combat jobs. Rushers weave into range before a short pounce, Gunners alternate precise shots with late-floor fan volleys, Lancers threaten a long narrow thrust, and Shield Guards lock a broad charge lane that reaches past Pappa Hammer instead of stopping short. Dashes crash into physical cover, successful attacks enter visible recovery windows, and authored telegraphs keep every threat readable on mobile and desktop.
 
@@ -98,7 +98,7 @@ Pappa Hammer earns XP immediately whenever a player-caused enemy death occurs. R
 - Higher Legendary drop bands begin at Pappa levels 30 and 65.
 - Late-game signature sets continue unlocking through Fatebound at Level 92.
 
-The boss catalog contains exactly 110 set items: 22 named sets with a Hat, Scarf, Coat, Hammer, and Boots in each set. Five sets are Rare, four are Epic, and thirteen are Legendary. Ordinary enemies only drop coins; equipment is reserved for boss victories.
+The boss catalog contains exactly 115 set items: 23 named sets with a Hat, Scarf, Coat, Hammer, and Boots in each set. Five sets are Rare, four are Epic, and fourteen are Legendary. Ordinary enemies only drop coins; equipment is reserved for boss victories.
 
 Every recovered piece is a unique item instance with its own item level, quality roll, randomized stats, and sale value. Finding the same named piece again can therefore still produce a meaningful upgrade. Gear can change health, hammer damage, pickup reach, movement speed, strike rate, armor, loot value, dash recharge, and critical chance.
 
@@ -164,7 +164,7 @@ Open `http://127.0.0.1:4175` on the computer, or use the computer's local IP add
 npm test
 ```
 
-The automated release suite covers all 99 XP thresholds, the exact Level 100 cap, multi-level rewards, corrupt progression sanitization, Level 1-100 item generation, mobile three-digit UI, DOM/CSS integrity, JavaScript syntax, all 22 sets and 110 set pieces, five gear slots, RNG item rolls, fixed set bonuses, boss-only equipment, the rotating Gear Locker, relic fusion, safe extraction, the boss-loot ritual, a two-champion Go Deeper chain, extraction ambushes, both full boss paths, permanent trophies, career progression, settings, and developer tools.
+The automated release suite covers all 99 XP thresholds, the exact Level 100 cap, multi-level rewards, corrupt progression sanitization, Level 1-100 item generation, mobile three-digit UI, DOM/CSS integrity, JavaScript syntax, all 23 sets and 115 set pieces, five gear slots, RNG item rolls, fixed set bonuses, boss-only equipment, the rotating Gear Locker, relic fusion, safe extraction, the boss-loot ritual, a two-champion Go Deeper chain, extraction ambushes, both full boss paths, permanent trophies, career progression, settings, and developer tools.
 
 Run the Chromium browser test with:
 

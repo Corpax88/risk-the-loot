@@ -10,11 +10,11 @@ test('every current gear item has a Gear 2.0 visual profile',async({page})=>{
   await waitForGearBridge(page);
   const coverage=await page.evaluate(()=>window.__riskTest.gearVisualCoverage());
   expect(coverage).toMatchObject({
-    items:150,
-    setItems:110,
+    items:155,
+    setItems:115,
     legacyItems:40,
-    sets:22,
-    profiles:22,
+    sets:23,
+    profiles:23,
     missing:[],
     usesPieceGeometry:true,
     usesStripePattern:false,
@@ -36,7 +36,7 @@ test('all sets render every animation without clipping or edge artifacts',async(
     const state=await page.evaluate(()=>window.__riskTest.gearVisualState(true));
     expect(state.setId).toBe(set.id);
     expect(state.visualProfile).toBe(set.id);
-    expect(state.usesProductionSkin).toBe(['hammerChoir','blackHole','stormrunner','lavaSet'].includes(set.id));
+    expect(state.usesProductionSkin).toBe(['hammerChoir','blackHole','stormrunner','lavaSet','natureSet'].includes(set.id));
     expect(state.layers).toEqual([
       {slot:'coat',region:'chest-gloves'},
       {slot:'scarf',region:'neck'},

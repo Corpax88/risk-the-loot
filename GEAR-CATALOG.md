@@ -6,7 +6,7 @@ Denne katalogen er generert fra de aktive definisjonene i `script.js`.
 
 - Spillet har **150 gear-maler**.
 - 40 er frittstaende field-items.
-- 110 er set-items: 22 sett x 5 slots.
+- 115 er set-items: 23 sett x 5 slots.
 - Slots: Hat, Scarf, Coat, Hammer og Boots.
 - Rarities i aktiv kode: Common, Rare, Epic og Legendary.
 - Det finnes ikke Uncommon gear i den aktive loot-tabellen.
@@ -87,7 +87,7 @@ Tallene nedenfor er **base stats**. Når et item dropper, skaleres hver stat med
 | Legendary | Hammer | RISKREAVER | +20 DMG, +22% IMPACT, +22% CRIT | Dedicated legendary item/drop atlas cell; no full animation sheet |
 | Legendary | Coat | Grand Vault Coat | +90 HP, +15% ARMOR, +10% MOVE | Dedicated legendary item/drop atlas cell; no full animation sheet |
 
-## Hvordan de 110 set-item-statsa bygges
+## Hvordan de 115 set-item-statsa bygges
 
 Hvert sett har disse fem item-navnene:
 
@@ -119,7 +119,7 @@ I tillegg far Crown, Longcoat og Striders settets **Focus A**. Oathwrap og Great
 
 Eksempel: Hammer Choir har Focus A = DMG og Focus B = IMPACT. Hammer Choir Crown, Longcoat og Striders far derfor ekstra DMG, mens Oathwrap og Great Hammer far ekstra IMPACT.
 
-## Alle 22 gear sets
+## Alle 23 gear sets
 
 `Assets` beskriver om settet har samme type assets som Hammer Choir.
 
@@ -142,6 +142,7 @@ Eksempel: Hammer Choir har Focus A = DMG og Focus B = IMPACT. Hammer Choir Crown
 | Starforge | Legendary / Lv 45 | DMG / ARMOR | 2p: +4.2 DMG; 3p: +5% ARMOR; 5p: +5 DMG, +4.5% CRIT | Starfall: hvert sjette strike blir star impact / hvert fjerde blir sterkere star impact | Gear 2.0 set-atlas + drop-atlas + layers |
 | Grand Voyager | Legendary / Lv 50 | VALUE / MOVE | 2p: +8% VALUE; 3p: +7% MOVE; 5p: +30 REACH, +5.5% IMPACT | Uncharted Fortune: hver floor gir coins / doble coins og bonus cache pa dypere floors | Gear 2.0 set-atlas + drop-atlas + layers |
 | **Lava Set** | Legendary / Lv 55 | DMG / IMPACT | 2p: +4 DMG; 3p: +6% IMPACT; 5p: +5 DMG, +5% CRIT; Handlava krever hele settet | Handlava (bare 5/5): to levende skjerfarmer prioriterer fiender utenfor hammerrekkevidde, griper og svinger dem inn i andre fiender, kaster mot naere flokker og slipper dem innenfor Spin-rekkevidde | **Tre fullfigur-sheets, eget ikon/drop-atlas, seks Handlava-sheets og animert lava-treffsprut** |
+| **Nature Set** | Legendary / Lv 60 | ARMOR / MOVE | 2p: +4% ARMOR; 3p: +6% MOVE; 5p: +38 HP, +3.5 DMG; Ancient Pact krever hele settet | Ancient Pact (bare 5/5): en udodelig Ancient Ent finner den storste flokken, slammer den opp, binder opptil seks fiender med Rootwhip og holder dem klare for Hammerstorm. Bosser blir bare staggered | **Tre fullfigur-sheets, eget ikon/drop-atlas, Ancient Ent-sheet og Rootwhip trap-sheet** |
 | Riskreaver | Legendary / Lv 65 | DMG / CRIT | 2p: +8% MOVE; 4p: +6 DMG, +5% CRIT; 5p: +8 DMG, +8% IMPACT, +5% CRIT | Crowd Hunger: fiender rundt deg oker skade og Hammerstorm-radius / mye sterkere surrounded scaling og begrenset Hammerstorm lifesteal | Dedicated legendary item/drop atlas + Gear 2.0 legendary layers |
 | Grand Vault | Legendary / Lv 72 | HP / ARMOR | 2p: +55 HP; 3p: +8% ARMOR; 5p: +14% VALUE, +45 HP, +4 DMG | Vaultbound: to unsecured boss-items gir guard charge / hvert item gir charge, maks to | Dedicated legendary item/drop atlas + Gear 2.0 legendary layers |
 | Crownless King | Legendary / Lv 80 | DMG / HP | 2p: +5 DMG, +28 HP; 3p: +7% CRIT, +5% ARMOR; 5p: +8% MOVE, +8% IMPACT, +10% VALUE | Kingslayer: elites/bosser under 30% HP tar +20% / under 40% tar +35% | Dedicated legendary item/drop atlas + Gear 2.0 legendary layers |
@@ -152,7 +153,7 @@ Eksempel: Hammer Choir har Focus A = DMG og Focus B = IMPACT. Hammer Choir Crown
 
 ### Fullstendig samme asset-type som Hammer Choir
 
-Tre sett bruker na den ferdigtegnede fullfigur-pipelinen.
+Fem sett bruker na den ferdigtegnede fullfigur-pipelinen.
 
 Hammer Choir har:
 
@@ -203,9 +204,22 @@ Lava Set har:
 - `assets/handlava-retract-v1.png`
 - Fullt 5/5-sett bruker den ferdigtegnede Lava-transformasjonen i idle, run og attack. Handlava er en eksklusiv 5/5-signature. De to armene deler pooler for varme-, trail- og impact-effekter, spruter animert lava ved faktiske treff og lar fiender lande naer nok til Hammerstorm-oppfolging.
 
+### Nature Set / Ancient Pact
+
+Nature Set har:
+
+- `assets/nature-gear-icons-v1.png`
+- `assets/nature-gear-drops-v1.png`
+- `assets/nature-hammer-idle-v1.png`
+- `assets/nature-hammer-run-v1.png`
+- `assets/nature-hammer-attack-v1.png`
+- `assets/ancient-ent-v1.png`
+- `assets/nature-root-trap-v1.png`
+- Fullt 5/5-sett bruker den ferdigtegnede Nature-transformasjonen. Ancient Ent er en permanent, udodelig kontroll-alliert som velger den storste naere flokken. Rootwhip trekker og fordeler opptil seks fiender rundt Enten uten a stable dem pa samme punkt. Elitefiender trekkes svakere, mens bosser er immune mot grep og bare blir staggered.
+
 ### Hva de andre settene faktisk har
 
-Alle 22 sett har:
+Alle 23 sett har:
 
 - En egen `SET_VISUAL_PROFILES`-profil.
 - Egne item-ikoner i atlas.

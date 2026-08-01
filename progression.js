@@ -35,7 +35,7 @@
   const SET_UNLOCK_LEVELS=Object.freeze({
     trailwarden:1,ironGuild:1,redBanner:5,moonlitScout:5,coinseeker:8,
     towerBulwark:12,stormrunner:12,hammerChoir:16,lanternGuard:16,grandWayfarer:20,
-    crimsonOath:25,moonbreaker:30,kingsRoad:35,phantomCourt:40,starforge:45,grandVoyager:50,lavaSet:55,
+    crimsonOath:25,moonbreaker:30,kingsRoad:35,phantomCourt:40,starforge:45,grandVoyager:50,lavaSet:55,natureSet:60,
     riskreaver:65,grandVault:72,crownlessKing:80,blackHole:86,fatebound:92
   });
 

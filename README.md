@@ -1,10 +1,12 @@
-# RISK THE LOOT! v0.58.1
+# RISK THE LOOT! v0.59.0
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
 
-Spin Stability v0.58.1 coalesces rapid normal-Spin input into one authoritative attack, removes a synchronous paper-doll canvas serialization from the touch path, reuses hot-path combat buffers and pooled effects, and replaces dense-pack filter work with bounded hit feedback. A 30-second desktop and iPhone regression test verifies bounded attacks, effects, listeners, timers and recovery while preserving Hammerstorm damage and slide-over Dash.
+Live Combat XP v0.59.0 awards progression immediately from the authoritative enemy-death path. Normal enemies, elites and champions feed a smoothly interpolated XP rail during combat; rapid horde kills share one batched notification, level overflow animates safely across boundaries, and the results screen only summarizes XP already earned. XP saving is deferred and coalesced so dense Hammerstorm clears never trigger one save or one HUD rerender per kill.
 
-Level 100 Progression expands Pappa's complete progression from Level 1 to a hard Level 100 cap. One shared module owns the XP curve, cap, map milestones, set unlocks, player growth, enemy and champion scaling, item levels and gear-value growth. The deterministic XP requirement is `10 + step + floor(step^2 / 100)`, where `step = level - 1`; reaching Level 100 requires exactly 8,986 boss XP. The cap displays `MAX LEVEL`, discards overflow safely and never creates Level 101 gear or progression. This playtest schema intentionally resets older saves.
+Spin Stability coalesces rapid normal-Spin input into one authoritative attack, removes a synchronous paper-doll canvas serialization from the touch path, reuses hot-path combat buffers and pooled effects, and replaces dense-pack filter work with bounded hit feedback. A 30-second desktop and iPhone regression test verifies bounded attacks, effects, listeners, timers and recovery while preserving Hammerstorm damage and slide-over Dash.
+
+Level 100 Progression expands Pappa's complete progression from Level 1 to a hard Level 100 cap. One shared module owns the XP curve, cap, map milestones, set unlocks, player growth, enemy and champion scaling, item levels and gear-value growth. The deterministic XP requirement is `10 + step + floor(step^2 / 100)`, where `step = level - 1`; reaching Level 100 requires exactly 8,986 XP. The cap displays `MAX LEVEL`, discards overflow safely and never creates Level 101 gear or progression. This playtest schema intentionally resets older saves.
 
 Mobile Performance v0.55.0 adds bounded visual budgets, pooled combat effects and enemy projectiles, view culling, cached static gear calculations, throttled HUD/minimap rendering, and High/Medium/Low quality profiles. Auto quality uses conservative hysteresis to reduce visual work during sustained slow frames and gradually restore it after recovery. Damage, enemy behavior, input timing, item stats, drop rates and balance remain unchanged.
 
@@ -56,7 +58,7 @@ The Adventure Atlas turns Pappa Level into visible world progression. Guild Fron
 
 Skyglass Lagoon now ends with the animated Skyglass Leviathan. Its three bespoke phases combine readable crystal fans, rotating tide shards and clearly telegraphed undertow pools.
 
-The expedition view now has a compact world minimap with Pappa's facing, the visible camera area, solid cover, active champion and pulsing rare-cache markers. A low-profile ARPG-style experience rail tracks real boss XP and celebrates Pappa level-ups without covering combat.
+The expedition view now has a compact world minimap with Pappa's facing, the visible camera area, solid cover, active champion and pulsing rare-cache markers. A low-profile ARPG-style experience rail tracks live combat XP and celebrates Pappa level-ups without covering combat.
 
 Dreamworld Expedition gives Moonfall Gardens a complete illustrated environment identity. A seamless indigo arena floor, moonlit ruins, dream trees, lanterns, shrines, crystal growths and physical cover now replace its generic procedural scenery. Assets use bottom-center world anchors, camera culling, restrained glow and front-layer occlusion so Pappa can move behind tall ruins while all existing collision and line-of-sight rules remain intact.
 
@@ -86,7 +88,7 @@ Every item now has its own inventory and field-drop asset. Mouse hover and keybo
 
 ## Pappa levels and equipment
 
-Pappa Hammer earns boss XP and levels up whenever a champion falls. Levels run from 1 to a hard cap of 100. Every level adds controlled base health and damage, while regular enemies and champions use separate bounded scaling curves. The XP formula is `10 + (level - 1) + floor((level - 1)^2 / 100)` and the exact cumulative requirement for Level 100 is 8,986 XP. Higher levels open stronger equipment pools:
+Pappa Hammer earns XP immediately whenever a player-caused enemy death occurs. Rushers and Gunners start at 1 XP, Lancers and Brutes at 2 XP, elites earn at least 4 XP and usually triple their type reward, while champions grant 10/20/30 XP by risk tier. Deep expeditions add a small bounded reward every five floors, with later difficulty and level bands adding another point. Levels run from 1 to a hard cap of 100. Every level adds controlled base health and damage, while regular enemies and champions use separate bounded scaling curves. The XP formula is `10 + (level - 1) + floor((level - 1)^2 / 100)` and the exact cumulative requirement for Level 100 is 8,986 XP. Higher levels open stronger equipment pools:
 
 - Rare set gear can drop immediately.
 - Epic set gear begins at Pappa level 12.
@@ -104,7 +106,7 @@ Equipment uses a fixed anime gear atlas for readable slot silhouettes, while set
 
 All 20 Legendary set pieces now use dedicated hand-authored sprite art instead of shared silhouettes. Riskreaver, Grand Vault, Crownless King, and Fatebound each have a complete Crown, Oathwrap, Longcoat, Great Hammer, and Striders family with a distinct set identity. The same transparent art appears in the Adventure Bag, equipped slots, item comparison, world drops, pickup reveal, and post-run report. A deterministic atlas builder keeps the full-size and mobile drop sheets aligned.
 
-The Adventure Bag now separates loot management from the character loadout. The **Bag** view uses a dedicated illustrated anime field bag with readable category filters, a compact item grid, rarity totals, sorting, protected bulk selling, and a focused comparison panel. The **Pappa** view gives the live character preview room to breathe with a draggable 360-degree turntable, Pappa level and boss XP, five dedicated worn slots, active set milestones, and combined equipment stats. Selecting a worn slot returns directly to the matching bag category. `Sell Filtered` sells every matching unequipped item after confirmation. Gear currently worn by Pappa is always reserved and can never be sold.
+The Adventure Bag now separates loot management from the character loadout. The **Bag** view uses a dedicated illustrated anime field bag with readable category filters, a compact item grid, rarity totals, sorting, protected bulk selling, and a focused comparison panel. The **Pappa** view gives the live character preview room to breathe with a draggable 360-degree turntable, Pappa level and XP, five dedicated worn slots, active set milestones, and combined equipment stats. Selecting a worn slot returns directly to the matching bag category. `Sell Filtered` sells every matching unequipped item after confirmation. Gear currently worn by Pappa is always reserved and can never be sold.
 
 Pappa Hammer uses dedicated eight-frame idle, run, and attack animation sheets. Every equipped slot recolors and details the correct moving part through 15 frame-matched paper-doll masks, so hats, scarves, coats, hammers, and boots remain attached throughout all three animations. The complete five-piece Hammer Choir set now upgrades into three dedicated production spritesheets with a genuinely new violet longcoat, shoulder armor, hat, scarf, reinforced boots, musical insignia, and square great hammer. The same animated full-set identity appears in the living Gear Locker preview and during expeditions.
 

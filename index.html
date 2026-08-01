@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="description" content="Risk everything, recover equippable gear and build Pappa Hammer in this compact extraction roguelite.">
   <title>RISK THE LOOT!</title>
-  <link rel="stylesheet" href="style.css?v=0.58.1">
+  <link rel="stylesheet" href="style.css?v=0.59.0">
   <link rel="stylesheet" href="inventory-v2.css?v=0.2.0">
 </head>
 <body>
@@ -16,7 +16,7 @@
     <header class="topbar">
       <div class="brand" tabindex="0" data-help-title="Risk the Loot" data-help="Enter the tower, defeat champions and decide when the gear you carry is valuable enough to extract.">
         <span class="brandMark">R</span>
-        <div><strong>RISK THE LOOT!</strong><small>LEVEL 100 v0.58.1</small></div>
+        <div><strong>RISK THE LOOT!</strong><small>LIVE XP v0.59.0</small></div>
       </div>
       <div class="resources">
         <div class="resource level" data-help-title="Pappa Level" data-help="Boss victories grant XP. Higher levels unlock stronger gear and tougher champions."><i>LV</i><div><b id="pappaLevel">1</b><span>PAPPA</span></div></div>
@@ -89,7 +89,7 @@
               </div>
               <div class="gearCharacterReadout">
                 <b id="gearEquippedCount">0 / 5</b>
-                <div class="pappaProgress" tabindex="0" data-help-title="Pappa Experience" data-help="Champions grant XP from Level 1 to the Level 100 cap. Higher levels unlock new destinations and allow stronger, rarer boss gear to drop."><span><small>LV</small><b id="gearPappaLevel">1</b></span><div><i id="gearXpFill"></i></div><em id="gearXpText">0 / 10 XP</em></div>
+                <div class="pappaProgress" tabindex="0" data-help-title="Pappa Experience" data-help="Every defeated enemy grants XP immediately. Elites and champions grant more. Higher levels unlock new destinations and stronger boss gear."><span><small>LV</small><b id="gearPappaLevel">1</b></span><div><i id="gearXpFill"></i></div><em id="gearXpText">0 / 10 XP</em></div>
               </div>
               <div class="gearStatsBlock"><div id="gearStatsSummary" class="gearStatsSummary"></div></div>
               <div class="gearSetBlock"><div id="gearSetSummary" class="gearSetSummary"></div></div>
@@ -205,6 +205,9 @@
             <div tabindex="0" data-help-title="Enemies Defeated" data-help="All regular enemies and champions defeated during this expedition."><span>KILLS</span><b id="resultKills">0</b></div>
           </div>
           <div class="resultFieldData"><span><b id="resultDamage">0</b> DAMAGE TAKEN</span><span><b id="resultRisk">0</b> RISKS TAKEN</span><span><b id="resultItems">0</b> ITEMS</span></div>
+          <div id="resultXpSummary" class="resultXpSummary" aria-label="Experience earned">
+            <span>ENEMIES <b id="resultEnemyXp">+0 XP</b></span><span>ELITES <b id="resultEliteXp">+0 XP</b></span><span>BOSSES <b id="resultBossXp">+0 XP</b></span><span>COMPLETION <b id="resultCompletionXp">+0 XP</b></span><strong>TOTAL <b id="resultTotalXp">+0 XP</b><em id="resultLevelsGained">NO LEVELS GAINED</em></strong>
+          </div>
           <div id="resultRecord" class="resultRecord"></div>
           <div id="resultLootSummary" class="resultLootSummary"></div>
           <div id="resultLoot" class="resultLoot"></div>
@@ -334,10 +337,12 @@
         <span id="mapSeedDebug" class="mapSeedDebug"></span>
         <span id="miniMapCacheCount" class="miniMapCacheCount"></span>
       </div>
-      <div id="xpHud" class="xpHud" data-help-title="Pappa Experience" data-help="Defeat champions to gain experience. Each full bar raises Pappa's level toward the Level 100 cap and unlocks stronger gear, harder maps and richer rewards.">
+      <div id="xpHud" class="xpHud" data-help-title="Pappa Experience" data-help="Every defeated enemy grants XP immediately. Elites and champions grant more. Each full bar raises Pappa's level toward the Level 100 cap.">
         <span class="xpLevel">LV <b id="xpLevel">1</b></span>
         <div class="xpTrack"><i id="xpFill"></i><em id="xpSpark"></em></div>
         <span id="xpText" class="xpText">0 / 10 XP</span>
+        <span id="xpGain" class="xpGain" aria-live="polite"></span>
+        <strong id="xpLevelNotice" class="xpLevelNotice" aria-live="polite"></strong>
       </div>
       <div id="touchControls" class="touchControls" aria-hidden="true"><div id="joystick" class="joystick" data-help-title="Movement" data-help="Drag in any direction to move. Pappa Hammer attacks nearby enemies automatically."><i id="joystickKnob"></i></div></div>
       <button id="spinButton" class="spinButton" aria-label="Hold Hammerstorm" title="Hold Hammerstorm (Q)" data-help-title="Hold Hammerstorm" data-help="Hold to dive into the pack and keep spinning. Dash between packs without releasing. More nearby enemies increase damage and reach."><b>&#10038;</b><span>HOLD</span><em id="spinPackCount">0</em></button>
@@ -378,14 +383,14 @@
         </div>
         <button id="resumeButton" class="primaryButton settingsResume"><span>RESUME</span><i>&#8250;</i></button>
         <button id="abandonButton" class="dangerButton">ABANDON EXPEDITION</button>
-        <p class="buildStamp">v0.58.1 SPIN STABILITY</p>
+        <p class="buildStamp">v0.59.0 LIVE COMBAT XP</p>
       </div>
     </div>
     <aside id="helpTooltip" class="helpTooltip" role="tooltip" aria-hidden="true"><strong id="helpTooltipTitle"></strong><span id="helpTooltipText"></span></aside>
   </main>
-  <script src="guild-terrain.js?v=0.58.1"></script>
-  <script src="progression.js?v=0.58.1"></script>
-  <script src="script.js?v=0.58.1"></script>
+  <script src="guild-terrain.js?v=0.59.0"></script>
+  <script src="progression.js?v=0.59.0"></script>
+  <script src="script.js?v=0.59.0"></script>
   <script src="inventory-v2.js?v=0.2.0"></script>
 </body>
 </html>

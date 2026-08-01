@@ -12,6 +12,8 @@ const {
   applyXp,
   sanitizeProgress,
   xpProgress,
+  xpProgressFromTotal,
+  getEnemyXpReward,
   playerStatsForLevel,
   enemyScaleForLevel,
   bossScaleForLevel,
@@ -57,6 +59,18 @@ for(const point of [[1,0],[9,2],[10,0],[99,203],[100,0]]){
   const value=xpProgress(point[0],point[1]);
   assert(Number.isFinite(value.percent)&&value.percent>=0&&value.percent<=1,'invalid XP percentage at Level '+point[0]);
 }
+for(const level of [1,2,10,35,60,99,100]){
+  const total=totalXpForLevel(level),value=xpProgressFromTotal(total);
+  assert.equal(value.level,level,'total XP lookup returned the wrong level at '+level);
+  assert.equal(value.current,0,'total XP lookup did not land on the boundary at '+level);
+}
+assert.equal(getEnemyXpReward({enemyType:'rusher',enemyLevel:1,depth:1,difficulty:0}),1,'base Rusher XP changed');
+assert.equal(getEnemyXpReward({enemyType:'brute',enemyLevel:1,depth:1,difficulty:0}),2,'base Brute XP changed');
+assert(getEnemyXpReward({enemyType:'rusher',enemyLevel:1,elite:true,depth:1,difficulty:0})>getEnemyXpReward({enemyType:'rusher',enemyLevel:1,depth:1,difficulty:0}),'elite XP must exceed normal XP');
+assert.equal(getEnemyXpReward({enemyType:'boss',boss:true,enemyLevel:1,depth:5,difficulty:0}),10,'base boss XP changed');
+assert.equal(getEnemyXpReward({enemyType:'boss',boss:true,enemyLevel:1,depth:5,difficulty:2}),20,'risk-tier boss XP changed');
+assert.equal(getEnemyXpReward({enemyType:'boss',boss:true,enemyLevel:1,depth:10,difficulty:4}),30,'deep-risk boss XP changed');
+assert(getEnemyXpReward({enemyType:'brute',enemyLevel:80,depth:11,difficulty:8})>getEnemyXpReward({enemyType:'brute',enemyLevel:1,depth:1,difficulty:0}),'depth, level and difficulty must scale regular XP');
 
 assert.deepEqual(Object.values(MAP_UNLOCK_LEVELS),[1,15,35,60,80],'map milestones are not spread across 100 levels');
 for(const [id,level] of Object.entries(SET_UNLOCK_LEVELS))assert(level>=1&&level<=100,'set unlock outside progression range: '+id);

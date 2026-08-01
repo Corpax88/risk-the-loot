@@ -9,6 +9,7 @@
 
   const MAX_PLAYER_LEVEL=100;
   const XP_CURVE=Object.freeze({base:10,linear:1,quadraticDivisor:100});
+  const ENEMY_XP_BASE=Object.freeze({rusher:1,shooter:1,lancer:2,brute:2,boss:10,default:1});
   const MAP_UNLOCK_LEVELS=Object.freeze({guild:1,foundry:15,moonfall:35,skyglass:60,summit:80});
   const LOOT_UNLOCK_LEVELS=Object.freeze({epic:12,elevated:30,apex:65});
   const SET_UNLOCK_LEVELS=Object.freeze({
@@ -70,6 +71,18 @@
       capped
     };
   }
+  function xpProgressFromTotal(total){
+    total=Math.max(0,Math.min(TOTAL_XP_TO_MAX,finiteNumber(total,0)));
+    if(total>=TOTAL_XP_TO_MAX)return xpProgress(MAX_PLAYER_LEVEL,0);
+    let low=1,high=MAX_PLAYER_LEVEL;
+    while(low<high){
+      const middle=Math.ceil((low+high)/2);
+      if(totalXpForLevel(middle)<=total)low=middle;
+      else high=middle-1;
+    }
+    const current=total-totalXpForLevel(low),required=xpRequiredForNextLevel(low);
+    return {level:low,current,required,percent:required?Math.max(0,Math.min(1,current/required)):0,total,totalToMax:TOTAL_XP_TO_MAX,capped:false};
+  }
   function playerStatsForLevel(level){
     const step=clampLevel(level)-1;
     return {hp:100+step*1.5,damage:8+step*.16};
@@ -93,10 +106,19 @@
   function bossXpReward(riskTier){
     return 10*(1+Math.min(2,Math.floor(Math.max(0,finiteNumber(riskTier,0))/2)));
   }
+  function getEnemyXpReward({enemyType,enemyLevel,elite,boss,depth,difficulty}={}){
+    const type=String(enemyType||'default'),level=clampLevel(enemyLevel),floor=Math.max(1,Math.floor(finiteNumber(depth,1))),risk=Math.max(0,Math.floor(finiteNumber(difficulty,0)));
+    if(boss||type==='boss')return bossXpReward(risk);
+    const base=ENEMY_XP_BASE[type]||ENEMY_XP_BASE.default;
+    const depthBonus=Math.floor((floor-1)/5),difficultyBonus=Math.floor(risk/4),levelBonus=Math.floor((level-1)/40);
+    const reward=base+depthBonus+difficultyBonus+levelBonus;
+    return elite?Math.max(4,reward*3):reward;
+  }
 
   return {
     MAX_PLAYER_LEVEL,
     XP_CURVE,
+    ENEMY_XP_BASE,
     TOTAL_XP_TO_MAX,
     MAP_UNLOCK_LEVELS,
     LOOT_UNLOCK_LEVELS,
@@ -107,11 +129,13 @@
     applyXp,
     sanitizeProgress,
     xpProgress,
+    xpProgressFromTotal,
     playerStatsForLevel,
     enemyScaleForLevel,
     bossScaleForLevel,
     gearScaleForLevel,
     gearValueScaleForLevel,
-    bossXpReward
+    bossXpReward,
+    getEnemyXpReward
   };
 });

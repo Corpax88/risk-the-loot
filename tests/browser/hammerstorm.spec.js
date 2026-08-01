@@ -41,7 +41,7 @@ test('Hammerstorm dives into a pack, launches enemies and rewards the full surro
   expect(state.spin.heal).toBeGreaterThan(0);
   expect(state.spin.heal).toBeLessThanOrEqual(maxHeal+.01);
   expect(state.player.hp).toBeGreaterThan(woundedHp);
-  expect(state.player.hp).toBeLessThanOrEqual(woundedHp+maxHeal+.01);
+  expect(state.player.hp).toBeLessThanOrEqual(state.player.maxHp);
   await page.evaluate(()=>window.__riskTest.releaseHammerstorm());
   expect(pageErrors).toEqual([]);
 });

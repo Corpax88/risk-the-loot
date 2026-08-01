@@ -2,6 +2,8 @@
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
 
+Handlava awakens only when Pappa equips all five pieces of the Legendary Lava Set, unlocked at Level 55. The Living Lava Scarf grows two massive arms that favor enemies beyond hammer range, grab and swing them into other raiders, then throw them toward nearby packs and leave them within Hammerstorm reach. Six dedicated ability sheets and pooled heat, trail and impact effects keep the living-scarf silhouette readable on mobile without replacing the close-range Spin follow-up.
+
 XP Journey v0.59.1 keeps immediate combat XP while reshaping the full Level 1-100 journey. Early levels arrive quickly, Levels 50-80 shift emphasis toward gear, Levels 80-95 demand longer expeditions and the final five prestige levels account for roughly one third of the total XP journey. Enemy, elite and champion rewards now share one configurable depth-and-risk model.
 
 Spin Stability coalesces rapid normal-Spin input into one authoritative attack, removes a synchronous paper-doll canvas serialization from the touch path, reuses hot-path combat buffers and pooled effects, and replaces dense-pack filter work with bounded hit feedback. A 30-second desktop and iPhone regression test verifies bounded attacks, effects, listeners, timers and recovery while preserving Hammerstorm damage and slide-over Dash.
@@ -36,13 +38,13 @@ Hammerstorm is always available. Hold the on-screen button, `Q`, or `F` to dive 
 
 Riskreaver remains the dedicated surrounded build. Two pieces improve movement, four pieces awaken damage scaling from nearby enemies, and the complete five-piece set increases that scaling and heals only from unique enemies struck by Hammerstorm. Healing is capped at 12% of maximum health per activation, so aggressive pack dives can recover a mistake without making Pappa immortal.
 
-Gear Wardrobe replaces the old diagonal paper-doll stripes across every current item. All 20 sets now use authored material, trim, silhouette and emblem profiles across idle, run and attack animations, while all 40 legacy items share the same clean layered renderer. Hammer Choir keeps its bespoke production sprite sheets. Riskreaver, Grand Vault, Crownless King and Fatebound use separate legendary palettes, motifs and animated complete-set presentation so top-tier equipment reads immediately on Pappa Hammer.
+Gear Wardrobe replaces the old diagonal paper-doll stripes across every current item. All 22 sets now use authored material, trim, silhouette and emblem profiles across idle, run and attack animations, while all 40 legacy items share the same clean layered renderer. Hammer Choir keeps its bespoke production sprite sheets. Riskreaver, Grand Vault, Crownless King and Fatebound use separate legendary palettes, motifs and animated complete-set presentation so top-tier equipment reads immediately on Pappa Hammer.
 
 Raider Tactics gives regular enemies distinct combat jobs. Rushers weave into range before a short pounce, Gunners alternate precise shots with late-floor fan volleys, Lancers threaten a long narrow thrust, and Shield Guards lock a broad charge lane that reaches past Pappa Hammer instead of stopping short. Dashes crash into physical cover, successful attacks enter visible recovery windows, and authored telegraphs keep every threat readable on mobile and desktop.
 
 Champion Rituals gives every boss a more readable three-act fight. Phase changes now clear old projectiles and briefly stagger the champion, creating a deliberate breath before the next pattern. Vault Warden seals parts of the arena and closes a visible lock corridor, Crimson Champion telegraphs sweeping cleaves between its projectile salvos, and Skyglass Leviathan crosses the lagoon with tidal lanes alongside its undertow pools. Physical cover blocks the new lane attacks, preserving the arena's positional strategy.
 
-Gear 2.0 gives all 20 hero sets a playstyle-defining signature. Existing ranged-facing labels are presented as melee reinforcement: Impact Speed, Hammer Echoes, ground-breaking impacts, dash slams, critical chains, and physical shockwaves. Most signatures awaken at three matching pieces and master at five; Riskreaver uses a deliberate 2/4/5 progression for its surrounded build.
+Gear 2.0 gives all 22 hero sets a playstyle-defining signature. Existing ranged-facing labels are presented as melee reinforcement: Impact Speed, Hammer Echoes, ground-breaking impacts, dash slams, critical chains, and physical shockwaves. Most signatures awaken at three matching pieces and master at five; Riskreaver uses a deliberate 2/4/5 progression for its surrounded build, while Handlava awakens only with the complete 5/5 Lava Set.
 
 This project is in active playtest development. Better gameplay and cleaner systems take priority over preserving old save formats; save resets are acceptable when a feature needs a better data model.
 
@@ -96,15 +98,15 @@ Pappa Hammer earns XP immediately whenever a player-caused enemy death occurs. R
 - Higher Legendary drop bands begin at Pappa levels 30 and 65.
 - Late-game signature sets continue unlocking through Fatebound at Level 92.
 
-The boss catalog contains exactly 105 set items: 21 named sets with a Hat, Scarf, Coat, Hammer, and Boots in each set. Five sets are Rare, four are Epic, and twelve are Legendary. Ordinary enemies only drop coins; equipment is reserved for boss victories.
+The boss catalog contains exactly 110 set items: 22 named sets with a Hat, Scarf, Coat, Hammer, and Boots in each set. Five sets are Rare, four are Epic, and thirteen are Legendary. Ordinary enemies only drop coins; equipment is reserved for boss victories.
 
 Every recovered piece is a unique item instance with its own item level, quality roll, randomized stats, and sale value. Finding the same named piece again can therefore still produce a meaningful upgrade. Gear can change health, hammer damage, pickup reach, movement speed, strike rate, armor, loot value, dash recharge, and critical chance.
 
 Set milestones are fixed and predictable while individual piece rolls vary. Most sets use 2-piece, 3-piece, and 5-piece bonuses; Riskreaver uses 2-piece, 4-piece, and 5-piece milestones to reserve its aggressive sustain for a committed build.
 
-Equipment uses a fixed anime gear atlas for readable slot silhouettes, while set colors, marks, names, and paper-doll treatments distinguish the 105 boss pieces. Locker cards, equipped slots, recovery reports, pickup notices, and boss drops keep the same item identity. Empty slots automatically equip the strongest matching item after the first successful recovery.
+Equipment uses a fixed anime gear atlas for readable slot silhouettes, while set colors, marks, names, and paper-doll treatments distinguish the 110 boss pieces. Locker cards, equipped slots, recovery reports, pickup notices, and boss drops keep the same item identity. Empty slots automatically equip the strongest matching item after the first successful recovery.
 
-All 20 Legendary set pieces now use dedicated hand-authored sprite art instead of shared silhouettes. Riskreaver, Grand Vault, Crownless King, and Fatebound each have a complete Crown, Oathwrap, Longcoat, Great Hammer, and Striders family with a distinct set identity. The same transparent art appears in the Adventure Bag, equipped slots, item comparison, world drops, pickup reveal, and post-run report. A deterministic atlas builder keeps the full-size and mobile drop sheets aligned.
+All 25 Legendary set pieces in Lava Set, Riskreaver, Grand Vault, Crownless King, and Fatebound now use dedicated sprite art instead of shared silhouettes. Lava Set preserves the supplied Hat, Living Scarf, Coat, Hammer, and Boots artwork, while the other four families keep their authored Crown, Oathwrap, Longcoat, Great Hammer, and Striders identities. The same transparent art appears in the Adventure Bag, equipped slots, item comparison, world drops, pickup reveal, and post-run report. Deterministic atlas builders keep the full-size and mobile drop sheets aligned.
 
 The Adventure Bag now separates loot management from the character loadout. The **Bag** view uses a dedicated illustrated anime field bag with readable category filters, a compact item grid, rarity totals, sorting, protected bulk selling, and a focused comparison panel. The **Pappa** view gives the live character preview room to breathe with a draggable 360-degree turntable, Pappa level and XP, five dedicated worn slots, active set milestones, and combined equipment stats. Selecting a worn slot returns directly to the matching bag category. `Sell Filtered` sells every matching unequipped item after confirmation. Gear currently worn by Pappa is always reserved and can never be sold.
 
@@ -162,7 +164,7 @@ Open `http://127.0.0.1:4175` on the computer, or use the computer's local IP add
 npm test
 ```
 
-The automated release suite covers all 99 XP thresholds, the exact Level 100 cap, multi-level rewards, corrupt progression sanitization, Level 1-100 item generation, mobile three-digit UI, DOM/CSS integrity, JavaScript syntax, all 21 sets and 105 set pieces, five gear slots, RNG item rolls, fixed set bonuses, boss-only equipment, the rotating Gear Locker, relic fusion, safe extraction, the boss-loot ritual, a two-champion Go Deeper chain, extraction ambushes, both full boss paths, permanent trophies, career progression, settings, and developer tools.
+The automated release suite covers all 99 XP thresholds, the exact Level 100 cap, multi-level rewards, corrupt progression sanitization, Level 1-100 item generation, mobile three-digit UI, DOM/CSS integrity, JavaScript syntax, all 22 sets and 110 set pieces, five gear slots, RNG item rolls, fixed set bonuses, boss-only equipment, the rotating Gear Locker, relic fusion, safe extraction, the boss-loot ritual, a two-champion Go Deeper chain, extraction ambushes, both full boss paths, permanent trophies, career progression, settings, and developer tools.
 
 Run the Chromium browser test with:
 

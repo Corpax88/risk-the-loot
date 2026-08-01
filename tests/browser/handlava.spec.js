@@ -45,6 +45,24 @@ test('Handlava combat remains active when animation sheets fail to decode',async
   expect(state.grabs).toBe(2);
 });
 
+test('Lava transformation and impact splash remain readable on mobile',async({page},testInfo)=>{
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/?playwright');
+  await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest))).toBe(true);
+  await page.evaluate(()=>window.__riskTest.prepareHandlava([
+    {id:'far-a',x:190,y:-35},
+    {id:'far-b',x:170,y:85},
+    {id:'impact',x:-90,y:-130}
+  ],5));
+  await waitForHandlava(page);
+  const state=await page.evaluate(()=>window.__riskTest.advanceHandlava(.25));
+  expect(state.setId).toBe('lavaSet');
+  expect(state.splash).toBe(true);
+  expect(state.effectKinds).toContain('handlavaSplash');
+  await page.waitForTimeout(80);
+  await page.locator('#world').screenshot({path:testInfo.outputPath('lava-set-mobile-combat.png')});
+});
+
 test('living arms swing through enemies and throw prey back into Spin range',async({page})=>{
   await page.goto('/?playwright');
   await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest))).toBe(true);
@@ -59,6 +77,8 @@ test('living arms swing through enemies and throw prey back into Spin range',asy
   expect(state.grabs).toBeGreaterThanOrEqual(2);
   expect(state.collisions).toBeGreaterThan(0);
   expect(state.throws).toBeGreaterThanOrEqual(2);
+  expect(state.splash).toBe(true);
+  expect(state.effectKinds).toContain('handlavaSplash');
   for(const id of ['far-a','far-b']){
     const enemy=state.enemies.find(entry=>entry.id===id);
     expect(enemy.distance).toBeLessThanOrEqual(state.player.spinRadius+20);

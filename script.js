@@ -24,6 +24,11 @@
       idle:loadImage('assets/stormcaller-hammer-idle-v1.png'),
       run:loadImage('assets/stormcaller-hammer-run-v1.png'),
       attack:loadImage('assets/stormcaller-hammer-attack-v1.png')
+    },
+    lavaSet:{
+      idle:loadImage('assets/lava-hammer-idle-v1.png'),
+      run:loadImage('assets/lava-hammer-run-v1.png'),
+      attack:loadImage('assets/lava-hammer-attack-v1.png')
     }
   };
   const blackHoleVfxSprites={
@@ -41,6 +46,7 @@
   const stormcallerDropAtlas=loadImage('assets/stormcaller-gear-drops-v1.png');
   const lavaGearAtlas=loadImage('assets/lava-gear-icons-v1.png');
   const lavaDropAtlas=loadImage('assets/lava-gear-drops-v1.png');
+  const handlavaHitSplashSprite=loadImage('assets/handlava-hit-splash-v1.png');
   let handlavaSprites=null;
   function ensureHandlavaSprites(){
     if(handlavaSprites)return handlavaSprites;
@@ -1773,7 +1779,7 @@
   function effectPriority(effect){
     let kind=String(effect&&effect.kind||'ring');
     if(kind==='coinText'||kind==='healText'||kind==='blackHoleCollapse'||kind==='packClear')return 3;
-    if(kind.startsWith('blackHole')||kind==='lightningImpact'||kind==='lightningKill'||kind==='pressureWave'||kind==='groundCrack'||kind==='enemyLaunch')return 2;
+    if(kind.startsWith('blackHole')||kind==='lightningImpact'||kind==='lightningKill'||kind==='handlavaSplash'||kind==='pressureWave'||kind==='groundCrack'||kind==='enemyLaunch')return 2;
     if(kind==='lightningAfterimage'||kind==='gravityMote')return 0;
     return 1
   }
@@ -2116,6 +2122,10 @@
     let breath=Math.sin((player.animClock||0)*3.2+arm.index*Math.PI)*3.5,behind=player.facing*(48+breath);arm.rootX=player.x-player.facing*5;arm.rootY=player.y+arm.side*11;arm.x=player.x-behind;arm.y=player.y+arm.side*(28+breath*.45)
   }
   function handlavaBeginRetract(arm){arm.startX=arm.x;arm.startY=arm.y;handlavaClearTarget(arm);handlavaSetPhase(arm,'retract',HANDLAVA.retractDuration)}
+  function spawnHandlavaSplash(x,y,angle,size){
+    if(!save.settings.particles)return null;let life=.34;
+    return spawnEffect({kind:'handlavaSplash',x,y,r:8,maxR:size*.72,size,angle,life,max:life,color:'#ff6a1a'},2)
+  }
   function handlavaDeactivate(state){
     if(!state.active)return;for(const arm of state.arms){handlavaClearTarget(arm);handlavaSetPhase(arm,'idle',1);arm.cooldown=.1+arm.index*.08;handlavaIdlePose(arm)}state.active=false
   }
@@ -2129,7 +2139,7 @@
     if(!best)return false;best.handlavaClaim=arm;arm.target=best;arm.startX=arm.x;arm.startY=arm.y;arm.hitTargets.clear();handlavaSetPhase(arm,'extend',HANDLAVA.extendDuration);return true
   }
   function handlavaGrab(arm,state){
-    let target=arm.target;if(!target||target.dead){handlavaBeginRetract(arm);return}target.handlavaHeld=arm;target.handlavaClaim=arm;target.charge=0;target.dashTime=0;target.knockTime=0;target.fire=Math.max(target.fire,.35);target.recover=Math.max(target.recover,.25);arm.x=target.x;arm.y=target.y;handlavaSetPhase(arm,'grab',HANDLAVA.grabDuration);state.grabs++;spawnEffect({kind:'hitSpark',x:target.x,y:target.y,r:5,maxR:30,life:.18,max:.18,color:'#ff6a1a',angle:Math.atan2(target.y-player.y,target.x-player.x)},2);shake=Math.max(shake,4);sound('hit')
+    let target=arm.target;if(!target||target.dead){handlavaBeginRetract(arm);return}target.handlavaHeld=arm;target.handlavaClaim=arm;target.charge=0;target.dashTime=0;target.knockTime=0;target.fire=Math.max(target.fire,.35);target.recover=Math.max(target.recover,.25);arm.x=target.x;arm.y=target.y;handlavaSetPhase(arm,'grab',HANDLAVA.grabDuration);state.grabs++;let angle=Math.atan2(target.y-player.y,target.x-player.x);spawnEffect({kind:'hitSpark',x:target.x,y:target.y,r:5,maxR:30,life:.18,max:.18,color:'#ff6a1a',angle},2);spawnHandlavaSplash(target.x,target.y,angle,88);shake=Math.max(shake,4);sound('hit')
   }
   function handlavaBeginSwing(arm){
     let target=arm.target;if(!target||target.dead){handlavaBeginRetract(arm);return}arm.swingAngle=Math.atan2(target.y-player.y,target.x-player.x);arm.swingRadius=Math.max(HANDLAVA.followUpMin+20,Math.hypot(target.x-player.x,target.y-player.y));arm.hitTargets.clear();handlavaSetPhase(arm,'swing',HANDLAVA.swingDuration)
@@ -2138,7 +2148,7 @@
     let target=arm.target;if(!target)return;let travelX=target.x-fromX,travelY=target.y-fromY,travelSq=travelX*travelX+travelY*travelY;
     for(const other of enemies){
       if(other===target||other.dead||other.handlavaHeld||arm.hitTargets.has(other))continue;let projection=travelSq?Math.max(0,Math.min(1,((other.x-fromX)*travelX+(other.y-fromY)*travelY)/travelSq)):1,impactX=fromX+travelX*projection,impactY=fromY+travelY*projection,dx=other.x-impactX,dy=other.y-impactY,reach=other.r+target.r+HANDLAVA.collisionRadius;if(dx*dx+dy*dy>reach*reach)continue;
-      arm.hitTargets.add(other);let towardX=player.x-other.x,towardY=player.y-other.y,length=Math.hypot(towardX,towardY)||1;other.knockVx=towardX/length*(other.boss?50:150);other.knockVy=towardY/length*(other.boss?50:150);other.knockTime=other.boss?0:.13;damageEnemy(other,playerDamageAgainst(other,shotDamage()*stats.damage*(other.boss?.22:.42)),impactX,impactY,true,'lite');state.collisions++;spawnEffect({kind:'hitSpark',x:impactX,y:impactY,r:6,maxR:38,life:.2,max:.2,color:'#ff9a36',angle:Math.atan2(dy,dx)},2);shake=Math.max(shake,7);hitStop=Math.max(hitStop,.026)
+      arm.hitTargets.add(other);let towardX=player.x-other.x,towardY=player.y-other.y,length=Math.hypot(towardX,towardY)||1;other.knockVx=towardX/length*(other.boss?50:150);other.knockVy=towardY/length*(other.boss?50:150);other.knockTime=other.boss?0:.13;damageEnemy(other,playerDamageAgainst(other,shotDamage()*stats.damage*(other.boss?.22:.42)),impactX,impactY,true,'lite');state.collisions++;let angle=Math.atan2(dy,dx);spawnEffect({kind:'hitSpark',x:impactX,y:impactY,r:6,maxR:38,life:.2,max:.2,color:'#ff9a36',angle},2);spawnHandlavaSplash(impactX,impactY,angle,104);shake=Math.max(shake,7);hitStop=Math.max(hitStop,.026)
     }
   }
   function handlavaChooseLanding(arm,target,stats){
@@ -2155,7 +2165,7 @@
   function handlavaImpact(arm,state,stats){
     let target=arm.target,x=arm.throwX,y=arm.throwY;if(!target){handlavaBeginRetract(arm);return}target.x=x;target.y=y;target.handlavaHeld=null;target.handlavaClaim=null;target.recover=Math.max(target.recover||0,.42);damageEnemy(target,playerDamageAgainst(target,shotDamage()*stats.damage*.58),x,y,true,'lite');
     for(const other of enemies){if(other===target||other.dead||other.handlavaHeld)continue;let dx=other.x-x,dy=other.y-y,distance=Math.hypot(dx,dy)||1,maxDistance=HANDLAVA.impactRadius+other.r;if(distance>maxDistance)continue;let falloff=.45+.55*(1-distance/maxDistance);if(!other.boss)applyEnemyDisplacement(other,dx/distance,dy/distance,{mode:'pull',strength:130},falloff);damageEnemy(other,playerDamageAgainst(other,shotDamage()*stats.damage*.24*falloff),x,y,true,'lite')}
-    arm.target=null;arm.startX=x;arm.startY=y;state.throws++;spawnEffect({kind:'pressureWave',x,y,r:12,maxR:HANDLAVA.impactRadius,life:.4,max:.4,color:'#ff6a1a'},3);if(save.settings.particles)burst(x,y,'#ff6a1a',perfState.active==='low'?12:22,1.35);shake=Math.max(shake,12);hitStop=Math.max(hitStop,.055);sound('hit');handlavaSetPhase(arm,'retract',HANDLAVA.retractDuration)
+    arm.target=null;arm.startX=x;arm.startY=y;state.throws++;spawnHandlavaSplash(x,y,Math.atan2(y-player.y,x-player.x),148);spawnEffect({kind:'pressureWave',x,y,r:12,maxR:HANDLAVA.impactRadius,life:.4,max:.4,color:'#ff6a1a'},3);if(save.settings.particles)burst(x,y,'#ff6a1a',perfState.active==='low'?12:22,1.35);shake=Math.max(shake,12);hitStop=Math.max(hitStop,.055);sound('hit');handlavaSetPhase(arm,'retract',HANDLAVA.retractDuration)
   }
   function updateHandlava(dt,stats){
     let state=player.handlava||(player.handlava=createHandlavaState());if(!usesHandlava(stats)){handlavaDeactivate(state);return}if(!state.active){state.active=true;state.scan=.02;state.fx=.04;ensureHandlavaSprites();for(const arm of state.arms)handlavaIdlePose(arm)}state.scan-=dt;state.fx-=dt;
@@ -2605,6 +2615,10 @@
       else if(fx.kind==='lightningImpact'){let intensity=fx.intensity||0;ctx.strokeStyle=fx.color;ctx.shadowColor='#39aaff';ctx.shadowBlur=(12+intensity*7)*effectShadow;ctx.lineWidth=Math.max(1,(5+intensity*2)*(1-progress));ctx.beginPath();ctx.arc(0,0,radius,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=alpha*.7;ctx.lineWidth=Math.max(1,(2.2+intensity)*(1-progress));ctx.beginPath();ctx.arc(0,0,radius*.62,0,Math.PI*2);ctx.stroke();ctx.rotate((fx.seed||0)+progress*.85);for(let ray=0;ray<10;ray++){ctx.rotate(Math.PI/5);ctx.beginPath();ctx.moveTo(radius*.18,0);ctx.lineTo(radius*(ray%2?.78:1.08),0);ctx.stroke()}}
       else if(fx.kind==='lightningKill'){let intensity=fx.intensity||0;ctx.rotate((fx.seed||0)-progress*.55);ctx.strokeStyle='#dffcff';ctx.shadowColor='#2388d8';ctx.shadowBlur=(10+intensity*7)*effectShadow;ctx.lineCap='round';ctx.lineWidth=Math.max(1,(3.2+intensity)*(1-progress));for(let ray=0;ray<8;ray++){ctx.rotate(Math.PI/4);ctx.beginPath();ctx.moveTo(radius*.2,0);ctx.lineTo(radius*(ray%2?.72:1.08),0);ctx.stroke()}ctx.globalAlpha=alpha*.42;ctx.fillStyle='#1e78c7';ctx.beginPath();ctx.arc(0,0,radius*.36,0,Math.PI*2);ctx.fill()}
       else if(fx.kind==='lightningCharge'){ctx.strokeStyle=fx.color;ctx.shadowColor='#79e7f2';ctx.shadowBlur=8*effectShadow;ctx.lineWidth=Math.max(1,3*(1-progress));ctx.setLineDash([4,4]);ctx.lineDashOffset=-progress*14;ctx.beginPath();ctx.arc(0,0,radius,0,Math.PI*2);ctx.stroke();ctx.setLineDash([])}
+      else if(fx.kind==='handlavaSplash'){
+        if(imageReady(handlavaHitSplashSprite)){let frame=Math.min(7,Math.floor(progress*8)),cell=512,size=(fx.size||96)*(.86+Math.sin(progress*Math.PI)*.18);ctx.rotate((fx.angle||0)+Math.PI/2);ctx.globalAlpha=alpha;ctx.drawImage(handlavaHitSplashSprite,(frame%4)*cell,Math.floor(frame/4)*cell,cell,cell,-size*.5,-size*.58,size,size)}
+        else{ctx.rotate(fx.angle||0);ctx.strokeStyle=fx.color;ctx.lineCap='round';ctx.lineWidth=Math.max(1,4*(1-progress));for(let ray=0;ray<5;ray++){ctx.rotate(Math.PI*.4);ctx.beginPath();ctx.moveTo(radius*.12,0);ctx.lineTo(radius,0);ctx.stroke()}}
+      }
       else if(fx.kind==='hitSpark'){ctx.rotate(fx.angle||0);ctx.strokeStyle=fx.color;ctx.lineCap='round';ctx.shadowColor=fx.color;ctx.shadowBlur=perfState.active==='high'?5*effectShadow:0;ctx.lineWidth=Math.max(1,3.5*(1-progress));for(let ray=0;ray<6;ray++){ctx.rotate(Math.PI/3);ctx.beginPath();ctx.moveTo(radius*.18,0);ctx.lineTo(radius,0);ctx.stroke()}}
       else if(fx.kind==='lunarArc'){let target=worldToScreen(fx.tx,fx.ty,cam);ctx.strokeStyle=fx.color;ctx.lineWidth=Math.max(1,4*(1-progress));ctx.shadowColor=fx.color;ctx.shadowBlur=8*effectShadow;ctx.beginPath();ctx.moveTo(0,0);ctx.quadraticCurveTo((target.x-q.x)*.48-10,(target.y-q.y)*.48-14,target.x-q.x,target.y-q.y);ctx.stroke()}
       else if(fx.kind==='coinText'){ctx.translate(0,-progress*28);ctx.fillStyle=fx.color;ctx.strokeStyle='#111827';ctx.lineWidth=3;ctx.font='900 11px Georgia,serif';ctx.textAlign='center';ctx.strokeText(fx.text||'+$',0,0);ctx.fillText(fx.text||'+$',0,0)}
@@ -2946,7 +2960,7 @@
       },
       unequipHandlavaPiece(slot){slot=GEAR_SLOTS.includes(slot)?slot:'hat';save.equipped[slot]=null;cargoStaticKey='';cargoStaticValue=null;updateHandlava(0,cargoStats());return this.handlavaState()},
       handlavaState(){
-        let state=player&&player.handlava,stats=player&&cargoStats(),living=enemies.filter(enemy=>!enemy.dead);return{enabled:!!(stats&&usesHandlava(stats)),tier:gearSignatureTier('lavaSet'),setId:equippedFullSetId(),sheets:handlavaAssetsReady(),grabs:state?state.grabs:0,collisions:state?state.collisions:0,throws:state?state.throws:0,arms:state?state.arms.map(arm=>({side:arm.side,phase:arm.phase,target:arm.target&&(arm.target.handlavaTestId||arm.target.type)||null,x:Math.round(arm.x),y:Math.round(arm.y)})):[],player:{x:Math.round(player.x),y:Math.round(player.y),spinRadius:Math.round(stats.spinRadius)},enemies:living.map(enemy=>({id:enemy.handlavaTestId||enemy.type,x:Math.round(enemy.x),y:Math.round(enemy.y),distance:Math.round(Math.hypot(enemy.x-player.x,enemy.y-player.y)),held:!!enemy.handlavaHeld,claimed:!!enemy.handlavaClaim,boss:!!enemy.boss,hp:Math.round(enemy.hp)})),effects:effects.length,particles:particles.length,pools:{effects:effectPool.length,particles:particlePool.length}}
+        let state=player&&player.handlava,stats=player&&cargoStats(),living=enemies.filter(enemy=>!enemy.dead);return{enabled:!!(stats&&usesHandlava(stats)),tier:gearSignatureTier('lavaSet'),setId:equippedFullSetId(),sheets:handlavaAssetsReady(),splash:imageReady(handlavaHitSplashSprite),grabs:state?state.grabs:0,collisions:state?state.collisions:0,throws:state?state.throws:0,arms:state?state.arms.map(arm=>({side:arm.side,phase:arm.phase,target:arm.target&&(arm.target.handlavaTestId||arm.target.type)||null,x:Math.round(arm.x),y:Math.round(arm.y)})):[],player:{x:Math.round(player.x),y:Math.round(player.y),spinRadius:Math.round(stats.spinRadius)},enemies:living.map(enemy=>({id:enemy.handlavaTestId||enemy.type,x:Math.round(enemy.x),y:Math.round(enemy.y),distance:Math.round(Math.hypot(enemy.x-player.x,enemy.y-player.y)),held:!!enemy.handlavaHeld,claimed:!!enemy.handlavaClaim,boss:!!enemy.boss,hp:Math.round(enemy.hp)})),effects:effects.length,effectKinds:effects.map(effect=>effect.kind||'ring'),particles:particles.length,pools:{effects:effectPool.length,particles:particlePool.length}}
       },
       setLightningTargets(points,options){
         options=options||{};if(!player)return null;enemies=[];waveDirector.phase='test';waveDirector.queue=[];player.lightningPhase='idle';player.lightningTime=0;player.lightningRate=0;player.lightningQueue=0;player.lightningTarget=null;let list=Array.isArray(points)?points:[];

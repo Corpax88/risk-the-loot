@@ -9,7 +9,9 @@ const HANDLAVA_PHASES=['idle','extend','grab','swing','throw','retract'];
 const ASSETS=[
   ...HANDLAVA_PHASES.map(phase=>({name:'handlava-'+phase+'-v1.png',width:1024,height:256,frames:4})),
   {name:'lava-gear-icons-v1.png',width:1280,height:256,frames:5},
-  {name:'lava-gear-drops-v1.png',width:400,height:80,frames:5}
+  {name:'lava-gear-drops-v1.png',width:400,height:80,frames:5},
+  ...['idle','run','attack'].map(pose=>({name:'lava-hammer-'+pose+'-v1.png',width:2048,height:1024,cols:4,rows:2})),
+  {name:'handlava-hit-splash-v1.png',width:2048,height:1024,cols:4,rows:2,minVisible:.0005}
 ];
 
 function paeth(left,up,upperLeft){
@@ -50,10 +52,10 @@ function decodeRgbaPng(file){
   return {width,height,pixels};
 }
 
-function framePixels(image,frameIndex,frameCount){
-  const frameWidth=image.width/frameCount,frame=Buffer.alloc(frameWidth*image.height*4);
-  for(let y=0;y<image.height;y++){
-    const source=(y*image.width+frameIndex*frameWidth)*4,destination=y*frameWidth*4;
+function framePixels(image,frameIndex,cols,rows){
+  const frameWidth=image.width/cols,frameHeight=image.height/rows,frame=Buffer.alloc(frameWidth*frameHeight*4),frameX=frameIndex%cols,frameY=Math.floor(frameIndex/cols);
+  for(let y=0;y<frameHeight;y++){
+    const source=((frameY*frameHeight+y)*image.width+frameX*frameWidth)*4,destination=y*frameWidth*4;
     image.pixels.copy(frame,destination,source,source+frameWidth*4);
   }
   return frame;
@@ -65,22 +67,24 @@ for(const asset of ASSETS){
   assert(fs.existsSync(file),'Lava asset is missing: '+asset.name);
   const image=decodeRgbaPng(file);
   assert.deepEqual([image.width,image.height],[asset.width,asset.height],asset.name+' dimensions are wrong');
-  assert.equal(image.width%asset.frames,0,asset.name+' cannot be split into equal horizontal frames');
+  const cols=asset.cols||asset.frames,rows=asset.rows||1,frameCount=cols*rows;
+  assert.equal(image.width%cols,0,asset.name+' cannot be split into equal columns');
+  assert.equal(image.height%rows,0,asset.name+' cannot be split into equal rows');
   const hashes=[];
-  for(let frameIndex=0;frameIndex<asset.frames;frameIndex++){
-    const frame=framePixels(image,frameIndex,asset.frames),pixelCount=frame.length/4;
+  for(let frameIndex=0;frameIndex<frameCount;frameIndex++){
+    const frame=framePixels(image,frameIndex,cols,rows),pixelCount=frame.length/4;
     let transparent=0,visible=0,maxAlpha=0;
     for(let alphaIndex=3;alphaIndex<frame.length;alphaIndex+=4){
       const alpha=frame[alphaIndex];if(alpha===0)transparent++;else visible++;if(alpha>maxAlpha)maxAlpha=alpha
     }
-    assert(visible>pixelCount*.01,asset.name+' frame '+frameIndex+' has no readable silhouette');
+    assert(visible>pixelCount*(asset.minVisible||.01),asset.name+' frame '+frameIndex+' has no readable silhouette');
     assert(transparent>pixelCount*.01,asset.name+' frame '+frameIndex+' lost its transparent background');
     assert.equal(maxAlpha,255,asset.name+' frame '+frameIndex+' has no fully opaque visual foundation');
     hashes.push(crypto.createHash('sha256').update(frame).digest('hex'));
   }
-  assert.equal(new Set(hashes).size,asset.frames,asset.name+' contains duplicate animation/item frames');
+  assert.equal(new Set(hashes).size,frameCount,asset.name+' contains duplicate animation/item frames');
   sheetHashes.set(asset.name,crypto.createHash('sha256').update(image.pixels).digest('hex'));
 }
 assert.equal(new Set(HANDLAVA_PHASES.map(phase=>sheetHashes.get('handlava-'+phase+'-v1.png'))).size,HANDLAVA_PHASES.length,'Handlava phases reuse a duplicate spritesheet');
 
-console.log('Handlava asset smoke passed: 6 four-frame ability sheets and 2 five-item Lava gear strips retain alpha and unique silhouettes.');
+console.log('Handlava asset smoke passed: ability, gear, full-figure and lava-splash sheets retain alpha and unique frames.');

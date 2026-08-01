@@ -36,7 +36,7 @@ test('all sets render every animation without clipping or edge artifacts',async(
     const state=await page.evaluate(()=>window.__riskTest.gearVisualState(true));
     expect(state.setId).toBe(set.id);
     expect(state.visualProfile).toBe(set.id);
-    expect(state.usesProductionSkin).toBe(['hammerChoir','blackHole','stormrunner'].includes(set.id));
+    expect(state.usesProductionSkin).toBe(['hammerChoir','blackHole','stormrunner','lavaSet'].includes(set.id));
     expect(state.layers).toEqual([
       {slot:'coat',region:'chest-gloves'},
       {slot:'scarf',region:'neck'},

@@ -141,7 +141,7 @@ Eksempel: Hammer Choir har Focus A = DMG og Focus B = IMPACT. Hammer Choir Crown
 | Phantom Court | Legendary / Lv 40 | MOVE / ARMOR | 2p: +6.5% MOVE; 3p: +5.5% ARMOR; 5p: -8% DASH, +5% CRIT | Phantom Veil: Dash gir lengre evade og +25% neste strike / +45% neste strike | Gear 2.0 set-atlas + drop-atlas + layers |
 | Starforge | Legendary / Lv 45 | DMG / ARMOR | 2p: +4.2 DMG; 3p: +5% ARMOR; 5p: +5 DMG, +4.5% CRIT | Starfall: hvert sjette strike blir star impact / hvert fjerde blir sterkere star impact | Gear 2.0 set-atlas + drop-atlas + layers |
 | Grand Voyager | Legendary / Lv 50 | VALUE / MOVE | 2p: +8% VALUE; 3p: +7% MOVE; 5p: +30 REACH, +5.5% IMPACT | Uncharted Fortune: hver floor gir coins / doble coins og bonus cache pa dypere floors | Gear 2.0 set-atlas + drop-atlas + layers |
-| **Lava Set** | Legendary / Lv 55 | DMG / IMPACT | 2p: +4 DMG; 3p: +6% IMPACT; 5p: +5 DMG, +5% CRIT; Handlava krever hele settet | Handlava (bare 5/5): to levende skjerfarmer prioriterer fiender utenfor hammerrekkevidde, griper og svinger dem inn i andre fiender, kaster mot naere flokker og slipper dem innenfor Spin-rekkevidde | **Eget ikon/drop-atlas og seks Handlava-sheets** |
+| **Lava Set** | Legendary / Lv 55 | DMG / IMPACT | 2p: +4 DMG; 3p: +6% IMPACT; 5p: +5 DMG, +5% CRIT; Handlava krever hele settet | Handlava (bare 5/5): to levende skjerfarmer prioriterer fiender utenfor hammerrekkevidde, griper og svinger dem inn i andre fiender, kaster mot naere flokker og slipper dem innenfor Spin-rekkevidde | **Tre fullfigur-sheets, eget ikon/drop-atlas, seks Handlava-sheets og animert lava-treffsprut** |
 | Riskreaver | Legendary / Lv 65 | DMG / CRIT | 2p: +8% MOVE; 4p: +6 DMG, +5% CRIT; 5p: +8 DMG, +8% IMPACT, +5% CRIT | Crowd Hunger: fiender rundt deg oker skade og Hammerstorm-radius / mye sterkere surrounded scaling og begrenset Hammerstorm lifesteal | Dedicated legendary item/drop atlas + Gear 2.0 legendary layers |
 | Grand Vault | Legendary / Lv 72 | HP / ARMOR | 2p: +55 HP; 3p: +8% ARMOR; 5p: +14% VALUE, +45 HP, +4 DMG | Vaultbound: to unsecured boss-items gir guard charge / hvert item gir charge, maks to | Dedicated legendary item/drop atlas + Gear 2.0 legendary layers |
 | Crownless King | Legendary / Lv 80 | DMG / HP | 2p: +5 DMG, +28 HP; 3p: +7% CRIT, +5% ARMOR; 5p: +8% MOVE, +8% IMPACT, +10% VALUE | Kingslayer: elites/bosser under 30% HP tar +20% / under 40% tar +35% | Dedicated legendary item/drop atlas + Gear 2.0 legendary layers |
@@ -191,13 +191,17 @@ Lava Set har:
 
 - `assets/lava-gear-icons-v1.png`
 - `assets/lava-gear-drops-v1.png`
+- `assets/lava-hammer-idle-v1.png`
+- `assets/lava-hammer-run-v1.png`
+- `assets/lava-hammer-attack-v1.png`
+- `assets/handlava-hit-splash-v1.png`
 - `assets/handlava-idle-v1.png`
 - `assets/handlava-extend-v1.png`
 - `assets/handlava-grab-v1.png`
 - `assets/handlava-swing-v1.png`
 - `assets/handlava-throw-v1.png`
 - `assets/handlava-retract-v1.png`
-- Handlava er en eksklusiv 5/5-signature. De to armene deler pooler for varme-, trail- og impact-effekter og lar fiender lande naer nok til Hammerstorm-oppfolging.
+- Fullt 5/5-sett bruker den ferdigtegnede Lava-transformasjonen i idle, run og attack. Handlava er en eksklusiv 5/5-signature. De to armene deler pooler for varme-, trail- og impact-effekter, spruter animert lava ved faktiske treff og lar fiender lande naer nok til Hammerstorm-oppfolging.
 
 ### Hva de andre settene faktisk har
 

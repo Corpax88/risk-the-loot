@@ -80,7 +80,8 @@ test('production gear sets remain the only visible workshop character layer',asy
   const productionSets={
     hammerChoir:'hammer-choir-idle-v1.png',
     blackHole:'black-hole-hammer-idle-v1.png',
-    stormrunner:'stormcaller-hammer-idle-v1.png'
+    stormrunner:'stormcaller-hammer-idle-v1.png',
+    lavaSet:'lava-hammer-idle-v1.png'
   };
   for(const [setId,asset] of Object.entries(productionSets)){
     await page.evaluate(id=>window.__riskTest.previewGearSet(id),setId);

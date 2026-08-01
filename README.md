@@ -1,12 +1,12 @@
-# RISK THE LOOT! v0.59.0
+# RISK THE LOOT! v0.59.1
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
 
-Live Combat XP v0.59.0 awards progression immediately from the authoritative enemy-death path. Normal enemies, elites and champions feed a smoothly interpolated XP rail during combat; rapid horde kills share one batched notification, level overflow animates safely across boundaries, and the results screen only summarizes XP already earned. XP saving is deferred and coalesced so dense Hammerstorm clears never trigger one save or one HUD rerender per kill.
+XP Journey v0.59.1 keeps immediate combat XP while reshaping the full Level 1-100 journey. Early levels arrive quickly, Levels 50-80 shift emphasis toward gear, Levels 80-95 demand longer expeditions and the final five prestige levels account for roughly one third of the total XP journey. Enemy, elite and champion rewards now share one configurable depth-and-risk model.
 
 Spin Stability coalesces rapid normal-Spin input into one authoritative attack, removes a synchronous paper-doll canvas serialization from the touch path, reuses hot-path combat buffers and pooled effects, and replaces dense-pack filter work with bounded hit feedback. A 30-second desktop and iPhone regression test verifies bounded attacks, effects, listeners, timers and recovery while preserving Hammerstorm damage and slide-over Dash.
 
-Level 100 Progression expands Pappa's complete progression from Level 1 to a hard Level 100 cap. One shared module owns the XP curve, cap, map milestones, set unlocks, player growth, enemy and champion scaling, item levels and gear-value growth. The deterministic XP requirement is `10 + step + floor(step^2 / 100)`, where `step = level - 1`; reaching Level 100 requires exactly 8,986 XP. The cap displays `MAX LEVEL`, discards overflow safely and never creates Level 101 gear or progression. This playtest schema intentionally resets older saves.
+Level 100 Progression expands Pappa's complete progression from Level 1 to a hard Level 100 cap. One shared module owns the XP curve, cap, reward scaling, map milestones, set unlocks, player growth, enemy and champion scaling, item levels and gear-value growth. The deterministic curve preserves the proven fast journey to Level 50, then adds smooth exponential ramps beginning at Levels 50, 80 and 95. Level 50 requires 2,026 total XP, Level 80 requires 12,532, Level 95 requires 39,632 and reaching Level 100 requires exactly 61,094 XP. The cap displays `MAX LEVEL`, discards overflow safely and never creates Level 101 gear or progression. Existing current-schema saves remain compatible.
 
 Mobile Performance v0.55.0 adds bounded visual budgets, pooled combat effects and enemy projectiles, view culling, cached static gear calculations, throttled HUD/minimap rendering, and High/Medium/Low quality profiles. Auto quality uses conservative hysteresis to reduce visual work during sustained slow frames and gradually restore it after recovery. Damage, enemy behavior, input timing, item stats, drop rates and balance remain unchanged.
 
@@ -88,7 +88,7 @@ Every item now has its own inventory and field-drop asset. Mouse hover and keybo
 
 ## Pappa levels and equipment
 
-Pappa Hammer earns XP immediately whenever a player-caused enemy death occurs. Rushers and Gunners start at 1 XP, Lancers and Brutes at 2 XP, elites earn at least 4 XP and usually triple their type reward, while champions grant 10/20/30 XP by risk tier. Deep expeditions add a small bounded reward every five floors, with later difficulty and level bands adding another point. Levels run from 1 to a hard cap of 100. Every level adds controlled base health and damage, while regular enemies and champions use separate bounded scaling curves. The XP formula is `10 + (level - 1) + floor((level - 1)^2 / 100)` and the exact cumulative requirement for Level 100 is 8,986 XP. Higher levels open stronger equipment pools:
+Pappa Hammer earns XP immediately whenever a player-caused enemy death occurs. Rushers and Gunners start at 1 XP, Lancers and Brutes at 2 XP, and elites earn at least 4 XP and usually triple their type reward. Regular-enemy XP rises every two risk tiers, deeper five-floor ascents add another reward step, and champion XP improves at every risk tier and dungeon floor. Levels run from 1 to a hard cap of 100. Every level adds controlled base health and damage, while regular enemies and champions use separate bounded scaling curves. The configurable progression curve keeps Levels 1-50 fast, 50-80 measured, 80-95 demanding and 95-100 prestigious; the exact cumulative requirement for Level 100 is 61,094 XP. Higher levels open stronger equipment pools:
 
 - Rare set gear can drop immediately.
 - Epic set gear begins at Pappa level 12.

@@ -22,7 +22,7 @@ const {
 }=progression;
 
 assert.equal(MAX_PLAYER_LEVEL,100,'Level 100 must be the single hard cap');
-assert.equal(TOTAL_XP_TO_MAX,8986,'total XP to Level 100 is not deterministic');
+assert.equal(TOTAL_XP_TO_MAX,61094,'total XP to Level 100 is not deterministic');
 assert.deepEqual(sanitizeProgress(undefined,undefined),{level:1,xp:0,levelsGained:0,discardedXp:0},'fresh progress must start at Level 1');
 
 const thresholds=[];
@@ -33,6 +33,8 @@ for(let level=1;level<MAX_PLAYER_LEVEL;level++){
   thresholds.push(needed);
   assert.equal(totalXpForLevel(level+1)-totalXpForLevel(level),needed,'total XP table disagrees at Level '+level);
 }
+assert.deepEqual([1,10,25,50,65,80,95,100].map(totalXpForLevel),[0,126,550,2026,4519,12532,39632,61094],'XP phase milestones changed unexpectedly');
+for(let level=2;level<MAX_PLAYER_LEVEL;level++)assert(xpRequiredForNextLevel(level)/xpRequiredForNextLevel(level-1)<1.17,'XP curve spikes too sharply at Level '+level);
 assert.equal(xpRequiredForNextLevel(100),0,'Level 100 must not expose Level 101 XP');
 assert.equal(totalXpForLevel(100),TOTAL_XP_TO_MAX,'Level 100 cumulative XP is inconsistent');
 
@@ -67,10 +69,12 @@ for(const level of [1,2,10,35,60,99,100]){
 assert.equal(getEnemyXpReward({enemyType:'rusher',enemyLevel:1,depth:1,difficulty:0}),1,'base Rusher XP changed');
 assert.equal(getEnemyXpReward({enemyType:'brute',enemyLevel:1,depth:1,difficulty:0}),2,'base Brute XP changed');
 assert(getEnemyXpReward({enemyType:'rusher',enemyLevel:1,elite:true,depth:1,difficulty:0})>getEnemyXpReward({enemyType:'rusher',enemyLevel:1,depth:1,difficulty:0}),'elite XP must exceed normal XP');
-assert.equal(getEnemyXpReward({enemyType:'boss',boss:true,enemyLevel:1,depth:5,difficulty:0}),10,'base boss XP changed');
+assert.equal(getEnemyXpReward({enemyType:'boss',boss:true,enemyLevel:1,depth:5,difficulty:0}),16,'base boss XP changed');
 assert.equal(getEnemyXpReward({enemyType:'boss',boss:true,enemyLevel:1,depth:5,difficulty:2}),20,'risk-tier boss XP changed');
-assert.equal(getEnemyXpReward({enemyType:'boss',boss:true,enemyLevel:1,depth:10,difficulty:4}),30,'deep-risk boss XP changed');
+assert.equal(getEnemyXpReward({enemyType:'boss',boss:true,enemyLevel:1,depth:10,difficulty:4}),29,'deep-risk boss XP changed');
 assert(getEnemyXpReward({enemyType:'brute',enemyLevel:80,depth:11,difficulty:8})>getEnemyXpReward({enemyType:'brute',enemyLevel:1,depth:1,difficulty:0}),'depth, level and difficulty must scale regular XP');
+for(let risk=2;risk<=20;risk+=2)assert(getEnemyXpReward({enemyType:'rusher',depth:1,difficulty:risk})>getEnemyXpReward({enemyType:'rusher',depth:1,difficulty:risk-2}),'higher risk did not improve regular-enemy XP at tier '+risk);
+for(let risk=1;risk<=20;risk++)assert(getEnemyXpReward({enemyType:'boss',boss:true,depth:5,difficulty:risk})>getEnemyXpReward({enemyType:'boss',boss:true,depth:5,difficulty:risk-1}),'higher risk did not improve boss XP at tier '+risk);
 
 assert.deepEqual(Object.values(MAP_UNLOCK_LEVELS),[1,15,35,60,80],'map milestones are not spread across 100 levels');
 for(const [id,level] of Object.entries(SET_UNLOCK_LEVELS))assert(level>=1&&level<=100,'set unlock outside progression range: '+id);
@@ -90,4 +94,4 @@ assert(playerStatsForLevel(100).hp<300,'player health grew beyond the intended L
 assert(bossScaleForLevel(100).hp<4,'boss level scaling ran away from expedition difficulty');
 assert(gearScaleForLevel(100)<3,'gear stat scaling ran away at Level 100');
 
-console.log('Level 100 progression smoke passed: 99 thresholds, 8,986 total XP, finite scaling and a strict cap.');
+console.log('Level 100 progression smoke passed: 99 smooth thresholds, 61,094 total XP, scalable rewards and a strict cap.');

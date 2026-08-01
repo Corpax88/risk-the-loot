@@ -21,7 +21,7 @@ const closeBraces=(css.match(/}/g)||[]).length;
 assert.equal(openBraces,closeBraces,'CSS braces are unbalanced');
 assert(html.includes('style.css?v='+packageJson.version)&&html.includes('progression.js?v='+packageJson.version)&&html.includes('script.js?v='+packageJson.version),'release assets do not match package version '+packageJson.version);
 assert.equal(progression.MAX_PLAYER_LEVEL,100,'shared player level cap is not 100');
-assert.equal(progression.TOTAL_XP_TO_MAX,8986,'Level 100 total XP changed unexpectedly');
+assert.equal(progression.TOTAL_XP_TO_MAX,61094,'Level 100 total XP changed unexpectedly');
 assert(script.includes('const progression=window.RiskLootProgression')&&script.includes('MAX_PLAYER_LEVEL')&&script.includes('applyXp(save.level,save.xp'),'shared progression source is not wired into gameplay');
 for(const file of sourceFiles())assert(!new RegExp(retiredRarity,'i').test(fs.readFileSync(file,'utf8')),'retired rarity survived in '+file);
 assert(/id:'stormrunner',name:'STORMCALLER',rarity:'legendary'/.test(script),'Stormcaller is not classified as Legendary');

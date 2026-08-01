@@ -8,8 +8,28 @@
   'use strict';
 
   const MAX_PLAYER_LEVEL=100;
-  const XP_CURVE=Object.freeze({base:10,linear:1,quadraticDivisor:100});
+  const XP_CURVE=Object.freeze({
+    base:10,
+    linear:1,
+    quadraticDivisor:100,
+    ramps:Object.freeze([
+      Object.freeze({startLevel:50,growth:1.08,scale:85}),
+      Object.freeze({startLevel:80,growth:1.15,scale:80}),
+      Object.freeze({startLevel:95,growth:1.35,scale:200})
+    ])
+  });
   const ENEMY_XP_BASE=Object.freeze({rusher:1,shooter:1,lancer:2,brute:2,boss:10,default:1});
+  const XP_REWARDS=Object.freeze({
+    depthFloorsPerBonus:5,
+    depthBonus:1,
+    riskTiersPerBonus:2,
+    riskBonus:1,
+    eliteMultiplier:3,
+    eliteMinimum:4,
+    bossBase:12,
+    bossDepthPerFloor:1,
+    bossRiskPerTier:2
+  });
   const MAP_UNLOCK_LEVELS=Object.freeze({guild:1,foundry:15,moonfall:35,skyglass:60,summit:80});
   const LOOT_UNLOCK_LEVELS=Object.freeze({epic:12,elevated:30,apex:65});
   const SET_UNLOCK_LEVELS=Object.freeze({
@@ -30,7 +50,12 @@
     level=clampLevel(level);
     if(level>=MAX_PLAYER_LEVEL)return 0;
     const step=level-1;
-    return XP_CURVE.base+step*XP_CURVE.linear+Math.floor(step*step/XP_CURVE.quadraticDivisor);
+    const ramp=XP_CURVE.ramps.reduce((total,phase)=>{
+      const distance=Math.max(0,level-phase.startLevel);
+      return total+(distance?phase.scale*(Math.pow(phase.growth,distance)-1):0);
+    },0);
+    const baseline=XP_CURVE.base+step*XP_CURVE.linear+Math.floor(step*step/XP_CURVE.quadraticDivisor);
+    return baseline+Math.round(ramp);
   }
   function totalXpForLevel(level){
     level=clampLevel(level);
@@ -103,22 +128,25 @@
     const step=clampLevel(level)-1;
     return 1+step*.018+step*step*.000025;
   }
-  function bossXpReward(riskTier){
-    return 10*(1+Math.min(2,Math.floor(Math.max(0,finiteNumber(riskTier,0))/2)));
+  function bossXpReward(riskTier,depth){
+    const risk=Math.max(0,Math.floor(finiteNumber(riskTier,0))),floor=Math.max(1,Math.floor(finiteNumber(depth,5)));
+    return XP_REWARDS.bossBase+(floor-1)*XP_REWARDS.bossDepthPerFloor+risk*XP_REWARDS.bossRiskPerTier;
   }
   function getEnemyXpReward({enemyType,enemyLevel,elite,boss,depth,difficulty}={}){
-    const type=String(enemyType||'default'),level=clampLevel(enemyLevel),floor=Math.max(1,Math.floor(finiteNumber(depth,1))),risk=Math.max(0,Math.floor(finiteNumber(difficulty,0)));
-    if(boss||type==='boss')return bossXpReward(risk);
+    const type=String(enemyType||'default'),floor=Math.max(1,Math.floor(finiteNumber(depth,1))),risk=Math.max(0,Math.floor(finiteNumber(difficulty,0)));
+    if(boss||type==='boss')return bossXpReward(risk,floor);
     const base=ENEMY_XP_BASE[type]||ENEMY_XP_BASE.default;
-    const depthBonus=Math.floor((floor-1)/5),difficultyBonus=Math.floor(risk/4),levelBonus=Math.floor((level-1)/40);
-    const reward=base+depthBonus+difficultyBonus+levelBonus;
-    return elite?Math.max(4,reward*3):reward;
+    const depthBonus=Math.floor((floor-1)/XP_REWARDS.depthFloorsPerBonus)*XP_REWARDS.depthBonus;
+    const riskBonus=Math.floor(risk/XP_REWARDS.riskTiersPerBonus)*XP_REWARDS.riskBonus;
+    const reward=base+depthBonus+riskBonus;
+    return elite?Math.max(XP_REWARDS.eliteMinimum,reward*XP_REWARDS.eliteMultiplier):reward;
   }
 
   return {
     MAX_PLAYER_LEVEL,
     XP_CURVE,
     ENEMY_XP_BASE,
+    XP_REWARDS,
     TOTAL_XP_TO_MAX,
     MAP_UNLOCK_LEVELS,
     LOOT_UNLOCK_LEVELS,

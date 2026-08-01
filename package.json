@@ -1,10 +1,10 @@
 {
   "name": "risk-the-loot",
-  "version": "0.61.0",
+  "version": "0.62.0",
   "private": true,
   "description": "A framework-free HTML5 gear extraction roguelite starring Pappa Hammer.",
   "scripts": {
-    "test": "node tests/progression-level100-smoke.js && node tests/static-audit.js && node tests/guild-terrain-smoke.js && node tests/safe-route-smoke.js && node tests/warden-balance-smoke.js && node tests/furnace-balance-smoke.js && node tests/release-smoke.js && node tests/boss-chain-smoke.js",
+    "test": "node tests/progression-level100-smoke.js && node tests/static-audit.js && node tests/guild-terrain-smoke.js && node tests/infinite-world-smoke.js && node tests/safe-route-smoke.js && node tests/warden-balance-smoke.js && node tests/furnace-balance-smoke.js && node tests/release-smoke.js && node tests/boss-chain-smoke.js",
     "test:browser": "playwright test",
     "test:equip-performance": "playwright test tests/browser/equipment-performance.spec.js --workers=1 --reporter=line",
     "test:browser:ui": "playwright test --ui"

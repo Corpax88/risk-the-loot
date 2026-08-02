@@ -139,7 +139,7 @@
     joystick:$('joystick'),knob:$('joystickKnob'),spin:$('spinButton'),spinPackCount:$('spinPackCount'),dash:$('dashButton'),
     settingsOverlay:$('settingsOverlay'),settingsPanel:document.querySelector('.settingsPanel'),closeSettings:$('closeSettings'),soundToggle:$('soundToggle'),shakeToggle:$('shakeToggle'),particlesToggle:$('particlesToggle'),qualityToggle:$('qualityToggle'),resume:$('resumeButton'),abandon:$('abandonButton'),
     devButton:$('devButton'),devPanel:$('devPanel'),devScrap:$('devScrap'),devGear:$('devGear'),devGearPanel:$('devGearPanel'),devGearSelect:$('devGearSelect'),devGearSpawn:$('devGearSpawn'),devGearEquip:$('devGearEquip'),devHeal:$('devHeal'),devCache:$('devCache'),devLevel:$('devLevel'),devWarden:$('devWarden'),devTyrant:$('devTyrant'),devSchematic:$('devSchematic'),devReset:$('devReset'),
-    helpTooltip:$('helpTooltip'),helpTooltipTitle:$('helpTooltipTitle'),helpTooltipText:$('helpTooltipText')
+    helpTooltip:$('helpTooltip'),helpTooltipTitle:$('helpTooltipTitle'),helpTooltipText:$('helpTooltipText'),expeditionMusic:$('expeditionMusic')
   };
   const gearHoverPreview=ui.gearHoverPreview;
 
@@ -453,7 +453,8 @@
     {id:'counter',name:'COUNTERSTRIKE',needs:['burst','plating'],desc:'Blocking a hit slams out a defensive pressure wave.'},
     {id:'finisher',name:'FINAL VERDICT',needs:['mark','volatile'],desc:'Wounded bosses take another 20% hammer damage.'}
   ];
-  const keys={},stick={active:false,id:null,x:0,y:0},audio={ctx:null,timer:null,mode:'base',step:0};
+  const keys={},stick={active:false,id:null,x:0,y:0},audio={ctx:null,mode:'base'};
+  const EXPEDITION_MUSIC_VOLUME=.28;
   const SKILL_GESTURE_DEBUG=false,skillGesture={pointerId:null,pointerType:'',dashAreaEntered:false};
   const SPIN_INPUT=Object.freeze({maxPending:0});
   const spinInputState={requests:0,starts:0,coalesced:0,duplicates:0,finishes:0,pulses:0,targetChecks:0,impactVisuals:0,activeInstances:0,maxActiveInstances:0};
@@ -1002,10 +1003,15 @@
     document.addEventListener('pointercancel',clearTouchHelpPress,true);
     document.addEventListener('click',event=>{if(!suppressedHelpTarget||performance.now()>suppressedHelpUntil)return;if(suppressedHelpTarget===event.target||suppressedHelpTarget.contains(event.target)){event.preventDefault();event.stopImmediatePropagation();suppressedHelpTarget=null}},true)
   }
-  function ensureAudio(){if(!save.settings.sound)return null;try{audio.ctx=audio.ctx||new (window.AudioContext||window.webkitAudioContext)();if(audio.ctx.state==='suspended')audio.ctx.resume();if(!audio.timer&&typeof window.setInterval==='function')audio.timer=window.setInterval(musicStep,420);return audio.ctx}catch(e){return null}}
+  function ensureAudio(){if(!save.settings.sound)return null;try{audio.ctx=audio.ctx||new (window.AudioContext||window.webkitAudioContext)();if(audio.ctx.state==='suspended')audio.ctx.resume();return audio.ctx}catch(e){return null}}
   function tone(freq,duration,volume,type,slide,delay){let a=ensureAudio();if(!a)return;let o=a.createOscillator(),g=a.createGain(),t=a.currentTime+(delay||0);o.type=type||'triangle';o.frequency.setValueAtTime(Math.max(25,freq),t);if(slide)o.frequency.exponentialRampToValueAtTime(Math.max(25,slide),t+duration*.85);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(volume||.02,t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+duration);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+duration+.02)}
-  function musicStep(){if(!save.settings.sound||!audio.ctx)return;let sets=audio.mode==='boss'?[55,55,65,49,73,65,55,49]:audio.mode==='run'?[110,131,147,98,110,165,147,131]:[82,98,110,73,82,123,110,98],notes=sets[audio.step++%sets.length];tone(notes,audio.mode==='boss' ? .32 : .24,audio.mode==='boss' ? .012 : .008,'sine',notes*.998);if(audio.step%4===0)tone(notes*2,.12,.006,'triangle',notes*1.5,.06)}
-  function setMusicMode(next){audio.mode=next==='run'?(bossActive?'boss':'run'):'base';if(audio.ctx)ensureAudio()}
+  function syncExpeditionMusic(){
+    let track=ui.expeditionMusic;if(!track)return;
+    track.volume=EXPEDITION_MUSIC_VOLUME;track.muted=!save.settings.sound;
+    if(audio.mode==='run'&&save.settings.sound&&typeof track.play==='function'){let playback=track.play();if(playback&&typeof playback.catch==='function')playback.catch(()=>{})}
+    else{if(typeof track.pause==='function')track.pause();if(audio.mode!=='run')try{track.currentTime=0}catch(e){}}
+  }
+  function setMusicMode(next){audio.mode=next==='run'?'run':'base';syncExpeditionMusic()}
   function sound(name,intensity){
     if(!save.settings.sound)return;ensureAudio();intensity=Math.max(0,Math.min(1,Number(intensity)||0));
     if(name==='lightningDash'){let lift=1+intensity*.48;tone(145*lift,.09,.022+intensity*.009,'sawtooth',760*lift);tone(920*lift,.055,.012+intensity*.006,'triangle',1480*lift,.012);if(intensity>.62)tone(72,.13,.014,'square',165,.018)}
@@ -2798,7 +2804,7 @@
   function syncDevTools(){let inRun=mode==='run',next=SCHEMATIC_IDS.find(id=>schematicLevel(id)<BOSS_SCHEMATICS[id].max),lagoonBoss=activeMap().boss==='leviathan';ui.devScrap.textContent=inRun?'+500 RUN COINS':'+500 BANK COINS';ui.devHeal.disabled=!inRun;ui.devCache.disabled=!inRun;ui.devWarden.textContent=lagoonBoss?'FIGHT SKYGLASS LEVIATHAN':'FIGHT VAULT WARDEN';ui.devTyrant.hidden=lagoonBoss;ui.devSchematic.disabled=!next;ui.devSchematic.textContent=next?'NEXT TROPHY':'TROPHIES MAX';renderDevGearOptions()}
   function openSettings(){cancelSkillGesture('game paused');settingsWasRun=mode==='run';if(settingsWasRun){paused=true;flushXpPersist()}abandonArmed=false;devResetArmed=false;ui.abandon.textContent='ABANDON EXPEDITION';ui.abandon.classList.remove('confirm');ui.devReset.textContent='HARD RESET SAVE';ui.devReset.classList.remove('confirm');ui.devPanel.classList.remove('show');ui.devButton.setAttribute('aria-expanded','false');closeDevGear();ui.settingsPanel.classList.toggle('baseMode',!settingsWasRun);syncSettings();syncDevTools();ui.settingsOverlay.classList.add('show')}
   function closeSettings(){ui.settingsOverlay.classList.remove('show');paused=false;abandonArmed=false;devResetArmed=false;last=performance.now()}
-  function toggleSetting(key){save.settings[key]=!save.settings[key];persist();syncSettings();if(key==='sound'){if(save.settings.sound){ensureAudio();sound('pickup')}else if(audio.timer){clearInterval(audio.timer);audio.timer=null}}}
+  function toggleSetting(key){save.settings[key]=!save.settings[key];persist();syncSettings();if(key==='sound'){if(save.settings.sound){ensureAudio();syncExpeditionMusic();sound('pickup')}else syncExpeditionMusic()}}
   function cycleQuality(){
     let choices=['auto','high','medium','low'],index=choices.indexOf(save.settings.quality||'auto');save.settings.quality=choices[(index+1)%choices.length];syncRequestedQuality();persist();syncSettings()
   }

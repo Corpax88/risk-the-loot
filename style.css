@@ -3527,3 +3527,67 @@ button:focus-visible{outline-color:#f4ead6}
 }
 @media(max-height:620px) and (orientation:landscape){.expeditionHud{top:4px}.cargoHud,.depthRoute,.zoneHud,.bossHud{top:119px}.runNotice,.lootToast{top:153px}}
 @media(prefers-reduced-motion:reduce){.combatPortraitSprite{animation:none}.pappaCombatHud .xpHud.levelUp{animation:none}}
+
+/* Mobile ARPG combat layout: the arena stays central while essential controls hug the edges. */
+.expeditionHud{display:block;pointer-events:none}
+.pappaCombatHud{
+  position:fixed;left:12px;bottom:12px;top:auto;width:min(520px,47vw);height:94px;
+  grid-template-columns:100px minmax(0,1fr);z-index:7;
+}
+.runHudCluster{position:absolute;right:0;top:0}
+.futureSkillSlots{
+  position:absolute;right:17px;bottom:max(12px,env(safe-area-inset-bottom));z-index:7;
+  display:grid;grid-template-columns:repeat(3,38px);gap:7px;pointer-events:none;
+}
+.futureSkillSlots button{
+  position:relative;width:38px;height:38px;min-height:38px;padding:0;display:grid;place-items:center;border:1px solid #a6844c66;border-radius:50%;
+  background:linear-gradient(145deg,#111a27a8,#070b11a8);color:#d8bf8580;box-shadow:inset 0 0 0 2px #070a0e80,0 3px 8px #0006;
+  opacity:.46;filter:none;pointer-events:none;
+}
+.futureSkillSlots button i{font-style:normal;font-size:12px}.futureSkillSlots button:before{content:"";position:absolute;width:5px;height:5px;border:1px solid #d6aa5880;transform:rotate(45deg)}
+.spinButton,.dashButton{bottom:max(62px,calc(env(safe-area-inset-bottom) + 62px))}
+.miniMap{bottom:calc(max(62px,calc(env(safe-area-inset-bottom) + 62px)) + 101px)}
+
+/* The movement surface owns the first touch; the joystick is only its visual response. */
+#game.runMode .touchControls{
+  display:block;position:absolute;inset:0;left:0;right:0;top:0;bottom:0;width:auto;height:auto;z-index:9;pointer-events:none;
+}
+#game.runMode .joystick{
+  position:absolute;inset:auto;left:0;top:0;width:116px;height:116px;pointer-events:none;opacity:0;
+  transition:opacity .16s ease-out;will-change:transform,opacity;
+}
+#game.runMode .touchControls.active .joystick{opacity:.78}
+#game.runMode .joystick i{left:50%;top:50%;width:54px;height:54px;margin:-27px 0 0 -27px;will-change:transform}
+
+@media(max-width:920px){
+  .expeditionHud{left:5px;right:5px;top:5px;display:block}
+  .runHudCluster{position:relative;right:auto;top:auto;width:100%;height:40px;display:grid;grid-template-columns:minmax(0,1fr) 58px;gap:4px;filter:none}
+  .runHudCluster .runMetrics{grid-column:1;grid-row:1;width:100%;height:40px}
+  .runHudCluster .runMetrics>div{min-width:0;padding:4px 5px}.runHudCluster .runMetrics span{font-size:6px}.runHudCluster .runMetrics b{font-size:10px}
+  .runHudCluster .runMetrics>div.lootMetric{min-width:0;padding:3px 5px}.runHudCluster .runMetrics>div.lootMetric em{display:block;max-width:92px}
+  .runHudCluster .extractButton{grid-column:2;grid-row:1;width:58px;height:40px;min-width:58px;display:flex;padding:3px;gap:3px}.runHudCluster .extractButton span{font-size:15px}.runHudCluster .extractButton b{font-size:6px}
+  .pappaCombatHud{
+    position:fixed;left:max(5px,env(safe-area-inset-left));bottom:max(7px,env(safe-area-inset-bottom));
+    width:min(258px,calc(100vw - 127px));height:78px;grid-template-columns:81px minmax(0,1fr);
+  }
+  .cargoHud,.depthRoute,.zoneHud,.bossHud{top:50px}.runNotice,.lootToast{top:84px}
+  .spinButton{right:max(102px,calc(84px + env(safe-area-inset-right)));bottom:max(55px,calc(env(safe-area-inset-bottom) + 55px))}
+  .dashButton{right:max(15px,env(safe-area-inset-right));bottom:max(58px,calc(env(safe-area-inset-bottom) + 58px))}
+  .futureSkillSlots{right:max(8px,env(safe-area-inset-right));bottom:max(7px,env(safe-area-inset-bottom));grid-template-columns:repeat(3,34px);gap:5px}
+  .futureSkillSlots button{width:34px;height:34px;min-height:34px}
+  .miniMap{right:max(9px,env(safe-area-inset-right));bottom:calc(max(58px,calc(env(safe-area-inset-bottom) + 58px)) + 96px)}
+}
+@media(max-width:360px){
+  .pappaCombatHud{width:calc(100vw - 122px);grid-template-columns:72px minmax(0,1fr)}
+  .combatPortrait{width:70px;height:70px}.combatVitals{padding-left:11px;padding-right:5px}.combatSet>b{max-width:65px}.combatStats>span{padding:0 1px}
+  .spinButton{right:91px;width:78px;height:78px}.dashButton{width:70px;height:70px}.miniMap{width:96px;height:68px}
+  .futureSkillSlots{grid-template-columns:repeat(3,32px);gap:4px}.futureSkillSlots button{width:32px;height:32px;min-height:32px}
+}
+@media(max-height:620px) and (orientation:landscape){
+  .pappaCombatHud{left:max(5px,env(safe-area-inset-left));bottom:max(5px,env(safe-area-inset-bottom));width:min(360px,46vw);height:70px;grid-template-columns:73px minmax(0,1fr)}
+  .combatPortrait{width:70px;height:70px}.combatVitals{height:67px;padding-top:4px;padding-bottom:3px}
+  .spinButton,.dashButton{bottom:max(48px,calc(env(safe-area-inset-bottom) + 48px))}.futureSkillSlots{bottom:max(5px,env(safe-area-inset-bottom))}
+  .miniMap{bottom:calc(max(48px,calc(env(safe-area-inset-bottom) + 48px)) + 78px)}
+  .cargoHud,.depthRoute,.zoneHud,.bossHud{top:50px}.runNotice,.lootToast{top:84px}
+}
+@media(prefers-reduced-motion:reduce){#game.runMode .joystick{transition:none}}

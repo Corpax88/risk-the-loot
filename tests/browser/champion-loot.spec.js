@@ -33,8 +33,9 @@ test('defeat the first Champion, equip each revealed item, and go deeper',async(
     await expect(page.locator('#bossLootCompare')).toContainText(stat);
   }
   await expect(page.locator('#bossLootEquip')).toBeVisible();
+  await expect(page.locator('#bossLootKeep')).toBeVisible();
   await expect(page.locator('#bossLootSalvage')).toBeVisible();
-  await expect(page.locator('#bossLootDecision button:visible')).toHaveCount(2);
+  await expect(page.locator('#bossLootDecision button:visible')).toHaveCount(3);
   await expect(page.locator('#helpTooltip')).not.toHaveClass(/show/);
 
   const decisionCount=(await page.evaluate(()=>window.__riskTest.state().lootCount));
@@ -54,6 +55,29 @@ test('defeat the first Champion, equip each revealed item, and go deeper',async(
   await expect.poll(()=>page.evaluate(()=>window.__riskTest.state().postBossIntent)).toBe('deeper');
   await expect(page.locator('#moduleOverlay')).toHaveClass(/show/);
   expect(pageErrors).toEqual([]);
+});
+
+test('keep stores Champion loot without equipping it',async({page})=>{
+  await page.setViewportSize({width:390,height:844});
+  await page.addInitScript(()=>localStorage.clear());
+  await page.goto('/?playwright');
+  await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest))).toBe(true);
+  await page.locator('#settingsButton').click();
+  await page.locator('#devButton').click();
+  await page.locator('#devWarden').click();
+  expect(await page.evaluate(()=>window.__riskTest.defeatChampion())).toBe(true);
+  await expect.poll(()=>page.evaluate(()=>window.__riskTest.state().lootOrbReady)).toBe(true);
+  const orbPoint=await page.evaluate(()=>window.__riskTest.bossLootOrbPoint());
+  await page.locator('#world').click({position:orbPoint,force:true});
+  await expect(page.locator('#bossLootDecision')).toHaveAttribute('aria-hidden','false');
+  await expect.poll(()=>page.evaluate(()=>window.__riskTest.state().lootUid)).not.toBeNull();
+  const before=await page.evaluate(()=>window.__riskTest.state());
+  await page.locator('#bossLootKeep').click();
+  const after=await page.evaluate(()=>window.__riskTest.state());
+  expect(Object.values(after.equipped)).not.toContain(before.lootUid);
+  const stored=await page.evaluate(uid=>window.__riskTest.equipmentInventory().find(item=>item.uid===uid),before.lootUid);
+  expect(stored).toBeTruthy();
+  expect(stored.equipped).toBe(false);
 });
 
 test('salvage destroys loot and permanently stores rarity rewards on mobile',async({page})=>{

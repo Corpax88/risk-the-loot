@@ -3591,3 +3591,46 @@ button:focus-visible{outline-color:#f4ead6}
   .cargoHud,.depthRoute,.zoneHud,.bossHud{top:50px}.runNotice,.lootToast{top:84px}
 }
 @media(prefers-reduced-motion:reduce){#game.runMode .joystick{transition:none}}
+
+/* Compact combat readouts and safe mobile result flow. */
+.pappaCombatHud{width:min(500px,45vw);height:88px;grid-template-columns:92px minmax(0,1fr)}
+.combatPortrait{width:88px;height:88px}.combatVitals{height:82px;grid-template-rows:29px 19px 25px;padding-top:6px;padding-bottom:5px}
+.pappaCombatHud .healthLabel{min-width:0}.pappaCombatHud .healthLabel b{min-width:72px;flex:0 0 auto;text-align:right;white-space:nowrap;letter-spacing:0}
+.miniMap{width:120px;height:84px}
+.resultPanel{max-height:calc(100dvh - max(20px,env(safe-area-inset-top)) - max(20px,env(safe-area-inset-bottom)));display:flex;flex-direction:column;overflow:hidden}
+.resultPanel .resultLoot{flex:1 1 auto;min-height:54px;overflow-y:auto}.resultPanel .resultContinue{position:relative;z-index:2;flex:0 0 auto;margin-bottom:max(0px,env(safe-area-inset-bottom))}
+
+/* Inventory bulk actions protect equipped gear and keep confirmation local. */
+.gearInventoryActions{grid-template-columns:minmax(130px,.75fr) repeat(3,minmax(118px,1fr))}
+.bulkGearButton{min-width:0;min-height:42px;display:flex;align-items:center;justify-content:space-between;gap:7px;padding:7px 9px;border:1px solid #6d5a38;border-radius:4px;background:#151717;color:#e9dec8;text-align:left}
+.bulkGearButton span,.bulkGearButton b{display:block}.bulkGearButton span{font-size:7px;letter-spacing:.6px}.bulkGearButton b{overflow:hidden;color:#a99a7b;font-size:5px;letter-spacing:.4px;text-overflow:ellipsis;white-space:nowrap}.bulkGearButton:disabled{opacity:.34}.bulkGearButton.select.active{border-color:#d6aa58;background:#2b2417;color:#ffe3a2}.bulkGearButton.salvageSelectedGear{border-color:#4f806f;color:#a9e1c6}.bulkGearButton.armed{border-color:#c83f46;background:#3a161a;color:#ffe0e0}.bulkGearButton.armed b{color:#ffc0c3}
+.gearBulkMark{position:absolute;z-index:7;left:2px;bottom:2px;width:20px;height:20px;display:grid;place-items:center;border:2px solid #e9f8ef;border-radius:50%;background:#27865a;color:#fff;font-style:normal;font-size:10px;box-shadow:0 2px 5px #0009}
+#gearPanel .gearBagSlot.bulkSelectable:not(.equipped){cursor:pointer}#gearPanel .gearBagSlot.bulkSelected{outline:3px solid #56d592!important;outline-offset:-3px;box-shadow:inset 0 0 0 2px #082b1d!important}#gearPanel .gearBagSlot.equipped.bulkSelectable{opacity:.7}
+
+/* Three-way champion loot decision. */
+.bossLootDecisionActions{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.bossLootDecisionButton.keep{border-color:#6589af;background:linear-gradient(180deg,#203c58,#111f31);color:#b9dcff}
+
+@media(max-width:920px){
+  .pappaCombatHud{width:min(250px,calc(100vw - 127px));height:72px;grid-template-columns:74px minmax(0,1fr)}
+  .pappaCombatHud:before{left:57px}.pappaCombatHud:after{left:65px}.combatPortrait{width:72px;height:72px}.combatVitals{height:68px;grid-template-rows:24px 16px 21px;margin-left:-6px;padding:4px 6px 3px 12px}
+  .pappaCombatHud .healthLabel b{min-width:62px;font-size:7px}.pappaCombatHud .healthTrack{height:11px}.pappaCombatHud .xpHud{height:15px;grid-template-columns:18px minmax(20px,1fr) 49px}.combatIdentity{gap:2px}.combatSet>b{max-width:75px}.combatStats>span{padding:0 1px}
+  .miniMap{width:96px;height:68px;bottom:calc(max(58px,calc(env(safe-area-inset-bottom) + 58px)) + 92px)}
+  .gearInventoryActions{grid-template-columns:1fr 1fr}.bulkGearButton,.gearSortButton{min-height:36px}
+  .resultOverlay{padding:max(7px,env(safe-area-inset-top)) max(7px,env(safe-area-inset-right)) max(7px,env(safe-area-inset-bottom)) max(7px,env(safe-area-inset-left))}.resultPanel{max-height:calc(100dvh - max(14px,env(safe-area-inset-top)) - max(14px,env(safe-area-inset-bottom)));padding:13px}.resultPanel .resultContinue{height:52px;margin-top:7px}
+  .bossLootDecisionButton{min-width:0;grid-template-columns:25px minmax(0,1fr);padding:5px}.bossLootDecisionButton>i{width:24px;height:24px}.bossLootDecisionButton b{font-size:8px}.bossLootDecisionButton em{font-size:5px}
+}
+@media(max-width:360px){.pappaCombatHud{width:calc(100vw - 118px);grid-template-columns:68px minmax(0,1fr)}.combatPortrait{width:66px;height:66px}.pappaCombatHud .healthLabel span{font-size:6px}.pappaCombatHud .healthLabel b{min-width:56px;font-size:6px}.combatSet>b{max-width:55px}.miniMap{width:90px;height:64px}.bossLootDecisionActions{gap:4px}.bossLootDecisionButton{grid-template-columns:1fr;text-align:center}.bossLootDecisionButton>i{display:none}}
+
+.bossLootItem.receipt.kept:after{content:"KEPT";position:absolute;inset:auto 2px 13px;padding:2px;background:#10263bcc;color:#9bd2ff;font-size:5px;font-weight:900;text-align:center}
+
+@media(max-width:920px){
+  /* Bulk actions stay visible without duplicating the mobile Sort and Filter controls. */
+  #gearPanel .unifiedGearBrowser .gearInventoryPanel{grid-template-rows:28px 108px 36px 36px minmax(0,1fr)}
+  #gearPanel .gearToolbar{display:block!important;height:36px;margin:0;padding:2px 7px;border:0;border-top:1px solid #8e6d342c;border-bottom:1px solid #8e6d342c;background:#0a0c0e}
+  #gearPanel .gearToolbar>.gearFilterGroup,#gearPanel .gearToolbar .gearSortButton{display:none!important}
+  #gearPanel .gearInventoryActions{height:31px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+  #gearPanel .gearInventoryActions .bulkGearButton{height:31px;min-height:31px;padding:3px 5px}
+  #gearPanel .gearInventoryActions .bulkGearButton span{font-size:5px}
+  #gearPanel .gearInventoryActions .bulkGearButton b{font-size:4px}
+}
+@media(max-width:390px){#gearPanel .unifiedGearBrowser .gearInventoryPanel{grid-template-rows:26px 102px 36px 36px minmax(0,1fr)}}

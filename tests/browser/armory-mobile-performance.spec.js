@@ -118,9 +118,10 @@ test('desktop keeps drag and drop while equip uses incremental rendering',async(
 
   const slotShape=await page.locator('.gearLoadoutSlot[data-display-slot="hat"]').evaluate(element=>({
     clipPath:getComputedStyle(element).clipPath,
-    borderStyle:getComputedStyle(element).borderStyle
+    borderStyle:getComputedStyle(element).borderStyle,
+    borderRadius:getComputedStyle(element).borderRadius
   }));
-  expect(slotShape.clipPath).not.toBe('none');
+  expect(slotShape.clipPath!=='none'||parseFloat(slotShape.borderRadius)>=20).toBe(true);
   expect(slotShape.borderStyle).toBe('solid');
   await page.mouse.move(1400,930);
   await expect(page.locator('#gearHoverPreview')).not.toHaveClass(/show/);

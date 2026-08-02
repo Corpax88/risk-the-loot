@@ -124,8 +124,14 @@
                     <button id="gearSortButton" class="gearSortButton" title="Change inventory sorting">
                       <i aria-hidden="true">&#8645;</i><span><small>SORTED BY</small><b id="gearSortLabel">POWER</b></span>
                     </button>
-                    <button id="sellFilteredGear" class="sellFilteredGear" title="Sell all items matching the active filters. Equipped copies are always protected.">
-                      <span id="sellFilteredLabel">SELL FILTERED</span><b id="sellFilteredSummary">0 ITEMS</b>
+                    <button id="selectGearItems" class="bulkGearButton select" title="Select several unequipped items for a bulk action.">
+                      <span id="selectGearLabel">SELECT ITEMS</span><b id="selectGearSummary">0 SELECTED</b>
+                    </button>
+                    <button id="sellFilteredGear" class="bulkGearButton sellFilteredGear" title="Sell selected items. Equipped gear is always protected.">
+                      <span id="sellFilteredLabel">SELL ITEMS</span><b id="sellFilteredSummary">SELECT FIRST</b>
+                    </button>
+                    <button id="salvageSelectedGear" class="bulkGearButton salvageSelectedGear" title="Salvage selected items into permanent crafting materials.">
+                      <span id="salvageSelectedLabel">SALVAGE ITEMS</span><b id="salvageSelectedSummary">SELECT FIRST</b>
                     </button>
                   </div>
                 </div>
@@ -312,6 +318,7 @@
               <span id="bossLootDecisionCount">ITEM 1 OF 1</span>
               <div class="bossLootDecisionActions">
                 <button id="bossLootEquip" class="bossLootDecisionButton equip"><i>&#9874;</i><span><b>EQUIP</b><em>Wear it now</em></span></button>
+                <button id="bossLootKeep" class="bossLootDecisionButton keep"><i>&#9635;</i><span><b>KEEP</b><em>Store in inventory</em></span></button>
                 <button id="bossLootSalvage" class="bossLootDecisionButton salvage"><i>&#10022;</i><span><b>SALVAGE</b><em id="bossLootSalvageReward">+1 Material</em></span></button>
               </div>
             </div>
@@ -356,7 +363,7 @@
         </div>
       </div>
 
-      <div id="miniMap" class="miniMap" data-help-title="Expedition Map" data-help="The white arrow is Pappa Hammer. Gold diamonds reveal unopened rare caches; the thin frame shows the area currently on screen.">
+      <div id="miniMap" class="miniMap" data-help-title="Expedition Map" data-help="The white arrow is Pappa Hammer. Square, diamond, star and orb markers identify unopened relic rewards; the thin frame shows the area currently on screen.">
         <canvas id="miniMapCanvas" aria-hidden="true"></canvas>
         <span class="miniMapLabel">MAP</span>
         <span id="mapSeedDebug" class="mapSeedDebug"></span>

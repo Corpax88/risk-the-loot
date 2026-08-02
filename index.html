@@ -234,16 +234,41 @@
     <section id="expeditionView" class="view expeditionView">
       <canvas id="world" aria-label="RISK THE LOOT expedition arena"></canvas>
       <div class="expeditionHud">
-        <div class="healthBlock" data-help-title="Pappa's Health" data-help="Reach zero and every unsecured coin, relic and boss drop from this expedition is lost.">
-          <div class="healthLabel"><span>PAPPA</span><b id="healthText">100 / 100</b></div>
-          <div class="healthTrack"><i id="healthFill"></i></div>
+        <section id="pappaCombatHud" class="pappaCombatHud" aria-label="Pappa Hammer combat status">
+          <div class="combatPortrait" data-help-title="Pappa Hammer" data-help="Your current level, equipped look and active gear set.">
+            <span id="combatPortraitSprite" class="combatPortraitSprite" aria-hidden="true"></span>
+            <strong class="combatPortraitLevel"><small>LV</small><b id="xpLevel">1</b></strong>
+          </div>
+          <div class="combatVitals">
+            <div class="healthBlock" data-help-title="Pappa's Health" data-help="Reach zero and every unsecured coin, relic and boss drop from this expedition is lost.">
+              <div class="healthLabel"><span><i aria-hidden="true">&#9829;</i>PAPPA HAMMER</span><b id="healthText">100 / 100</b></div>
+              <div class="healthTrack"><i id="healthFill"></i></div>
+            </div>
+            <div id="xpHud" class="xpHud" data-help-title="Pappa Experience" data-help="Every defeated enemy grants XP immediately. Elites and champions grant more. Each full bar raises Pappa's level toward the Level 100 cap.">
+              <span class="xpLevel">XP</span>
+              <div class="xpTrack"><i id="xpFill"></i><em id="xpSpark"></em></div>
+              <span id="xpText" class="xpText">0 / 10 XP</span>
+              <span id="xpGain" class="xpGain" aria-live="polite"></span>
+              <strong id="xpLevelNotice" class="xpLevelNotice" aria-live="polite"></strong>
+            </div>
+            <div class="combatIdentity">
+              <span class="combatSet"><i id="combatSetMark" aria-hidden="true">&#9874;</i><b id="combatSetName">FIELD LOADOUT</b><em id="combatSetProgress">0/5</em></span>
+              <div class="combatStats" aria-label="Combat build stats">
+                <span data-help-title="Hammer Damage" data-help="Base melee damage before critical hits and temporary relic bonuses."><i aria-hidden="true">&#9874;</i><b id="combatDamage">1</b></span>
+                <span data-help-title="Armor" data-help="Percentage of incoming damage prevented by equipped gear and active bonuses."><i aria-hidden="true">&#x26E8;</i><b id="combatArmor">0%</b></span>
+                <span data-help-title="Critical Chance" data-help="Chance for a melee impact to deal amplified critical damage."><i aria-hidden="true">&#9733;</i><b id="combatCrit">0%</b></span>
+              </div>
+            </div>
+          </div>
+        </section>
+        <div class="runHudCluster">
+          <div class="runMetrics">
+            <div id="lootMetric" class="lootMetric" data-help-title="Expedition Loot" data-help="Coins and the highest-grade boss gear currently at risk. Extract alive to secure them."><span>COINS FOUND</span><b id="runScrap">0</b><em id="lootBest">NO BOSS GEAR</em></div>
+            <div data-help-title="Tower Floor" data-help="Your current floor. Deeper floors bring stronger enemies and better rewards."><span>FLOOR</span><b id="depthText">1</b></div>
+            <div class="riskMetric" data-help-title="Risk Multiplier" data-help="Shows current danger and the value multiplier applied to expedition rewards."><span>RISK</span><b id="riskText">LOW</b></div>
+          </div>
+          <button id="extractButton" class="extractButton" title="Begin extraction. You can keep moving during the countdown."><span>&#8617;</span><b>EXTRACT</b></button>
         </div>
-        <div class="runMetrics">
-          <div id="lootMetric" class="lootMetric" data-help-title="Expedition Loot" data-help="Coins and the highest-grade boss gear currently at risk. Extract alive to secure them."><span>COINS FOUND</span><b id="runScrap">0</b><em id="lootBest">NO BOSS GEAR</em></div>
-          <div data-help-title="Tower Floor" data-help="Your current floor. Deeper floors bring stronger enemies and better rewards."><span>FLOOR</span><b id="depthText">1</b></div>
-          <div class="riskMetric" data-help-title="Risk Multiplier" data-help="Shows current danger and the value multiplier applied to expedition rewards."><span>RISK</span><b id="riskText">LOW</b></div>
-        </div>
-        <button id="extractButton" class="extractButton" title="Begin extraction. You can keep moving during the countdown."><span>&#8617;</span><b>EXTRACT</b></button>
       </div>
 
       <div id="depthRoute" class="depthRoute" aria-label="Expedition route" data-help-title="Tower Route" data-help="Tracks progress toward the champion waiting on floor five.">
@@ -336,13 +361,6 @@
         <span class="miniMapLabel">MAP</span>
         <span id="mapSeedDebug" class="mapSeedDebug"></span>
         <span id="miniMapCacheCount" class="miniMapCacheCount"></span>
-      </div>
-      <div id="xpHud" class="xpHud" data-help-title="Pappa Experience" data-help="Every defeated enemy grants XP immediately. Elites and champions grant more. Each full bar raises Pappa's level toward the Level 100 cap.">
-        <span class="xpLevel">LV <b id="xpLevel">1</b></span>
-        <div class="xpTrack"><i id="xpFill"></i><em id="xpSpark"></em></div>
-        <span id="xpText" class="xpText">0 / 10 XP</span>
-        <span id="xpGain" class="xpGain" aria-live="polite"></span>
-        <strong id="xpLevelNotice" class="xpLevelNotice" aria-live="polite"></strong>
       </div>
       <div id="touchControls" class="touchControls" aria-hidden="true"><div id="joystick" class="joystick" data-help-title="Movement" data-help="Drag in any direction to move. Pappa Hammer attacks nearby enemies automatically."><i id="joystickKnob"></i></div></div>
       <button id="spinButton" class="spinButton" aria-label="Hold Hammerstorm" title="Hold Hammerstorm (Q)" data-help-title="Hold Hammerstorm" data-help="Hold to dive into the pack and keep spinning. Dash between packs without releasing. More nearby enemies increase damage and reach."><b>&#10038;</b><span>HOLD</span><em id="spinPackCount">0</em></button>

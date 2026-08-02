@@ -3393,7 +3393,8 @@ button:focus-visible{outline-color:#f4ead6}
 
 @media(max-width:900px){
   #gearPanel>.panelClose{
-    top:max(10px,env(safe-area-inset-top));
+    /* The Armory already starts below the safe-area-aware top bar. */
+    top:10px;
     right:max(10px,env(safe-area-inset-right));
     width:44px;
     height:44px;

@@ -18,6 +18,7 @@ async function presentationState(page){
     };
     const overlaps=(a,b)=>a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top;
     const close=rect(document.querySelector('#closeGear'));
+    const stage=rect(document.querySelector('#gearCharacterStage'));
     const detailCard=document.querySelector('#gearDetail .gearDetailCard');
     const detail=detailCard&&getComputedStyle(detailCard).display!=='none'?rect(detailCard):null;
     const slots=[...document.querySelectorAll('#gearLoadoutSlots .gearLoadoutSlot')].map(element=>{
@@ -30,6 +31,7 @@ async function presentationState(page){
     });
     return {
       close,
+      closeStageOffset:close.top-stage.top,
       slots,
       cards,
       closeOverlapsSlot:slots.some(slot=>overlaps(close,slot.box)),
@@ -52,6 +54,7 @@ for(const setup of [
     expect(state.cards.length).toBeGreaterThan(0);
     expect(state.closeOverlapsSlot).toBe(false);
     expect(state.closeOverlapsDetail).toBe(false);
+    if(setup.name==='iphone')expect(state.closeStageOffset).toBeLessThanOrEqual(18);
     expect(state.overflow).toBeLessThanOrEqual(1);
     for(const slot of state.slots){
       expect(slot.radius).toBe('50%');

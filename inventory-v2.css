@@ -67,9 +67,24 @@
 .inventoryV2Portrait[data-inventory-backdrop] .inventoryV2Hero{z-index:1}
 .inventoryV2Portrait[data-inventory-backdrop]:after{z-index:1}
 
+.inventoryV2ItemActions{margin-top:auto;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(68px,.75fr) minmax(78px,.85fr);gap:6px}
+.inventoryV2ItemActions .inventoryV2Equip{margin:0}
+.inventoryV2Dispose{min-height:44px;border:1px solid #555b62;border-radius:4px;background:#15181c;color:#bfc5cc;font-size:7px;font-weight:900;letter-spacing:.5px}
+.inventoryV2Dispose.salvage{border-color:#4c765c;color:#a9e8c2}.inventoryV2Dispose:disabled{opacity:.34}
+.inventoryV2LockedMark{position:absolute;left:6px;top:6px;width:20px;height:20px;display:grid;place-items:center;border:1px solid #ffc928;border-radius:50%;background:#161207e8;color:#ffc928;font-size:7px;font-style:normal;font-weight:900}
+.inventoryV2Card.quickEquip,.inventoryV2Slot.quickEquip{animation:inventoryV2QuickEquip .32s cubic-bezier(.2,1.7,.45,1)}
+.inventoryV2Card.quickRemove,.inventoryV2Slot.quickRemove{animation:inventoryV2QuickRemove .28s ease-out}
+.inventoryV2Card{touch-action:manipulation;-webkit-touch-callout:none;user-select:none}
+@keyframes inventoryV2QuickEquip{0%{transform:scale(.94)}48%{transform:scale(1.05);box-shadow:0 0 0 2px var(--item-color,#d6aa58),0 0 13px color-mix(in srgb,var(--item-color,#d6aa58) 46%,transparent)}100%{transform:scale(1)}}
+@keyframes inventoryV2QuickRemove{0%{transform:scale(1)}50%{transform:scale(.94);opacity:.72}100%{transform:scale(1);opacity:1}}
+
 @media(max-width:720px){
   .inventoryV2Portrait[data-inventory-backdrop]{
     background-position:center,center var(--inventory-set-backdrop-mobile-y,62%);
     background-size:100% auto;
   }
+  .inventoryV2Detail{grid-template-columns:52px minmax(0,1fr) 102px}
+  .inventoryV2ItemActions{grid-column:3;grid-row:1;display:grid;grid-template-columns:1fr;grid-template-rows:1fr 22px 22px;gap:2px;height:58px}
+  .inventoryV2ItemActions .inventoryV2Equip{grid-column:1;grid-row:1;min-height:0;height:auto;font-size:7px}
+  .inventoryV2Dispose{min-height:0;font-size:4.5px}
 }

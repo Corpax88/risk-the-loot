@@ -3352,3 +3352,25 @@ button:focus-visible{outline-color:#f4ead6}
   #gearPanel .gearInventoryActions .bulkGearButton b{font-size:4px}
 }
 @media(max-width:390px){#gearPanel .unifiedGearBrowser .gearInventoryPanel{grid-template-rows:26px 102px 36px 36px minmax(0,1fr)}}
+
+/* Inventory actions stay local, fast and readable without persistent non-Legendary VFX. */
+.gearDetailActions{grid-template-columns:minmax(0,1.1fr) minmax(68px,.8fr) minmax(78px,.9fr)}
+.gearDetailActions .salvageGear{border-color:#57866b;background:#13261d;color:#a9e8c2}
+.gearDetailActions .sellGear,.gearDetailActions .salvageGear{white-space:nowrap}
+.gearLockMark{position:absolute;z-index:7;right:2px;bottom:2px;width:19px;height:19px;display:grid;place-items:center;border:1px solid #ffc928;border-radius:50%;background:#161207e8;color:#ffc928;font:900 7px/1 system-ui;font-style:normal}
+#gearPanel .gearBagSlot.locked{cursor:pointer}
+.gearBagSlot.gearQuickEquip,.gearLoadoutSlot.gearQuickEquip{animation:gearQuickEquip .32s cubic-bezier(.2,1.7,.45,1)}
+.gearBagSlot.gearQuickRemove,.gearLoadoutSlot.gearQuickRemove{animation:gearQuickRemove .28s ease-out}
+@keyframes gearQuickEquip{0%{transform:scale(.94)}48%{transform:scale(1.055);box-shadow:0 0 0 2px var(--gear-color),0 0 13px color-mix(in srgb,var(--gear-color) 46%,transparent)}100%{transform:scale(1)}}
+@keyframes gearQuickRemove{0%{transform:scale(1)}50%{transform:scale(.94);opacity:.72}100%{transform:scale(1);opacity:1}}
+.mobileGearActions{display:contents}
+.mobileGearSell,.mobileGearSalvage{display:none}
+@media(max-width:920px){
+  .adventureBagPanel .mobileGearSelection{grid-template-columns:64px minmax(0,1fr) 84px;grid-template-rows:1fr 27px 27px;height:126px}
+  .adventureBagPanel .mobileGearSelectionArt{grid-row:1/4}
+  .adventureBagPanel .mobileGearActions{grid-column:3;grid-row:1/4;display:grid;grid-template-rows:1fr 27px 27px;gap:3px}
+  .adventureBagPanel .mobileGearEquip{grid-column:1;grid-row:1;width:100%;min-height:0!important}
+  .mobileGearSell,.mobileGearSalvage{display:block;min-width:0;border:1px solid #4d5560;border-radius:3px;background:#15191e;color:#bcc4ce;font-size:5px;font-weight:900;letter-spacing:.35px}
+  .mobileGearSalvage{border-color:#49725a;color:#a9e8c2}.mobileGearSell:disabled,.mobileGearSalvage:disabled{opacity:.35}
+}
+@media(max-width:390px){.adventureBagPanel .mobileGearSelection{height:116px;grid-template-columns:58px minmax(0,1fr) 76px}}

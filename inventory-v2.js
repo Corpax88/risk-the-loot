@@ -8,6 +8,7 @@
     open:false,
     selectedUid:null,
     tapUid:null,
+    tapAt:0,
     hoverUid:null,
     slot:'all',
     rarity:'all',
@@ -16,6 +17,8 @@
     drag:null,
     suppressClickUntil:0,
     equipLocked:false,
+    actionConfirm:null,
+    actionTimer:0,
     previousFocus:null,
     unlockTimer:0,
     renderCount:0
@@ -147,15 +150,15 @@
     ui.count.textContent=list.length+' / '+snapshot.summary.count+' ITEMS';
     if(!list.length){ui.grid.innerHTML='<div class="inventoryV2Empty"><b>NO GEAR FOUND</b><span>Change the active filters.</span></div>';return}
     let draggable=!coarsePointer();
-    ui.grid.innerHTML=list.map(item=>'<button class="inventoryV2Card rarity'+item.rarityRank+(item.equipped?' equipped':'')+(state.selectedUid===item.uid?' selected':'')+'" role="option" aria-selected="'+(state.selectedUid===item.uid)+'" data-uid="'+item.uid+'" style="--item-color:'+item.color+'" type="button" draggable="'+draggable+'"><span class="inventoryV2CardArt">'+item.art+'</span><span class="inventoryV2CardCopy"><small>'+item.rarityName+' '+item.slotName+'</small><b>'+item.name+'</b><em>'+item.power+' POWER</em></span>'+(item.equipped?'<i class="inventoryV2EquippedMark">E</i>':'')+'</button>').join('')
+    ui.grid.innerHTML=list.map(item=>'<button class="inventoryV2Card rarity'+item.rarityRank+(item.equipped?' equipped':'')+(item.locked?' locked':'')+(state.selectedUid===item.uid?' selected':'')+'" role="option" aria-selected="'+(state.selectedUid===item.uid)+'" data-uid="'+item.uid+'" style="--item-color:'+item.color+'" type="button" draggable="'+draggable+'"><span class="inventoryV2CardArt">'+item.art+'</span><span class="inventoryV2CardCopy"><small>'+item.rarityName+' '+item.slotName+'</small><b>'+item.name+'</b><em>'+item.power+' POWER</em></span>'+(item.equipped?'<i class="inventoryV2EquippedMark">E</i>':'')+(item.locked?'<i class="inventoryV2LockedMark">L</i>':'')+'</button>').join('')
   }
 
   function renderDetail(snapshot){
     let item=selected(snapshot);
     if(!item){ui.detail.style.removeProperty('--item-color');ui.detail.innerHTML='<div class="inventoryV2NoSelection"><i>&#9670;</i><b>SELECT GEAR</b><span>Inspect an item to compare it with the current loadout.</span></div>';return}
-    let comparison=item.comparison,rows=comparison?comparison.rows.map(row=>'<span class="'+row.tone+'"><small>'+row.label+'</small><b>'+compareFormat(row.candidate,row.type)+'</b><em>'+(row.tone==='same'?'=':(row.delta>0?'+':'')+compareFormat(row.delta,row.type))+'</em></span>').join(''):'',set=item.set,worn=comparison&&snapshot.gear.find(entry=>entry.uid===comparison.wornUid),powerDelta=Math.round((item.power-(worn?worn.power:0))*10)/10,powerTone=item.equipped?'same':powerDelta>0?'gain':powerDelta<0?'loss':'same',action=item.equipped?'REMOVE':comparison&&comparison.wornUid?'REPLACE':'EQUIP';
+    let comparison=item.comparison,rows=comparison?comparison.rows.map(row=>'<span class="'+row.tone+'"><small>'+row.label+'</small><b>'+compareFormat(row.candidate,row.type)+'</b><em>'+(row.tone==='same'?'=':(row.delta>0?'+':'')+compareFormat(row.delta,row.type))+'</em></span>').join(''):'',set=item.set,worn=comparison&&snapshot.gear.find(entry=>entry.uid===comparison.wornUid),powerDelta=Math.round((item.power-(worn?worn.power:0))*10)/10,powerTone=item.equipped?'same':powerDelta>0?'gain':powerDelta<0?'loss':'same',action=item.equipped?'REMOVE':comparison&&comparison.wornUid?'REPLACE':'EQUIP',protectedItem=item.equipped||item.locked,confirming=state.actionConfirm&&state.actionConfirm.uid===item.uid?state.actionConfirm.action:null,salvage=item.salvage||{materials:0,cores:0};
     ui.detail.style.setProperty('--item-color',item.color);
-    ui.detail.innerHTML='<div class="inventoryV2InspectArt">'+item.art+'</div><div class="inventoryV2InspectTitle"><small>'+item.rarityName+' &middot; '+item.slotName+'</small><h2>'+item.name+'</h2><span class="inventoryV2SelectionSummary"><b>'+item.power+' POWER</b><em class="'+powerTone+'">'+(item.equipped?'EQUIPPED':(powerDelta>0?'+':'')+powerDelta+' VS WORN')+'</em></span>'+(set?'<span class="inventoryV2SelectionSet">'+set.name+' &middot; '+set.candidate+'/5 &middot; '+(set.candidate>=5?'FULL SET':nextBonusText(set.next))+'</span>':'')+'</div><div class="inventoryV2Comparison"><header><small>VS EQUIPPED</small><b>'+(comparison?comparison.wornName:'EMPTY SLOT')+'</b></header>'+rows+'</div>'+(set?'<div class="inventoryV2Set"><span><small>'+set.name+' SET</small><b>'+set.candidate+'/5</b></span><i><em style="width:'+(set.candidate/5*100)+'%"></em></i><p>'+(set.next?set.next.label+' &middot; '+set.next.effect:'FULL SET ACTIVE')+'</p></div>':'')+'<button id="inventoryV2Equip" class="inventoryV2Equip" type="button" '+(state.equipLocked?'disabled':'')+'>'+action+'</button>'
+    ui.detail.innerHTML='<div class="inventoryV2InspectArt">'+item.art+'</div><div class="inventoryV2InspectTitle"><small>'+item.rarityName+' &middot; '+item.slotName+(item.locked?' &middot; LOCKED':'')+'</small><h2>'+item.name+'</h2><span class="inventoryV2SelectionSummary"><b>'+item.power+' POWER</b><em class="'+powerTone+'">'+(item.equipped?'EQUIPPED':(powerDelta>0?'+':'')+powerDelta+' VS WORN')+'</em></span>'+(set?'<span class="inventoryV2SelectionSet">'+set.name+' &middot; '+set.candidate+'/5 &middot; '+(set.candidate>=5?'FULL SET':nextBonusText(set.next))+'</span>':'')+'</div><div class="inventoryV2Comparison"><header><small>VS EQUIPPED</small><b>'+(comparison?comparison.wornName:'EMPTY SLOT')+'</b></header>'+rows+'</div>'+(set?'<div class="inventoryV2Set"><span><small>'+set.name+' SET</small><b>'+set.candidate+'/5</b></span><i><em style="width:'+(set.candidate/5*100)+'%"></em></i><p>'+(set.next?set.next.label+' &middot; '+set.next.effect:'FULL SET ACTIVE')+'</p></div>':'')+'<div class="inventoryV2ItemActions"><button id="inventoryV2Equip" class="inventoryV2Equip" type="button" '+(state.equipLocked?'disabled':'')+'>'+action+'</button><button id="inventoryV2Sell" class="inventoryV2Dispose sell" type="button" '+(protectedItem?'disabled':'')+'>'+(protectedItem?(item.locked?'LOCKED':'SAFE'):confirming==='sell'?'CONFIRM SELL':'SELL $'+item.value)+'</button><button id="inventoryV2Salvage" class="inventoryV2Dispose salvage" type="button" '+(protectedItem?'disabled':'')+'>'+(protectedItem?(item.locked?'LOCKED':'SAFE'):confirming==='salvage'?'CONFIRM SALVAGE':'SALVAGE +'+salvage.materials)+'</button></div>'
   }
 
   function renderCharacter(snapshot){
@@ -196,13 +199,23 @@
     },140)
   }
 
+  function clearActionConfirmation(){
+    if(state.actionTimer){clearTimeout(state.actionTimer);state.actionTimer=0}
+    state.actionConfirm=null;
+    bridge.clearActionConfirmation&&bridge.clearActionConfirmation()
+  }
+
   function applyEquipment(item,remove){
     if(!item||state.equipLocked)return false;
     state.equipLocked=true;
     state.tapUid=null;
+    state.tapAt=0;
+    clearActionConfirmation();
     let result=remove?bridge.unequip(item.slot):bridge.equip(item.uid);
     let snapshot=result&&result.snapshot||bridge.snapshot();
     render({snapshot,ensureVisible:false});
+    let card=ui.grid.querySelector('.inventoryV2Card[data-uid="'+item.uid+'"]'),slot=ui.slots.querySelector('.inventoryV2Slot[data-slot="'+item.slot+'"]');
+    for(const target of [card,slot].filter(Boolean)){target.classList.remove('quickEquip','quickRemove');void target.offsetWidth;target.classList.add(remove?'quickRemove':'quickEquip');setTimeout(()=>target.classList.remove('quickEquip','quickRemove'),360)}
     unlockEquipSoon();
     return !!(result&&result.changed)
   }
@@ -219,12 +232,22 @@
     return applyEquipment(item,false)
   }
 
+  function disposeSelected(action){
+    let item=selected(state.snapshot);if(!item||item.equipped||item.locked)return false;
+    let result=bridge.dispose(item.uid,action);state.snapshot=result&&result.snapshot||bridge.snapshot();
+    if(result&&result.confirmationRequired){state.actionConfirm={uid:item.uid,action};if(state.actionTimer)clearTimeout(state.actionTimer);state.actionTimer=setTimeout(()=>{state.actionTimer=0;state.actionConfirm=null;if(state.open)render()},3650);render({snapshot:state.snapshot});return false}
+    clearActionConfirmation();if(result&&result.ok){state.selectedUid=null;state.tapUid=null;state.tapAt=0;render({snapshot:state.snapshot,ensureVisible:true});return true}
+    render({snapshot:state.snapshot});return false
+  }
+
   function open(){
     if(state.open){render({ensureVisible:true,previewUid:state.selectedUid});ui.close.focus();return}
     bridge.closeLegacy();
     clearDrag();
     state.open=true;
     state.tapUid=null;
+    state.tapAt=0;
+    clearActionConfirmation();
     state.hoverUid=null;
     state.previousFocus=document.activeElement;
     overlay.classList.add('show');
@@ -241,6 +264,7 @@
     state.hoverUid=null;
     state.open=false;
     if(state.unlockTimer){clearTimeout(state.unlockTimer);state.unlockTimer=0;state.equipLocked=false}
+    clearActionConfirmation();state.tapUid=null;state.tapAt=0;
     bridge.flush&&bridge.flush();
     overlay.classList.remove('show');
     overlay.setAttribute('aria-hidden','true');
@@ -253,10 +277,12 @@
     if(!card)return;
     let uid=card.dataset.uid,item=state.snapshot.gear.find(entry=>entry.uid===uid);
     if(!item)return;
-    let secondTap=coarsePointer()&&state.tapUid===uid&&state.selectedUid===uid;
+    let now=performance.now(),secondTap=coarsePointer()&&state.tapUid===uid&&state.selectedUid===uid&&now-state.tapAt<=340;
     state.selectedUid=uid;
-    if(secondTap){equipSelected();return}
+    clearActionConfirmation();
+    if(secondTap){state.tapUid=null;state.tapAt=0;equipSelected();return}
     state.tapUid=coarsePointer()?uid:null;
+    state.tapAt=coarsePointer()?now:0;
     render({previewUid:uid})
   }
 
@@ -336,7 +362,7 @@
   });
   overlay.addEventListener('dragleave',event=>{if(state.drag&&state.drag.target&&!state.drag.target.contains(event.relatedTarget))setDragTarget(null)});
   overlay.addEventListener('pointerdown',event=>{if(event.target===overlay)close()});
-  ui.detail.addEventListener('click',event=>{if(event.target.closest('#inventoryV2Equip'))equipSelected()});
+  ui.detail.addEventListener('click',event=>{if(event.target.closest('#inventoryV2Equip'))equipSelected();else if(event.target.closest('#inventoryV2Sell'))disposeSelected('sell');else if(event.target.closest('#inventoryV2Salvage'))disposeSelected('salvage')});
   ui.slots.addEventListener('click',event=>{
     let slot=event.target.closest('.inventoryV2Slot');
     if(!slot)return;

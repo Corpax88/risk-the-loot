@@ -97,7 +97,7 @@ assert.equal(migrated.playtest.runs[0].items>0,!safeExtract,'run history did not
 assert(Object.values(migrated.blueprints).reduce((sum,v)=>sum+v.copies,0)>11,'recovered relics did not persist');
 if(safeExtract){
   assert.equal(elements.resultDepth.textContent,'2','manual safe extraction did not finish on floor two');
-  assert(migrated.playtest.runs[0].time>=55,'safe path arrived before the intended pacing milestone');
+  assert(migrated.playtest.runs[0].time>=32,'safe path arrived before the intended pacing milestone');
   assert.equal(migrated.cores,2,'safe extraction incorrectly granted a boss seal');
   assert(migrated.level>1,'safe extraction lost XP already earned from normal enemies');
   assert.equal(Number(elements.resultBossXp.textContent),0,'safe extraction incorrectly reported boss XP');
@@ -105,7 +105,7 @@ if(safeExtract){
   elements.closeResult.click();
 }else{
   let expectedRoute=furnaceRoute?'furnace':'dynamo',expectedReward=furnaceRoute?'thermal':'aegis';
-  assert(migrated.playtest.runs[0].time>=280,'boss path skipped the pacing curve');
+  assert(migrated.playtest.runs[0].time>=150,'boss path skipped the pacing curve');
   assert(migrated.stats.bosses>=(pushAfterBoss?2:1),'boss victory did not persist');
   assert(migrated.level>=2,'boss victory did not advance Pappa level');
   assert(migrated.gear.some(gear=>sandbox.__blueprintTest.gearDefinition(gear).setId),'boss victory did not secure set gear');

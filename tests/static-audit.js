@@ -99,7 +99,7 @@ assert(script.includes('REGULAR_ENEMY_DAMAGE_SCALE=.82')&&script.includes('map.e
 assert(script.includes("damage:((isTyrant?20:isLagoon?18:18)+riskTier*1.5)*levelScale.damage*map.bossDamage"),'Champion damage must remain independent from regular-enemy scaling');
 assert(script.includes('fan=(e.elite||depth>=3)'),'Gunner fan-volley variation is missing');
 assert(!/v0\.[23456]\.\d/.test(html+css+script),'stale release version found');
-assert(script.includes('DEPTH_THRESHOLDS=[0,55,120,195,280]'),'expedition pacing is missing');
+assert(script.includes('DEPTH_THRESHOLDS=[0,32,68,108,150]')&&script.includes('function enemySpawningLocked()')&&script.includes('function lockEnemySpawning()'),'boss pacing or spawn locking is missing');
 assert(script.includes('BOSS_SCHEMATICS')&&script.includes('pendingWardenReward'),'permanent boss rewards are missing');
 assert(script.includes('burstVolleyBonus')&&script.includes('platingProtection'),'meaningful fractional Blueprint mastery is missing');
 assert(html.includes('id="resultTime"')&&html.includes('id="routeProgressFill"')&&html.includes('id="wardenTechGrid"'),'playtest readout, route progress, or schematic bench is missing');

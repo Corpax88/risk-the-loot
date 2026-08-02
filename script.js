@@ -45,14 +45,10 @@
     collapse:loadImage('assets/black-hole-vortex-collapse-v2.png'),
     burst:loadImage('assets/black-hole-vortex-burst-v2.png')
   };
-  const blackHoleGearAtlas=loadImage('assets/black-hole-gear-icons-v1.png');
   const blackHoleDropAtlas=loadImage('assets/black-hole-gear-drops-v1.png');
-  const stormcallerGearAtlas=loadImage('assets/stormcaller-gear-icons-v1.png');
   const stormcallerDropAtlas=loadImage('assets/stormcaller-gear-drops-v1.png');
-  const lavaGearAtlas=loadImage('assets/lava-gear-icons-v1.png');
   const lavaDropAtlas=loadImage('assets/lava-gear-drops-v1.png');
   const handlavaHitSplashSprite=loadImage('assets/handlava-hit-splash-v1.png');
-  const natureGearAtlas=loadImage('assets/nature-gear-icons-v1.png');
   const natureDropAtlas=loadImage('assets/nature-gear-drops-v1.png');
   const ancientEntSprite=loadImage('assets/ancient-ent-v1.png');
   const natureRootTrapSprite=loadImage('assets/nature-root-trap-v1.png');
@@ -63,16 +59,11 @@
     for(const phase of ['idle','extend','grab','swing','throw','retract'])handlavaSprites[phase]=loadImage('assets/handlava-'+phase+'-v1.png');
     return handlavaSprites
   }
-  const enemyAtlas=typeof Image==='function'?new Image():document.createElement('img');
-  enemyAtlas.src='assets/pappa-hammer-enemies.png';
-  const bossAtlas=typeof Image==='function'?new Image():document.createElement('img');
-  bossAtlas.src='assets/pappa-hammer-bosses.png';
+  const enemyAtlas=loadImage('assets/pappa-hammer-enemies.png');
+  const bossAtlas=loadImage('assets/pappa-hammer-bosses.png');
   const skyglassLeviathanImage=loadImage('assets/bosses/skyglass-leviathan.png');
-  const gearItemAtlas=loadImage('assets/gear-items-atlas.png');
   const gearDropAtlas=loadImage('assets/gear-drops-atlas.png');
-  const setGearAtlas=loadImage('assets/set-gear-atlas.png');
   const setGearDropAtlas=loadImage('assets/set-gear-drops.png');
-  const legendaryGearAtlas=loadImage('assets/legendary-gear-atlas.png');
   const legendaryDropAtlas=loadImage('assets/legendary-gear-drops.png');
   const DREAMWORLD_ROOT='assets/environment/dreamworld/';
   const dreamworldGround=loadImage(DREAMWORLD_ROOT+'dreamworld-ground-tile.png');

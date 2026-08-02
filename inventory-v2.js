@@ -158,6 +158,12 @@
     ui.detail.innerHTML='<div class="inventoryV2InspectArt">'+item.art+'</div><div class="inventoryV2InspectTitle"><small>'+item.rarityName+' &middot; '+item.slotName+'</small><h2>'+item.name+'</h2><span class="inventoryV2SelectionSummary"><b>'+item.power+' POWER</b><em class="'+powerTone+'">'+(item.equipped?'EQUIPPED':(powerDelta>0?'+':'')+powerDelta+' VS WORN')+'</em></span>'+(set?'<span class="inventoryV2SelectionSet">'+set.name+' &middot; '+set.candidate+'/5 &middot; '+(set.candidate>=5?'FULL SET':nextBonusText(set.next))+'</span>':'')+'</div><div class="inventoryV2Comparison"><header><small>VS EQUIPPED</small><b>'+(comparison?comparison.wornName:'EMPTY SLOT')+'</b></header>'+rows+'</div>'+(set?'<div class="inventoryV2Set"><span><small>'+set.name+' SET</small><b>'+set.candidate+'/5</b></span><i><em style="width:'+(set.candidate/5*100)+'%"></em></i><p>'+(set.next?set.next.label+' &middot; '+set.next.effect:'FULL SET ACTIVE')+'</p></div>':'')+'<button id="inventoryV2Equip" class="inventoryV2Equip" type="button" '+(state.equipLocked?'disabled':'')+'>'+action+'</button>'
   }
 
+  function renderCharacter(snapshot){
+    ui.hero.style.backgroundImage=snapshot.characterImage||'';
+    if(snapshot.backdropSetId)ui.portrait.dataset.inventoryBackdrop=snapshot.backdropSetId;
+    else ui.portrait.removeAttribute('data-inventory-backdrop')
+  }
+
   function render(options){
     options=options||{};
     state.snapshot=options.snapshot||bridge.snapshot(options.previewUid);
@@ -167,7 +173,7 @@
     renderStats(state.snapshot);
     renderGrid(state.snapshot,list);
     renderDetail(state.snapshot);
-    ui.hero.style.backgroundImage=state.snapshot.characterImage||'';
+    renderCharacter(state.snapshot);
     ui.sort.textContent='SORT: '+sortNames[state.sort];
     state.renderCount++
   }
@@ -288,16 +294,14 @@
     let card=event.target.closest('.inventoryV2Card');
     if(!card||state.hoverUid===card.dataset.uid)return;
     state.hoverUid=card.dataset.uid;
-    let preview=bridge.snapshot(state.hoverUid).characterImage;
-    if(preview)ui.hero.style.backgroundImage=preview
+    renderCharacter(bridge.snapshot(state.hoverUid))
   });
   ui.grid.addEventListener('pointerout',event=>{
     if(event.pointerType==='touch'||state.drag)return;
     let card=event.target.closest('.inventoryV2Card');
     if(!card||card.contains(event.relatedTarget))return;
     state.hoverUid=null;
-    let preview=bridge.snapshot(state.selectedUid).characterImage;
-    if(preview)ui.hero.style.backgroundImage=preview
+    renderCharacter(bridge.snapshot(state.selectedUid))
   });
   ui.grid.addEventListener('dragstart',event=>{
     let card=event.target.closest('.inventoryV2Card');

@@ -54,3 +54,22 @@
   .inventoryV2Detail{grid-template-columns:48px minmax(0,1fr) 76px}.inventoryV2Equip{font-size:7px}
 }
 .inventoryV2DragGhost{position:fixed;left:-10000px;top:-10000px;z-index:-1;overflow:hidden;pointer-events:none}.inventoryV2Card.dragging{opacity:.55}.inventoryV2Slot.dragTarget,.inventoryV2Portrait.dragTarget{outline:2px solid var(--item-color,#d6aa58);outline-offset:-3px}
+
+/* Supplied set scenes are presentation-only and never affect the Gear 2.0 renderer. */
+.inventoryV2Portrait[data-inventory-backdrop]{
+  isolation:isolate;
+  background-color:#07090a;
+  background-image:linear-gradient(180deg,#05070a16 0%,#05070a35 62%,#05070a9c 100%),var(--inventory-set-backdrop);
+  background-repeat:no-repeat;
+  background-position:center,center var(--inventory-set-backdrop-y,55%);
+  background-size:cover;
+}
+.inventoryV2Portrait[data-inventory-backdrop] .inventoryV2Hero{z-index:1}
+.inventoryV2Portrait[data-inventory-backdrop]:after{z-index:1}
+
+@media(max-width:720px){
+  .inventoryV2Portrait[data-inventory-backdrop]{
+    background-position:center,center var(--inventory-set-backdrop-mobile-y,62%);
+    background-size:100% auto;
+  }
+}

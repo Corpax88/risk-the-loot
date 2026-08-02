@@ -3225,3 +3225,49 @@ button:focus-visible{outline-color:#f4ead6}
 #gearPanel .gearPreviewing.gearLegendaryPreview .gearCharacterHero{
   filter:drop-shadow(0 17px 14px #000c) drop-shadow(0 0 12px var(--preview-color,#d6aa58));
 }
+
+/* Set-specific Armory stages. The supplied art stays behind the paper doll and UI. */
+[data-inventory-backdrop="blackHole"]{
+  --inventory-set-backdrop:url("assets/inventory/set-backdrops/black-hole.png");
+  --inventory-set-backdrop-y:56%;
+  --inventory-set-backdrop-mobile-y:64%;
+}
+[data-inventory-backdrop="stormrunner"]{
+  --inventory-set-backdrop:url("assets/inventory/set-backdrops/stormcaller.png");
+  --inventory-set-backdrop-y:65%;
+  --inventory-set-backdrop-mobile-y:72%;
+}
+[data-inventory-backdrop="lavaSet"]{
+  --inventory-set-backdrop:url("assets/inventory/set-backdrops/lava.png");
+  --inventory-set-backdrop-y:53%;
+  --inventory-set-backdrop-mobile-y:58%;
+}
+[data-inventory-backdrop="natureSet"]{
+  --inventory-set-backdrop:url("assets/inventory/set-backdrops/nature.png");
+  --inventory-set-backdrop-y:51%;
+  --inventory-set-backdrop-mobile-y:57%;
+}
+#gearPanel .gearCharacterStage[data-inventory-backdrop]{
+  isolation:isolate;
+  background-color:#07090a!important;
+  background-image:
+    linear-gradient(180deg,#05070a10 0%,#05070a28 58%,#05070a94 100%),
+    var(--inventory-set-backdrop)!important;
+  background-repeat:no-repeat!important;
+  background-position:center,center var(--inventory-set-backdrop-y,55%)!important;
+  background-size:cover!important;
+}
+#gearPanel .gearCharacterStage[data-inventory-backdrop] .gearCharacterHalo,
+#gearPanel .gearCharacterStage[data-inventory-backdrop] .gearCharacterHero,
+#gearPanel .gearCharacterStage[data-inventory-backdrop] .equipmentOrbitSlots,
+#gearPanel .gearCharacterStage[data-inventory-backdrop] .gearPreviewName,
+#gearPanel .gearCharacterStage[data-inventory-backdrop] .gearSetAwaken{
+  z-index:1;
+}
+
+@media(max-width:900px){
+  #gearPanel .gearCharacterStage[data-inventory-backdrop]{
+    background-position:center,center var(--inventory-set-backdrop-mobile-y,62%)!important;
+    background-size:100% auto!important;
+  }
+}

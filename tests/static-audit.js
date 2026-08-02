@@ -144,7 +144,7 @@ assert(!/\.pappaHammerBase\{[^}]*background(?:-image)?:/.test(css),'obsolete def
 assert(!html.includes('id="baseGearPreview"')&&!html.includes('id="gearCharacterPreview"')&&!script.includes('renderGearLayers'),'obsolete paper-doll overlay hierarchy is still present');
 assert(html.includes('id="gearLockerButton"')&&html.includes('id="gearGrid"')&&html.includes('class="gearCharacterHero"'),'Gear Locker or live character preview is missing');
 assert(html.includes('id="gearTurnLeft"')&&html.includes('id="gearTurnRight"')&&html.includes('id="gearSetSummary"')&&script.includes('updateGearTurntable'),'rotating preview or set summary is missing');
-assert(html.includes('id="gearRarityFilters"')&&html.includes('id="sellFilteredGear"')&&script.includes('filteredGearSaleSummary')&&script.includes('sellFilteredGear'),'protected filtered gear sale is missing');
+assert(html.includes('id="gearRarityFilters"')&&html.includes('id="sellFilteredGear"')&&script.includes('selectedBulkGear')&&script.includes('executeBulkGearAction')&&script.includes('sellFilteredGear'),'protected bulk gear sale is missing');
 assert(html.includes('id="gearInventorySummary"')&&html.includes('id="gearRaritySummary"')&&html.includes('id="gearSortButton"')&&html.includes('id="gearDetail"'),'inventory count, rarity summary, sorting, or item details are missing');
 assert(html.includes('id="gearHoverPreview"')&&script.includes('function showGearHover')&&script.includes('function bindGearHover')&&css.includes('.gearHoverPreview.show'),'per-item hover and focus preview is missing');
 assert(html.includes('id="helpTooltip"')&&script.includes('function bindContextHelp')&&script.includes('HELP_COPY')&&css.includes('.helpTooltip.show'),'universal contextual help is missing');

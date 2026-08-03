@@ -3394,3 +3394,22 @@ button:focus-visible{outline-color:#f4ead6}
 }
 @media(max-width:360px){.gearBulkActionBar{grid-template-columns:54px repeat(3,minmax(0,1fr))}.gearBulkActionBar output{font-size:5.5px}.gearBulkAction span{font-size:6px}}
 @media(prefers-reduced-motion:reduce){.gearBulkActionBar{transition:none}.gearBagSlot.bulkSelected{animation:none!important}}
+
+/* Inventory-only camera: frame the atlas without touching source pixels or gear anchors. */
+#gearPanel .gearCharacterCamera{
+  --inventory-camera-zoom:1.125;
+  --inventory-camera-x:-1%;
+  --inventory-camera-y:.5%;
+  position:absolute;
+  z-index:2;
+  inset:0;
+  overflow:visible;
+  pointer-events:none;
+  transform:translate3d(var(--inventory-camera-x),var(--inventory-camera-y),0) scale(var(--inventory-camera-zoom));
+  transform-origin:50% 100%;
+}
+#gearPanel .gearCharacterCamera .gearCharacterHero{z-index:1;bottom:1%;max-width:455px;max-height:455px}
+@media(max-width:900px){
+  #gearPanel .gearCharacterCamera{--inventory-camera-zoom:1.12;--inventory-camera-x:-.5%;--inventory-camera-y:0%;transform-origin:50% 100%}
+  #gearPanel .gearCharacterCamera .gearCharacterHero{bottom:0}
+}

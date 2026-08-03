@@ -6,12 +6,32 @@
   function syncStyle(element,property,value){let style=element.style,current=typeof style.getPropertyValue==='function'?style.getPropertyValue(property):style[property];if(current===value)return;if(typeof style.setProperty==='function')style.setProperty(property,value);else style[property]=value}
   function mixHexColor(from,to,amount){let parse=value=>{let hex=String(value||'#000000').replace('#','');if(hex.length===3)hex=hex.split('').map(part=>part+part).join('');let number=parseInt(hex.slice(0,6),16);return Number.isFinite(number)?[(number>>16)&255,(number>>8)&255,number&255]:[0,0,0]},a=parse(from),b=parse(to),t=Math.max(0,Math.min(1,Number(amount)||0));return '#'+a.map((value,index)=>Math.round(value+(b[index]-value)*t).toString(16).padStart(2,'0')).join('')}
   function loadImage(src){let image=typeof Image==='function'?new Image():document.createElement('img');image.src=src;return image}
-  const pappaHammerImage=loadImage('assets/pappa-hammer-player.png');
-  const pappaHammerSprites={
+  const pappaHammerImage=loadImage('assets/pappa-hammer-player.png?v=20260803');
+  const pappaHammerMotionGuides={
     idle:loadImage('assets/pappa-hammer-idle-v2.png'),
     run:loadImage('assets/pappa-hammer-run-v2.png'),
     attack:loadImage('assets/pappa-hammer-attack-v2.png')
   };
+  const pappaHammerSprites=Object.assign({},pappaHammerMotionGuides);
+  let pappaHammerAssetRevision=0;
+  function imageAlphaBounds(image,sx,sy,sw,sh){
+    let canvas=document.createElement('canvas'),layer=canvas.getContext('2d',{willReadFrequently:true});canvas.width=sw;canvas.height=sh;layer.drawImage(image,sx,sy,sw,sh,0,0,sw,sh);let pixels=layer.getImageData(0,0,sw,sh).data,minX=sw,minY=sh,maxX=-1,maxY=-1;
+    for(let y=0;y<sh;y+=2)for(let x=0;x<sw;x+=2)if(pixels[(y*sw+x)*4+3]>10){if(x<minX)minX=x;if(y<minY)minY=y;if(x>maxX)maxX=x;if(y>maxY)maxY=y}
+    return maxX<0?null:{x:minX,y:minY,w:maxX-minX+2,h:maxY-minY+2}
+  }
+  function buildPappaHammerAtlas(pose,sourceBounds){
+    let guide=pappaHammerMotionGuides[pose],atlas=document.createElement('canvas'),layer=atlas.getContext('2d');atlas.width=2048;atlas.height=1024;layer.imageSmoothingEnabled=true;layer.imageSmoothingQuality='high';
+    for(let frame=0;frame<8;frame++){
+      let cellX=frame%4*512,cellY=Math.floor(frame/4)*512,target=imageAlphaBounds(guide,cellX,cellY,512,512);if(!target)continue;
+      let fit=Math.min(target.w/sourceBounds.w,target.h/sourceBounds.h),width=sourceBounds.w*fit,height=sourceBounds.h*fit,x=cellX+target.x+(target.w-width)/2,y=cellY+target.y+target.h-height;
+      layer.drawImage(pappaHammerImage,sourceBounds.x,sourceBounds.y,sourceBounds.w,sourceBounds.h,x,y,width,height)
+    }
+    return atlas
+  }
+  function refreshPappaHammerAssetAtlases(){
+    if(!imageReady(pappaHammerImage)||!Object.values(pappaHammerMotionGuides).every(imageReady))return false;let sourceBounds=imageAlphaBounds(pappaHammerImage,0,0,pappaHammerImage.naturalWidth,pappaHammerImage.naturalHeight);if(!sourceBounds)return false;
+    for(const pose of Object.keys(pappaHammerSprites))pappaHammerSprites[pose]=buildPappaHammerAtlas(pose,sourceBounds);pappaHammerAssetRevision++;paperDollKey='';paperDollPreviewUrl='';paperDollAtlases={idle:null,run:null,attack:null};paperDollPreviewCache.clear();refreshPaperDoll();return true
+  }
   const paperDollSetSprites={
     hammerChoir:{
       idle:loadImage('assets/hammer-choir-idle-v1.png'),
@@ -486,6 +506,8 @@
   let spinHeld=false,spinControlLightning=false;
   let gearUidCounter=0,gearTurnAngle=0,gearTurnDrag=null;
   let save=loadSave(),mode='base',paused=false,testFrameFrozen=false,settingsWasRun=false,abandonArmed=false,devResetArmed=false;
+  let equipmentRevision=0,equipmentMutationDepth=0,equipmentMutationDirty=false;
+  save.equipped=observeEquipmentState(save.equipped);
   const xpPresentation={displayTotal:0,targetTotal:0,boundary:null,pendingAmount:0,pendingKind:'enemy',batchDeadline:0,noticeUntil:0,levelNoticeUntil:0,levelNoticeCount:0,levelPulseUntil:0,lastLevel:-1,lastCurrent:-1,lastRequired:-1,lastPercent:-1,lastCapped:null};
   const xpTelemetry={awards:0,duplicateSkips:0,hudUpdates:0,notificationBatches:0,maxActiveVisuals:0,persistWrites:0};
   let xpPersistTimer=0;
@@ -740,9 +762,27 @@
   }
   function applyPaperDollAtlases(next,key){paperDollAtlases=next;paperDollKey=key;paperDollPreviewUrl=next.idle&&typeof next.idle.toDataURL==='function'?'url("'+next.idle.toDataURL('image/png')+'")':'url("'+next.idle.src+'")';ui.pappaHammerBaseSprite.style.backgroundImage=paperDollPreviewUrl;ui.gearCharacterHero.style.backgroundImage=paperDollPreviewUrl;if(ui.combatPortraitSprite)ui.combatPortraitSprite.style.backgroundImage=paperDollPreviewUrl;ui.gearCharacterHero.dataset.gearVisualKey=paperDollLoadoutKey()}
   function refreshPaperDoll(){
-    let fullSetId=equippedFullSetId(),setReady=paperDollSetReady(fullSetId),key=(setReady?'skin:'+fullSetId+':':'paper:')+paperDollLoadoutKey();if(key===paperDollKey&&paperDollAtlases.idle)return;if(!setReady&&!paperDollAssetsReady())return;
+    let fullSetId=equippedFullSetId(),setReady=paperDollSetReady(fullSetId),key=(setReady?'skin:'+fullSetId+':':'paper:'+pappaHammerAssetRevision+':')+paperDollLoadoutKey();if(key===paperDollKey&&paperDollAtlases.idle)return;if(!setReady&&!paperDollAssetsReady())return;
     if(setReady){gearPerf.paperDollBuilds++;applyPaperDollAtlases(paperDollSetSprites[fullSetId],key);return}
     let next={};gearPerf.paperDollBuilds++;for(const pose of PAPER_DOLL_POSES)next[pose]=composePaperDollPose(pose);applyPaperDollAtlases(next,key)
+  }
+  function observeEquipmentState(source){
+    return new Proxy(source||{}, {
+      set(target,slot,value){
+        let next=value==null?null:String(value);if(target[slot]===next)return true;target[slot]=next;markEquipmentChanged();return true
+      },
+      deleteProperty(target,slot){if(!Object.prototype.hasOwnProperty.call(target,slot))return true;delete target[slot];markEquipmentChanged();return true}
+    })
+  }
+  function markEquipmentChanged(){equipmentMutationDirty=true;if(!equipmentMutationDepth)synchronizeEquipmentPreview()}
+  function batchEquipmentChanges(work){
+    equipmentMutationDepth++;try{return work()}finally{equipmentMutationDepth--;if(!equipmentMutationDepth&&equipmentMutationDirty)synchronizeEquipmentPreview()}
+  }
+  function synchronizeEquipmentPreview(){
+    if(!equipmentMutationDirty)return;equipmentMutationDirty=false;equipmentRevision++;paperDollKey='';paperDollPreviewUrl='';paperDollAtlases={idle:null,run:null,attack:null};paperDollPreviewCache.clear();perfState.gearKey='';perfState.gearValue=null;cargoStaticKey='';cargoStaticValue=null;hoverGearUid=null;
+    refreshPaperDoll();
+    if(!paperDollPreviewUrl){let fallback=pappaHammerSprites.idle&&pappaHammerSprites.idle.src?'url("'+pappaHammerSprites.idle.src+'")':'';paperDollPreviewUrl=fallback;if(fallback){ui.pappaHammerBaseSprite.style.backgroundImage=fallback;ui.gearCharacterHero.style.backgroundImage=fallback;if(ui.combatPortraitSprite)ui.combatPortraitSprite.style.backgroundImage=fallback}}
+    restorePaperDollPreview();ui.gearCharacterHero.dataset.gearVisualKey=paperDollLoadoutKey()
   }
   function paperDollPreviewImage(gear){
     let item=gearDefinition(gear);if(!item)return '';
@@ -1180,14 +1220,14 @@
   }
   function equipGear(uid){
     let gear=save.gear.find(entry=>entry.uid===uid),item=gearDefinition(gear);if(!gear||!item)return false;
-    let equipping=save.equipped[item.slot]!==uid,record=beginEquipPerf(gear,item,equipping),visualPreview=equipPerfStep(record,'preview',()=>paperDollPreviewImage(gear)),beforeTier=item.setId?gearSignatureTier(item.setId):0,beforeFull=equippedFullSetId();
-    equipPerfStep(record,'state',()=>{save.equipped[item.slot]=equipping?uid:null;selectedGearUid=uid;gearTapUid=null;paperDollKey='';paperDollPreviewCache.clear()});equipPerfMark(record,'state');
+    let equipping=save.equipped[item.slot]!==uid,record=beginEquipPerf(gear,item,equipping),beforeTier=item.setId?gearSignatureTier(item.setId):0,beforeFull=equippedFullSetId();
+    equipPerfStep(record,'state',()=>{save.equipped[item.slot]=equipping?uid:null;selectedGearUid=uid;gearTapUid=null});equipPerfMark(record,'state');
     let afterTier=item.setId?gearSignatureTier(item.setId):0,afterFull=equippedFullSetId(),awakened=equipping&&afterTier>beforeTier,fullSetActivated=equipping&&afterFull===item.setId&&beforeFull!==afterFull;
-    equipPerfStep(record,'saveQueue',()=>scheduleEquipPersist(record));equipPerfMark(record,'saveQueued');refreshEquippedGearUI(record,visualPreview);ui.gearCharacterStage.classList.remove('gearPreviewing','gearLegendaryPreview');
+    equipPerfStep(record,'saveQueue',()=>scheduleEquipPersist(record));equipPerfMark(record,'saveQueued');refreshEquippedGearUI(record);ui.gearCharacterStage.classList.remove('gearPreviewing','gearLegendaryPreview');
     equipPerfStep(record,'feedback',()=>{gearQuickFeedback(uid,item.slot,LOOT_RARITIES[item.rarity],!equipping);gearHaptic(equipping?(item.rarity==='legendary'?[14,24,18]:12):8);if(equipping)playGearEquipEffect(gear,awakened,fullSetActivated);else gearSlotFeedback(item.slot,LOOT_RARITIES[item.rarity],false)});
     let rarity=LOOT_RARITIES[item.rarity],activeVisualSet=equippedFullSetId();record.visualSetId=activeVisualSet||null;record.usesProductionSkin=paperDollSetReady(activeVisualSet);equipPerfStep(record,'sound',()=>sound(awakened||equipping&&rarity.rank===4?'legendary':equipping&&rarity.rank>=2?'rare':'upgrade'));finishEquipPerf(record);return equipping
   }
-  function unequipGearSlot(slot){let gear=equippedGear(slot),item=gearDefinition(gear);if(!gear||!item||!GEAR_SLOTS.includes(slot)||save.equipped[slot]!==gear.uid)return false;save.equipped[slot]=null;selectedGearUid=gear.uid;gearTapUid=null;gearTapAt=0;paperDollKey='';paperDollPreviewCache.clear();persist();refreshEquippedGearUI();gearQuickFeedback(gear.uid,slot,LOOT_RARITIES[item.rarity],true);gearHaptic(8);sound('upgrade');return true}
+  function unequipGearSlot(slot){let gear=equippedGear(slot),item=gearDefinition(gear);if(!gear||!item||!GEAR_SLOTS.includes(slot)||save.equipped[slot]!==gear.uid)return false;save.equipped[slot]=null;selectedGearUid=gear.uid;gearTapUid=null;gearTapAt=0;persist();refreshEquippedGearUI();gearQuickFeedback(gear.uid,slot,LOOT_RARITIES[item.rarity],true);gearHaptic(8);sound('upgrade');return true}
   function sellGear(uid){return requestGearAction(uid,'sell')}
   function salvageGear(uid){return requestGearAction(uid,'salvage')}
   function renderSellFilteredButton(){renderGearBulkActions()}
@@ -1198,9 +1238,9 @@
   function renderBaseGear(){gearPerf.baseRenders++;let equipped=[];ui.baseLoadout.innerHTML='';for(const slot of GEAR_SLOTS){let gear=equippedGear(slot),item=gearDefinition(gear),meta=GEAR_SLOT_META[slot],rarity=item&&LOOT_RARITIES[item.rarity],cell=document.createElement('i');cell.className='baseGearSlot'+(item?' filled rarity'+rarity.rank:'');cell.title=item?meta.name+': '+item.name+' \u00B7 Level '+gear.level:meta.name+': Empty';if(item){equipped.push(gear);cell.style.setProperty('--gear-color',rarity.color);cell.innerHTML=gearArtMarkup(gear,'micro');cell.tabIndex=0;bindGearHover(cell,gear)}else cell.textContent='\u00B7';ui.baseLoadout.appendChild(cell)}let highest=equipped.slice().sort(compareGearPriority)[0],highestDef=gearDefinition(highest),sets=equippedSetCounts(),bestSet=Object.keys(sets).sort((a,b)=>sets[b]-sets[a])[0],fullSetId=equippedFullSetId(),profile=equippedRarityProfile();applyLoadoutRarity(ui.gearCharacterStage,profile);applyLoadoutRarity(ui.pappaHammerBase,profile);applyLoadoutSetVisual(ui.gearCharacterStage,fullSetId);applyLoadoutSetVisual(ui.pappaHammerBase,fullSetId);applyInventoryBackdrop(ui.gearCharacterStage,inventoryBackdropSetId());ui.gearLoadoutName.textContent=equipped.length+'/5 EQUIPPED'+(bestSet&&sets[bestSet]>=2?' \u00B7 '+SET_BY_ID[bestSet].name:highestDef?' \u00B7 '+LOOT_RARITIES[highestDef.rarity].name:'');ui.gearEquippedCount.textContent=equipped.length+' / 5';ui.gearPreviewName.textContent=highestDef?highestDef.name.toUpperCase():'FIELD LOADOUT';ui.gearPreviewName.style.setProperty('--loadout-color',profile.color);let stats=gearStats();ui.baseGearStats.innerHTML='<span tabindex="0" data-help-title="Health" data-help="Maximum damage Pappa can survive before an expedition ends."><b>'+maxHp()+'</b> HP</span><span tabindex="0" data-help-title="Hammer Damage" data-help="Base damage dealt by close-range hammer impacts before critical hits and relic bonuses."><b>'+shotDamage()+'</b> DMG</span><span tabindex="0" data-help-title="Pickup Reach" data-help="Distance from which nearby coins, caches and pickups are drawn toward Pappa."><b>'+magnetRange()+'</b> REACH</span><span tabindex="0" data-help-title="Critical Chance" data-help="Chance for a melee impact to deal amplified critical damage."><b>'+Math.round(stats.crit*100)+'%</b> CRIT</span>';refreshPaperDoll()}
   function renderGearFilters(){ui.gearFilters.innerHTML='';let filterNames={hat:'HELMET',scarf:'NECK',coat:'CHEST + GLOVES',hammer:'HAMMER',boots:'BOOTS'};for(const slot of ['all',...GEAR_SLOTS]){let button=document.createElement('button'),meta=slot==='all'?{name:'ALL GEAR',icon:'\u2606'}:Object.assign({},GEAR_SLOT_META[slot],{name:filterNames[slot]}),count=slot==='all'?inventoryCount():save.gear.filter(gear=>gearDefinition(gear).slot===slot).length;button.className=gearFilter===slot?'active':'';button.setAttribute('aria-pressed',gearFilter===slot?'true':'false');button.setAttribute('data-help-title',meta.name);button.setAttribute('data-help','Show '+(slot==='all'?'every secured item':meta.name.toLowerCase()+' items')+' in the bag. '+count+' currently match.');button.innerHTML='<i>'+meta.icon+'</i><span>'+meta.name+'</span><small>'+count+'</small>';button.addEventListener('click',()=>setGearFilter(slot));ui.gearFilters.appendChild(button)}ui.gearRarityFilters.innerHTML='';for(const rarity of ['all',...Object.keys(LOOT_RARITIES)]){let button=document.createElement('button'),count=rarity==='all'?inventoryCount():save.gear.filter(gear=>gearDefinition(gear).rarity===rarity).length,label=rarity==='all'?'ALL':LOOT_RARITIES[rarity].name;button.className=gearRarityFilter===rarity?'active':'';button.textContent=label+'  '+count;button.setAttribute('aria-pressed',gearRarityFilter===rarity?'true':'false');button.setAttribute('data-help-title',label+' Rarity');button.setAttribute('data-help','Filter the bag to '+(rarity==='all'?'all rarity grades.':'only '+label+' gear. '+count+' secured item'+(count===1?' matches.':'s match.')));if(rarity!=='all')button.style.setProperty('--filter-color',LOOT_RARITIES[rarity].color);button.addEventListener('click',()=>setGearRarityFilter(rarity));ui.gearRarityFilters.appendChild(button)}}
   function renderGearRaritySummary(){gearPerf.rarityRenders++;ui.gearRaritySummary.innerHTML='';for(const id of Object.keys(LOOT_RARITIES)){let rarity=LOOT_RARITIES[id],count=save.gear.filter(gear=>gearDefinition(gear).rarity===id).length,button=document.createElement('button');button.className='rarityCount rarity'+rarity.rank+(gearRarityFilter===id?' active':'');button.style.setProperty('--rarity-color',rarity.color);button.innerHTML='<i></i><span><b>'+count+'</b><small>'+rarity.name+'</small></span>';button.setAttribute('data-help-title',rarity.name+' Gear');button.setAttribute('data-help',count+' '+rarity.name+' item'+(count===1?' is':'s are')+' secured. Select to toggle this rarity filter.');button.addEventListener('click',()=>setGearRarityFilter(gearRarityFilter===id?'all':id));ui.gearRaritySummary.appendChild(button)}}
-  function refreshArmoryCharacter(previewImage){
+  function refreshArmoryCharacter(){
     gearPerf.baseRenders++;let equipped=GEAR_SLOTS.map(equippedGear).filter(Boolean),highest=equipped.slice().sort(compareGearPriority)[0],highestDef=gearDefinition(highest),sets=equippedSetCounts(),bestSet=Object.keys(sets).sort((a,b)=>sets[b]-sets[a])[0],fullSetId=equippedFullSetId(),profile=equippedRarityProfile();
-    applyLoadoutRarity(ui.gearCharacterStage,profile);applyLoadoutSetVisual(ui.gearCharacterStage,fullSetId);applyInventoryBackdrop(ui.gearCharacterStage,inventoryBackdropSetId());ui.gearLoadoutName.textContent=equipped.length+'/5 EQUIPPED'+(bestSet&&sets[bestSet]>=2?' \u00B7 '+SET_BY_ID[bestSet].name:highestDef?' \u00B7 '+LOOT_RARITIES[highestDef.rarity].name:'');ui.gearEquippedCount.textContent=equipped.length+' / 5';ui.gearPreviewName.textContent=highestDef?highestDef.name.toUpperCase():'FIELD LOADOUT';ui.gearPreviewName.style.setProperty('--loadout-color',profile.color);if(previewImage)ui.gearCharacterHero.style.backgroundImage=previewImage;ui.gearCharacterHero.dataset.gearVisualKey=paperDollLoadoutKey()
+    refreshPaperDoll();restorePaperDollPreview();applyLoadoutRarity(ui.gearCharacterStage,profile);applyLoadoutSetVisual(ui.gearCharacterStage,fullSetId);applyInventoryBackdrop(ui.gearCharacterStage,inventoryBackdropSetId());ui.gearLoadoutName.textContent=equipped.length+'/5 EQUIPPED'+(bestSet&&sets[bestSet]>=2?' \u00B7 '+SET_BY_ID[bestSet].name:highestDef?' \u00B7 '+LOOT_RARITIES[highestDef.rarity].name:'');ui.gearEquippedCount.textContent=equipped.length+' / 5';ui.gearPreviewName.textContent=highestDef?highestDef.name.toUpperCase():'FIELD LOADOUT';ui.gearPreviewName.style.setProperty('--loadout-color',profile.color);if(paperDollPreviewUrl)ui.gearCharacterHero.style.backgroundImage=paperDollPreviewUrl;ui.gearCharacterHero.dataset.gearVisualKey=paperDollLoadoutKey()
   }
   function renderGearDetail(gear,copies){
     gearPerf.detailRenders++;ui.gearDetail.innerHTML='';let item=gearDefinition(gear);
@@ -1267,8 +1307,8 @@
     }
     ui.gearEmpty.classList.toggle('show',items.length===0);updateGearToolbarState(items);renderGearSelection()
   }
-  function refreshEquippedGearUI(record,previewImage){
-    gearPerf.incrementalRenders++;equipPerfStep(record,'character',()=>refreshArmoryCharacter(previewImage));equipPerfMark(record,'character');equipPerfStep(record,'turntable',updateGearTurntable);equipPerfStep(record,'stats',renderGearProgressAndStats);equipPerfMark(record,'stats');equipPerfStep(record,'slots',renderGearLoadoutSlots);equipPerfMark(record,'slot');equipPerfStep(record,'sets',renderSetSummary);equipPerfStep(record,'cards',updateGearInventoryStates);equipPerfMark(record,'card');equipPerfStep(record,'comparison',renderGearSelection);equipPerfMark(record,'comparison')
+  function refreshEquippedGearUI(record){
+    gearPerf.incrementalRenders++;equipPerfStep(record,'character',refreshArmoryCharacter);equipPerfMark(record,'character');equipPerfStep(record,'turntable',updateGearTurntable);equipPerfStep(record,'stats',renderGearProgressAndStats);equipPerfMark(record,'stats');equipPerfStep(record,'slots',renderGearLoadoutSlots);equipPerfMark(record,'slot');equipPerfStep(record,'sets',renderSetSummary);equipPerfStep(record,'cards',updateGearInventoryStates);equipPerfMark(record,'card');equipPerfStep(record,'comparison',renderGearSelection);equipPerfMark(record,'comparison')
   }
   function renderGearLocker(){
     gearPerf.fullRenders++;renderBaseGear();updateGearTurntable();renderGearProgressAndStats();renderGearLoadoutSlots();renderSetSummary();renderGearFilters();renderGearRaritySummary();renderGearInventoryArea()
@@ -1448,7 +1488,7 @@
     for(const gear of reportLoot){let stored=save.gear.find(entry=>entry.uid===gear.uid);if(stored)delete stored.atRisk;else{delete gear.atRisk;save.gear.push(gear)}save.lootFound[gear.itemId]=(save.lootFound[gear.itemId]||0)+1}
   }
   function discardAtRiskGear(){
-    let risky=new Set(save.gear.filter(gear=>gear.atRisk).map(gear=>gear.uid));if(!risky.size)return;save.gear=save.gear.filter(gear=>!gear.atRisk);for(const slot of GEAR_SLOTS)if(risky.has(save.equipped[slot])){let backup=runGearEquipBackups[slot];save.equipped[slot]=backup&&save.gear.some(gear=>gear.uid===backup)?backup:null}paperDollKey='';paperDollPreviewCache.clear();refreshPaperDoll()
+    let risky=new Set(save.gear.filter(gear=>gear.atRisk).map(gear=>gear.uid));if(!risky.size)return;save.gear=save.gear.filter(gear=>!gear.atRisk);batchEquipmentChanges(()=>{for(const slot of GEAR_SLOTS)if(risky.has(save.equipped[slot])){let backup=runGearEquipBackups[slot];save.equipped[slot]=backup&&save.gear.some(gear=>gear.uid===backup)?backup:null}})
   }
   function returnBase(survived,status){
     cancelSkillGesture('run ended');spinInputState.activeInstances=0;let dividend=survived&&pendingWardenReward==='dividend'?CORE_DIVIDEND:0,reportScrap=runScrap,reportDepth=expeditionFloor(),reportCargo=cargo.map(m=>Object.assign({},m)),reportLoot=lootManifest().map(entry=>Object.assign({},entry,{stats:Object.assign({},entry.stats)})),itemCount=reportLoot.length,legendaryCount=reportLoot.filter(entry=>gearDefinition(entry).rarity==='legendary').length,reportData={time:Math.round(runTime),kills:runStats?runStats.kills:0,damage:runStats?Math.round(runStats.damage):0,risks:riskTier,bosses:bossRunClears,items:itemCount,legendary:legendaryCount,loot:reportLoot,map:runStats&&runStats.map||save.selectedMap,route,wardenReward:pendingWardenReward,wardenRank:0,xp:Object.assign({enemy:0,elite:0,boss:0,completion:0,total:0,levelsGained:0},runStats&&runStats.xp||{})},newRecord=survived&&reportDepth>save.best,securedCores=survived?bossRunClears:0,wasComplete=save.contractComplete;
@@ -1456,7 +1496,7 @@
       if(BOSS_SCHEMATICS[pendingWardenReward]){let def=BOSS_SCHEMATICS[pendingWardenReward];save.schematics[pendingWardenReward]=Math.min(def.max,schematicLevel(pendingWardenReward)+1);reportData.wardenRank=save.schematics[pendingWardenReward]}
       save.scrap+=reportScrap+dividend;save.best=Math.max(save.best,reportDepth);save.bestRisk=Math.max(save.bestRisk,riskTier);save.stats.extractions++;save.stats.totalScrap+=reportScrap;save.stats.itemsRecovered+=itemCount;save.stats.legendaryRecovered+=legendaryCount;if(securedCores)save.cores+=securedCores;
       secureAtRiskGear(reportLoot);
-      for(const slot of GEAR_SLOTS){if(save.equipped[slot])continue;let recovered=reportLoot.filter(gear=>gearDefinition(gear).slot===slot).sort(compareGearPriority);if(recovered[0])save.equipped[slot]=recovered[0].uid}
+      batchEquipmentChanges(()=>{for(const slot of GEAR_SLOTS){if(save.equipped[slot])continue;let recovered=reportLoot.filter(gear=>gearDefinition(gear).slot===slot).sort(compareGearPriority);if(recovered[0])save.equipped[slot]=recovered[0].uid}})
       for(const m of cargo){if(m.starter&&!m.recoveries)continue;let record=save.blueprints[m.id],recoveries=Math.max(0,Math.floor(m.recoveries||0));record.copies+=recoveries;record.rare+=Math.max(0,Math.floor(m.rareRecoveries||0))}
       paperDollKey='';save.contractComplete=contractReady();notice(itemCount?itemCount+' BOSS GEAR SECURED':'$'+reportScrap+' COINS SECURED','#79a67e')
     }else{discardAtRiskGear();save.stats.losses++;notice(itemCount?itemCount+' BOSS GEAR LOST':'RUN LOOT LOST','#ef5350')}
@@ -1472,7 +1512,7 @@
     if(mode!=='base'||!contractReady()||vaultOpening||ui.contractOverlay.classList.contains('show'))return;vaultOpening=true;vaultRewards=[rollVaultGear()];if(Math.random()<vaultExtraChance())vaultRewards.push(rollVaultGear());vaultRewards.sort(compareGearPriority);ui.vaultCycle.textContent=String(save.vaultCycle+1).padStart(2,'0');ui.vaultEyebrow.textContent='GRAND VAULT  \u00B7  CYCLE '+(save.vaultCycle+1);ui.contractCompleteTitle.textContent='THE GRAND VAULT AWAKENS';ui.vaultDescription.textContent='The seals are turning. Something valuable is waiting inside.';ui.vaultOdds.textContent='GUARANTEED GEAR  \u00B7  '+Math.round(vaultExtraChance()*100)+'% BONUS ITEM';ui.vaultReward.classList.remove('revealed');ui.vaultReward.innerHTML='<span>UNLOCKING THE VAULT</span>';ui.closeContract.disabled=true;ui.vaultClaimLabel.textContent='OPENING...';ui.contractOverlay.classList.remove('revealed');ui.contractOverlay.classList.add('show','opening');sound('upgrade');setTimeout(renderVaultRewards,900)
   }
   function claimContract(){
-    if(vaultOpening&&ui.closeContract.disabled||!vaultRewards.length)return;let legendary=0;for(const gear of vaultRewards){let item=gearDefinition(gear);save.gear.push(gear);save.lootFound[gear.itemId]=(save.lootFound[gear.itemId]||0)+1;save.stats.itemsRecovered++;if(item.rarity==='legendary'){save.stats.legendaryRecovered++;legendary++}if(!save.equipped[item.slot])save.equipped[item.slot]=gear.uid}save.vaultCycle++;save.stats.vaultsOpened++;save.contractSeen=true;save.contractComplete=false;selectedGearUid=vaultRewards[0].uid;paperDollKey='';let count=vaultRewards.length;vaultRewards=[];vaultOpening=false;persist();ui.contractOverlay.classList.remove('show','opening','revealed');refreshBase();notice('GRAND VAULT  \u00B7  '+count+' ITEM'+(count===1?'':'S')+' SECURED',legendary?'#ffc928':'#d6aa58');sound(legendary?'legendary':'rare')
+    if(vaultOpening&&ui.closeContract.disabled||!vaultRewards.length)return;let legendary=0;batchEquipmentChanges(()=>{for(const gear of vaultRewards){let item=gearDefinition(gear);save.gear.push(gear);save.lootFound[gear.itemId]=(save.lootFound[gear.itemId]||0)+1;save.stats.itemsRecovered++;if(item.rarity==='legendary'){save.stats.legendaryRecovered++;legendary++}if(!save.equipped[item.slot])save.equipped[item.slot]=gear.uid}});save.vaultCycle++;save.stats.vaultsOpened++;save.contractSeen=true;save.contractComplete=false;selectedGearUid=vaultRewards[0].uid;let count=vaultRewards.length;vaultRewards=[];vaultOpening=false;persist();ui.contractOverlay.classList.remove('show','opening','revealed');refreshBase();notice('GRAND VAULT  \u00B7  '+count+' ITEM'+(count===1?'':'S')+' SECURED',legendary?'#ffc928':'#d6aa58');sound(legendary?'legendary':'rare')
   }
   function spawnExtractionAmbush(){let amount=Math.min(24,14+expeditionCycle*3+Math.floor(riskTier/2)),types=['rusher','rusher','rusher','shooter','lancer','brute'],anchors=waveSpawnAnchors(2),packId=++waveDirector.packId;for(let i=0;i<amount;i++){let anchor=anchors[i%anchors.length],angle=Math.random()*Math.PI*2,distance=12+Math.random()*54,position=openArenaPosition(anchor.x+Math.cos(angle)*distance,anchor.y+Math.sin(angle)*distance,34),type=types[(i+riskTier)%types.length],enemy=spawnEnemy(i===amount-1&&riskTier>=2,type,{position,packId,packX:anchor.x,packY:anchor.y});if(enemy){enemy.eventReward=0;enemy.spawnGrace=Math.max(enemy.spawnGrace||0,.46)}}shake=Math.max(shake,7);runNotice('FINAL HORDE  \u00B7  KEEP MOVING','#ef746c')}
   function beginExtract(fromBoss){if(mode!=='run'||extracting||bossLootChest||postBossDecision||routeDecision||moduleDecision||paused)return;bossExtraction=!!fromBoss;extracting=fromBoss?4.25:3.25;ui.extractOverlay.classList.add('show');if(fromBoss)spawnExtractionAmbush();else runNotice('KEEP MOVING UNTIL EXTRACTION','#39dc78');sound('pickup')}
@@ -1876,7 +1916,7 @@
   }
   function equipRunGear(gear){
     let item=gearDefinition(gear);if(!item)return false;if(!Object.prototype.hasOwnProperty.call(runGearEquipBackups,item.slot))runGearEquipBackups[item.slot]=save.equipped[item.slot]||null;
-    gear.atRisk=true;if(!save.gear.some(entry=>entry.uid===gear.uid))save.gear.push(gear);save.equipped[item.slot]=gear.uid;registerRunGear(gear,false,player.x,player.y);paperDollKey='';paperDollPreviewCache.clear();refreshPaperDoll();updateHud();return true
+    gear.atRisk=true;if(!save.gear.some(entry=>entry.uid===gear.uid))save.gear.push(gear);save.equipped[item.slot]=gear.uid;registerRunGear(gear,false,player.x,player.y);updateHud();return true
   }
   function keepRunGear(gear){let item=gearDefinition(gear);if(!item)return false;gear.atRisk=true;if(!save.gear.some(entry=>entry.uid===gear.uid))save.gear.push(gear);registerRunGear(gear,false,player.x,player.y);updateHud();return true}
   function renderBossLootReceipt(result,index){
@@ -2915,8 +2955,8 @@
   function devCreateGear(item){let gear=rollGearInstance(item,Math.max(item.minLevel||1,save.level),1.08);save.gear.push(gear);save.lootFound[item.id]=(save.lootFound[item.id]||0)+1;return gear}
   function devGrantGear(equip){
     let [kind,id]=(ui.devGearSelect.value||'').split(':'),items=kind==='set'?SET_ITEMS.filter(item=>item.setId===id):kind==='item'?[LOOT_BY_ID[id]].filter(Boolean):[];if(!items.length){devFeedback('SELECT GEAR FIRST');return}
-    for(const item of items){let gear=devCreateGear(item);if(equip)save.equipped[item.slot]=gear.uid}
-    paperDollKey='';paperDollPreviewCache.clear();persist();refreshBase();if(mode==='run'&&player){applyCargoEffects();player.hp=Math.min(player.hp,player.maxHp);updateHud()}
+    batchEquipmentChanges(()=>{for(const item of items){let gear=devCreateGear(item);if(equip)save.equipped[item.slot]=gear.uid}});
+    persist();refreshBase();if(mode==='run'&&player){applyCargoEffects();player.hp=Math.min(player.hp,player.maxHp);updateHud()}
     let name=kind==='set'&&SET_BY_ID[id]?SET_BY_ID[id].name:items[0].name;devFeedback(name.toUpperCase()+(equip?' EQUIPPED':' ADDED TO BAG'))
   }
   function devRepair(){if(mode!=='run'||!player)return;player.hp=player.maxHp;player.shields=cargoStats().shields;updateHud();devFeedback('FULL REPAIR')}
@@ -3337,11 +3377,11 @@
       },
       previewGearSet(setId){
         let set=SET_BY_ID[setId];if(!set)return null;
-        for(const slot of GEAR_SLOTS){
+        batchEquipmentChanges(()=>{for(const slot of GEAR_SLOTS){
           let item=SET_ITEMS.find(entry=>entry.setId===setId&&entry.slot===slot),gear=rollGearInstance(item,Math.max(set.minLevel,save.level),1.08);
           save.gear.push(gear);save.equipped[slot]=gear.uid
-        }
-        paperDollKey='';refreshPaperDoll();refreshBase();openGearLocker();setGearView('loadout');renderGearLocker();
+        }});
+        refreshBase();openGearLocker();setGearView('loadout');renderGearLocker();
         return this.gearVisualState()
       },
       previewGearSetPieces(setId,count){
@@ -3349,29 +3389,32 @@
         count=Math.max(0,Math.min(GEAR_SLOTS.length,Math.floor(Number(count)||0)));
         let removed=new Set(save.gear.filter(gear=>{let item=gearDefinition(gear);return item&&item.setId===setId}).map(gear=>gear.uid));
         save.gear=save.gear.filter(gear=>!removed.has(gear.uid));
-        for(const slot of GEAR_SLOTS)save.equipped[slot]=null;
-        let progressionSlots=['hat','scarf','coat','boots','hammer'];
-        for(let index=0;index<progressionSlots.length;index++){
-          let slot=progressionSlots[index],item=SET_ITEMS.find(entry=>entry.setId===setId&&entry.slot===slot),gear=rollGearInstance(item,Math.max(set.minLevel,save.level),1.08);
-          save.gear.push(gear);if(index<count)save.equipped[slot]=gear.uid
-        }
-        paperDollKey='';paperDollPreviewCache.clear();refreshPaperDoll();refreshBase();openGearLocker();renderGearLocker();
+        batchEquipmentChanges(()=>{for(const slot of GEAR_SLOTS)save.equipped[slot]=null;
+          let progressionSlots=['hat','scarf','coat','boots','hammer'];
+          for(let index=0;index<progressionSlots.length;index++){
+            let slot=progressionSlots[index],item=SET_ITEMS.find(entry=>entry.setId===setId&&entry.slot===slot),gear=rollGearInstance(item,Math.max(set.minLevel,save.level),1.08);
+            save.gear.push(gear);if(index<count)save.equipped[slot]=gear.uid
+          }
+        });
+        refreshBase();openGearLocker();renderGearLocker();
         return{visual:this.gearVisualState(),inventory:this.equipmentInventory()}
       },
       previewGearRarity(rarityId){
         let pool=LOOT_BY_RARITY[rarityId]||[];if(!pool.length)return null;
-        for(const slot of GEAR_SLOTS)save.equipped[slot]=null;
-        for(const slot of GEAR_SLOTS){
-          let item=pool.find(entry=>entry.slot===slot);if(!item)continue;
-          let gear=rollGearInstance(item,Math.max(item.minLevel||1,save.level),1.08);save.gear.push(gear);save.equipped[slot]=gear.uid
-        }
-        paperDollKey='';refreshPaperDoll();refreshBase();openGearLocker();setGearView('loadout');renderGearLocker();
+        batchEquipmentChanges(()=>{for(const slot of GEAR_SLOTS)save.equipped[slot]=null;
+          for(const slot of GEAR_SLOTS){
+            let item=pool.find(entry=>entry.slot===slot);if(!item)continue;
+            let gear=rollGearInstance(item,Math.max(item.minLevel||1,save.level),1.08);save.gear.push(gear);save.equipped[slot]=gear.uid
+          }
+        });
+        refreshBase();openGearLocker();setGearView('loadout');renderGearLocker();
         return this.gearVisualState()
       },
       previewGearItems(itemIds){
-        let ids=Array.isArray(itemIds)?itemIds:[];for(const slot of GEAR_SLOTS)save.equipped[slot]=null;
-        for(const id of ids){let item=LOOT_BY_ID[id];if(!item)continue;let gear=rollGearInstance(item,Math.max(item.minLevel||1,save.level),1.08);save.gear.push(gear);save.equipped[item.slot]=gear.uid}
-        paperDollKey='';paperDollPreviewCache.clear();refreshPaperDoll();refreshBase();openGearLocker();renderGearLocker();return this.gearVisualState()
+        let ids=Array.isArray(itemIds)?itemIds:[];batchEquipmentChanges(()=>{for(const slot of GEAR_SLOTS)save.equipped[slot]=null;
+          for(const id of ids){let item=LOOT_BY_ID[id];if(!item)continue;let gear=rollGearInstance(item,Math.max(item.minLevel||1,save.level),1.08);save.gear.push(gear);save.equipped[item.slot]=gear.uid}
+        });
+        refreshBase();openGearLocker();renderGearLocker();return this.gearVisualState()
       },
       gearVisualState(includePreview){
         let setId=equippedFullSetId(),set=setId&&SET_BY_ID[setId],profile=equippedRarityProfile();
@@ -3388,6 +3431,10 @@
       persistNow(){persist();return true},
       equipmentState(){
         return{equipped:Object.assign({},save.equipped),selectedGearUid,gearFilter,gearRarityFilter,gearSort,previewing:ui.gearCharacterStage.classList.contains('gearPreviewing'),unified:ui.gearPanel.classList.contains('adventureBagPanel')&&!ui.gearPanel.classList.contains('loadoutMode')}
+      },
+      equipmentPreviewState(){
+        let loadoutKey=paperDollLoadoutKey(),renderKey=paperDollKey,domKey=ui.gearCharacterHero.dataset.gearVisualKey||'',atlas=paperDollAtlases.idle;
+        return{revision:equipmentRevision,loadoutKey,renderKey,domKey,matches:!!atlas&&renderKey.endsWith(loadoutKey)&&domKey===loadoutKey&&!ui.gearCharacterStage.classList.contains('gearPreviewing'),fullSetId:equippedFullSetId(),equipped:Object.fromEntries(GEAR_SLOTS.map(slot=>{let gear=equippedGear(slot),item=gearDefinition(gear);return[slot,gear&&item?{uid:gear.uid,itemId:item.id,assetId:(gearAssetRef(item)||{}).id||null}:null]})),atlas:atlas?{width:atlas.naturalWidth||atlas.width,height:atlas.naturalHeight||atlas.height}:null}
       },
       equipmentRenderMetrics(){
         return Object.assign({},gearPerf)
@@ -3568,7 +3615,7 @@
   canvas.addEventListener('pointerdown',beginFloatingStick,{passive:false});canvas.addEventListener('pointermove',moveFloatingStick,{passive:false});canvas.addEventListener('pointerup',event=>endFloatingStick(event,false));canvas.addEventListener('pointercancel',event=>endFloatingStick(event,false));canvas.addEventListener('lostpointercapture',event=>endFloatingStick(event,false));
   let lastTouchEnd=0,lastTouchTarget=null;document.addEventListener('touchend',e=>{let now=Date.now(),inventoryItem=e.target.closest&&e.target.closest('.gearBagSlot,.inventoryV2Card'),button=e.target.closest&&e.target.closest('button');if(inventoryItem){lastTouchEnd=now;lastTouchTarget=e.target;return}if(now-lastTouchEnd<340&&e.target===lastTouchTarget){e.preventDefault();if(button&&!button.disabled)button.click()}lastTouchEnd=now;lastTouchTarget=e.target},{passive:false});for(const event of ['gesturestart','gesturechange','gestureend','dblclick'])document.addEventListener(event,e=>e.preventDefault(),{passive:false});document.addEventListener('contextmenu',e=>e.preventDefault());
 
-  for(const pose of PAPER_DOLL_POSES){pappaHammerSprites[pose].addEventListener('load',refreshPaperDoll);for(const slot of GEAR_SLOTS)paperDollMasks[pose][slot].addEventListener('load',refreshPaperDoll);for(const setId of Object.keys(paperDollSetSprites))paperDollSetSprites[setId][pose].addEventListener('load',refreshPaperDoll)}
+  pappaHammerImage.addEventListener('load',refreshPappaHammerAssetAtlases);for(const pose of PAPER_DOLL_POSES){pappaHammerMotionGuides[pose].addEventListener('load',refreshPappaHammerAssetAtlases);for(const slot of GEAR_SLOTS)paperDollMasks[pose][slot].addEventListener('load',refreshPaperDoll);for(const setId of Object.keys(paperDollSetSprites))paperDollSetSprites[setId][pose].addEventListener('load',refreshPaperDoll)}
   for(const atlas of Object.values(productionGearAtlases))atlas.image.addEventListener('load',refreshPaperDoll);
-  installInventoryV2Bridge();installPlaywrightBridge();bindContextHelp();syncRequestedQuality();resetXpPresentation();persist();refreshBase();updateCargoHud();syncSettings();setView('base');requestAnimationFrame(loop);
+  refreshPappaHammerAssetAtlases();installInventoryV2Bridge();installPlaywrightBridge();bindContextHelp();syncRequestedQuality();resetXpPresentation();persist();refreshBase();updateCargoHud();syncSettings();setView('base');requestAnimationFrame(loop);
 })();

@@ -6,17 +6,23 @@ async function boot(page){
   await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest&&window.RiskLootProgression))).toBe(true)
 }
 
-test('first-stage XP profiles land inside the intended Level 8-12 band',async({page})=>{
+test('Floor 4 and first-stage XP profiles stay inside their target bands',async({page})=>{
   await boot(page);
   const profiles=await page.evaluate(()=>{
     const p=window.RiskLootProgression;
-    function result(normal,brutes,elites){
-      const xp=normal*p.getEnemyXpReward({enemyType:'rusher',depth:1,difficulty:0})+brutes*p.getEnemyXpReward({enemyType:'brute',depth:1,difficulty:0})+elites*p.getEnemyXpReward({enemyType:'rusher',elite:true,depth:1,difficulty:0})+p.getEnemyXpReward({enemyType:'boss',boss:true,depth:5,difficulty:0});
+    function result(normal,brutes,elites,boss){
+      const xp=normal*p.getEnemyXpReward({enemyType:'rusher',stage:1,difficulty:0})+brutes*p.getEnemyXpReward({enemyType:'brute',stage:1,difficulty:0})+elites*p.getEnemyXpReward({enemyType:'rusher',elite:true,stage:1,difficulty:0})+(boss?p.getEnemyXpReward({enemyType:'boss',boss:true,stage:1,difficulty:0}):0);
       return{x:xp,level:p.applyXp(1,0,xp).level}
     }
-    return{weak:result(66,0,3),normal:result(72,8,5),excellent:result(105,15,8)}
+    return{
+      floor4:{weak:result(265,10,5,false),normal:result(430,20,10,false),excellent:result(690,35,13,false)},
+      complete:{weak:result(430,20,10,true),normal:result(650,25,20,true),excellent:result(1350,45,20,true)}
+    }
   });
-  expect(profiles).toEqual({weak:{x:91,level:8},normal:{x:119,level:9},excellent:{x:175,level:12}})
+  expect(profiles).toEqual({
+    floor4:{weak:{x:300,level:3},normal:{x:500,level:4},excellent:{x:799,level:5}},
+    complete:{weak:{x:1600,level:9},normal:{x:1860,level:10},excellent:{x:2600,level:12}}
+  })
 });
 
 test('highest reached stage gates rarity even for a Level 100 farmer',async({page})=>{
@@ -55,6 +61,11 @@ test('save/load, extraction and Go Deeper preserve earned XP',async({page})=>{
 
   await page.evaluate(()=>window.__riskTest.prepareXpTest(9,7));
   transition=await page.evaluate(()=>window.__riskTest.progressionTransition('extract'));
+  expect(transition.after.total).toBe(transition.before.total);
+  expect(transition.mode).toBe('base');
+
+  await page.evaluate(()=>window.__riskTest.prepareXpTest(9,7));
+  transition=await page.evaluate(()=>window.__riskTest.progressionTransition('death'));
   expect(transition.after.total).toBe(transition.before.total);
   expect(transition.mode).toBe('base')
 });

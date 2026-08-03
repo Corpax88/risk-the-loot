@@ -170,6 +170,7 @@
   });
   const HORDE={basePopulation:34,maxPopulation:64,overlapRatio:.58,reinforceAfter:5.4,clearBreather:.24,spawnBatch:6,spawnInterval:.034,cohesionRadius:150};
   const XP_FEEDBACK=Object.freeze({batchWindow:170,noticeDuration:720,bossNoticeDuration:980,levelBoundaryHold:85,minFillRate:24,maxFillRate:1800,catchup:5,persistDelay:3500,maxVisuals:1});
+  const LEVEL_UP_RECOVERY=Object.freeze({immunity:.75,color:'#79e7f2'});
   const COMMON_ZONES=[
     {name:'GUILD OUTSKIRTS',threat:'MASKED RAIDERS',top:'#263650',bottom:'#111928',grid:'#eadfca14',accent:'#d6aa58',pool:['rusher','rusher','rusher','shooter']},
     {name:'LANTERN MARKET',threat:'CROSSBOW SCOUTS',top:'#21324d',bottom:'#0d1728',grid:'#c83f4617',accent:'#c83f46',pool:['rusher','shooter','shooter','shooter']}
@@ -1822,7 +1823,7 @@
     let amount=xpPresentation.pendingAmount;if(amount<=0)return;let kind=xpPresentation.pendingKind;xpPresentation.pendingAmount=0;xpPresentation.pendingKind='enemy';xpPresentation.batchDeadline=0;xpPresentation.noticeUntil=now+(kind==='boss'?XP_FEEDBACK.bossNoticeDuration:XP_FEEDBACK.noticeDuration);xpTelemetry.notificationBatches++;xpTelemetry.maxActiveVisuals=Math.max(xpTelemetry.maxActiveVisuals,1);ui.xpGain.className='xpGain show '+kind;ui.xpGain.textContent='+'+amount+' XP';sound('xp',kind==='boss'?1:kind==='elite'?.55:.15)
   }
   function pulseXpLevel(count,level){
-    count=Math.max(1,Math.floor(count||1));let now=performance.now(),grouped=xpPresentation.levelNoticeUntil>now;if(grouped)xpPresentation.levelNoticeCount+=count;else{xpPresentation.levelNoticeCount=count;sound('levelUp')}
+    count=Math.max(1,Math.floor(count||1));let now=performance.now(),grouped=xpPresentation.levelNoticeUntil>now;if(grouped)xpPresentation.levelNoticeCount+=count;else xpPresentation.levelNoticeCount=count;
     xpPresentation.levelNoticeUntil=now+1050;xpPresentation.levelPulseUntil=now+720;ui.xpLevelNotice.textContent='LEVEL UP'+(xpPresentation.levelNoticeCount>1?' x'+xpPresentation.levelNoticeCount:'')+'  ·  LV '+level;ui.xpLevelNotice.classList.add('show');ui.xpHud.classList.add('levelUp')
   }
   function updateXpPresentation(dt,now){
@@ -1843,10 +1844,10 @@
   function flushXpPersist(){if(!xpPersistTimer)return false;clearTimeout(xpPersistTimer);xpPersistTimer=0;xpTelemetry.persistWrites++;persist();return true}
   function applyPlayerXpReward(amount,kind){
     amount=Math.max(0,Math.floor(Number(amount)||0));let before=xpProgress(save.level,save.xp),beforeLevel=before.level;if(!amount)return{amount:0,applied:0,beforeLevel,level:beforeLevel,levelsGained:0};let next=applyXp(save.level,save.xp,amount);save.level=next.level;save.xp=next.xp;let after=xpProgress(save.level,save.xp),applied=Math.max(0,Math.round(after.total-before.total));if(applied<=0){syncXpHud();return{amount,applied:0,beforeLevel,level:next.level,levelsGained:0,discardedXp:next.discardedXp}}
-    xpTelemetry.awards++;if(runStats&&runStats.xp){let bucket=kind==='boss'?'boss':kind==='elite'?'elite':'enemy';runStats.xp[bucket]+=applied;runStats.xp.total+=applied;runStats.xp.levelsGained+=next.levelsGained}if(player&&next.levelsGained){let oldMax=Math.max(1,player.maxHp||maxHp()),ratio=Math.max(0,player.hp)/oldMax;player.maxHp=maxHp();player.hp=Math.min(player.maxHp,Math.max(1,player.maxHp*ratio))}ui.pappaLevel.textContent=save.level;syncXpHud();queueXpFeedback(applied,kind||'enemy');scheduleXpPersist();return{amount,applied,beforeLevel,level:next.level,levelsGained:next.levelsGained,discardedXp:next.discardedXp}
+    xpTelemetry.awards++;if(runStats&&runStats.xp){let bucket=kind==='boss'?'boss':kind==='elite'?'elite':'enemy';runStats.xp[bucket]+=applied;runStats.xp.total+=applied;runStats.xp.levelsGained+=next.levelsGained}if(next.levelsGained){if(player){player.maxHp=maxHp();player.hp=player.maxHp;player.inv=Math.max(player.inv||0,LEVEL_UP_RECOVERY.immunity);if(mode==='run'){spawnEffect({kind:'levelUpRecovery',x:player.x,y:player.y,r:8,maxR:74,life:.46,max:.46,color:LEVEL_UP_RECOVERY.color},2);if(save.settings.particles)burst(player.x,player.y,LEVEL_UP_RECOVERY.color,12,1.08);shake=Math.max(shake,3)}}sound('levelUp')}ui.pappaLevel.textContent=save.level;syncXpHud();queueXpFeedback(applied,kind||'enemy');scheduleXpPersist();return{amount,applied,beforeLevel,level:next.level,levelsGained:next.levelsGained,discardedXp:next.discardedXp}
   }
   function awardEnemyXp(enemy){
-    if(!enemy)return null;if(enemy.xpAwarded){xpTelemetry.duplicateSkips++;return null}enemy.xpAwarded=true;if(enemy.noXp||enemy.cancelled)return null;let kind=enemy.boss?'boss':enemy.elite?'elite':'enemy',amount=getEnemyXpReward({enemyType:enemy.type,enemyLevel:enemy.level||save.level,elite:!!enemy.elite,boss:!!enemy.boss,depth:expeditionFloor(),difficulty:riskTier}),distanceReward=1+(Math.max(1,enemy.regionDanger||1)-1)*.75;return applyPlayerXpReward(Math.round(amount*distanceReward),kind)
+    if(!enemy)return null;if(enemy.xpAwarded){xpTelemetry.duplicateSkips++;return null}enemy.xpAwarded=true;if(enemy.noXp||enemy.cancelled)return null;let kind=enemy.boss?'boss':enemy.elite?'elite':'enemy',amount=getEnemyXpReward({enemyType:enemy.type,elite:!!enemy.elite,boss:!!enemy.boss,stage:expeditionCycle+1,difficulty:riskTier});return applyPlayerXpReward(amount,kind)
   }
   function startBoss(){
     let def=currentBoss(),map=activeMap(),isTyrant=def.kind==='tyrant',isLagoon=def.kind==='leviathan',levelScale=bossScaleForLevel(save.level);
@@ -2968,7 +2969,7 @@
     let xpTestSequence=0;
     function xpTestState(){
       let progress=xpProgress(save.level,save.xp),display=xpProgressFromTotal(xpPresentation.displayTotal),target=xpProgressFromTotal(xpPresentation.targetTotal);
-      return{progress,display,target,pendingAmount:xpPresentation.pendingAmount,boundary:xpPresentation.boundary&&Object.assign({},xpPresentation.boundary),notice:ui.xpGain.textContent,noticeVisible:ui.xpGain.classList.contains('show'),levelNotice:ui.xpLevelNotice.textContent,levelNoticeVisible:ui.xpLevelNotice.classList.contains('show'),fill:ui.xpFill.style.transform,visualNodes:document.querySelectorAll('.xpGain').length,activeVisuals:ui.xpGain.classList.contains('show')?1:0,persistTimer:xpPersistTimer?1:0,effects:effects.length,particles:particles.length,enemies:enemies.length,telemetry:Object.assign({},xpTelemetry),run:Object.assign({enemy:0,elite:0,boss:0,completion:0,total:0,levelsGained:0},runStats&&runStats.xp||{})}
+      return{progress,display,target,pendingAmount:xpPresentation.pendingAmount,boundary:xpPresentation.boundary&&Object.assign({},xpPresentation.boundary),notice:ui.xpGain.textContent,noticeVisible:ui.xpGain.classList.contains('show'),levelNotice:ui.xpLevelNotice.textContent,levelNoticeVisible:ui.xpLevelNotice.classList.contains('show'),fill:ui.xpFill.style.transform,visualNodes:document.querySelectorAll('.xpGain').length,activeVisuals:ui.xpGain.classList.contains('show')?1:0,persistTimer:xpPersistTimer?1:0,effects:effects.length,particles:particles.length,enemies:enemies.length,player:player?{hp:player.hp,maxHp:player.maxHp,inv:player.inv}:null,telemetry:Object.assign({},xpTelemetry),run:Object.assign({enemy:0,elite:0,boss:0,completion:0,total:0,levelsGained:0},runStats&&runStats.xp||{})}
     }
     window.__riskTest={
       progressionState(){
@@ -3025,6 +3026,9 @@
       levelScaling(level){
         level=progression.clampLevel(level);return{level,player:playerStatsForLevel(level),enemy:enemyScaleForLevel(level),boss:bossScaleForLevel(level),gear:gearScaleForLevel(level),value:gearValueScaleForLevel(level)}
       },
+      setXpPlayerState(hp,inv){if(!player)return null;player.hp=Math.max(0,Math.min(player.maxHp,Number(hp)||0));if(inv!=null)player.inv=Math.max(0,Number(inv)||0);return xpTestState()},
+      advanceXpImmunity(seconds){if(!player)return null;player.inv=Math.max(0,player.inv-Math.max(0,Number(seconds)||0));return xpTestState()},
+      damageXpPlayer(amount){if(!player)return null;damagePlayer(Math.max(0,Number(amount)||0));return xpTestState()},
       lootProgression(level,highestDepth){
         let context=lootProgressionContext(level,highestDepth),odds=bossGearOdds(level,0,EXPEDITION_MAPS.guild,null,highestDepth);
         return{context,ranges:LOOT_RARITY_RANGES,stageCaps:LOOT_STAGE_LEVEL_CAPS,eligible:eligibleLootRarities(level,highestDepth),odds}
@@ -3037,6 +3041,7 @@
         let before={level:save.level,xp:save.xp,total:authoritativeXpTotal(),floor:expeditionFloor()};
         if(action==='deeper')continueAfterBoss();
         else if(action==='extract')returnBase(true,'XP TRANSITION TEST');
+        else if(action==='death')returnBase(false,'XP DEATH TEST');
         return{before,after:{level:save.level,xp:save.xp,total:authoritativeXpTotal(),floor:mode==='run'?expeditionFloor():save.best},mode,best:save.best}
       },
       freezeFrame(value){

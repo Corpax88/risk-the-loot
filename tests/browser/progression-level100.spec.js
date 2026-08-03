@@ -13,7 +13,7 @@ test('fresh and old-schema saves start cleanly at Level 1',async({page})=>{
     localStorage.setItem('scrapbound_prototype_v1',JSON.stringify({version:11,level:88,xp:999999,scrap:12345}))
   });
   const state=await page.evaluate(()=>window.__riskTest.progressionState());
-  expect(state).toMatchObject({maxLevel:100,totalXpToMax:70329,saveVersion:12,progress:{level:1,current:0,required:10,capped:false}});
+  expect(state).toMatchObject({maxLevel:100,totalXpToMax:173388,saveVersion:12,progress:{level:1,current:0,required:120,capped:false}});
   await expect(page.locator('#pappaLevel')).toHaveText('1');
   const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('scrapbound_prototype_v1')));
   expect(saved.version).toBe(12);
@@ -22,21 +22,25 @@ test('fresh and old-schema saves start cleanly at Level 1',async({page})=>{
 
 test('exact, multi-level and capped XP updates stay synchronized',async({page})=>{
   await boot(page);
-  let state=await page.evaluate(()=>window.__riskTest.setProgress(1,9));
-  expect(state.progress).toMatchObject({level:1,current:9,required:10,capped:false});
+  const firstThreshold=await page.evaluate(()=>window.RiskLootProgression.xpRequiredForNextLevel(1));
+  let state=await page.evaluate(value=>window.__riskTest.setProgress(1,value-1),firstThreshold);
+  expect(state.progress).toMatchObject({level:1,current:119,required:120,capped:false});
   state=await page.evaluate(()=>window.__riskTest.grantPlayerXp(1));
   expect(state.progress).toMatchObject({level:2,current:0,capped:false});
   expect(state.levelsGained).toBe(1);
 
-  state=await page.evaluate(()=>window.__riskTest.setProgress(1,520));
-  expect(state.progress.level).toBeGreaterThan(10);
+  state=await page.evaluate(()=>window.__riskTest.setProgress(1,window.RiskLootProgression.totalXpForLevel(20)+5));
+  expect(state.progress.level).toBe(20);
   expect(state.progress.level).toBeLessThan(100);
 
   state=await page.evaluate(()=>{
     const needed=window.RiskLootProgression.xpRequiredForNextLevel(99);
     return window.__riskTest.setProgress(99,needed-1)
   });
-  expect(state.progress).toMatchObject({level:99,current:5699,required:5700,capped:false});
+  const beforeCap=state.progress;
+  expect(beforeCap.level).toBe(99);
+  expect(beforeCap.current).toBe(beforeCap.required-1);
+  expect(beforeCap.capped).toBe(false);
   state=await page.evaluate(()=>window.__riskTest.grantPlayerXp(1));
   expect(state.progress).toMatchObject({level:100,current:0,required:0,percent:1,capped:true});
   await expect(page.locator('#pappaLevel')).toHaveText('100');

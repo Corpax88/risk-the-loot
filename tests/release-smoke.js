@@ -109,7 +109,7 @@ if(safeExtract){
   assert(migrated.playtest.runs[0].time>=150,'boss path skipped the pacing curve');
   assert(migrated.stats.bosses>=(pushAfterBoss?2:1),'boss victory did not persist');
   assert(migrated.level>=2,'boss victory did not advance Pappa level');
-  assert(migrated.gear.some(gear=>sandbox.__blueprintTest.gearDefinition(gear).setId),'boss victory did not secure set gear');
+  assert(migrated.gear.some(gear=>gear.itemId!=='bentCog'),'boss victory did not secure boss gear');
   assert.equal(migrated.cores,pushAfterBoss?4:3,'secured boss seal count is wrong');
   assert.equal(migrated.schematics[expectedReward],1,'chosen boss trophy did not persist');
   assert.equal(migrated.playtest.runs[0].warden,expectedReward,'boss reward choice was not recorded');

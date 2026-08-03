@@ -67,18 +67,19 @@ test('Spin, chain lightning and a 100-kill frame lose no XP and keep visuals bou
 
 test('XP added during animation carries through level boundaries and multiple levels',async({page})=>{
   await boot(page);
-  await page.evaluate(()=>window.__riskTest.prepareXpTest(1,9));
+  const firstThreshold=await page.evaluate(()=>window.RiskLootProgression.xpRequiredForNextLevel(1));
+  await page.evaluate(value=>window.__riskTest.prepareXpTest(1,value-1),firstThreshold);
   const first=await page.evaluate(()=>window.__riskTest.spawnXpEnemy({type:'rusher'}));
   let state=await page.evaluate(id=>window.__riskTest.killXpEnemy(id),first.id);
-  expect(state.progress).toMatchObject({level:2,current:0,total:10});
-  expect(state.display.total).toBe(9);
+  expect(state.progress).toMatchObject({level:2,current:0,total:120});
+  expect(state.display.total).toBe(119);
 
   const more=await page.evaluate(()=>window.__riskTest.spawnXpPack(8,{type:'rusher'}));
   state=await page.evaluate(ids=>window.__riskTest.killXpPack(ids,'spin'),more);
-  expect(state.progress).toMatchObject({level:2,current:8,total:18});
-  expect(state.target.total).toBe(18);
+  expect(state.progress).toMatchObject({level:2,current:8,total:128});
+  expect(state.target.total).toBe(128);
   state=await page.evaluate(()=>window.__riskTest.advanceXpPresentation(900));
-  expect(state.display.total).toBeCloseTo(18,3);
+  expect(state.display.total).toBeCloseTo(128,3);
   expect(state.display.level).toBe(2);
   expect(state.levelNotice).toContain('LEVEL UP');
 
@@ -89,6 +90,35 @@ test('XP added during animation carries through level boundaries and multiple le
   expect(state.display.level).toBe(8);
   expect(state.display.current).toBeCloseTo(3,3);
   expect(state.telemetry.maxActiveVisuals).toBeLessThanOrEqual(1)
+});
+
+test('every level-up fully heals and refreshes exactly 0.75 seconds of immunity',async({page})=>{
+  await boot(page,{width:390,height:844});
+  await page.evaluate(()=>window.__riskTest.prepareXpTest(1,0));
+  await page.evaluate(()=>window.__riskTest.setXpPlayerState(1,0));
+  const firstThreshold=await page.evaluate(()=>window.RiskLootProgression.xpRequiredForNextLevel(1));
+  let state=await page.evaluate(amount=>window.__riskTest.grantPlayerXp(amount),firstThreshold);
+  expect(state.progress.level).toBe(2);
+  state=await page.evaluate(()=>window.__riskTest.xpState());
+  expect(state.player.hp).toBe(state.player.maxHp);
+  expect(state.player.inv).toBeCloseTo(.75,5);
+
+  state=await page.evaluate(()=>window.__riskTest.advanceXpImmunity(.5));
+  expect(state.player.inv).toBeCloseTo(.25,5);
+  await page.evaluate(()=>window.__riskTest.setXpPlayerState(1));
+  const secondThreshold=await page.evaluate(()=>window.RiskLootProgression.xpRequiredForNextLevel(2));
+  state=await page.evaluate(amount=>window.__riskTest.grantPlayerXp(amount),secondThreshold);
+  expect(state.progress.level).toBe(3);
+  state=await page.evaluate(()=>window.__riskTest.xpState());
+  expect(state.player.hp).toBe(state.player.maxHp);
+  expect(state.player.inv).toBeCloseTo(.75,5);
+
+  const protectedHp=state.player.hp;
+  state=await page.evaluate(()=>window.__riskTest.damageXpPlayer(10));
+  expect(state.player.hp).toBe(protectedHp);
+  await page.evaluate(()=>window.__riskTest.advanceXpImmunity(.76));
+  state=await page.evaluate(()=>window.__riskTest.damageXpPlayer(10));
+  expect(state.player.hp).toBeLessThan(protectedHp)
 });
 
 test('results summarize already-awarded XP and Level 100 remains capped',async({page})=>{

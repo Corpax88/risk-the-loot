@@ -228,7 +228,7 @@ test('iPhone layout is safe, independently scrollable and tap equip is reliable'
   await expectCleanV2(page);
   await card.tap();
   await expect(page.locator('#inventoryV2Detail h2')).toHaveText(candidate.name);
-  await card.tap();
+  await page.locator('#inventoryV2Equip').tap();
   await expect.poll(()=>page.evaluate(uid=>window.RiskLootInventoryV2Bridge.snapshot().gear.find(item=>item.uid===uid).equipped,candidate.uid)).toBe(true);
   await expectCleanV2(page);
   await page.screenshot({path:path.join('docs','screenshots','inventory-v2','mobile.png')});

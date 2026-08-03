@@ -57,13 +57,13 @@ elements.gearTurnRight.click();elements.gearTurnRight.click();assert(elements.ge
 elements.gearRarityFilters.children[2].click();assert.equal(elements.gearGrid.children.length,0,'rare filter showed common gear');
 elements.gearRarityFilters.children[0].click();assert.equal(elements.gearGrid.children.length,2,'all-rarity filter did not restore unique inventory');
 let coinsBeforeSale=JSON.parse(saved).scrap,equippedHat=JSON.parse(saved).equipped.hat;
-elements.selectGearItems.click();let sellCard=elements.gearGrid.children.find?elements.gearGrid.children.find(card=>!card.className.includes('equipped')):[...elements.gearGrid.children].find(card=>!card.className.includes('equipped'));sellCard.click();
+let sellCard=elements.gearGrid.children.find?elements.gearGrid.children.find(card=>!card.className.includes('equipped')):[...elements.gearGrid.children].find(card=>!card.className.includes('equipped'));sellCard.click();
 elements.sellFilteredGear.click();assert.equal(JSON.parse(saved).gear.length,2,'filtered sale skipped confirmation');
 elements.sellFilteredGear.click();assert.equal(JSON.parse(saved).gear.length,1,'filtered sale did not keep exactly the equipped item');
 assert.equal(JSON.parse(saved).equipped.hat,equippedHat,'filtered sale removed equipped gear');
 assert(JSON.parse(saved).scrap>coinsBeforeSale,'filtered sale did not bank coins');
 let firstGearActions=elements.gearDetail.children[0].children[0];
-assert(firstGearActions.children[1].disabled,'equipped-only item was still sellable');
+assert(!elements.gearBulkActionBar.classList.contains('show')&&elements.sellFilteredGear.disabled,'equipped-only item was still selectable for sale');
 firstGearActions.children[0].click();assert.equal(JSON.parse(saved).equipped.hat,null,'gear could not be unequipped');
 firstGearActions=elements.gearDetail.children[0].children[0];
 firstGearActions.children[0].click();assert.equal(JSON.parse(saved).equipped.hat,equippedHat,'gear could not be re-equipped by unique ID');

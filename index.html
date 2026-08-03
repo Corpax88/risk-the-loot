@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="description" content="Risk everything, recover equippable gear and build Pappa Hammer in this compact extraction roguelite.">
   <title>RISK THE LOOT!</title>
-  <link rel="stylesheet" href="style.css?v=0.68.0">
+  <link rel="stylesheet" href="style.css?v=0.69.0">
   <link rel="stylesheet" href="inventory-v2.css?v=0.3.0">
 </head>
 <body>
@@ -16,7 +16,7 @@
     <header class="topbar">
       <div class="brand" tabindex="0" data-help-title="Risk the Loot" data-help="Enter the tower, defeat champions and decide when the gear you carry is valuable enough to extract.">
         <span class="brandMark">R</span>
-        <div><strong>RISK THE LOOT!</strong><small>INFINITE WORLD v0.68.0</small></div>
+        <div><strong>RISK THE LOOT!</strong><small>INFINITE WORLD v0.69.0</small></div>
       </div>
       <div class="resources">
         <div class="resource level" data-help-title="Pappa Level" data-help="Boss victories grant XP. Higher levels unlock stronger gear and tougher champions."><i>LV</i><div><b id="pappaLevel">1</b><span>PAPPA</span></div></div>
@@ -107,8 +107,6 @@
                   <div id="mobileGearSet" class="mobileGearSet"></div>
                   <div class="mobileGearActions">
                     <button id="mobileGearEquip" class="mobileGearEquip" disabled>EQUIP</button>
-                    <button id="mobileGearSell" class="mobileGearSell" disabled>SELL</button>
-                    <button id="mobileGearSalvage" class="mobileGearSalvage" disabled>SALVAGE</button>
                   </div>
                 </div>
                 <div class="mobileGearControls" aria-label="Inventory controls">
@@ -128,15 +126,6 @@
                     <button id="gearSortButton" class="gearSortButton" title="Change inventory sorting">
                       <i aria-hidden="true">&#8645;</i><span><small>SORTED BY</small><b id="gearSortLabel">POWER</b></span>
                     </button>
-                    <button id="selectGearItems" class="bulkGearButton select" title="Select several unequipped items for a bulk action.">
-                      <span id="selectGearLabel">SELECT ITEMS</span><b id="selectGearSummary">0 SELECTED</b>
-                    </button>
-                    <button id="sellFilteredGear" class="bulkGearButton sellFilteredGear" title="Sell selected items. Equipped gear is always protected.">
-                      <span id="sellFilteredLabel">SELL ITEMS</span><b id="sellFilteredSummary">SELECT FIRST</b>
-                    </button>
-                    <button id="salvageSelectedGear" class="bulkGearButton salvageSelectedGear" title="Salvage selected items into permanent crafting materials.">
-                      <span id="salvageSelectedLabel">SALVAGE ITEMS</span><b id="salvageSelectedSummary">SELECT FIRST</b>
-                    </button>
                   </div>
                 </div>
                 <div id="gearRaritySummary" class="gearRaritySummary" aria-label="Inventory rarity counts"></div>
@@ -153,6 +142,12 @@
               </section>
               <aside id="gearDetail" class="gearDetail" aria-live="polite"></aside>
             </section>
+          </div>
+          <div id="gearBulkActionBar" class="gearBulkActionBar" aria-hidden="true" aria-live="polite">
+            <output id="gearBulkCount">0 SELECTED</output>
+            <button id="sellFilteredGear" class="gearBulkAction sell" title="Sell selected items. Equipped and locked gear are protected."><span id="sellFilteredLabel">SELL</span><b id="sellFilteredSummary">$0</b></button>
+            <button id="salvageSelectedGear" class="gearBulkAction salvage" title="Salvage selected items into permanent crafting materials."><span id="salvageSelectedLabel">SALVAGE</span><b id="salvageSelectedSummary">0 MATERIALS</b></button>
+            <button id="cancelGearSelection" class="gearBulkAction cancel" title="Clear selected items."><span>CANCEL</span><b>CLEAR ALL</b></button>
           </div>
           <div id="gearMobileSheet" class="gearMobileSheet" role="dialog" aria-modal="true" aria-labelledby="gearMobileSheetTitle" aria-hidden="true">
             <button id="gearMobileSheetShade" class="gearMobileSheetShade" aria-label="Close inventory options"></button>
@@ -417,7 +412,7 @@
         </div>
         <button id="resumeButton" class="primaryButton settingsResume"><span>RESUME</span><i>&#8250;</i></button>
         <button id="abandonButton" class="dangerButton">ABANDON EXPEDITION</button>
-        <p class="buildStamp">v0.68.0 INVENTORY ACTIONS</p>
+        <p class="buildStamp">v0.69.0 INVENTORY SELECTION</p>
       </div>
     </div>
     <aside id="helpTooltip" class="helpTooltip" role="tooltip" aria-hidden="true"><strong id="helpTooltipTitle"></strong><span id="helpTooltipText"></span></aside>
@@ -426,10 +421,10 @@
       <source src="assets/audio/sky-menu-drift-loop.m4a" type="audio/mp4">
     </audio>
   </main>
-  <script src="guild-terrain.js?v=0.68.0"></script>
-  <script src="infinite-world.js?v=0.68.0"></script>
-  <script src="progression.js?v=0.68.0"></script>
-  <script src="script.js?v=0.68.0"></script>
+  <script src="guild-terrain.js?v=0.69.0"></script>
+  <script src="infinite-world.js?v=0.69.0"></script>
+  <script src="progression.js?v=0.69.0"></script>
+  <script src="script.js?v=0.69.0"></script>
   <script src="inventory-v2.js?v=0.3.0"></script>
 </body>
 </html>

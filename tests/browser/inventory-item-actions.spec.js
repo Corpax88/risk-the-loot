@@ -25,6 +25,7 @@ async function selectV1(page,uid){
   const card=page.locator(`.gearBagSlot[data-item="${uid}"]`);
   await card.click();
   await expect(card).toHaveAttribute('aria-selected','true');
+  await expect(page.locator('#gearBulkActionBar')).toHaveClass(/show/);
   return card
 }
 
@@ -36,14 +37,16 @@ test('desktop Sell and Salvage update exact resources, inventory and save data',
   const before=await page.evaluate(()=>window.__riskTest.inventoryResources());
 
   await selectV1(page,candidates[0].uid);
-  await page.locator('#gearDetail .sellGear').click();
+  await page.locator('#sellFilteredGear').click();
+  await page.locator('#sellFilteredGear').click();
   await expect.poll(()=>page.evaluate(uid=>!window.__riskTest.equipmentInventory().some(item=>item.uid===uid),candidates[0].uid)).toBe(true);
   let resources=await page.evaluate(()=>window.__riskTest.inventoryResources());
   expect(resources.scrap-before.scrap).toBe(candidates[0].value);
   expect(resources.materials).toBe(before.materials);
 
   await selectV1(page,candidates[1].uid);
-  await page.locator('#gearDetail .salvageGear').click();
+  await page.locator('#salvageSelectedGear').click();
+  await page.locator('#salvageSelectedGear').click();
   await expect.poll(()=>page.evaluate(uid=>!window.__riskTest.equipmentInventory().some(item=>item.uid===uid),candidates[1].uid)).toBe(true);
   resources=await page.evaluate(()=>window.__riskTest.inventoryResources());
   expect(resources.materials-before.materials).toBe(candidates[1].salvage.materials);
@@ -67,28 +70,30 @@ test('Legendary actions require confirmation and equipped or locked gear stays p
   const locked=inventory.find(item=>!item.equipped&&item.uid!==candidate.uid);
   expect(equipped&&candidate&&locked).toBeTruthy();
 
-  await selectV1(page,equipped.uid);
-  await expect(page.locator('#gearDetail .sellGear')).toBeDisabled();
-  await expect(page.locator('#gearDetail .salvageGear')).toBeDisabled();
+  const equippedCard=page.locator(`.gearBagSlot[data-item="${equipped.uid}"]`);
+  await equippedCard.click();
+  await expect(equippedCard).toHaveAttribute('aria-selected','false');
+  await expect(page.locator('#gearBulkActionBar')).not.toHaveClass(/show/);
 
   expect(await page.evaluate(uid=>window.__riskTest.setGearLocked(uid,true),locked.uid)).toBe(true);
-  await selectV1(page,locked.uid);
-  await expect(page.locator('#gearDetail .sellGear')).toBeDisabled();
-  await expect(page.locator('#gearDetail .salvageGear')).toBeDisabled();
+  const lockedCard=page.locator(`.gearBagSlot[data-item="${locked.uid}"]`);
+  await lockedCard.click();
+  await expect(lockedCard).toHaveAttribute('aria-selected','false');
+  await expect(page.locator('#gearBulkActionBar')).not.toHaveClass(/show/);
 
   const before=await page.evaluate(()=>window.__riskTest.inventoryResources());
   await selectV1(page,candidate.uid);
-  await page.locator('#gearDetail .salvageGear').click();
-  await expect(page.locator('#gearDetail .salvageGear')).toContainText('CONFIRM');
+  await page.locator('#salvageSelectedGear').click();
+  await expect(page.locator('#salvageSelectedGear')).toContainText('CONFIRM');
   expect(await page.evaluate(uid=>window.__riskTest.equipmentInventory().some(item=>item.uid===uid),candidate.uid)).toBe(true);
-  await page.locator('#gearDetail .salvageGear').click();
+  await page.locator('#salvageSelectedGear').click();
   await expect.poll(()=>page.evaluate(uid=>!window.__riskTest.equipmentInventory().some(item=>item.uid===uid),candidate.uid)).toBe(true);
   const after=await page.evaluate(()=>window.__riskTest.inventoryResources());
   expect(after.materials-before.materials).toBe(25);
   expect(after.legendaryCores-before.legendaryCores).toBe(1)
 });
 
-test('iPhone double tap equips and removes every slot while one tap only inspects',async({browser})=>{
+test('iPhone double tap equips and removes every slot while one tap selects and inspects',async({browser})=>{
   const context=await browser.newContext({...devices['iPhone 13']});
   const page=await context.newPage();
   await boot(page);
@@ -103,16 +108,38 @@ test('iPhone double tap equips and removes every slot while one tap only inspect
     const card=page.locator(`.gearBagSlot[data-item="${item.uid}"]`);
     await card.tap();
     expect(await page.evaluate(uid=>window.__riskTest.equipmentInventory().find(entry=>entry.uid===uid).equipped,item.uid)).toBe(false);
-    await card.tap();
+    await page.waitForTimeout(560);
+    await page.evaluate(uid=>{const card=document.querySelector(`.gearBagSlot[data-item="${uid}"]`);card.click();card.click()},item.uid);
     await expect.poll(()=>page.evaluate(uid=>window.__riskTest.equipmentInventory().find(entry=>entry.uid===uid).equipped,item.uid)).toBe(true);
     await expect.poll(()=>page.evaluate(()=>window.__gearHaptics.length)).toBeGreaterThan(0);
     await page.waitForTimeout(380)
   }
 
-  const first=candidates[0],firstCard=page.locator(`.gearBagSlot[data-item="${first.uid}"]`);
-  await firstCard.tap();
-  await firstCard.tap();
+  const first=candidates[0];
+  await page.evaluate(uid=>{const card=document.querySelector(`.gearBagSlot[data-item="${uid}"]`);card.click();card.click()},first.uid);
   await expect.poll(()=>page.evaluate(uid=>window.__riskTest.equipmentInventory().find(entry=>entry.uid===uid).equipped,first.uid)).toBe(false);
+  await context.close()
+});
+
+test('iPhone touch multi-select stays clear, reachable, and cancellable',async({browser},testInfo)=>{
+  const context=await browser.newContext({...devices['iPhone 13']});
+  const page=await context.newPage();
+  await boot(page);
+  await page.evaluate(()=>window.__riskTest.previewGearSetPieces('hammerChoir',0));
+  const cards=page.locator('#gearGrid .gearBagSlot:not(.equipped)');
+  await cards.nth(0).tap();
+  await cards.nth(1).tap();
+  await expect(page.locator('#gearBulkCount')).toContainText('2 SELECTED');
+  await expect(page.locator('#gearHoverPreview')).not.toHaveClass(/show/);
+  const bar=await page.locator('#gearBulkActionBar').boundingBox();
+  expect(bar).toBeTruthy();
+  expect(bar.x).toBeGreaterThanOrEqual(0);
+  expect(bar.x+bar.width).toBeLessThanOrEqual(390);
+  expect(bar.y+bar.height).toBeLessThanOrEqual(844);
+  await page.screenshot({path:testInfo.outputPath('iphone-touch-selection.png'),fullPage:true});
+  await page.locator('#cancelGearSelection').tap();
+  await expect(page.locator('#gearBulkActionBar')).not.toHaveClass(/show/);
+  await expect(page.locator('#gearGrid .gearBagSlot.bulkSelected')).toHaveCount(0);
   await context.close()
 });
 

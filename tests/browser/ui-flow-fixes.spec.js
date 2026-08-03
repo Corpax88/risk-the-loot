@@ -33,24 +33,36 @@ test('iPhone HUD, minimap markers, and result action remain readable',async({pag
   await page.screenshot({path:testInfo.outputPath('iphone-ui-flow.png'),fullPage:true});
 });
 
-test('inventory multi-select requires confirmation and protects equipped items',async({page},testInfo)=>{
+test('inventory tap selection slides up one action flow and protects equipped items',async({page},testInfo)=>{
   await boot(page);
   await page.evaluate(()=>window.__riskTest.previewGearSetPieces('hammerChoir',0));
   await expect(page.locator('#gearOverlay')).toHaveClass(/show/);
   const initial=await page.evaluate(()=>window.__riskTest.equipmentInventory().length);
-  await page.locator('#selectGearItems').click();
+  await expect(page.locator('#selectGearItems')).toHaveCount(0);
   const cards=page.locator('#gearGrid .gearBagSlot:not(.equipped)');
   await expect(cards).toHaveCount(5);
   await cards.nth(0).click();
+  await expect(page.locator('#gearBulkActionBar')).toHaveClass(/show/);
+  await expect(cards.nth(0)).toHaveClass(/bulkSelected/);
   await cards.nth(1).click();
-  await expect(page.locator('#selectGearSummary')).toContainText('2 SELECTED');
+  await expect(page.locator('#gearBulkCount')).toContainText('2 SELECTED');
+  await page.screenshot({path:testInfo.outputPath('inventory-selection-actions.png'),fullPage:true});
+  await cards.nth(1).click();
+  await expect(page.locator('#gearBulkCount')).toContainText('1 SELECTED');
+  await cards.nth(1).click();
+  await expect(page.locator('#gearBulkCount')).toContainText('2 SELECTED');
+  await page.locator('#cancelGearSelection').click();
+  await expect(page.locator('#gearBulkActionBar')).not.toHaveClass(/show/);
+  await expect(page.locator('#gearGrid .gearBagSlot.bulkSelected')).toHaveCount(0);
+  await cards.nth(0).click();
+  await cards.nth(1).click();
   await page.locator('#sellFilteredGear').click();
   await expect(page.locator('#sellFilteredLabel')).toHaveText('CONFIRM SELL');
   expect(await page.evaluate(()=>window.__riskTest.equipmentInventory().length)).toBe(initial);
   await page.locator('#sellFilteredGear').click();
   await expect.poll(()=>page.evaluate(()=>window.__riskTest.equipmentInventory().length)).toBe(initial-2);
+  await expect(page.locator('#gearBulkActionBar')).not.toHaveClass(/show/);
 
-  await page.locator('#selectGearItems').click();
   const remaining=page.locator('#gearGrid .gearBagSlot:not(.equipped)');
   await remaining.nth(0).click();
   const materialsBefore=await page.locator('#materialCount').textContent();

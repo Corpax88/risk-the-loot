@@ -100,12 +100,12 @@ test('mobile uses tap-select and tap-equip without horizontal overflow',async({b
   await expect(page.locator('#mobileGearComparison > span')).toHaveCount(5);
   await expect(page.locator('#mobileGearSet')).not.toBeEmpty();
   await expect(page.locator('#mobileGearEquip')).toHaveText(/EQUIP|REPLACE/);
-  await page.locator('#gearGrid [data-item="'+candidate.uid+'"]').tap();
+  await page.locator('#mobileGearEquip').tap();
   await expect.poll(()=>page.evaluate(()=>window.__riskTest.equipmentState().equipped.scarf)).toBe(candidate.uid);
 
   candidate=await unequippedItem(page,'boots');
   await page.locator('#gearGrid [data-item="'+candidate.uid+'"]').tap();
-  await page.locator('#gearGrid [data-item="'+candidate.uid+'"]').tap();
+  await page.locator('#mobileGearEquip').tap();
   await expect.poll(()=>page.evaluate(()=>window.__riskTest.equipmentState().equipped.boots)).toBe(candidate.uid);
 
   const layout=await page.locator('#gearPanel').evaluate(element=>({

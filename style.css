@@ -3318,12 +3318,10 @@ button:focus-visible{outline-color:#f4ead6}
 .resultPanel{max-height:calc(100dvh - max(20px,env(safe-area-inset-top)) - max(20px,env(safe-area-inset-bottom)));display:flex;flex-direction:column;overflow:hidden}
 .resultPanel .resultLoot{flex:1 1 auto;min-height:54px;overflow-y:auto}.resultPanel .resultContinue{position:relative;z-index:2;flex:0 0 auto;margin-bottom:max(0px,env(safe-area-inset-bottom))}
 
-/* Inventory bulk actions protect equipped gear and keep confirmation local. */
-.gearInventoryActions{grid-template-columns:minmax(130px,.75fr) repeat(3,minmax(118px,1fr))}
-.bulkGearButton{min-width:0;min-height:42px;display:flex;align-items:center;justify-content:space-between;gap:7px;padding:7px 9px;border:1px solid #6d5a38;border-radius:4px;background:#151717;color:#e9dec8;text-align:left}
-.bulkGearButton span,.bulkGearButton b{display:block}.bulkGearButton span{font-size:7px;letter-spacing:.6px}.bulkGearButton b{overflow:hidden;color:#a99a7b;font-size:5px;letter-spacing:.4px;text-overflow:ellipsis;white-space:nowrap}.bulkGearButton:disabled{opacity:.34}.bulkGearButton.select.active{border-color:#d6aa58;background:#2b2417;color:#ffe3a2}.bulkGearButton.salvageSelectedGear{border-color:#4f806f;color:#a9e1c6}.bulkGearButton.armed{border-color:#c83f46;background:#3a161a;color:#ffe0e0}.bulkGearButton.armed b{color:#ffc0c3}
+/* Inventory selection is immediate; one local action bar owns disposal actions. */
 .gearBulkMark{position:absolute;z-index:7;left:2px;bottom:2px;width:20px;height:20px;display:grid;place-items:center;border:2px solid #e9f8ef;border-radius:50%;background:#27865a;color:#fff;font-style:normal;font-size:10px;box-shadow:0 2px 5px #0009}
-#gearPanel .gearBagSlot.bulkSelectable:not(.equipped){cursor:pointer}#gearPanel .gearBagSlot.bulkSelected{outline:3px solid #56d592!important;outline-offset:-3px;box-shadow:inset 0 0 0 2px #082b1d!important}#gearPanel .gearBagSlot.equipped.bulkSelectable{opacity:.7}
+#gearPanel .gearBagSlot.bulkSelectable{cursor:pointer}#gearPanel .gearBagSlot.bulkSelected{z-index:3;outline:2px solid var(--gear-color,#56d592)!important;outline-offset:-2px;box-shadow:inset 0 0 0 2px #071c14,0 0 13px color-mix(in srgb,var(--gear-color,#56d592) 48%,transparent)!important;animation:gearSelectPop .19s cubic-bezier(.2,1.45,.45,1)}
+@keyframes gearSelectPop{0%{transform:scale(.94)}65%{transform:scale(1.025)}100%{transform:scale(1)}}
 
 /* Three-way champion loot decision. */
 .bossLootDecisionActions{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.bossLootDecisionButton.keep{border-color:#6589af;background:linear-gradient(180deg,#203c58,#111f31);color:#b9dcff}
@@ -3333,25 +3331,13 @@ button:focus-visible{outline-color:#f4ead6}
   .pappaCombatHud:before{left:57px}.pappaCombatHud:after{left:65px}.combatPortrait{width:72px;height:72px}.combatVitals{height:68px;grid-template-rows:24px 16px 21px;margin-left:-6px;padding:4px 6px 3px 12px}
   .pappaCombatHud .healthLabel b{min-width:62px;font-size:7px}.pappaCombatHud .healthTrack{height:11px}.pappaCombatHud .xpHud{height:15px;grid-template-columns:18px minmax(20px,1fr) 49px}.combatIdentity{gap:2px}.combatSet>b{max-width:75px}.combatStats>span{padding:0 1px}
   .miniMap{width:96px;height:68px;bottom:calc(max(58px,calc(env(safe-area-inset-bottom) + 58px)) + 92px)}
-  .gearInventoryActions{grid-template-columns:1fr 1fr}.bulkGearButton,.gearSortButton{min-height:36px}
+  .gearInventoryActions{grid-template-columns:1fr}.gearSortButton{min-height:36px}
   .resultOverlay{padding:max(7px,env(safe-area-inset-top)) max(7px,env(safe-area-inset-right)) max(7px,env(safe-area-inset-bottom)) max(7px,env(safe-area-inset-left))}.resultPanel{max-height:calc(100dvh - max(14px,env(safe-area-inset-top)) - max(14px,env(safe-area-inset-bottom)));padding:13px}.resultPanel .resultContinue{height:52px;margin-top:7px}
   .bossLootDecisionButton{min-width:0;grid-template-columns:25px minmax(0,1fr);padding:5px}.bossLootDecisionButton>i{width:24px;height:24px}.bossLootDecisionButton b{font-size:8px}.bossLootDecisionButton em{font-size:5px}
 }
 @media(max-width:360px){.pappaCombatHud{width:calc(100vw - 118px);grid-template-columns:68px minmax(0,1fr)}.combatPortrait{width:66px;height:66px}.pappaCombatHud .healthLabel span{font-size:6px}.pappaCombatHud .healthLabel b{min-width:56px;font-size:6px}.combatSet>b{max-width:55px}.miniMap{width:90px;height:64px}.bossLootDecisionActions{gap:4px}.bossLootDecisionButton{grid-template-columns:1fr;text-align:center}.bossLootDecisionButton>i{display:none}}
 
 .bossLootItem.receipt.kept:after{content:"KEPT";position:absolute;inset:auto 2px 13px;padding:2px;background:#10263bcc;color:#9bd2ff;font-size:5px;font-weight:900;text-align:center}
-
-@media(max-width:920px){
-  /* Bulk actions stay visible without duplicating the mobile Sort and Filter controls. */
-  #gearPanel .unifiedGearBrowser .gearInventoryPanel{grid-template-rows:28px 108px 36px 36px minmax(0,1fr)}
-  #gearPanel .gearToolbar{display:block!important;height:36px;margin:0;padding:2px 7px;border:0;border-top:1px solid #8e6d342c;border-bottom:1px solid #8e6d342c;background:#0a0c0e}
-  #gearPanel .gearToolbar>.gearFilterGroup,#gearPanel .gearToolbar .gearSortButton{display:none!important}
-  #gearPanel .gearInventoryActions{height:31px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
-  #gearPanel .gearInventoryActions .bulkGearButton{height:31px;min-height:31px;padding:3px 5px}
-  #gearPanel .gearInventoryActions .bulkGearButton span{font-size:5px}
-  #gearPanel .gearInventoryActions .bulkGearButton b{font-size:4px}
-}
-@media(max-width:390px){#gearPanel .unifiedGearBrowser .gearInventoryPanel{grid-template-rows:26px 102px 36px 36px minmax(0,1fr)}}
 
 /* Inventory actions stay local, fast and readable without persistent non-Legendary VFX. */
 .gearDetailActions{grid-template-columns:minmax(0,1.1fr) minmax(68px,.8fr) minmax(78px,.9fr)}
@@ -3364,13 +3350,25 @@ button:focus-visible{outline-color:#f4ead6}
 @keyframes gearQuickEquip{0%{transform:scale(.94)}48%{transform:scale(1.055);box-shadow:0 0 0 2px var(--gear-color),0 0 13px color-mix(in srgb,var(--gear-color) 46%,transparent)}100%{transform:scale(1)}}
 @keyframes gearQuickRemove{0%{transform:scale(1)}50%{transform:scale(.94);opacity:.72}100%{transform:scale(1);opacity:1}}
 .mobileGearActions{display:contents}
-.mobileGearSell,.mobileGearSalvage{display:none}
-@media(max-width:920px){
-  .adventureBagPanel .mobileGearSelection{grid-template-columns:64px minmax(0,1fr) 84px;grid-template-rows:1fr 27px 27px;height:126px}
-  .adventureBagPanel .mobileGearSelectionArt{grid-row:1/4}
-  .adventureBagPanel .mobileGearActions{grid-column:3;grid-row:1/4;display:grid;grid-template-rows:1fr 27px 27px;gap:3px}
-  .adventureBagPanel .mobileGearEquip{grid-column:1;grid-row:1;width:100%;min-height:0!important}
-  .mobileGearSell,.mobileGearSalvage{display:block;min-width:0;border:1px solid #4d5560;border-radius:3px;background:#15191e;color:#bcc4ce;font-size:5px;font-weight:900;letter-spacing:.35px}
-  .mobileGearSalvage{border-color:#49725a;color:#a9e8c2}.mobileGearSell:disabled,.mobileGearSalvage:disabled{opacity:.35}
+
+.gearBulkActionBar{
+  position:fixed;z-index:85;left:50%;bottom:max(9px,env(safe-area-inset-bottom));width:min(620px,calc(100% - 24px));min-height:62px;display:grid;grid-template-columns:minmax(72px,.72fr) repeat(3,minmax(92px,1fr));align-items:stretch;gap:6px;padding:7px;border:1px solid #a27b3f;border-radius:8px;background:#0b0d0ff2;box-shadow:0 14px 34px #000d,inset 0 1px #f4d88d1f;opacity:0;pointer-events:none;transform:translate(-50%,calc(100% + 24px));transition:transform .2s cubic-bezier(.2,.8,.3,1),opacity .18s ease;
 }
-@media(max-width:390px){.adventureBagPanel .mobileGearSelection{height:116px;grid-template-columns:58px minmax(0,1fr) 76px}}
+.gearBulkActionBar.show{opacity:1;pointer-events:auto;transform:translate(-50%,0)}
+.gearBulkActionBar output{display:grid;place-items:center;padding:0 6px;border-right:1px solid #9b783a45;color:#f0dcae;font-size:8px;font-weight:900;letter-spacing:.7px;text-align:center}
+.gearBulkAction{min-width:0;min-height:46px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:5px 7px;border:1px solid #665d4d;border-radius:5px;background:#17191a;color:#e9e0cf}
+.gearBulkAction span,.gearBulkAction b{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.gearBulkAction span{font-size:8px;font-weight:900;letter-spacing:.65px}.gearBulkAction b{color:#a99d87;font-size:5px}.gearBulkAction.sell{border-color:#98763d;color:#f2d792}.gearBulkAction.salvage{border-color:#4f806f;color:#a9e1c6}.gearBulkAction.cancel{border-color:#5c6268;color:#c7ccd1}.gearBulkAction.armed{border-color:#cf4850;background:#40191d;color:#ffe1e1}.gearBulkAction.armed b{color:#ffc0c3}
+#gearPanel.bulkSelectionActive .gearGrid{padding-bottom:78px}
+#gearPanel .gearInventoryActions{display:block;max-width:190px}
+#gearPanel .gearInventoryActions .gearSortButton{width:100%}
+#gearPanel .gearDetailActions{grid-template-columns:1fr}
+
+@media(max-width:900px){
+  .gearBulkActionBar{bottom:max(6px,env(safe-area-inset-bottom));width:calc(100% - 12px);min-height:56px;grid-template-columns:62px repeat(3,minmax(0,1fr));gap:4px;padding:5px}
+  .gearBulkActionBar output{padding:0 3px;font-size:6px}.gearBulkAction{min-height:44px;padding:4px}.gearBulkAction span{font-size:6.5px}.gearBulkAction b{font-size:4px}
+  #gearPanel.bulkSelectionActive .gearGrid{padding-bottom:70px}
+  #gearPanel .mobileGearActions{grid-column:3;grid-row:1/4;display:block}
+  #gearPanel .mobileGearEquip{width:100%;height:100%!important}
+}
+@media(max-width:360px){.gearBulkActionBar{grid-template-columns:54px repeat(3,minmax(0,1fr))}.gearBulkActionBar output{font-size:5.5px}.gearBulkAction span{font-size:6px}}
+@media(prefers-reduced-motion:reduce){.gearBulkActionBar{transition:none}.gearBagSlot.bulkSelected{animation:none!important}}

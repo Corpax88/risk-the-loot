@@ -3047,13 +3047,37 @@ button:focus-visible{outline-color:#f4ead6}
   background:radial-gradient(circle,color-mix(in srgb,var(--gear-color) 10%,#11100d) 0 58%,#070809d9 70%,transparent 72%);
 }
 #gearPanel .equipmentOrbitSlots .gearLoadoutSlot>i{
+  position:relative;
   width:48px!important;
   height:48px!important;
   margin:0!important;
   border-radius:50%;
-  overflow:visible;
+  overflow:hidden;
+  isolation:isolate;
 }
 #gearPanel .equipmentOrbitSlots .gearLoadoutSlot>span{display:none!important}
+#gearPanel .equipmentOrbitSlots .equippedGearPreview{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  display:block;
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  object-fit:contain;
+  pointer-events:none;
+}
+#gearPanel .equipmentOrbitSlots .equippedGearPreviewFallback{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  overflow:hidden;
+  pointer-events:none;
+}
+#gearPanel .equipmentOrbitSlots .equippedGearPreviewFallback[hidden],#gearPanel .equipmentOrbitSlots .equippedGearPreview[hidden]{display:none!important}
 #gearPanel .equipmentOrbitSlots .gearLoadoutSlot .gearArt{
   width:100%!important;
   height:100%!important;

@@ -588,7 +588,18 @@
   function equippedItem(slot){return gearDefinition(equippedGear(slot))}
   function paperDollLoadoutKey(){return GEAR_SLOTS.map(slot=>{let gear=equippedGear(slot);return gear?gear.uid+'@'+gear.itemId:'-'}).join('|')}
   function equippedFullSetId(resolveItem){let resolver=resolveItem||equippedItem,items=GEAR_SLOTS.map(resolver);if(items.some(item=>!item||!item.setId))return null;let setId=items[0].setId;return items.every(item=>item.setId===setId)?setId:null}
-  const missingGearAssetWarnings=new Set(),gearAssetBoundsCache=new Map();
+  const missingGearAssetWarnings=new Set(),gearAssetBoundsCache=new Map(),equippedGearPreviewTransformCache=new Map();
+  const EQUIPPED_GEAR_PREVIEW_SIZE=192;
+  const EQUIPPED_GEAR_PREVIEW_RULES=Object.freeze({
+    hat:Object.freeze({padding:.1,anchorX:0,anchorY:0}),
+    scarf:Object.freeze({padding:.12,anchorX:0,anchorY:0}),
+    coat:Object.freeze({padding:.07,anchorX:0,anchorY:0}),
+    gloves:Object.freeze({padding:.12,anchorX:0,anchorY:0}),
+    boots:Object.freeze({padding:.07,anchorX:0,anchorY:0}),
+    hammer:Object.freeze({padding:.06,anchorX:0,anchorY:0})
+  });
+  // Keep exceptions explicit and asset-scoped. Automatic alpha fitting currently covers every production item.
+  const EQUIPPED_GEAR_PREVIEW_OVERRIDES=Object.freeze({});
   function gearAssetRef(item){
     let asset=item&&item.visual&&item.visual.asset,atlas=asset&&productionGearAtlases[asset.atlasId],valid=!!(asset&&atlas&&asset.path===atlas.path&&Number.isInteger(asset.column)&&Number.isInteger(asset.row)&&asset.column>=0&&asset.column<atlas.columns&&asset.row>=0&&asset.row<atlas.rows);
     if(!valid&&item&&!missingGearAssetWarnings.has(item.id)){missingGearAssetWarnings.add(item.id);console.warn('[Gear Asset] Missing or invalid equip asset for '+item.id+'; neutral Pappa Hammer fallback retained.')}
@@ -699,6 +710,23 @@
     let atlas=productionGearAtlases[asset.atlasId],canvas=document.createElement('canvas'),layer=canvas.getContext('2d',{willReadFrequently:true});canvas.width=canvas.height=asset.cell;layer.clearRect(0,0,asset.cell,asset.cell);layer.drawImage(atlas.image,asset.column*asset.cell,asset.row*asset.cell,asset.cell,asset.cell,0,0,asset.cell,asset.cell);
     let pixels=layer.getImageData(0,0,asset.cell,asset.cell).data,minX=asset.cell,minY=asset.cell,maxX=-1,maxY=-1;for(let y=0;y<asset.cell;y+=2)for(let x=0;x<asset.cell;x+=2)if(pixels[(y*asset.cell+x)*4+3]>8){if(x<minX)minX=x;if(y<minY)minY=y;if(x>maxX)maxX=x;if(y>maxY)maxY=y}
     cached=maxX<0?null:{x:minX,y:minY,w:maxX-minX+2,h:maxY-minY+2};gearAssetBoundsCache.set(key,cached);return cached
+  }
+  function equippedGearPreviewTransform(asset,displaySlot){
+    let size=EQUIPPED_GEAR_PREVIEW_SIZE,slot=displaySlot==='cape'?'coat':displaySlot,rule=EQUIPPED_GEAR_PREVIEW_RULES[slot]||EQUIPPED_GEAR_PREVIEW_RULES.coat,override=EQUIPPED_GEAR_PREVIEW_OVERRIDES[asset.id]||{},cacheKey=asset.id+'|'+slot+'|'+size,cached=equippedGearPreviewTransformCache.get(cacheKey);if(cached)return cached;
+    let source=gearAssetAlphaBounds(asset);if(!source)return null;
+    let padding=Math.max(.04,Math.min(.2,override.padding==null?rule.padding:override.padding)),radius=size*(.5-padding),fit=radius*2/Math.max(1,Math.hypot(source.w,source.h)),manualScale=Math.max(.82,Math.min(1,override.scale||1)),width=source.w*fit*manualScale,height=source.h*fit*manualScale,anchorX=(override.anchorX==null?rule.anchorX:override.anchorX)||0,anchorY=(override.anchorY==null?rule.anchorY:override.anchorY)||0;
+    cached={source,x:(size-width)/2+anchorX*radius,y:(size-height)/2+anchorY*radius,width,height,radius:size*.5-1};equippedGearPreviewTransformCache.set(cacheKey,cached);return cached
+  }
+  function drawEquippedGearPreview(canvas,gear,displaySlot){
+    if(!canvas||!canvas.isConnected)return false;let item=gearDefinition(gear),asset=gearAssetRef(item),fallback=canvas.nextElementSibling;if(!item||!asset){canvas.hidden=true;if(fallback)fallback.hidden=false;return false}
+    let atlas=productionGearAtlases[asset.atlasId],renderKey=gear.uid+'|'+asset.id+'|'+displaySlot;canvas.dataset.previewKey=renderKey;canvas.dataset.itemId=item.id;canvas.dataset.assetId=asset.id;canvas.dataset.previewSlot=displaySlot;
+    if(!imageReady(atlas.image)){canvas.hidden=true;if(fallback)fallback.hidden=false;let retry=()=>{if(canvas.isConnected&&canvas.dataset.previewKey===renderKey)drawEquippedGearPreview(canvas,gear,displaySlot)};atlas.image.addEventListener('load',retry,{once:true});atlas.image.addEventListener('error',()=>{if(canvas.isConnected&&canvas.dataset.previewKey===renderKey){canvas.hidden=true;if(fallback)fallback.hidden=false}}, {once:true});return false}
+    let transform=equippedGearPreviewTransform(asset,displaySlot),layer=canvas.getContext('2d');if(!transform||!layer){canvas.hidden=true;if(fallback)fallback.hidden=false;if(!missingGearAssetWarnings.has(item.id)){missingGearAssetWarnings.add(item.id);console.warn('[Gear Asset] Empty or unreadable equipped-slot asset for '+item.id+'; neutral fallback retained.')}return false}
+    canvas.width=canvas.height=EQUIPPED_GEAR_PREVIEW_SIZE;layer.clearRect(0,0,canvas.width,canvas.height);layer.save();layer.beginPath();layer.arc(canvas.width/2,canvas.height/2,transform.radius,0,Math.PI*2);layer.clip();layer.imageSmoothingEnabled=true;layer.imageSmoothingQuality='high';let source=transform.source;layer.drawImage(atlas.image,asset.column*asset.cell+source.x,asset.row*asset.cell+source.y,source.w,source.h,transform.x,transform.y,transform.width,transform.height);layer.restore();canvas.hidden=false;if(fallback)fallback.hidden=true;return true
+  }
+  function equippedGearPreviewMarkup(gear,displaySlot){
+    let item=gearDefinition(gear),asset=gearAssetRef(item),fallback=gearArtMarkup(gear,'small');if(!item||!asset)return fallback;
+    return '<canvas class="equippedGearPreview" width="'+EQUIPPED_GEAR_PREVIEW_SIZE+'" height="'+EQUIPPED_GEAR_PREVIEW_SIZE+'" aria-hidden="true"></canvas><span class="equippedGearPreviewFallback" aria-hidden="true">'+fallback+'</span>'
   }
   function drawProductionGearAsset(layer,item,b){
     let asset=gearAssetRef(item);if(!asset||!b)return false;let atlas=productionGearAtlases[asset.atlasId];if(!imageReady(atlas.image))return false;let source=gearAssetAlphaBounds(asset);if(!source)return false;
@@ -1207,8 +1235,8 @@
       let slot=display.slot,gear=equippedGear(slot),item=gearDefinition(gear),meta=GEAR_SLOT_META[slot],rarity=item&&LOOT_RARITIES[item.rarity],button=document.createElement('button');
       button.className='gearLoadoutSlot'+(item?' filled rarity'+rarity.rank:'')+(gearFilter===slot?' selected':'');button.setAttribute('data-slot',slot);button.setAttribute('data-display-slot',display.display);button.style.setProperty('--gear-color',rarity?rarity.color:'#596a84');
       button.setAttribute('aria-label',item?display.name+': '+item.name+'. Tap to remove.':'Empty '+display.name+' slot');if(gear){button.setAttribute('data-item',gear.uid);button.setAttribute('data-info-ready','');button.draggable=!mobileArmory()}else{button.setAttribute('data-help-title','Empty '+display.name+' Slot');button.setAttribute('data-help',display.display==='gloves'?'Gloves are visually linked to chest gear. Equip a chest item to update both areas.':'Equip compatible '+meta.name.toLowerCase()+' gear here.')}
-      button.innerHTML='<i>'+(item?gearArtMarkup(gear,'small'):'<span class="gearSlotSilhouette">'+meta.icon+'</span>')+'</i><span><small>'+display.name+'</small><b>'+(item?item.name:'EMPTY')+'</b>'+(item?'<em>LEVEL '+gear.level+' \u00B7 EQUIPPED</em>':'')+'</span>';
-      button.addEventListener('click',()=>{if(mobileArmory()&&gear)unequipGearSlot(slot);else setGearFilter(slot)});ui.gearLoadoutSlots.appendChild(button)
+      button.innerHTML='<i>'+(item?equippedGearPreviewMarkup(gear,display.display):'<span class="gearSlotSilhouette">'+meta.icon+'</span>')+'</i><span><small>'+display.name+'</small><b>'+(item?item.name:'EMPTY')+'</b>'+(item?'<em>LEVEL '+gear.level+' \u00B7 EQUIPPED</em>':'')+'</span>';
+      button.addEventListener('click',()=>{if(mobileArmory()&&gear)unequipGearSlot(slot);else setGearFilter(slot)});ui.gearLoadoutSlots.appendChild(button);if(item){let preview=button.querySelector('.equippedGearPreview');if(preview)drawEquippedGearPreview(preview,gear,display.display)}
     }
     if(!ui.gearCharacterStage.querySelector('.gearEquipHint')){let hint=document.createElement('span');hint.className='gearEquipHint';hint.textContent='DROP TO EQUIP';ui.gearCharacterStage.appendChild(hint)}
   }

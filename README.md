@@ -1,6 +1,8 @@
-# RISK THE LOOT! v0.59.1
+# RISK THE LOOT! v0.70.1 - Inventory Focus
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
+
+Inventory Focus v0.70.1 adds a dedicated Armory camera that presents Pappa Hammer roughly 12% larger while preserving the original sprite atlases, Gear 2.0 anchors and combat scale. Full sets and mixed loadouts now remain sharply framed across iPhone and desktop, with large hammers allowed to break the inner presentation ring without clipping the character panel.
 
 Handlava awakens only when Pappa equips all five pieces of the Legendary Lava Set, unlocked at Level 55. The Living Lava Scarf grows two massive arms that favor enemies beyond hammer range, grab and swing them into other raiders, then throw them toward nearby packs and leave them within Hammerstorm reach. Six dedicated ability sheets and pooled heat, trail and impact effects keep the living-scarf silhouette readable on mobile without replacing the close-range Spin follow-up.
 

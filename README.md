@@ -8,7 +8,7 @@ XP Journey v0.59.1 keeps immediate combat XP while reshaping the full Level 1-10
 
 Spin Stability coalesces rapid normal-Spin input into one authoritative attack, removes a synchronous paper-doll canvas serialization from the touch path, reuses hot-path combat buffers and pooled effects, and replaces dense-pack filter work with bounded hit feedback. A 30-second desktop and iPhone regression test verifies bounded attacks, effects, listeners, timers and recovery while preserving Hammerstorm damage and slide-over Dash.
 
-Level 100 Progression expands Pappa's complete progression from Level 1 to a hard Level 100 cap. One shared module owns the XP curve, cap, reward scaling, map milestones, set unlocks, player growth, enemy and champion scaling, item levels and gear-value growth. The deterministic curve preserves the proven fast journey to Level 50, then adds smooth exponential ramps beginning at Levels 50, 80 and 95. Level 50 requires 2,026 total XP, Level 80 requires 12,532, Level 95 requires 39,632 and reaching Level 100 requires exactly 61,094 XP. The cap displays `MAX LEVEL`, discards overflow safely and never creates Level 101 gear or progression. Existing current-schema saves remain compatible.
+Level 100 Progression expands Pappa's complete progression from Level 1 to a hard Level 100 cap. One shared module owns the XP curve, cap, reward scaling, map milestones, set unlocks, player growth, enemy and champion scaling, item levels and gear-value growth. The deterministic curve keeps Levels 1-10 fast, introduces a gentle ramp after Level 10, then adds stronger ramps beginning at Levels 50, 80 and 95. Level 50 requires 2,828 total XP, Level 80 requires 16,470, Level 95 requires 47,159 and reaching Level 100 requires exactly 70,329 XP. The cap displays `MAX LEVEL`, discards overflow safely and never creates Level 101 gear or progression. Existing current-schema saves remain compatible.
 
 Mobile Performance v0.55.0 adds bounded visual budgets, pooled combat effects and enemy projectiles, view culling, cached static gear calculations, throttled HUD/minimap rendering, and High/Medium/Low quality profiles. Auto quality uses conservative hysteresis to reduce visual work during sustained slow frames and gradually restore it after recovery. Damage, enemy behavior, input timing, item stats, drop rates and balance remain unchanged.
 
@@ -90,12 +90,12 @@ Every item now has its own inventory and field-drop asset. Mouse hover and keybo
 
 ## Pappa levels and equipment
 
-Pappa Hammer earns XP immediately whenever a player-caused enemy death occurs. Rushers and Gunners start at 1 XP, Lancers and Brutes at 2 XP, and elites earn at least 4 XP and usually triple their type reward. Regular-enemy XP rises every two risk tiers, deeper five-floor ascents add another reward step, and champion XP improves at every risk tier and dungeon floor. Levels run from 1 to a hard cap of 100. Every level adds controlled base health and damage, while regular enemies and champions use separate bounded scaling curves. The configurable progression curve keeps Levels 1-50 fast, 50-80 measured, 80-95 demanding and 95-100 prestigious; the exact cumulative requirement for Level 100 is 61,094 XP. Higher levels open stronger equipment pools:
+Pappa Hammer earns XP immediately whenever a confirmed player-caused enemy death occurs. Rushers, Gunners and Lancers start at 1 XP, Brutes at 2 XP, and elites earn at least 3 XP and usually triple their type reward. Regular-enemy XP rises every two risk tiers, deeper five-floor ascents add another reward step, and champion XP improves at every risk tier and dungeon floor. Levels run from 1 to a hard cap of 100. Every level adds controlled base health and damage, while regular enemies and champions use separate bounded scaling curves. The configurable progression curve keeps Levels 1-50 fast, 50-80 measured, 80-95 demanding and 95-100 prestigious; the exact cumulative requirement for Level 100 is 70,329 XP. Loot uses overlapping availability ranges: Common Levels 1-40, Rare 10-70, Epic 25-100 and Legendary 50-100. Highest reached stage remains the primary gate through effective loot-level caps, so repeatedly farming Stage 1 can never unlock Epic or Legendary gear.
 
-- Rare set gear can drop immediately.
-- Epic set gear begins at Pappa level 12.
-- Legendary set gear begins with Stormcaller at Pappa level 12.
-- Higher Legendary drop bands begin at Pappa levels 30 and 65.
+- Common gear is available from Levels 1-40.
+- Rare gear overlaps from Levels 10-70.
+- Epic gear is available from Level 25 after reaching Stage 2.
+- Legendary gear is available from Level 50 after reaching Stage 4; apex Legendary weighting increases at Level 65.
 - Late-game signature sets continue unlocking through Fatebound at Level 92.
 
 The boss catalog contains exactly 115 set items: 23 named sets with a Hat, Scarf, Coat, Hammer, and Boots in each set. Five sets are Rare, four are Epic, and fourteen are Legendary. Ordinary enemies only drop coins; equipment is reserved for boss victories.

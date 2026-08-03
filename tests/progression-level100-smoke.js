@@ -5,6 +5,8 @@ const {
   MAX_PLAYER_LEVEL,
   TOTAL_XP_TO_MAX,
   MAP_UNLOCK_LEVELS,
+  LOOT_RARITY_RANGES,
+  LOOT_STAGE_LEVEL_CAPS,
   SET_UNLOCK_LEVELS,
   clampLevel,
   xpRequiredForNextLevel,
@@ -14,6 +16,9 @@ const {
   xpProgress,
   xpProgressFromTotal,
   getEnemyXpReward,
+  lootProgressionContext,
+  lootRarityEligible,
+  eligibleLootRarities,
   playerStatsForLevel,
   enemyScaleForLevel,
   bossScaleForLevel,
@@ -22,7 +27,7 @@ const {
 }=progression;
 
 assert.equal(MAX_PLAYER_LEVEL,100,'Level 100 must be the single hard cap');
-assert.equal(TOTAL_XP_TO_MAX,61094,'total XP to Level 100 is not deterministic');
+assert.equal(TOTAL_XP_TO_MAX,70329,'total XP to Level 100 is not deterministic');
 assert.deepEqual(sanitizeProgress(undefined,undefined),{level:1,xp:0,levelsGained:0,discardedXp:0},'fresh progress must start at Level 1');
 
 const thresholds=[];
@@ -33,7 +38,7 @@ for(let level=1;level<MAX_PLAYER_LEVEL;level++){
   thresholds.push(needed);
   assert.equal(totalXpForLevel(level+1)-totalXpForLevel(level),needed,'total XP table disagrees at Level '+level);
 }
-assert.deepEqual([1,10,25,50,65,80,95,100].map(totalXpForLevel),[0,126,550,2026,4519,12532,39632,61094],'XP phase milestones changed unexpectedly');
+assert.deepEqual([1,10,25,50,65,80,95,100].map(totalXpForLevel),[0,126,627,2828,6424,16470,47159,70329],'XP phase milestones changed unexpectedly');
 for(let level=2;level<MAX_PLAYER_LEVEL;level++)assert(xpRequiredForNextLevel(level)/xpRequiredForNextLevel(level-1)<1.17,'XP curve spikes too sharply at Level '+level);
 assert.equal(xpRequiredForNextLevel(100),0,'Level 100 must not expose Level 101 XP');
 assert.equal(totalXpForLevel(100),TOTAL_XP_TO_MAX,'Level 100 cumulative XP is inconsistent');
@@ -76,6 +81,22 @@ assert(getEnemyXpReward({enemyType:'brute',enemyLevel:80,depth:11,difficulty:8})
 for(let risk=2;risk<=20;risk+=2)assert(getEnemyXpReward({enemyType:'rusher',depth:1,difficulty:risk})>getEnemyXpReward({enemyType:'rusher',depth:1,difficulty:risk-2}),'higher risk did not improve regular-enemy XP at tier '+risk);
 for(let risk=1;risk<=20;risk++)assert(getEnemyXpReward({enemyType:'boss',boss:true,depth:5,difficulty:risk})>getEnemyXpReward({enemyType:'boss',boss:true,depth:5,difficulty:risk-1}),'higher risk did not improve boss XP at tier '+risk);
 
+function firstStageProfile({normal=0,brutes=0,elites=0}){
+  const amount=normal*getEnemyXpReward({enemyType:'rusher',depth:1,difficulty:0})+brutes*getEnemyXpReward({enemyType:'brute',depth:1,difficulty:0})+elites*getEnemyXpReward({enemyType:'rusher',elite:true,depth:1,difficulty:0})+getEnemyXpReward({enemyType:'boss',boss:true,depth:5,difficulty:0});
+  return Object.assign({amount},applyXp(1,0,amount));
+}
+assert.equal(firstStageProfile({normal:66,elites:3}).level,8,'a weak complete first stage must land at Level 8');
+assert.equal(firstStageProfile({normal:72,brutes:8,elites:5}).level,9,'a normal complete first stage must land around Level 9');
+assert.equal(firstStageProfile({normal:105,brutes:15,elites:8}).level,12,'an exceptional first stage must not exceed Level 12');
+
+assert.deepEqual(LOOT_RARITY_RANGES,{common:{minLevel:1,maxLevel:40,minStage:1},rare:{minLevel:10,maxLevel:70,minStage:1},epic:{minLevel:25,maxLevel:100,minStage:2},legendary:{minLevel:50,maxLevel:100,minStage:4}},'loot availability ranges changed');
+assert.deepEqual(LOOT_STAGE_LEVEL_CAPS,{1:24,2:49,3:70,4:100},'loot stage caps changed');
+assert.deepEqual(lootProgressionContext(100,5),{level:100,stage:1,highestDepth:5,effectiveLevel:24,stageCap:24},'stage-one farming escaped its loot cap');
+assert.deepEqual(eligibleLootRarities(100,5),['common','rare'],'stage one unlocked high-tier loot');
+assert.equal(lootRarityEligible('legendary',100,5),false,'stage-one farming unlocked Legendary gear');
+assert.equal(lootRarityEligible('legendary',50,20),true,'stage four did not unlock level-appropriate Legendary gear');
+assert.deepEqual(eligibleLootRarities(50,20),['rare','epic','legendary'],'stage-four overlap is wrong');
+
 assert.deepEqual(Object.values(MAP_UNLOCK_LEVELS),[1,15,35,60,80],'map milestones are not spread across 100 levels');
 for(const [id,level] of Object.entries(SET_UNLOCK_LEVELS))assert(level>=1&&level<=100,'set unlock outside progression range: '+id);
 assert.equal(SET_UNLOCK_LEVELS.lavaSet,55,'Lava Set must unlock at Level 55');
@@ -95,4 +116,4 @@ assert(playerStatsForLevel(100).hp<300,'player health grew beyond the intended L
 assert(bossScaleForLevel(100).hp<4,'boss level scaling ran away from expedition difficulty');
 assert(gearScaleForLevel(100)<3,'gear stat scaling ran away at Level 100');
 
-console.log('Level 100 progression smoke passed: 99 smooth thresholds, 61,094 total XP, scalable rewards and a strict cap.');
+console.log('Level 100 progression smoke passed: calibrated first-stage profiles, 70,329 total XP, depth-gated loot and a strict cap.');

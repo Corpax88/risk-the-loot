@@ -441,12 +441,12 @@ button:focus-visible{outline-color:#f4ead6}
 .sellFilteredGear{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 11px;border-color:#8b713f;background:#282113;color:#f2d88f;text-align:left}.sellFilteredGear span,.sellFilteredGear b{display:block}.sellFilteredGear span{font-size:8px}.sellFilteredGear b{color:#c9b474;font-size:6px;letter-spacing:.7px}.sellFilteredGear:disabled{opacity:.35}.sellFilteredGear.armed{border-color:#c83f46;background:#3a161a;color:#ffd9d9;box-shadow:inset 0 0 18px #c83f4633}.sellFilteredGear.armed b{color:#f4b0b3}
 .gearGrid{grid-template-columns:repeat(2,minmax(0,1fr));max-height:430px;overflow-y:auto;padding-right:2px;overscroll-behavior:contain}
 
-.gearArt{--gear-x:0%;--gear-y:0%;--gear-rarity:#9aa5aa;width:42px;height:42px;display:inline-block;flex:none;background-image:url('assets/gear-items-atlas.png');background-repeat:no-repeat;background-position:var(--gear-x) var(--gear-y);background-size:1000% 500%;filter:drop-shadow(0 2px 2px #000c)}
-.gearArt.setGearSprite{background-image:url('assets/set-gear-atlas.png');background-size:500% 1600%}
-.gearArt.legendarySprite{background-image:url('assets/legendary-gear-atlas.png');background-size:500% 500%;filter:drop-shadow(0 3px 2px #000e) drop-shadow(0 0 5px color-mix(in srgb,var(--legendary-accent) 45%,transparent))}
-.gearArt.blackHoleSprite{background-image:url('assets/black-hole-gear-icons-v1.png');background-size:500% 100%;filter:drop-shadow(0 4px 3px #000f) drop-shadow(0 0 7px #1b75d8aa) drop-shadow(0 0 3px #7ddcff)}
-.gearArt.lavaSprite{background-image:url('assets/lava-gear-icons-v1.png');background-size:500% 100%;filter:drop-shadow(0 4px 3px #000f) drop-shadow(0 0 7px #dc3b0faa) drop-shadow(0 0 3px #ffb13b)}
-.gearArt.natureSprite{background-image:url('assets/nature-gear-icons-v1.png');background-size:500% 100%;filter:drop-shadow(0 4px 3px #000f) drop-shadow(0 0 7px #567516aa) drop-shadow(0 0 3px #b8df55)}
+.gearArt{--gear-rarity:#9aa5aa;width:42px;height:42px;display:inline-block;flex:none;background-color:transparent;background-repeat:no-repeat;filter:drop-shadow(0 2px 2px #000c)}
+.gearArt.legendarySprite{filter:drop-shadow(0 3px 2px #000e) drop-shadow(0 0 5px color-mix(in srgb,var(--legendary-accent) 45%,transparent))}
+.gearArt.blackHoleSprite{filter:drop-shadow(0 4px 3px #000f) drop-shadow(0 0 7px #1b75d8aa) drop-shadow(0 0 3px #7ddcff)}
+.gearArt.lavaSprite{filter:drop-shadow(0 4px 3px #000f) drop-shadow(0 0 7px #dc3b0faa) drop-shadow(0 0 3px #ffb13b)}
+.gearArt.natureSprite{filter:drop-shadow(0 4px 3px #000f) drop-shadow(0 0 7px #567516aa) drop-shadow(0 0 3px #b8df55)}
+.gearArt.neutralGearFallback{background-image:none!important;filter:none}
 .gearArt.small{width:34px;height:34px}.gearArt.micro{width:26px;height:26px}.gearArt.card{width:52px;height:52px}.gearArt.toast{width:42px;height:42px}
 .baseGearSlot .gearArt,.gearLoadoutSlot>i .gearArt,.lootToast>i .gearArt{max-width:100%;max-height:100%}
 
@@ -2630,8 +2630,6 @@ button:focus-visible{outline-color:#f4ead6}
 
 /* Stormcaller legendary identity */
 .gearArt.stormcallerSprite{
-  background-image:url('assets/stormcaller-gear-icons-v1.png');
-  background-size:500% 100%;
   filter:
     drop-shadow(0 4px 3px #000f)
     drop-shadow(0 0 7px #187bc8aa)

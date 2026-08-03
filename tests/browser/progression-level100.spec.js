@@ -13,7 +13,7 @@ test('fresh and old-schema saves start cleanly at Level 1',async({page})=>{
     localStorage.setItem('scrapbound_prototype_v1',JSON.stringify({version:11,level:88,xp:999999,scrap:12345}))
   });
   const state=await page.evaluate(()=>window.__riskTest.progressionState());
-  expect(state).toMatchObject({maxLevel:100,totalXpToMax:61094,saveVersion:12,progress:{level:1,current:0,required:10,capped:false}});
+  expect(state).toMatchObject({maxLevel:100,totalXpToMax:70329,saveVersion:12,progress:{level:1,current:0,required:10,capped:false}});
   await expect(page.locator('#pappaLevel')).toHaveText('1');
   const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('scrapbound_prototype_v1')));
   expect(saved.version).toBe(12);
@@ -36,7 +36,7 @@ test('exact, multi-level and capped XP updates stay synchronized',async({page})=
     const needed=window.RiskLootProgression.xpRequiredForNextLevel(99);
     return window.__riskTest.setProgress(99,needed-1)
   });
-  expect(state.progress).toMatchObject({level:99,current:5332,required:5333,capped:false});
+  expect(state.progress).toMatchObject({level:99,current:5699,required:5700,capped:false});
   state=await page.evaluate(()=>window.__riskTest.grantPlayerXp(1));
   expect(state.progress).toMatchObject({level:100,current:0,required:0,percent:1,capped:true});
   await expect(page.locator('#pappaLevel')).toHaveText('100');

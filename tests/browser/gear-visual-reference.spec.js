@@ -19,7 +19,8 @@ test('every current gear item has a Gear 2.0 visual profile',async({page})=>{
     usesProductionAssets:true,
     usesPieceGeometry:false,
     usesStripePattern:false,
-    usesLegacyGearOverlay:false
+    usesLegacyGearOverlay:false,
+    modularChannels:['cape','boots','chest','hat','scarf','hammer']
   });
   expect(coverage.assets).toHaveLength(155);
   expect(coverage.assets.every(item=>item.assetId&&item.path)).toBe(true);
@@ -65,13 +66,15 @@ test('all sets render every animation without clipping or edge artifacts',async(
     const state=await page.evaluate(()=>window.__riskTest.gearVisualState(true));
     expect(state.setId).toBe(set.id);
     expect(state.visualProfile).toBe(set.id);
-    expect(state.usesProductionSkin).toBe(['hammerChoir','blackHole','stormrunner','lavaSet','natureSet'].includes(set.id));
+    expect(state.usesProductionSkin).toBe(false);
+    expect(state.usesModularLayers).toBe(true);
     expect(state.layers).toEqual([
-      {slot:'boots',region:'boots'},
-      {slot:'coat',region:'armor'},
-      {slot:'hat',region:'hat'},
-      {slot:'scarf',region:'accessories'},
-      {slot:'hammer',region:'hammer'}
+      {id:'cape',sourceSlot:'coat',region:'cape',layer:10,position:'back',anchor:{x:0,y:0,scale:1},visible:true},
+      {id:'boots',sourceSlot:'boots',region:'boots',layer:30,position:'front',anchor:{x:0,y:0,scale:1},visible:true},
+      {id:'chest',sourceSlot:'coat',region:'chestArmor',layer:40,position:'front',anchor:{x:0,y:0,scale:1},visible:true},
+      {id:'hat',sourceSlot:'hat',region:'hat',layer:50,position:'front',anchor:{x:0,y:0,scale:1},visible:true},
+      {id:'scarf',sourceSlot:'scarf',region:'scarf',layer:60,position:'front',anchor:{x:0,y:0,scale:1},visible:true},
+      {id:'hammer',sourceSlot:'hammer',region:'hammer',layer:70,position:'front',anchor:{x:0,y:0,scale:1},visible:true}
     ]);
     expect(Object.values(state.equippedAssets).every(asset=>asset&&asset.path)).toBe(true);
 

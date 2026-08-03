@@ -160,7 +160,7 @@ html,body{background:#080c14;font-family:Trebuchet MS,Segoe UI,Arial,sans-serif}
   animation:pappaMenuBreath 4.8s ease-in-out infinite;
 }
 .pappaHammerBaseSprite{
-  background-image:url('assets/pappa-hammer-idle-v2.png');
+  background-image:none;
   background-size:400% 200%;
   background-position:0 0;
   background-repeat:no-repeat;
@@ -428,7 +428,7 @@ button:focus-visible{outline-color:#f4ead6}
 .gearCharacterStage.loadoutLegendarySet{background:radial-gradient(circle at 50% 43%,color-mix(in srgb,var(--set-color) 42%,#203b61) 0,#101b2e 43%,#080e18 100%)}
 .gearCharacterStage.loadoutLegendarySet:after{opacity:.13;animation:legendarySetSigil 4.2s ease-in-out infinite}
 .gearCharacterHalo{position:absolute;z-index:1;left:50%;top:43%;width:200px;height:200px;transform:translate(-50%,-50%);border:1px solid #596a8455;border-radius:50%;box-shadow:inset 0 0 45px #172b4b,0 0 25px #0006}
-.gearCharacterHero{position:absolute;z-index:2;left:50%;bottom:-45px;width:340px;height:340px;transform:translateX(-50%);background-image:url('assets/pappa-hammer-idle-v2.png');background-size:400% 200%;background-position:0 0;background-repeat:no-repeat;image-rendering:auto;animation:pappaHammerFrames 1.65s step-end infinite}
+.gearCharacterHero{position:absolute;z-index:2;left:50%;bottom:-45px;width:340px;height:340px;transform:translateX(-50%);background-image:none;background-size:400% 200%;background-position:0 0;background-repeat:no-repeat;image-rendering:auto;animation:pappaHammerFrames 1.65s step-end infinite}
 .gearPreviewName{position:absolute;z-index:3;left:50%;bottom:8px;max-width:88%;transform:translateX(-50%);overflow:hidden;padding:5px 9px;border:1px solid #7e683d;background:#120f0ae8;color:#f1d385;font:700 7px Georgia,serif;letter-spacing:1.1px;text-overflow:ellipsis;white-space:nowrap}
 .gearInventoryPanel{min-width:0}
 .gearLoadoutSlots{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;margin:7px}
@@ -3189,7 +3189,7 @@ button:focus-visible{outline-color:#f4ead6}
 .combatPortrait:after{content:"";position:absolute;inset:8px;border:1px solid color-mix(in srgb,var(--hud-accent) 58%,transparent);border-radius:50%;pointer-events:none}
 .combatPortraitSprite{
   position:absolute;left:-28%;right:-28%;top:-18%;bottom:-38%;
-  background-image:url('assets/pappa-hammer-idle-v2.png');background-repeat:no-repeat;background-size:400% 200%;background-position:0 0;
+  background-image:none;background-repeat:no-repeat;background-size:400% 200%;background-position:0 0;
   transform:translateY(4%);transform-origin:50% 45%;animation:pappaHammerFrames 2.35s step-end infinite;will-change:background-position;
 }
 .combatPortraitLevel{

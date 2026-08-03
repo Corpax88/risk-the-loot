@@ -72,29 +72,22 @@ test('workshop Pappa respects reduced motion',async({page})=>{
   await expect(page.locator('#pappaHammerBaseSprite')).toHaveCSS('animation-name','none');
 });
 
-test('production gear sets remain the only visible workshop character layer',async({page},testInfo)=>{
+test('modular gear sets share one corrected workshop body foundation',async({page},testInfo)=>{
   await page.setViewportSize({width:1280,height:720});
   await page.goto('/?playwright');
   await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest))).toBe(true);
 
-  const productionSets={
-    hammerChoir:'hammer-choir-idle-v1.png',
-    blackHole:'black-hole-hammer-idle-v1.png',
-    stormrunner:'stormcaller-hammer-idle-v1.png',
-    lavaSet:'lava-hammer-idle-v1.png'
-  };
-  for(const [setId,asset] of Object.entries(productionSets)){
+  const productionSets=['hammerChoir','blackHole','stormrunner','lavaSet'];
+  for(const setId of productionSets){
     await page.evaluate(id=>window.__riskTest.previewGearSet(id),setId);
     await page.locator('#closeGear').click();
-    const layers=await page.locator('.pappaHammerBase').evaluate(element=>
-      [element,...element.querySelectorAll('*')].map(node=>({
-        className:node.className,
-        background:getComputedStyle(node).backgroundImage
-      })).filter(layer=>layer.background!=='none')
-    );
-    expect(layers).toHaveLength(1);
-    expect(layers[0].className).toBe('pappaHammerBaseSprite');
-    expect(layers[0].background).toContain(asset);
+    const state=await page.evaluate(()=>window.__riskTest.gearVisualState());
+    expect(state.usesProductionSkin).toBe(false);
+    expect(state.usesModularLayers).toBe(true);
+    expect(state.layers.filter(layer=>layer.visible)).toHaveLength(6);
+    const background=await page.locator('#pappaHammerBaseSprite').evaluate(element=>getComputedStyle(element).backgroundImage);
+    expect(background).not.toBe('none');
+    expect(background.split('url(').length-1).toBe(7);
   }
 
   await page.screenshot({path:testInfo.outputPath('black-hole-workshop-desktop.png'),fullPage:true});

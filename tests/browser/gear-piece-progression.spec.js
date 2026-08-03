@@ -7,7 +7,7 @@ async function openGame(page,width=1280,height=900){
   await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest))).toBe(true);
 }
 
-test('each set piece visibly evolves Pappa before the full-figure skin takes over',async({page})=>{
+test('each set piece visibly evolves the persistent modular Pappa foundation',async({page})=>{
   test.setTimeout(60000);
   await openGame(page);
   const stages=[];
@@ -17,8 +17,10 @@ test('each set piece visibly evolves Pappa before the full-figure skin takes ove
     await expect.poll(()=>page.evaluate(()=>window.__riskTest.gearVisualState().atlases.idle!==null)).toBe(true);
     const state=await page.evaluate(()=>window.__riskTest.gearVisualState(true));
     expect(result.inventory.filter(item=>item.equipped)).toHaveLength(count);
-    expect(state.usesProductionSkin).toBe(count===5);
+    expect(state.usesProductionSkin).toBe(false);
+    expect(state.usesModularLayers).toBe(true);
     expect(state.setId).toBe(count===5?'hammerChoir':null);
+    expect(state.layers).toHaveLength(6);
     stages.push({count,hash:state.atlases.idle.hash,image:state.atlases.idle.preview});
   }
 
@@ -34,14 +36,15 @@ test('each set piece visibly evolves Pappa before the full-figure skin takes ove
   await page.screenshot({path:path.join('test-results','gear-progression','hammer-choir-0-to-5.png'),fullPage:true});
 });
 
-test('piece evolution remains readable on iPhone and swaps to Black Hole full skin at 5/5',async({page})=>{
+test('piece evolution remains readable on iPhone through Black Hole 5/5',async({page})=>{
   await openGame(page,390,844);
   const hashes=[];
   for(const count of [1,2,3,4,5]){
     await page.evaluate(value=>window.__riskTest.previewGearSetPieces('blackHole',value),count);
-    const state=await page.evaluate(()=>window.__riskTest.gearVisualState());
+    const state=await page.evaluate(()=>window.__riskTest.gearVisualState(true));
     hashes.push(state.atlases.idle.hash);
-    expect(state.usesProductionSkin).toBe(count===5);
+    expect(state.usesProductionSkin).toBe(false);
+    expect(state.usesModularLayers).toBe(true);
   }
   expect(new Set(hashes).size).toBe(5);
   await expect(page.locator('#gearCharacterStage')).toBeVisible();

@@ -93,7 +93,8 @@ test('Nature gear and full-figure transformation fit the mobile Armory',async({p
   await waitForRiskTest(page);
   const state=await page.evaluate(()=>window.__riskTest.previewGearSet('natureSet'));
   expect(state.setId).toBe('natureSet');
-  expect(state.usesProductionSkin).toBe(true);
+  expect(state.usesProductionSkin).toBe(false);
+  expect(state.usesModularLayers).toBe(true);
   await expect(page.locator('#gearOverlay')).toHaveClass(/show/);
   await expect(page.locator('#gearGrid .natureSprite')).toHaveCount(5);
   await expect(page.locator('.gearCharacterHero')).toHaveAttribute('data-gear-visual-key',/natureSet/);

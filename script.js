@@ -6,59 +6,28 @@
   function syncStyle(element,property,value){let style=element.style,current=typeof style.getPropertyValue==='function'?style.getPropertyValue(property):style[property];if(current===value)return;if(typeof style.setProperty==='function')style.setProperty(property,value);else style[property]=value}
   function mixHexColor(from,to,amount){let parse=value=>{let hex=String(value||'#000000').replace('#','');if(hex.length===3)hex=hex.split('').map(part=>part+part).join('');let number=parseInt(hex.slice(0,6),16);return Number.isFinite(number)?[(number>>16)&255,(number>>8)&255,number&255]:[0,0,0]},a=parse(from),b=parse(to),t=Math.max(0,Math.min(1,Number(amount)||0));return '#'+a.map((value,index)=>Math.round(value+(b[index]-value)*t).toString(16).padStart(2,'0')).join('')}
   function loadImage(src){let image=typeof Image==='function'?new Image():document.createElement('img');image.src=src;return image}
-  const pappaHammerImage=loadImage('assets/pappa-hammer-player.png?v=20260803');
-  const pappaHammerMotionGuides={
-    idle:loadImage('assets/pappa-hammer-idle-v2.png'),
-    run:loadImage('assets/pappa-hammer-run-v2.png'),
-    attack:loadImage('assets/pappa-hammer-attack-v2.png')
-  };
-  const pappaHammerSprites=Object.assign({},pappaHammerMotionGuides);
-  let pappaHammerAssetRevision=0;
+  const pappaHammerImage=loadImage('assets/pappa-hammer-player.png?v=20260803-modular');
+  const pappaHammerSprites={idle:null,run:null,attack:null};
+  let pappaHammerAssetRevision=0,pappaHammerAssetBuildKey='';
   function imageAlphaBounds(image,sx,sy,sw,sh){
     let canvas=document.createElement('canvas'),layer=canvas.getContext('2d',{willReadFrequently:true});canvas.width=sw;canvas.height=sh;layer.drawImage(image,sx,sy,sw,sh,0,0,sw,sh);let pixels=layer.getImageData(0,0,sw,sh).data,minX=sw,minY=sh,maxX=-1,maxY=-1;
     for(let y=0;y<sh;y+=2)for(let x=0;x<sw;x+=2)if(pixels[(y*sw+x)*4+3]>10){if(x<minX)minX=x;if(y<minY)minY=y;if(x>maxX)maxX=x;if(y>maxY)maxY=y}
     return maxX<0?null:{x:minX,y:minY,w:maxX-minX+2,h:maxY-minY+2}
   }
   function buildPappaHammerAtlas(pose,sourceBounds){
-    let guide=pappaHammerMotionGuides[pose],atlas=document.createElement('canvas'),layer=atlas.getContext('2d');atlas.width=2048;atlas.height=1024;layer.imageSmoothingEnabled=true;layer.imageSmoothingQuality='high';
+    let atlas=document.createElement('canvas'),layer=atlas.getContext('2d');atlas.width=2048;atlas.height=1024;layer.imageSmoothingEnabled=true;layer.imageSmoothingQuality='high';
     for(let frame=0;frame<8;frame++){
-      let cellX=frame%4*512,cellY=Math.floor(frame/4)*512,target=imageAlphaBounds(guide,cellX,cellY,512,512);if(!target)continue;
+      let cellX=frame%4*512,cellY=Math.floor(frame/4)*512,target=equipmentBodyTargetBounds(pose,frame);if(!target)continue;
       let fit=Math.min(target.w/sourceBounds.w,target.h/sourceBounds.h),width=sourceBounds.w*fit,height=sourceBounds.h*fit,x=cellX+target.x+(target.w-width)/2,y=cellY+target.y+target.h-height;
       layer.drawImage(pappaHammerImage,sourceBounds.x,sourceBounds.y,sourceBounds.w,sourceBounds.h,x,y,width,height)
     }
     return atlas
   }
   function refreshPappaHammerAssetAtlases(){
-    if(!imageReady(pappaHammerImage)||!Object.values(pappaHammerMotionGuides).every(imageReady))return false;let sourceBounds=imageAlphaBounds(pappaHammerImage,0,0,pappaHammerImage.naturalWidth,pappaHammerImage.naturalHeight);if(!sourceBounds)return false;
-    for(const pose of Object.keys(pappaHammerSprites))pappaHammerSprites[pose]=buildPappaHammerAtlas(pose,sourceBounds);pappaHammerAssetRevision++;paperDollKey='';paperDollPreviewUrl='';paperDollAtlases={idle:null,run:null,attack:null};paperDollPreviewCache.clear();refreshPaperDoll();return true
+    if(!imageReady(pappaHammerImage)||!PAPER_DOLL_POSES.every(pose=>GEAR_SLOTS.every(slot=>imageReady(paperDollMasks[pose][slot]))))return false;let sourceBounds=imageAlphaBounds(pappaHammerImage,0,0,pappaHammerImage.naturalWidth,pappaHammerImage.naturalHeight);if(!sourceBounds)return false;
+    let buildKey=pappaHammerImage.currentSrc+'|'+pappaHammerImage.naturalWidth+'x'+pappaHammerImage.naturalHeight+'|'+PAPER_DOLL_POSES.map(pose=>GEAR_SLOTS.map(slot=>paperDollMasks[pose][slot].naturalWidth+'x'+paperDollMasks[pose][slot].naturalHeight).join(',')).join('|');if(buildKey===pappaHammerAssetBuildKey)return true;
+    for(const pose of Object.keys(pappaHammerSprites))pappaHammerSprites[pose]=buildPappaHammerAtlas(pose,sourceBounds);pappaHammerAssetBuildKey=buildKey;pappaHammerAssetRevision++;paperDollKey='';paperDollPreviewUrl='';paperDollAtlases={idle:null,run:null,attack:null};paperDollPreviewCache.clear();refreshPaperDoll();return true
   }
-  const paperDollSetSprites={
-    hammerChoir:{
-      idle:loadImage('assets/hammer-choir-idle-v1.png'),
-      run:loadImage('assets/hammer-choir-run-v1.png'),
-      attack:loadImage('assets/hammer-choir-attack-v1.png')
-    },
-    blackHole:{
-      idle:loadImage('assets/black-hole-hammer-idle-v1.png'),
-      run:loadImage('assets/black-hole-hammer-run-v1.png'),
-      attack:loadImage('assets/black-hole-hammer-attack-v1.png')
-    },
-    stormrunner:{
-      idle:loadImage('assets/stormcaller-hammer-idle-v1.png'),
-      run:loadImage('assets/stormcaller-hammer-run-v1.png'),
-      attack:loadImage('assets/stormcaller-hammer-attack-v1.png')
-    },
-    lavaSet:{
-      idle:loadImage('assets/lava-hammer-idle-v1.png'),
-      run:loadImage('assets/lava-hammer-run-v1.png'),
-      attack:loadImage('assets/lava-hammer-attack-v1.png')
-    },
-    natureSet:{
-      idle:loadImage('assets/nature-hammer-idle-v1.png'),
-      run:loadImage('assets/nature-hammer-run-v1.png'),
-      attack:loadImage('assets/nature-hammer-attack-v1.png')
-    }
-  };
   const blackHoleVfxSprites={
     spawn:loadImage('assets/black-hole-vortex-spawn-v2.png'),
     idle:loadImage('assets/black-hole-vortex-idle-v2.png'),
@@ -506,7 +475,7 @@
   let spinHeld=false,spinControlLightning=false;
   let gearUidCounter=0,gearTurnAngle=0,gearTurnDrag=null;
   let save=loadSave(),mode='base',paused=false,testFrameFrozen=false,settingsWasRun=false,abandonArmed=false,devResetArmed=false;
-  let equipmentRevision=0,equipmentMutationDepth=0,equipmentMutationDirty=false;
+  let equipmentRevision=0,equipmentMutationDepth=0,equipmentMutationDirty=false,equipmentChangedSlots=new Set(GEAR_SLOTS);
   save.equipped=observeEquipmentState(save.equipped);
   const xpPresentation={displayTotal:0,targetTotal:0,boundary:null,pendingAmount:0,pendingKind:'enemy',batchDeadline:0,noticeUntil:0,levelNoticeUntil:0,levelNoticeCount:0,levelPulseUntil:0,lastLevel:-1,lastCurrent:-1,lastRequired:-1,lastPercent:-1,lastCapped:null};
   const xpTelemetry={awards:0,duplicateSkips:0,hudUpdates:0,notificationBatches:0,maxActiveVisuals:0,persistWrites:0};
@@ -518,8 +487,9 @@
   let moduleDecision=false,moduleStage='offer',moduleOffer=[],pendingModule=null,activeCache=null,pendingWardenReward=null,bossActive=false,bossDefeated=false,bossEntity=null,bossLootChest=null,runStats=null,expeditionCycle=0,bossRunClears=0,postBossDecision=false,postBossIntent=null,bossLootRewards=[],bossLootSelected=0,bossLootResolved=[],bossLootPhase='idle',bossExtraction=false,runGearEquipBackups={},gearView='unified',gearFilter='all',gearRarityFilter='all',gearSort='power',selectedGearUid=null,hoverGearUid=null,sellFilterArmedKey='',sellFilterArmedUntil=0,gearBulkSelection=new Set(),gearBulkConfirmAction='',gearBulkConfirmUntil=0,gearActionConfirmUid='',gearActionConfirmType='',gearActionConfirmUntil=0,vaultRewards=[],vaultOpening=false;
   let paperDollAtlases={idle:null,run:null,attack:null},paperDollKey='',paperDollPreviewUrl='';
   let gearDragState=null,gearPointerType='mouse',gearTapUid=null,gearTapAt=0,gearQuickActionUntil=0,suppressGearClickUntil=0,gearMobileSheetMode=null;
-  const paperDollPreviewCache=new Map();
-  const gearItemNodes=new Map(),gearPerf={fullRenders:0,gridRenders:0,slotRenders:0,incrementalRenders:0,baseRenders:0,detailRenders:0,mobileDetailRenders:0,inventoryStateUpdates:0,setRenders:0,rarityRenders:0,paperDollBuilds:0,persistWrites:0};
+  const EQUIPMENT_LAYER_CELL=256,EQUIPMENT_LAYER_CACHE_LIMIT=36;
+  const paperDollPreviewCache=new Map(),equipmentLayerTextureCache=new Map(),equipmentLayerUrlCache=new WeakMap();
+  const gearItemNodes=new Map(),gearPerf={fullRenders:0,gridRenders:0,slotRenders:0,incrementalRenders:0,baseRenders:0,detailRenders:0,mobileDetailRenders:0,inventoryStateUpdates:0,setRenders:0,rarityRenders:0,paperDollBuilds:0,layerBuilds:0,persistWrites:0};
   const equipPerf={sequence:0,records:[]};
   let equipPersistTimer=0,equipPersistRecords=[];
   function equipPerfMark(record,name){if(!record)return performance.now();let now=performance.now();record.marks[name]=Math.round((now-record.started)*100)/100;if(typeof performance.mark==='function')performance.mark(record.key+':'+name);return now}
@@ -629,14 +599,16 @@
     return valid?asset:null
   }
   function paperDollAssetsReady(){return PAPER_DOLL_POSES.every(pose=>imageReady(pappaHammerSprites[pose])&&GEAR_SLOTS.every(slot=>imageReady(paperDollMasks[pose][slot])))&&Object.values(productionGearAtlases).every(atlas=>imageReady(atlas.image))}
-  function paperDollSetReady(setId){let sprites=paperDollSetSprites[setId];return !!sprites&&PAPER_DOLL_POSES.every(pose=>imageReady(sprites[pose]))}
-  const PAPER_DOLL_RENDER_LAYERS=[
-    {slot:'boots',region:'boots'},
-    {slot:'coat',region:'armor'},
-    {slot:'hat',region:'hat'},
-    {slot:'scarf',region:'accessories'},
-    {slot:'hammer',region:'hammer'}
-  ];
+  const EQUIPMENT_VISUAL_CHANNELS=Object.freeze([
+    Object.freeze({id:'cape',sourceSlot:'coat',maskSlot:'coat',region:'cape',layer:10,fit:'cover',anchor:Object.freeze({x:0,y:0,scale:1}),position:'back'}),
+    Object.freeze({id:'boots',sourceSlot:'boots',maskSlot:'boots',region:'boots',layer:30,fit:'contain',anchor:Object.freeze({x:0,y:0,scale:1}),position:'front'}),
+    Object.freeze({id:'chest',sourceSlot:'coat',maskSlot:'coat',region:'chestArmor',layer:40,fit:'cover',anchor:Object.freeze({x:0,y:0,scale:1}),position:'front'}),
+    Object.freeze({id:'hat',sourceSlot:'hat',maskSlot:'hat',region:'hat',layer:50,fit:'contain',anchor:Object.freeze({x:0,y:0,scale:1}),position:'front'}),
+    Object.freeze({id:'scarf',sourceSlot:'scarf',maskSlot:'scarf',region:'scarf',layer:60,fit:'contain',anchor:Object.freeze({x:0,y:0,scale:1}),position:'front'}),
+    Object.freeze({id:'hammer',sourceSlot:'hammer',maskSlot:'hammer',region:'hammer',layer:70,fit:'contain',anchor:Object.freeze({x:0,y:0,scale:1}),position:'front'})
+  ]);
+  const PAPER_DOLL_RENDER_LAYERS=EQUIPMENT_VISUAL_CHANNELS;
+  const EQUIPMENT_VISUAL_BY_SLOT=Object.freeze(Object.fromEntries(GEAR_SLOTS.map(slot=>[slot,EQUIPMENT_VISUAL_CHANNELS.filter(channel=>channel.sourceSlot===slot)])));
   function cleanPaperDollMask(maskLayer){
     let image=maskLayer.getImageData(0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL),pixels=image.data,alpha=new Uint8ClampedArray(PAPER_DOLL_CELL*PAPER_DOLL_CELL);
     for(let pixel=0;pixel<alpha.length;pixel++)alpha[pixel]=pixels[pixel*4+3];
@@ -659,6 +631,29 @@
   function paperDollMaskFrame(pose,slot,frame){
     let key=pose+':'+slot+':'+frame,cached=paperDollMaskFrameCache.get(key);if(cached)return cached;
     let canvas=document.createElement('canvas'),layer=canvas.getContext('2d'),mx=frame%4*PAPER_DOLL_MASK_CELL,my=Math.floor(frame/4)*PAPER_DOLL_MASK_CELL;canvas.width=canvas.height=PAPER_DOLL_CELL;layer.imageSmoothingEnabled=true;layer.imageSmoothingQuality='high';layer.drawImage(paperDollMasks[pose][slot],mx,my,PAPER_DOLL_MASK_CELL,PAPER_DOLL_MASK_CELL,0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);cleanPaperDollMask(layer);cached={canvas,bounds:paperDollMaskBounds(layer)};paperDollMaskFrameCache.set(key,cached);return cached
+  }
+  const equipmentChannelMaskCache=new Map();
+  function drawAnchoredEquipmentMask(layer,pose,channel,frame){
+    let b=equipmentBodyTargetBounds(pose,frame);if(!b)return false;let x=b.x,y=b.y,w=b.w,h=b.h;layer.clearRect(0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);layer.fillStyle='#fff';layer.beginPath();
+    if(channel.id==='chest'){layer.moveTo(x+w*.24,y+h*.23);layer.quadraticCurveTo(x+w*.52,y+h*.16,x+w*.84,y+h*.25);layer.lineTo(x+w*.81,y+h*.61);layer.quadraticCurveTo(x+w*.52,y+h*.67,x+w*.23,y+h*.6);layer.closePath()}
+    else if(channel.id==='scarf'){layer.moveTo(x+w*.29,y+h*.26);layer.quadraticCurveTo(x+w*.52,y+h*.33,x+w*.73,y+h*.28);layer.lineTo(x+w*.68,y+h*.4);layer.quadraticCurveTo(x+w*.5,y+h*.36,x+w*.31,y+h*.39);layer.closePath();layer.moveTo(x+w*.32,y+h*.32);layer.lineTo(x+w*.1,y+h*.4);layer.lineTo(x+w*.18,y+h*.55);layer.lineTo(x+w*.38,y+h*.38);layer.closePath()}
+    else if(channel.id==='boots'){layer.moveTo(x,y+h*.75);layer.lineTo(x+w*.34,y+h*.71);layer.lineTo(x+w*.42,y+h*.96);layer.lineTo(x+w*.02,y+h);layer.closePath();layer.moveTo(x+w*.57,y+h*.7);layer.lineTo(x+w*.94,y+h*.73);layer.lineTo(x+w,y+h*.94);layer.lineTo(x+w*.57,y+h*.96);layer.closePath()}
+    else return false;layer.fill();return true
+  }
+  function equipmentChannelMaskFrame(pose,channel,frame){
+    let key=pose+':'+channel.id+':'+frame,cached=equipmentChannelMaskCache.get(key);if(cached)return cached;
+    let source=paperDollMaskFrame(pose,channel.maskSlot,frame),canvas=document.createElement('canvas'),layer=canvas.getContext('2d');canvas.width=canvas.height=PAPER_DOLL_CELL;layer.drawImage(source.canvas,0,0);
+    // Coat art owns both a rear cape silhouette and the front armor. Splitting the mask keeps them independently ordered without adding a sixth gameplay slot.
+    if(channel.id==='cape')layer.clearRect(PAPER_DOLL_CELL*.44,0,PAPER_DOLL_CELL*.56,PAPER_DOLL_CELL);
+    else if(channel.id==='chest'||channel.id==='scarf'||channel.id==='boots')drawAnchoredEquipmentMask(layer,pose,channel,frame);
+    cached={canvas,bounds:paperDollMaskBounds(layer)};equipmentChannelMaskCache.set(key,cached);return cached
+  }
+  const equipmentBodyTargetCache=new Map();
+  function equipmentBodyTargetBounds(pose,frame){
+    let key=pose+':'+frame,cached=equipmentBodyTargetCache.get(key);if(cached)return cached;
+    // Raw hat, front-coat and boots masks describe the old body's actual silhouette. Scarf tails and the hammer extend far outside it and must never influence body scale or centering.
+    let hat=paperDollMaskFrame(pose,'hat',frame).bounds,coat=paperDollMaskFrame(pose,'coat',frame).bounds,boots=paperDollMaskFrame(pose,'boots',frame).bounds,bounds=[hat,coat&&{x:Math.max(coat.x,PAPER_DOLL_CELL*.27),y:coat.y,w:Math.max(1,coat.x+coat.w-Math.max(coat.x,PAPER_DOLL_CELL*.27)),h:coat.h},boots].filter(Boolean);if(!bounds.length)return null;
+    let minX=Math.min(...bounds.map(bound=>bound.x)),minY=Math.min(...bounds.map(bound=>bound.y)),maxX=Math.max(...bounds.map(bound=>bound.x+bound.w)),maxY=Math.max(...bounds.map(bound=>bound.y+bound.h));cached={x:minX,y:minY,w:maxX-minX,h:maxY-minY};equipmentBodyTargetCache.set(key,cached);return cached
   }
   function drawPaperDollMark(layer,item,x,y,size){
     let set=item.setId&&SET_BY_ID[item.setId],mark=set&&set.mark||item.visual.mark||'\u2726';layer.save();layer.textAlign='center';layer.textBaseline='middle';layer.font='900 '+Math.max(10,size)+'px Georgia,serif';layer.lineWidth=Math.max(2,size*.16);layer.strokeStyle='#111827';layer.strokeText(mark,x,y);layer.fillStyle=item.visual.accent;layer.fillText(mark,x,y);layer.restore()
@@ -751,30 +746,56 @@
     let item=gearDefinition(gear),asset=gearAssetRef(item),fallback=gearArtMarkup(gear,'small');if(!item||!asset)return fallback;
     return '<canvas class="equippedGearPreview" width="'+EQUIPPED_GEAR_PREVIEW_SIZE+'" height="'+EQUIPPED_GEAR_PREVIEW_SIZE+'" aria-hidden="true"></canvas><span class="equippedGearPreviewFallback" aria-hidden="true">'+fallback+'</span>'
   }
-  function drawProductionGearAsset(layer,item,b){
+  function drawProductionGearAsset(layer,item,b,fitMode){
     let asset=gearAssetRef(item);if(!asset||!b)return false;let atlas=productionGearAtlases[asset.atlasId];if(!imageReady(atlas.image))return false;let source=gearAssetAlphaBounds(asset);if(!source)return false;
-    let scale=Math.max(b.w/source.w,b.h/source.h),width=source.w*scale,height=source.h*scale,x=b.x+(b.w-width)/2,y=b.y+(b.h-height)/2;layer.drawImage(atlas.image,asset.column*asset.cell+source.x,asset.row*asset.cell+source.y,source.w,source.h,x,y,width,height);return true
+    let scale=(fitMode==='contain'?Math.min:Math.max)(b.w/source.w,b.h/source.h),width=source.w*scale,height=source.h*scale,x=b.x+(b.w-width)/2,y=b.y+(b.h-height)/2;layer.drawImage(atlas.image,asset.column*asset.cell+source.x,asset.row*asset.cell+source.y,source.w,source.h,x,y,width,height);return true
   }
+  function drawProductionHammerAsset(layer,item,b){
+    let asset=gearAssetRef(item);if(!asset||!b)return false;let atlas=productionGearAtlases[asset.atlasId],source=gearAssetAlphaBounds(asset);if(!imageReady(atlas.image)||!source)return false;
+    let targetWidth=b.w*1.32,targetHeight=b.h*.9,scale=Math.min(targetWidth/source.h,targetHeight/source.w),width=source.w*scale,height=source.h*scale;layer.save();layer.translate(b.x+b.w*.43,b.y+b.h*.5);layer.rotate(Math.PI/2);layer.drawImage(atlas.image,asset.column*asset.cell+source.x,asset.row*asset.cell+source.y,source.w,source.h,-width/2,-height/2,width,height);layer.restore();return true
+  }
+  function drawProductionBootAsset(layer,item,b){
+    let asset=gearAssetRef(item);if(!asset||!b)return false;let atlas=productionGearAtlases[asset.atlasId],source=gearAssetAlphaBounds(asset);if(!imageReady(atlas.image)||!source)return false;let half=source.w/2,boxes=[{x:b.x-b.w*.15,y:b.y+b.h*.73,w:b.w*.4,h:b.h*.27},{x:b.x+b.w*.73,y:b.y+b.h*.7,w:b.w*.4,h:b.h*.27}];
+    for(let index=0;index<2;index++){let sx=source.x+half*index,box=boxes[index],scale=Math.min(box.w/half,box.h/source.h),width=half*scale,height=source.h*scale;layer.drawImage(atlas.image,asset.column*asset.cell+sx,asset.row*asset.cell+source.y,half,source.h,box.x+(box.w-width)/2,box.y+box.h-height,width,height)}return true
+  }
+  function equipmentLayerTexture(pose,channel,item){
+    let asset=gearAssetRef(item);if(!asset||!imageReady(paperDollMasks[pose][channel.maskSlot]))return null;let key=pose+'|'+channel.id+'|'+asset.id,cached=equipmentLayerTextureCache.get(key);if(cached)return cached;
+    let out=document.createElement('canvas'),scratch=document.createElement('canvas'),outCtx=out.getContext('2d'),layer=scratch.getContext('2d'),ratio=EQUIPMENT_LAYER_CELL/PAPER_DOLL_CELL;out.width=EQUIPMENT_LAYER_CELL*4;out.height=EQUIPMENT_LAYER_CELL*2;scratch.width=scratch.height=PAPER_DOLL_CELL;if(!outCtx||!layer)return null;outCtx.imageSmoothingEnabled=layer.imageSmoothingEnabled=true;outCtx.imageSmoothingQuality=layer.imageSmoothingQuality='high';
+    for(let frame=0;frame<8;frame++){let mask=equipmentChannelMaskFrame(pose,channel,frame);if(!mask.bounds)continue;let dx=frame%4*EQUIPMENT_LAYER_CELL,dy=Math.floor(frame/4)*EQUIPMENT_LAYER_CELL,anchor=channel.anchor,isHammer=channel.id==='hammer',isBoots=channel.id==='boots',usesClip=!isHammer&&!isBoots;layer.clearRect(0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);layer.globalCompositeOperation='source-over';layer.globalAlpha=1;let drawn=isHammer?drawProductionHammerAsset(layer,item,mask.bounds):isBoots?drawProductionBootAsset(layer,item,equipmentBodyTargetBounds(pose,frame)):drawProductionGearAsset(layer,item,mask.bounds,channel.fit);if(!drawn)continue;if(usesClip){layer.globalCompositeOperation='destination-in';layer.drawImage(mask.canvas,0,0);layer.globalCompositeOperation='source-over'}outCtx.drawImage(scratch,0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL,dx+anchor.x*ratio,dy+anchor.y*ratio,EQUIPMENT_LAYER_CELL*anchor.scale,EQUIPMENT_LAYER_CELL*anchor.scale)}
+    gearPerf.layerBuilds++;equipmentLayerTextureCache.set(key,out);while(equipmentLayerTextureCache.size>EQUIPMENT_LAYER_CACHE_LIMIT)equipmentLayerTextureCache.delete(equipmentLayerTextureCache.keys().next().value);return out
+  }
+  function equipmentTextureUrl(texture){
+    if(!texture)return'';let cached=equipmentLayerUrlCache.get(texture);if(cached)return cached;cached=typeof texture.toDataURL==='function'?'url("'+texture.toDataURL('image/png')+'")':texture.src?'url("'+texture.src+'")':'';if(cached)equipmentLayerUrlCache.set(texture,cached);return cached
+  }
+  function equipmentVisualSources(pose,resolveItem){
+    let resolver=resolveItem||equippedItem,back=[],front=[];for(const channel of EQUIPMENT_VISUAL_CHANNELS){let item=resolver(channel.sourceSlot);if(!item)continue;let texture=equipmentLayerTexture(pose,channel,item);if(!texture)continue;(channel.position==='back'?back:front).push({channel,texture})}return{back,base:pappaHammerSprites[pose],front}
+  }
+  function equipmentCssBackground(pose,resolveItem){
+    let sources=equipmentVisualSources(pose,resolveItem),ordered=[...sources.front].sort((a,b)=>b.channel.layer-a.channel.layer).map(entry=>entry.texture),base=sources.base;if(base)ordered.push(base);ordered.push(...sources.back.sort((a,b)=>b.channel.layer-a.channel.layer).map(entry=>entry.texture));return ordered.map(equipmentTextureUrl).filter(Boolean).join(',')
+  }
+  function drawEquipmentCharacterFrame(pose,frame,size){
+    let sources=equipmentVisualSources(pose),draw=source=>{if(imageReady(source))drawAtlasCell(source,frame%4,Math.floor(frame/4),4,2,size,size,false,false)};for(const entry of sources.back.sort((a,b)=>a.channel.layer-b.channel.layer))draw(entry.texture);draw(sources.base);for(const entry of sources.front.sort((a,b)=>a.channel.layer-b.channel.layer))draw(entry.texture)
+  }
+  // Test/report-only compositor. Runtime rendering remains persistent base plus independent cached layers.
   function composePaperDollPose(pose,resolveItem){
-    let resolver=resolveItem||equippedItem;
-    let source=pappaHammerSprites[pose],out=document.createElement('canvas'),scratch=document.createElement('canvas');out.width=PAPER_DOLL_CELL*4;out.height=PAPER_DOLL_CELL*2;scratch.width=scratch.height=PAPER_DOLL_CELL;let outCtx=out.getContext('2d'),layer=scratch.getContext('2d');if(!outCtx||!layer)return source;outCtx.imageSmoothingEnabled=layer.imageSmoothingEnabled=true;outCtx.imageSmoothingQuality=layer.imageSmoothingQuality='high';
-    for(let frame=0;frame<8;frame++){let sx=frame%4*512,sy=Math.floor(frame/4)*512,dx=frame%4*PAPER_DOLL_CELL,dy=Math.floor(frame/4)*PAPER_DOLL_CELL;outCtx.drawImage(source,sx,sy,512,512,dx,dy,PAPER_DOLL_CELL,PAPER_DOLL_CELL);for(const renderLayer of PAPER_DOLL_RENDER_LAYERS){let item=resolver(renderLayer.slot);if(!item)continue;let mask=paperDollMaskFrame(pose,renderLayer.slot,frame);layer.clearRect(0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);layer.globalCompositeOperation='source-over';layer.globalAlpha=1;if(!drawProductionGearAsset(layer,item,mask.bounds))continue;layer.globalCompositeOperation='destination-in';layer.drawImage(mask.canvas,0,0);layer.globalCompositeOperation='source-over';outCtx.drawImage(scratch,dx,dy)}}return out
+    let sources=equipmentVisualSources(pose,resolveItem),out=document.createElement('canvas'),outCtx=out.getContext('2d');out.width=PAPER_DOLL_CELL*4;out.height=PAPER_DOLL_CELL*2;if(!outCtx)return sources.base;let ordered=[...sources.back.sort((a,b)=>a.channel.layer-b.channel.layer).map(entry=>entry.texture),sources.base,...sources.front.sort((a,b)=>a.channel.layer-b.channel.layer).map(entry=>entry.texture)].filter(Boolean);for(const source of ordered)outCtx.drawImage(source,0,0,source.width||source.naturalWidth,source.height||source.naturalHeight,0,0,out.width,out.height);return out
   }
-  function applyPaperDollAtlases(next,key){paperDollAtlases=next;paperDollKey=key;paperDollPreviewUrl=next.idle&&typeof next.idle.toDataURL==='function'?'url("'+next.idle.toDataURL('image/png')+'")':'url("'+next.idle.src+'")';ui.pappaHammerBaseSprite.style.backgroundImage=paperDollPreviewUrl;ui.gearCharacterHero.style.backgroundImage=paperDollPreviewUrl;if(ui.combatPortraitSprite)ui.combatPortraitSprite.style.backgroundImage=paperDollPreviewUrl;ui.gearCharacterHero.dataset.gearVisualKey=paperDollLoadoutKey()}
+  function applyPaperDollLayers(key,background){
+    paperDollAtlases=Object.assign({},pappaHammerSprites);paperDollKey=key;paperDollPreviewUrl=background;let armoryOpen=ui.gearOverlay&&ui.gearOverlay.classList.contains('show'),visualKey=paperDollLoadoutKey(),updateHidden=()=>{if(paperDollKey!==key)return;ui.pappaHammerBaseSprite.style.backgroundImage=background;if(ui.combatPortraitSprite)ui.combatPortraitSprite.style.backgroundImage=background};
+    if(armoryOpen){ui.gearCharacterHero.style.backgroundImage=background;ui.gearCharacterHero.dataset.gearVisualKey=visualKey;requestAnimationFrame(updateHidden)}else{updateHidden();ui.gearCharacterHero.style.backgroundImage=background;ui.gearCharacterHero.dataset.gearVisualKey=visualKey}
+  }
   function refreshPaperDoll(){
-    let fullSetId=equippedFullSetId(),setReady=paperDollSetReady(fullSetId),key=(setReady?'skin:'+fullSetId+':':'paper:'+pappaHammerAssetRevision+':')+paperDollLoadoutKey();if(key===paperDollKey&&paperDollAtlases.idle)return;if(!setReady&&!paperDollAssetsReady())return;
-    if(setReady){gearPerf.paperDollBuilds++;applyPaperDollAtlases(paperDollSetSprites[fullSetId],key);return}
-    let next={};gearPerf.paperDollBuilds++;for(const pose of PAPER_DOLL_POSES)next[pose]=composePaperDollPose(pose);applyPaperDollAtlases(next,key)
+    let key='modular:'+pappaHammerAssetRevision+':'+paperDollLoadoutKey();if(key===paperDollKey&&paperDollAtlases.idle)return;if(!paperDollAssetsReady())return;applyPaperDollLayers(key,equipmentCssBackground('idle'))
   }
   function observeEquipmentState(source){
     return new Proxy(source||{}, {
       set(target,slot,value){
-        let next=value==null?null:String(value);if(target[slot]===next)return true;target[slot]=next;markEquipmentChanged();return true
+        let next=value==null?null:String(value);if(target[slot]===next)return true;target[slot]=next;markEquipmentChanged(slot);return true
       },
-      deleteProperty(target,slot){if(!Object.prototype.hasOwnProperty.call(target,slot))return true;delete target[slot];markEquipmentChanged();return true}
+      deleteProperty(target,slot){if(!Object.prototype.hasOwnProperty.call(target,slot))return true;delete target[slot];markEquipmentChanged(slot);return true}
     })
   }
-  function markEquipmentChanged(){equipmentMutationDirty=true;if(!equipmentMutationDepth)synchronizeEquipmentPreview()}
+  function markEquipmentChanged(slot){equipmentMutationDirty=true;if(GEAR_SLOTS.includes(slot))equipmentChangedSlots.add(slot);if(!equipmentMutationDepth)synchronizeEquipmentPreview()}
   function batchEquipmentChanges(work){
     equipmentMutationDepth++;try{return work()}finally{equipmentMutationDepth--;if(!equipmentMutationDepth&&equipmentMutationDirty)synchronizeEquipmentPreview()}
   }
@@ -782,13 +803,13 @@
     if(!equipmentMutationDirty)return;equipmentMutationDirty=false;equipmentRevision++;paperDollKey='';paperDollPreviewUrl='';paperDollAtlases={idle:null,run:null,attack:null};paperDollPreviewCache.clear();perfState.gearKey='';perfState.gearValue=null;cargoStaticKey='';cargoStaticValue=null;hoverGearUid=null;
     refreshPaperDoll();
     if(!paperDollPreviewUrl){let fallback=pappaHammerSprites.idle&&pappaHammerSprites.idle.src?'url("'+pappaHammerSprites.idle.src+'")':'';paperDollPreviewUrl=fallback;if(fallback){ui.pappaHammerBaseSprite.style.backgroundImage=fallback;ui.gearCharacterHero.style.backgroundImage=fallback;if(ui.combatPortraitSprite)ui.combatPortraitSprite.style.backgroundImage=fallback}}
-    restorePaperDollPreview();ui.gearCharacterHero.dataset.gearVisualKey=paperDollLoadoutKey()
+    ui.gearCharacterStage.classList.remove('gearPreviewing','gearLegendaryPreview');ui.gearCharacterHero.dataset.gearVisualKey=paperDollLoadoutKey();equipmentChangedSlots.clear()
   }
   function paperDollPreviewImage(gear){
     let item=gearDefinition(gear);if(!item)return '';
     let cacheKey=paperDollLoadoutKey()+'>'+gear.uid,cached=paperDollPreviewCache.get(cacheKey);
     if(!cached){
-      try{let resolver=slot=>slot===item.slot?item:equippedItem(slot),fullSetId=equippedFullSetId(resolver),source=paperDollSetReady(fullSetId)?paperDollSetSprites[fullSetId].idle:composePaperDollPose('idle',resolver);cached=typeof source.toDataURL==='function'?'url("'+source.toDataURL('image/png')+'")':'url("'+source.src+'")'}catch(error){cached=''}
+      try{let resolver=slot=>slot===item.slot?item:equippedItem(slot);cached=equipmentCssBackground('idle',resolver)}catch(error){cached=''}
       if(cached)paperDollPreviewCache.set(cacheKey,cached);
       if(paperDollPreviewCache.size>24)paperDollPreviewCache.delete(paperDollPreviewCache.keys().next().value)
     }
@@ -801,8 +822,8 @@
   function restorePaperDollPreview(){
     if(!ui.gearCharacterHero)return;if(paperDollPreviewUrl&&ui.gearCharacterHero.style.backgroundImage!==paperDollPreviewUrl)ui.gearCharacterHero.style.backgroundImage=paperDollPreviewUrl;ui.gearCharacterStage.classList.remove('gearPreviewing','gearLegendaryPreview');applyInventoryBackdrop(ui.gearCharacterStage,inventoryBackdropSetId())
   }
-  function paperDollAtlasReport(pose,includePreview){
-    let atlas=paperDollAtlases[pose];if(!imageReady(atlas))return null;let width=atlas.naturalWidth||atlas.width,height=atlas.naturalHeight||atlas.height,probe=document.createElement('canvas'),probeCtx=probe.getContext('2d');probe.width=128;probe.height=64;probeCtx.drawImage(atlas,0,0,width,height,0,0,probe.width,probe.height);let pixels=probeCtx.getImageData(0,0,probe.width,probe.height).data,hash=2166136261,opaque=0;
+  function paperDollAtlasReport(pose,includePreview,reportAtlas){
+    let atlas=reportAtlas||paperDollAtlases[pose];if(!imageReady(atlas))return null;let width=atlas.naturalWidth||atlas.width,height=atlas.naturalHeight||atlas.height,probe=document.createElement('canvas'),probeCtx=probe.getContext('2d');probe.width=128;probe.height=64;probeCtx.drawImage(atlas,0,0,width,height,0,0,probe.width,probe.height);let pixels=probeCtx.getImageData(0,0,probe.width,probe.height).data,hash=2166136261,opaque=0;
     for(let index=0;index<pixels.length;index+=4){let alpha=pixels[index+3];if(alpha>18)opaque++;hash^=pixels[index];hash=Math.imul(hash,16777619);hash^=pixels[index+1];hash=Math.imul(hash,16777619);hash^=pixels[index+2];hash=Math.imul(hash,16777619);hash^=alpha;hash=Math.imul(hash,16777619)}
     let frames=[];for(let frame=0;frame<8;frame++){let frameProbe=document.createElement('canvas'),frameCtx=frameProbe.getContext('2d'),sx=frame%4*width/4,sy=Math.floor(frame/4)*height/2;frameProbe.width=frameProbe.height=128;frameCtx.drawImage(atlas,sx,sy,width/4,height/2,0,0,128,128);let framePixels=frameCtx.getImageData(0,0,128,128).data,minX=128,minY=128,maxX=-1,maxY=-1,edgeOpaque=0,frameHash=2166136261;for(let y=0;y<128;y++)for(let x=0;x<128;x++){let index=(y*128+x)*4,alpha=framePixels[index+3];if(alpha>18){minX=Math.min(minX,x);minY=Math.min(minY,y);maxX=Math.max(maxX,x);maxY=Math.max(maxY,y);if(x===0||x===127||y===0||y===127)edgeOpaque++}frameHash^=framePixels[index];frameHash=Math.imul(frameHash,16777619);frameHash^=framePixels[index+1];frameHash=Math.imul(frameHash,16777619);frameHash^=framePixels[index+2];frameHash=Math.imul(frameHash,16777619);frameHash^=alpha;frameHash=Math.imul(frameHash,16777619)}frames.push({frame,hash:(frameHash>>>0).toString(16).padStart(8,'0'),edgeOpaque,bounds:maxX<0?null:{x:minX,y:minY,w:maxX-minX+1,h:maxY-minY+1}})}
     let report={pose,width,height,hash:(hash>>>0).toString(16).padStart(8,'0'),opaque,corners:[pixels[3],pixels[(probe.width-1)*4+3],pixels[((probe.height-1)*probe.width)*4+3],pixels[(probe.width*probe.height-1)*4+3]],frames};
@@ -1223,9 +1244,9 @@
     let equipping=save.equipped[item.slot]!==uid,record=beginEquipPerf(gear,item,equipping),beforeTier=item.setId?gearSignatureTier(item.setId):0,beforeFull=equippedFullSetId();
     equipPerfStep(record,'state',()=>{save.equipped[item.slot]=equipping?uid:null;selectedGearUid=uid;gearTapUid=null});equipPerfMark(record,'state');
     let afterTier=item.setId?gearSignatureTier(item.setId):0,afterFull=equippedFullSetId(),awakened=equipping&&afterTier>beforeTier,fullSetActivated=equipping&&afterFull===item.setId&&beforeFull!==afterFull;
-    equipPerfStep(record,'saveQueue',()=>scheduleEquipPersist(record));equipPerfMark(record,'saveQueued');refreshEquippedGearUI(record);ui.gearCharacterStage.classList.remove('gearPreviewing','gearLegendaryPreview');
+    equipPerfStep(record,'saveQueue',()=>scheduleEquipPersist(record));equipPerfMark(record,'saveQueued');refreshEquippedGearUI(record,item.slot);ui.gearCharacterStage.classList.remove('gearPreviewing','gearLegendaryPreview');
     equipPerfStep(record,'feedback',()=>{gearQuickFeedback(uid,item.slot,LOOT_RARITIES[item.rarity],!equipping);gearHaptic(equipping?(item.rarity==='legendary'?[14,24,18]:12):8);if(equipping)playGearEquipEffect(gear,awakened,fullSetActivated);else gearSlotFeedback(item.slot,LOOT_RARITIES[item.rarity],false)});
-    let rarity=LOOT_RARITIES[item.rarity],activeVisualSet=equippedFullSetId();record.visualSetId=activeVisualSet||null;record.usesProductionSkin=paperDollSetReady(activeVisualSet);equipPerfStep(record,'sound',()=>sound(awakened||equipping&&rarity.rank===4?'legendary':equipping&&rarity.rank>=2?'rare':'upgrade'));finishEquipPerf(record);return equipping
+    let rarity=LOOT_RARITIES[item.rarity],activeVisualSet=equippedFullSetId();record.visualSetId=activeVisualSet||null;record.usesProductionSkin=false;record.usesModularLayers=true;equipPerfStep(record,'sound',()=>sound(awakened||equipping&&rarity.rank===4?'legendary':equipping&&rarity.rank>=2?'rare':'upgrade'));finishEquipPerf(record);return equipping
   }
   function unequipGearSlot(slot){let gear=equippedGear(slot),item=gearDefinition(gear);if(!gear||!item||!GEAR_SLOTS.includes(slot)||save.equipped[slot]!==gear.uid)return false;save.equipped[slot]=null;selectedGearUid=gear.uid;gearTapUid=null;gearTapAt=0;persist();refreshEquippedGearUI();gearQuickFeedback(gear.uid,slot,LOOT_RARITIES[item.rarity],true);gearHaptic(8);sound('upgrade');return true}
   function sellGear(uid){return requestGearAction(uid,'sell')}
@@ -1262,7 +1283,7 @@
     let progress=xpProgress(save.level,save.xp),progressRoot=ui.gearXpText.closest&&ui.gearXpText.closest('.pappaProgress');ui.gearPappaLevel.textContent=progress.level;ui.gearXpFill.style.width=progress.percent*100+'%';ui.gearXpText.textContent=progress.capped?'MAX LEVEL':progress.current+' / '+progress.required+' XP';if(progressRoot)progressRoot.classList.toggle('maxLevel',progress.capped);
     let stats=gearStats();ui.gearStatsSummary.innerHTML='<span data-help-title="Health" data-help="Maximum damage Pappa Hammer can survive before unsecured expedition loot is lost."><small>HEALTH</small><b>'+maxHp()+'</b></span><span data-help-title="Damage" data-help="Power of close-range hammer impacts and physical shockwaves before critical hits."><small>DAMAGE</small><b>'+shotDamage()+'</b></span><span data-help-title="Reach" data-help="Distance from which coins, caches and nearby pickups are drawn toward Pappa Hammer."><small>REACH</small><b>'+magnetRange()+'</b></span><span data-help-title="Impact Speed" data-help="Faster close-range hammer strikes and faster Hammerstorm pulses."><small>IMPACT</small><b>+'+Math.round(stats.fire*100)+'%</b></span><span data-help-title="Critical Chance" data-help="Chance for a melee impact to deal amplified critical damage."><small>CRIT</small><b>'+Math.round(stats.crit*100)+'%</b></span>';
   }
-  function renderGearLoadoutSlots(){
+  function renderGearLoadoutSlots(changedSlot){
     gearPerf.slotRenders++;let displays=[
       {slot:'hat',display:'hat',name:'HELMET'},
       {slot:'scarf',display:'scarf',name:'NECK'},
@@ -1271,13 +1292,13 @@
       {slot:'coat',display:'gloves',name:'GLOVES'},
       {slot:'boots',display:'boots',name:'BOOTS'}
     ];
-    ui.gearLoadoutSlots.innerHTML='';
+    if(changedSlot&&GEAR_SLOTS.includes(changedSlot))displays=displays.filter(display=>display.slot===changedSlot);else ui.gearLoadoutSlots.innerHTML='';
     for(const display of displays){
       let slot=display.slot,gear=equippedGear(slot),item=gearDefinition(gear),meta=GEAR_SLOT_META[slot],rarity=item&&LOOT_RARITIES[item.rarity],button=document.createElement('button');
       button.className='gearLoadoutSlot'+(item?' filled rarity'+rarity.rank:'')+(gearFilter===slot?' selected':'');button.setAttribute('data-slot',slot);button.setAttribute('data-display-slot',display.display);button.style.setProperty('--gear-color',rarity?rarity.color:'#596a84');
       button.setAttribute('aria-label',item?display.name+': '+item.name+'. Tap to remove.':'Empty '+display.name+' slot');if(gear){button.setAttribute('data-item',gear.uid);button.setAttribute('data-info-ready','');button.draggable=!mobileArmory()}else{button.setAttribute('data-help-title','Empty '+display.name+' Slot');button.setAttribute('data-help',display.display==='gloves'?'Gloves are visually linked to chest gear. Equip a chest item to update both areas.':'Equip compatible '+meta.name.toLowerCase()+' gear here.')}
       button.innerHTML='<i>'+(item?equippedGearPreviewMarkup(gear,display.display):'<span class="gearSlotSilhouette">'+meta.icon+'</span>')+'</i><span><small>'+display.name+'</small><b>'+(item?item.name:'EMPTY')+'</b>'+(item?'<em>LEVEL '+gear.level+' \u00B7 EQUIPPED</em>':'')+'</span>';
-      button.addEventListener('click',()=>{if(mobileArmory()&&gear)unequipGearSlot(slot);else setGearFilter(slot)});ui.gearLoadoutSlots.appendChild(button);if(item){let preview=button.querySelector('.equippedGearPreview');if(preview)drawEquippedGearPreview(preview,gear,display.display)}
+      button.addEventListener('click',()=>{if(mobileArmory()&&gear)unequipGearSlot(slot);else setGearFilter(slot)});let current=changedSlot&&ui.gearLoadoutSlots.querySelector('.gearLoadoutSlot[data-display-slot="'+display.display+'"]');if(current)current.replaceWith(button);else ui.gearLoadoutSlots.appendChild(button);if(item){let preview=button.querySelector('.equippedGearPreview');if(preview)requestAnimationFrame(()=>{if(preview.isConnected)drawEquippedGearPreview(preview,gear,display.display)})}
     }
     if(!ui.gearCharacterStage.querySelector('.gearEquipHint')){let hint=document.createElement('span');hint.className='gearEquipHint';hint.textContent='DROP TO EQUIP';ui.gearCharacterStage.appendChild(hint)}
   }
@@ -1307,8 +1328,8 @@
     }
     ui.gearEmpty.classList.toggle('show',items.length===0);updateGearToolbarState(items);renderGearSelection()
   }
-  function refreshEquippedGearUI(record){
-    gearPerf.incrementalRenders++;equipPerfStep(record,'character',refreshArmoryCharacter);equipPerfMark(record,'character');equipPerfStep(record,'turntable',updateGearTurntable);equipPerfStep(record,'stats',renderGearProgressAndStats);equipPerfMark(record,'stats');equipPerfStep(record,'slots',renderGearLoadoutSlots);equipPerfMark(record,'slot');equipPerfStep(record,'sets',renderSetSummary);equipPerfStep(record,'cards',updateGearInventoryStates);equipPerfMark(record,'card');equipPerfStep(record,'comparison',renderGearSelection);equipPerfMark(record,'comparison')
+  function refreshEquippedGearUI(record,changedSlot){
+    gearPerf.incrementalRenders++;equipPerfStep(record,'character',refreshArmoryCharacter);equipPerfMark(record,'character');equipPerfStep(record,'turntable',updateGearTurntable);equipPerfStep(record,'stats',renderGearProgressAndStats);equipPerfMark(record,'stats');equipPerfStep(record,'slots',()=>renderGearLoadoutSlots(changedSlot));equipPerfMark(record,'slot');equipPerfStep(record,'sets',renderSetSummary);equipPerfStep(record,'cards',updateGearInventoryStates);equipPerfMark(record,'card');equipPerfStep(record,'comparison',renderGearSelection);equipPerfMark(record,'comparison')
   }
   function renderGearLocker(){
     gearPerf.fullRenders++;renderBaseGear();updateGearTurntable();renderGearProgressAndStats();renderGearLoadoutSlots();renderSetSummary();renderGearFilters();renderGearRaritySummary();renderGearInventoryArea()
@@ -2480,10 +2501,10 @@
     let state=player.natureAlly;if(!state||!state.active||!combatViewContains(state.x,state.y,120,80,cam))return;drawNatureRootNetwork(state,cam);let point=worldToScreen(state.x,state.y,cam),frame=natureAllyFrame(state),size=190,bob=state.phase==='follow'?Math.sin((player.animClock||0)*2.4)*1.2:0;ctx.save();ctx.translate(point.x,point.y+bob);ctx.fillStyle='rgba(3,7,5,.42)';ctx.beginPath();ctx.ellipse(0,45,42,12,0,0,Math.PI*2);ctx.fill();if(imageReady(ancientEntSprite))drawAtlasCell(ancientEntSprite,frame%4,Math.floor(frame/4),4,2,size,size,state.facing<0,false);ctx.restore()
   }
   function drawPappaHammer(){
-    let move=movement(),spinning=player.spinTime>0,moving=player.dashTime>0||player.spinLeap>0||Math.abs(move.x)+Math.abs(move.y)>.05,attacking=player.attackAnim>0||spinning,pose=attacking?'attack':moving?'run':'idle',duration=pose==='attack'?player.attackDuration:pose==='run'?.52:1.65,progress=spinning?(player.spinAngle%(Math.PI*2))/(Math.PI*2):pose==='attack'?1-player.attackAnim/player.attackDuration:(player.animClock%duration)/duration,frame=Math.max(0,Math.min(7,Math.floor(progress*8))),sprite=paperDollAtlases[pose]||pappaHammerSprites[pose];
+    let move=movement(),spinning=player.spinTime>0,moving=player.dashTime>0||player.spinLeap>0||Math.abs(move.x)+Math.abs(move.y)>.05,attacking=player.attackAnim>0||spinning,pose=attacking?'attack':moving?'run':'idle',duration=pose==='attack'?player.attackDuration:pose==='run'?.52:1.65,progress=spinning?(player.spinAngle%(Math.PI*2))/(Math.PI*2):pose==='attack'?1-player.attackAnim/player.attackDuration:(player.animClock%duration)/duration,frame=Math.max(0,Math.min(7,Math.floor(progress*8)));
     ctx.save();
     ctx.fillStyle='rgba(0,0,0,.34)';ctx.beginPath();ctx.ellipse(-1,40,22,6,0,0,Math.PI*2);ctx.fill();
-    if(imageReady(sprite))drawAtlasCell(sprite,frame%4,Math.floor(frame/4),4,2,96,96,false,false);
+    if(imageReady(pappaHammerSprites[pose]))drawEquipmentCharacterFrame(pose,frame,96);
     else if(imageReady(pappaHammerImage))ctx.drawImage(pappaHammerImage,243,127,941,833,-27,-37,82,73);
     else{ctx.fillStyle='#101317';roundedRect(-16,-13,31,34,9);ctx.fill();ctx.fillStyle='#172b4b';roundedRect(-13,-9,27,28,8);ctx.fill();ctx.fillStyle='#b52d31';ctx.beginPath();ctx.moveTo(-13,-7);ctx.lineTo(10,-10);ctx.lineTo(4,2);ctx.closePath();ctx.fill();ctx.fillStyle='#080a0d';ctx.fillRect(-18,-20,36,7);roundedRect(-12,-29,24,12,4);ctx.fill();ctx.strokeStyle='#e8dfce';ctx.lineWidth=2;ctx.strokeRect(-8,-15,7,6);ctx.strokeRect(1,-15,7,6);ctx.fillStyle='#d0a35a';ctx.fillRect(13,-3,30,6);roundedRect(38,-12,19,24,4);ctx.fill()}
     ctx.restore()
@@ -2975,10 +2996,10 @@
       return source.src?'url("'+source.src+'")':''
     }
     function v2CharacterSource(){
-      let fullSetId=equippedFullSetId(),setReady=paperDollSetReady(fullSetId),layersReady=paperDollAssetsReady(),key=(setReady?'skin:'+fullSetId+':':'paper:')+paperDollLoadoutKey();
+      let layersReady=paperDollAssetsReady(),key='modular:'+pappaHammerAssetRevision+':'+paperDollLoadoutKey();
       if(key===v2CharacterKey&&v2CharacterImage)return v2CharacterImage;
-      let source=setReady?paperDollSetSprites[fullSetId].idle:layersReady?composePaperDollPose('idle'):paperDollAtlases.idle||pappaHammerSprites.idle,image=v2ImageUrl(source);
-      if(image&&(setReady||layersReady)){v2CharacterKey=key;v2CharacterImage=image}
+      let image=layersReady?equipmentCssBackground('idle'):v2ImageUrl(pappaHammerSprites.idle);
+      if(image&&layersReady){v2CharacterKey=key;v2CharacterImage=image}
       return image
     }
     function snapshot(previewUid){
@@ -3418,7 +3439,7 @@
       },
       gearVisualState(includePreview){
         let setId=equippedFullSetId(),set=setId&&SET_BY_ID[setId],profile=equippedRarityProfile();
-        return{setId,rarity:set&&set.rarity||profile.name.toLowerCase(),paperDollKey,usesProductionSkin:paperDollSetReady(setId),visualProfile:setId&&SET_VISUAL_PROFILES[setId]?setId:null,layers:PAPER_DOLL_RENDER_LAYERS.map(layer=>Object.assign({},layer)),equippedAssets:Object.fromEntries(GEAR_SLOTS.map(slot=>{let item=equippedItem(slot),asset=gearAssetRef(item);return[slot,asset?Object.assign({},asset):null]})),atlases:Object.fromEntries(PAPER_DOLL_POSES.map(pose=>[pose,paperDollAtlasReport(pose,!!includePreview)]))}
+        return{setId,rarity:set&&set.rarity||profile.name.toLowerCase(),paperDollKey,usesProductionSkin:false,usesModularLayers:true,visualProfile:setId&&SET_VISUAL_PROFILES[setId]?setId:null,layers:PAPER_DOLL_RENDER_LAYERS.map(layer=>({id:layer.id,sourceSlot:layer.sourceSlot,region:layer.region,layer:layer.layer,position:layer.position,anchor:Object.assign({},layer.anchor),visible:!!equippedItem(layer.sourceSlot)})),equippedAssets:Object.fromEntries(GEAR_SLOTS.map(slot=>{let item=equippedItem(slot),asset=gearAssetRef(item);return[slot,asset?Object.assign({},asset):null]})),atlases:Object.fromEntries(PAPER_DOLL_POSES.map(pose=>[pose,paperDollAtlasReport(pose,!!includePreview,includePreview?composePaperDollPose(pose):null)]))}
       },
       gearSetCatalog(){
         return SET_DEFINITIONS.map(set=>({id:set.id,name:set.name,rarity:set.rarity,minLevel:set.minLevel}))
@@ -3434,7 +3455,7 @@
       },
       equipmentPreviewState(){
         let loadoutKey=paperDollLoadoutKey(),renderKey=paperDollKey,domKey=ui.gearCharacterHero.dataset.gearVisualKey||'',atlas=paperDollAtlases.idle;
-        return{revision:equipmentRevision,loadoutKey,renderKey,domKey,matches:!!atlas&&renderKey.endsWith(loadoutKey)&&domKey===loadoutKey&&!ui.gearCharacterStage.classList.contains('gearPreviewing'),fullSetId:equippedFullSetId(),equipped:Object.fromEntries(GEAR_SLOTS.map(slot=>{let gear=equippedGear(slot),item=gearDefinition(gear);return[slot,gear&&item?{uid:gear.uid,itemId:item.id,assetId:(gearAssetRef(item)||{}).id||null}:null]})),atlas:atlas?{width:atlas.naturalWidth||atlas.width,height:atlas.naturalHeight||atlas.height}:null}
+        return{revision:equipmentRevision,loadoutKey,renderKey,domKey,matches:!!atlas&&renderKey.endsWith(loadoutKey)&&domKey===loadoutKey&&!ui.gearCharacterStage.classList.contains('gearPreviewing'),fullSetId:equippedFullSetId(),equipped:Object.fromEntries(GEAR_SLOTS.map(slot=>{let gear=equippedGear(slot),item=gearDefinition(gear);return[slot,gear&&item?{uid:gear.uid,itemId:item.id,assetId:(gearAssetRef(item)||{}).id||null}:null]})),visualChannels:Object.fromEntries(EQUIPMENT_VISUAL_CHANNELS.map(channel=>[channel.id,{sourceSlot:channel.sourceSlot,visible:!!equippedItem(channel.sourceSlot),layer:channel.layer,position:channel.position}])),atlas:atlas?{width:atlas.naturalWidth||atlas.width,height:atlas.naturalHeight||atlas.height}:null}
       },
       equipmentRenderMetrics(){
         return Object.assign({},gearPerf)
@@ -3513,7 +3534,7 @@
       },
       gearVisualCoverage(){
         let missing=LOOT_ITEMS.filter(item=>!gearAssetRef(item)).map(item=>item.id),assets=LOOT_ITEMS.map(item=>{let asset=gearAssetRef(item);return{id:item.id,slot:item.slot,setId:item.setId||null,assetId:asset&&asset.id||null,path:asset&&asset.path||null,sourceId:asset&&asset.sourceId||null}});
-        return{items:LOOT_ITEMS.length,setItems:SET_ITEMS.length,legacyItems:LEGACY_LOOT_ITEMS.length,sets:SET_DEFINITIONS.length,profiles:Object.keys(SET_VISUAL_PROFILES).length,missing,assets,atlasPaths:[...new Set(assets.map(entry=>entry.path).filter(Boolean))],usesProductionAssets:String(composePaperDollPose).includes('drawProductionGearAsset'),usesPieceGeometry:String(composePaperDollPose).includes('drawPaperDollGeometry'),usesStripePattern:String(composePaperDollPose).includes('drawPaperDollPattern')||assets.some(entry=>entry.path&&entry.path.includes('set-gear-atlas')),usesLegacyGearOverlay:/drawPappaGearBack|drawPappaGearFront/.test(String(drawPappaHammer))}
+        return{items:LOOT_ITEMS.length,setItems:SET_ITEMS.length,legacyItems:LEGACY_LOOT_ITEMS.length,sets:SET_DEFINITIONS.length,profiles:Object.keys(SET_VISUAL_PROFILES).length,missing,assets,atlasPaths:[...new Set(assets.map(entry=>entry.path).filter(Boolean))],usesProductionAssets:String(equipmentLayerTexture).includes('drawProductionGearAsset'),usesPieceGeometry:false,usesStripePattern:false,usesLegacyGearOverlay:/drawPappaGearBack|drawPappaGearFront/.test(String(drawPappaHammer)),modularChannels:EQUIPMENT_VISUAL_CHANNELS.map(channel=>channel.id),baseAsset:pappaHammerImage.src}
       },
       gearMaskBounds(pose,frame){
         if(!PAPER_DOLL_POSES.includes(pose)||frame<0||frame>7)return null;
@@ -3615,7 +3636,7 @@
   canvas.addEventListener('pointerdown',beginFloatingStick,{passive:false});canvas.addEventListener('pointermove',moveFloatingStick,{passive:false});canvas.addEventListener('pointerup',event=>endFloatingStick(event,false));canvas.addEventListener('pointercancel',event=>endFloatingStick(event,false));canvas.addEventListener('lostpointercapture',event=>endFloatingStick(event,false));
   let lastTouchEnd=0,lastTouchTarget=null;document.addEventListener('touchend',e=>{let now=Date.now(),inventoryItem=e.target.closest&&e.target.closest('.gearBagSlot,.inventoryV2Card'),button=e.target.closest&&e.target.closest('button');if(inventoryItem){lastTouchEnd=now;lastTouchTarget=e.target;return}if(now-lastTouchEnd<340&&e.target===lastTouchTarget){e.preventDefault();if(button&&!button.disabled)button.click()}lastTouchEnd=now;lastTouchTarget=e.target},{passive:false});for(const event of ['gesturestart','gesturechange','gestureend','dblclick'])document.addEventListener(event,e=>e.preventDefault(),{passive:false});document.addEventListener('contextmenu',e=>e.preventDefault());
 
-  pappaHammerImage.addEventListener('load',refreshPappaHammerAssetAtlases);for(const pose of PAPER_DOLL_POSES){pappaHammerMotionGuides[pose].addEventListener('load',refreshPappaHammerAssetAtlases);for(const slot of GEAR_SLOTS)paperDollMasks[pose][slot].addEventListener('load',refreshPaperDoll);for(const setId of Object.keys(paperDollSetSprites))paperDollSetSprites[setId][pose].addEventListener('load',refreshPaperDoll)}
+  pappaHammerImage.addEventListener('load',refreshPappaHammerAssetAtlases);for(const pose of PAPER_DOLL_POSES)for(const slot of GEAR_SLOTS)paperDollMasks[pose][slot].addEventListener('load',()=>{paperDollMaskFrameCache.clear();equipmentChannelMaskCache.clear();equipmentBodyTargetCache.clear();refreshPappaHammerAssetAtlases();refreshPaperDoll()});
   for(const atlas of Object.values(productionGearAtlases))atlas.image.addEventListener('load',refreshPaperDoll);
   refreshPappaHammerAssetAtlases();installInventoryV2Bridge();installPlaywrightBridge();bindContextHelp();syncRequestedQuality();resetXpPresentation();persist();refreshBase();updateCargoHud();syncSettings();setView('base');requestAnimationFrame(loop);
 })();

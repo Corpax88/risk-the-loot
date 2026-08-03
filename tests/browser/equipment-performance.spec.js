@@ -140,9 +140,9 @@ test('20 sequential equips and full-figure transitions avoid duplicate work or s
   expect(metrics.fullRenders).toBe(0);
   expect(metrics.gridRenders).toBe(0);
   expect(metrics.paperDollBuilds).toBe(0);
-  expect(records.some(record=>record.visualSetId==='blackHole'&&record.usesProductionSkin)).toBe(true);
-  expect(records.some(record=>record.visualSetId==='hammerChoir'&&record.usesProductionSkin)).toBe(true);
-  expect(records.some(record=>record.visualSetId==='fatebound'&&!record.usesProductionSkin)).toBe(true);
+  expect(records.some(record=>record.visualSetId==='blackHole'&&record.usesModularLayers)).toBe(true);
+  expect(records.some(record=>record.visualSetId==='hammerChoir'&&record.usesModularLayers)).toBe(true);
+  expect(records.every(record=>record.usesProductionSkin===false&&record.usesModularLayers)).toBe(true);
   expect(probe.emptyCharacterFrames).toBe(0);
   expect(await page.locator('.gearDragGhost').count()).toBe(0);
 });

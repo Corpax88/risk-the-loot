@@ -23,9 +23,10 @@ test('Stormcaller pieces use dedicated icons and the full set uses its productio
   await expect(page.locator('#gearDetail .gearDecisionSet')).toContainText('3/5');
 
   await page.evaluate(()=>window.__riskTest.previewGearSetPieces('stormrunner',5));
-  await expect.poll(()=>page.evaluate(()=>window.__riskTest.gearVisualState().usesProductionSkin)).toBe(true);
+  await expect.poll(()=>page.evaluate(()=>window.__riskTest.gearVisualState().usesModularLayers)).toBe(true);
   const state=await page.evaluate(()=>window.__riskTest.gearVisualState());
   expect(state.setId).toBe('stormrunner');
+  expect(state.usesProductionSkin).toBe(false);
   await expect(page.locator('#gearCharacterStage')).toHaveAttribute('data-set-id','stormrunner');
   const positions=await page.locator('#gearGrid .stormcallerSprite').evaluateAll(nodes=>
     [...new Set(nodes.map(node=>getComputedStyle(node).backgroundPosition))]

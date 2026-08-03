@@ -16,10 +16,39 @@ test('every current gear item has a Gear 2.0 visual profile',async({page})=>{
     sets:23,
     profiles:23,
     missing:[],
-    usesPieceGeometry:true,
+    usesProductionAssets:true,
+    usesPieceGeometry:false,
     usesStripePattern:false,
     usesLegacyGearOverlay:false
   });
+  expect(coverage.assets).toHaveLength(155);
+  expect(coverage.assets.every(item=>item.assetId&&item.path)).toBe(true);
+  expect(coverage.atlasPaths).not.toContain('assets/set-gear-atlas.png');
+});
+
+test('mixed gear keeps one production asset per slot through rapid swaps and reload',async({page})=>{
+  await waitForGearBridge(page);
+  const loadouts=[
+    ['bentCog','voidCompass','towerBulwark-coat','blackHole-hammer','natureSet-boots'],
+    ['stormrunner-hat','lavaSet-scarf','grandVault-coat','riskreaver-hammer','moonbreaker-boots'],
+    ['natureSet-hat','blackHole-scarf','stormrunner-coat','lavaSet-hammer','fatebound-boots']
+  ];
+  let expected;
+  for(let pass=0;pass<20;pass++){
+    const ids=loadouts[pass%loadouts.length];
+    const state=await page.evaluate(items=>window.__riskTest.previewGearItems(items),ids);
+    expect(state.setId).toBe(null);
+    expect(Object.values(state.equippedAssets)).toHaveLength(5);
+    expect(Object.values(state.equippedAssets).every(asset=>asset&&asset.path&&!asset.path.includes('set-gear-atlas'))).toBe(true);
+    expected=state.equippedAssets;
+  }
+  await page.evaluate(()=>window.__riskTest.persistNow());
+  await page.reload();
+  await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest))).toBe(true);
+  const restored=await page.evaluate(()=>window.__riskTest.gearVisualState());
+  expect(restored.equippedAssets).toEqual(expected);
+  await expect(page.locator('#gearCharacterStage .gearCharacterHero')).toHaveCount(1);
+  await expect(page.locator('.gearDragGhost')).toHaveCount(0);
 });
 
 test('all sets render every animation without clipping or edge artifacts',async({page})=>{
@@ -38,12 +67,13 @@ test('all sets render every animation without clipping or edge artifacts',async(
     expect(state.visualProfile).toBe(set.id);
     expect(state.usesProductionSkin).toBe(['hammerChoir','blackHole','stormrunner','lavaSet','natureSet'].includes(set.id));
     expect(state.layers).toEqual([
-      {slot:'coat',region:'chest-gloves'},
-      {slot:'scarf',region:'neck'},
       {slot:'boots',region:'boots'},
+      {slot:'coat',region:'armor'},
       {slot:'hat',region:'hat'},
+      {slot:'scarf',region:'accessories'},
       {slot:'hammer',region:'hammer'}
     ]);
+    expect(Object.values(state.equippedAssets).every(asset=>asset&&asset.path)).toBe(true);
 
     for(const pose of ['idle','run','attack']){
       const atlas=state.atlases[pose];

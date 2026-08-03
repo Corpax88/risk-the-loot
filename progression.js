@@ -9,29 +9,35 @@
 
   const MAX_PLAYER_LEVEL=100;
   const XP_CURVE=Object.freeze({
-    base:10,
-    linear:1,
+    base:120,
+    linear:20,
     quadraticDivisor:100,
     ramps:Object.freeze([
+      Object.freeze({startLevel:10,growth:1.035,scale:18}),
       Object.freeze({startLevel:50,growth:1.08,scale:85}),
       Object.freeze({startLevel:80,growth:1.15,scale:80}),
       Object.freeze({startLevel:95,growth:1.35,scale:200})
     ])
   });
-  const ENEMY_XP_BASE=Object.freeze({rusher:1,shooter:1,lancer:2,brute:2,boss:10,default:1});
+  const ENEMY_XP_BASE=Object.freeze({rusher:1,shooter:1,lancer:1,brute:2,boss:10,default:1});
   const XP_REWARDS=Object.freeze({
-    depthFloorsPerBonus:5,
-    depthBonus:1,
-    riskTiersPerBonus:2,
-    riskBonus:1,
     eliteMultiplier:3,
-    eliteMinimum:4,
-    bossBase:12,
-    bossDepthPerFloor:1,
-    bossRiskPerTier:2
+    eliteMinimum:3,
+    floorsPerStage:5,
+    bossBase:1100,
+    bossStageBonus:140,
+    bossRiskPerTier:20,
+    bossRiskTierCap:20
   });
   const MAP_UNLOCK_LEVELS=Object.freeze({guild:1,foundry:15,moonfall:35,skyglass:60,summit:80});
-  const LOOT_UNLOCK_LEVELS=Object.freeze({epic:12,elevated:30,apex:65});
+  const LOOT_UNLOCK_LEVELS=Object.freeze({common:1,rare:10,epic:25,legendary:50,elevated:50,apex:65});
+  const LOOT_RARITY_RANGES=Object.freeze({
+    common:Object.freeze({minLevel:1,maxLevel:40,minStage:1}),
+    rare:Object.freeze({minLevel:10,maxLevel:70,minStage:1}),
+    epic:Object.freeze({minLevel:25,maxLevel:100,minStage:2}),
+    legendary:Object.freeze({minLevel:50,maxLevel:100,minStage:4})
+  });
+  const LOOT_STAGE_LEVEL_CAPS=Object.freeze({1:24,2:49,3:70,4:100});
   const SET_UNLOCK_LEVELS=Object.freeze({
     trailwarden:1,ironGuild:1,redBanner:5,moonlitScout:5,coinseeker:8,
     towerBulwark:12,stormrunner:12,hammerChoir:16,lanternGuard:16,grandWayfarer:20,
@@ -128,18 +134,37 @@
     const step=clampLevel(level)-1;
     return 1+step*.018+step*step*.000025;
   }
-  function bossXpReward(riskTier,depth){
-    const risk=Math.max(0,Math.floor(finiteNumber(riskTier,0))),floor=Math.max(1,Math.floor(finiteNumber(depth,5)));
-    return XP_REWARDS.bossBase+(floor-1)*XP_REWARDS.bossDepthPerFloor+risk*XP_REWARDS.bossRiskPerTier;
+  function stageForXp(depth,stage){
+    if(stage!=null)return Math.max(1,Math.floor(finiteNumber(stage,1)));
+    const floor=Math.max(1,Math.floor(finiteNumber(depth,1)));
+    return Math.max(1,Math.ceil(floor/XP_REWARDS.floorsPerStage));
   }
-  function getEnemyXpReward({enemyType,enemyLevel,elite,boss,depth,difficulty}={}){
-    const type=String(enemyType||'default'),floor=Math.max(1,Math.floor(finiteNumber(depth,1))),risk=Math.max(0,Math.floor(finiteNumber(difficulty,0)));
-    if(boss||type==='boss')return bossXpReward(risk,floor);
+  function bossXpReward(riskTier,depth,stage){
+    const risk=Math.max(0,Math.min(XP_REWARDS.bossRiskTierCap,Math.floor(finiteNumber(riskTier,0)))),stageIndex=stageForXp(depth,stage);
+    return XP_REWARDS.bossBase+(stageIndex-1)*XP_REWARDS.bossStageBonus+risk*XP_REWARDS.bossRiskPerTier;
+  }
+  function getEnemyXpReward({enemyType,elite,boss,depth,stage,difficulty}={}){
+    const type=String(enemyType||'default'),risk=Math.max(0,Math.floor(finiteNumber(difficulty,0)));
+    if(boss||type==='boss')return bossXpReward(risk,depth,stage);
     const base=ENEMY_XP_BASE[type]||ENEMY_XP_BASE.default;
-    const depthBonus=Math.floor((floor-1)/XP_REWARDS.depthFloorsPerBonus)*XP_REWARDS.depthBonus;
-    const riskBonus=Math.floor(risk/XP_REWARDS.riskTiersPerBonus)*XP_REWARDS.riskBonus;
-    const reward=base+depthBonus+riskBonus;
-    return elite?Math.max(XP_REWARDS.eliteMinimum,reward*XP_REWARDS.eliteMultiplier):reward;
+    return elite?Math.max(XP_REWARDS.eliteMinimum,base*XP_REWARDS.eliteMultiplier):base;
+  }
+  function lootStageForDepth(highestDepth){
+    return Math.max(1,Math.ceil(Math.max(1,Math.floor(finiteNumber(highestDepth,1)))/5));
+  }
+  function lootProgressionContext(playerLevel,highestDepth){
+    const level=clampLevel(playerLevel),stage=lootStageForDepth(highestDepth),stageCap=LOOT_STAGE_LEVEL_CAPS[Math.min(4,stage)]||MAX_PLAYER_LEVEL;
+    return {level,stage,highestDepth:Math.max(1,Math.floor(finiteNumber(highestDepth,1))),effectiveLevel:Math.min(level,stageCap),stageCap};
+  }
+  function lootRarityEligible(rarity,playerLevel,highestDepth){
+    const range=LOOT_RARITY_RANGES[rarity];
+    if(!range)return false;
+    const context=typeof playerLevel==='object'&&playerLevel?playerLevel:lootProgressionContext(playerLevel,highestDepth);
+    return context.stage>=range.minStage&&context.effectiveLevel>=range.minLevel&&context.effectiveLevel<=range.maxLevel;
+  }
+  function eligibleLootRarities(playerLevel,highestDepth){
+    const context=lootProgressionContext(playerLevel,highestDepth);
+    return Object.keys(LOOT_RARITY_RANGES).filter(rarity=>lootRarityEligible(rarity,context));
   }
 
   return {
@@ -150,6 +175,8 @@
     TOTAL_XP_TO_MAX,
     MAP_UNLOCK_LEVELS,
     LOOT_UNLOCK_LEVELS,
+    LOOT_RARITY_RANGES,
+    LOOT_STAGE_LEVEL_CAPS,
     SET_UNLOCK_LEVELS,
     clampLevel,
     xpRequiredForNextLevel,
@@ -164,6 +191,10 @@
     gearScaleForLevel,
     gearValueScaleForLevel,
     bossXpReward,
-    getEnemyXpReward
+    getEnemyXpReward,
+    lootStageForDepth,
+    lootProgressionContext,
+    lootRarityEligible,
+    eligibleLootRarities
   };
 });

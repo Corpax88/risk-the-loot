@@ -6,12 +6,32 @@
   function syncStyle(element,property,value){let style=element.style,current=typeof style.getPropertyValue==='function'?style.getPropertyValue(property):style[property];if(current===value)return;if(typeof style.setProperty==='function')style.setProperty(property,value);else style[property]=value}
   function mixHexColor(from,to,amount){let parse=value=>{let hex=String(value||'#000000').replace('#','');if(hex.length===3)hex=hex.split('').map(part=>part+part).join('');let number=parseInt(hex.slice(0,6),16);return Number.isFinite(number)?[(number>>16)&255,(number>>8)&255,number&255]:[0,0,0]},a=parse(from),b=parse(to),t=Math.max(0,Math.min(1,Number(amount)||0));return '#'+a.map((value,index)=>Math.round(value+(b[index]-value)*t).toString(16).padStart(2,'0')).join('')}
   function loadImage(src){let image=typeof Image==='function'?new Image():document.createElement('img');image.src=src;return image}
-  const pappaHammerImage=loadImage('assets/pappa-hammer-player.png');
-  const pappaHammerSprites={
+  const pappaHammerImage=loadImage('assets/pappa-hammer-player.png?v=20260803');
+  const pappaHammerMotionGuides={
     idle:loadImage('assets/pappa-hammer-idle-v2.png'),
     run:loadImage('assets/pappa-hammer-run-v2.png'),
     attack:loadImage('assets/pappa-hammer-attack-v2.png')
   };
+  const pappaHammerSprites=Object.assign({},pappaHammerMotionGuides);
+  let pappaHammerAssetRevision=0;
+  function imageAlphaBounds(image,sx,sy,sw,sh){
+    let canvas=document.createElement('canvas'),layer=canvas.getContext('2d',{willReadFrequently:true});canvas.width=sw;canvas.height=sh;layer.drawImage(image,sx,sy,sw,sh,0,0,sw,sh);let pixels=layer.getImageData(0,0,sw,sh).data,minX=sw,minY=sh,maxX=-1,maxY=-1;
+    for(let y=0;y<sh;y+=2)for(let x=0;x<sw;x+=2)if(pixels[(y*sw+x)*4+3]>10){if(x<minX)minX=x;if(y<minY)minY=y;if(x>maxX)maxX=x;if(y>maxY)maxY=y}
+    return maxX<0?null:{x:minX,y:minY,w:maxX-minX+2,h:maxY-minY+2}
+  }
+  function buildPappaHammerAtlas(pose,sourceBounds){
+    let guide=pappaHammerMotionGuides[pose],atlas=document.createElement('canvas'),layer=atlas.getContext('2d');atlas.width=2048;atlas.height=1024;layer.imageSmoothingEnabled=true;layer.imageSmoothingQuality='high';
+    for(let frame=0;frame<8;frame++){
+      let cellX=frame%4*512,cellY=Math.floor(frame/4)*512,target=imageAlphaBounds(guide,cellX,cellY,512,512);if(!target)continue;
+      let fit=Math.min(target.w/sourceBounds.w,target.h/sourceBounds.h),width=sourceBounds.w*fit,height=sourceBounds.h*fit,x=cellX+target.x+(target.w-width)/2,y=cellY+target.y+target.h-height;
+      layer.drawImage(pappaHammerImage,sourceBounds.x,sourceBounds.y,sourceBounds.w,sourceBounds.h,x,y,width,height)
+    }
+    return atlas
+  }
+  function refreshPappaHammerAssetAtlases(){
+    if(!imageReady(pappaHammerImage)||!Object.values(pappaHammerMotionGuides).every(imageReady))return false;let sourceBounds=imageAlphaBounds(pappaHammerImage,0,0,pappaHammerImage.naturalWidth,pappaHammerImage.naturalHeight);if(!sourceBounds)return false;
+    for(const pose of Object.keys(pappaHammerSprites))pappaHammerSprites[pose]=buildPappaHammerAtlas(pose,sourceBounds);pappaHammerAssetRevision++;paperDollKey='';paperDollPreviewUrl='';paperDollAtlases={idle:null,run:null,attack:null};paperDollPreviewCache.clear();refreshPaperDoll();return true
+  }
   const paperDollSetSprites={
     hammerChoir:{
       idle:loadImage('assets/hammer-choir-idle-v1.png'),
@@ -742,7 +762,7 @@
   }
   function applyPaperDollAtlases(next,key){paperDollAtlases=next;paperDollKey=key;paperDollPreviewUrl=next.idle&&typeof next.idle.toDataURL==='function'?'url("'+next.idle.toDataURL('image/png')+'")':'url("'+next.idle.src+'")';ui.pappaHammerBaseSprite.style.backgroundImage=paperDollPreviewUrl;ui.gearCharacterHero.style.backgroundImage=paperDollPreviewUrl;if(ui.combatPortraitSprite)ui.combatPortraitSprite.style.backgroundImage=paperDollPreviewUrl;ui.gearCharacterHero.dataset.gearVisualKey=paperDollLoadoutKey()}
   function refreshPaperDoll(){
-    let fullSetId=equippedFullSetId(),setReady=paperDollSetReady(fullSetId),key=(setReady?'skin:'+fullSetId+':':'paper:')+paperDollLoadoutKey();if(key===paperDollKey&&paperDollAtlases.idle)return;if(!setReady&&!paperDollAssetsReady())return;
+    let fullSetId=equippedFullSetId(),setReady=paperDollSetReady(fullSetId),key=(setReady?'skin:'+fullSetId+':':'paper:'+pappaHammerAssetRevision+':')+paperDollLoadoutKey();if(key===paperDollKey&&paperDollAtlases.idle)return;if(!setReady&&!paperDollAssetsReady())return;
     if(setReady){gearPerf.paperDollBuilds++;applyPaperDollAtlases(paperDollSetSprites[fullSetId],key);return}
     let next={};gearPerf.paperDollBuilds++;for(const pose of PAPER_DOLL_POSES)next[pose]=composePaperDollPose(pose);applyPaperDollAtlases(next,key)
   }
@@ -3595,7 +3615,7 @@
   canvas.addEventListener('pointerdown',beginFloatingStick,{passive:false});canvas.addEventListener('pointermove',moveFloatingStick,{passive:false});canvas.addEventListener('pointerup',event=>endFloatingStick(event,false));canvas.addEventListener('pointercancel',event=>endFloatingStick(event,false));canvas.addEventListener('lostpointercapture',event=>endFloatingStick(event,false));
   let lastTouchEnd=0,lastTouchTarget=null;document.addEventListener('touchend',e=>{let now=Date.now(),inventoryItem=e.target.closest&&e.target.closest('.gearBagSlot,.inventoryV2Card'),button=e.target.closest&&e.target.closest('button');if(inventoryItem){lastTouchEnd=now;lastTouchTarget=e.target;return}if(now-lastTouchEnd<340&&e.target===lastTouchTarget){e.preventDefault();if(button&&!button.disabled)button.click()}lastTouchEnd=now;lastTouchTarget=e.target},{passive:false});for(const event of ['gesturestart','gesturechange','gestureend','dblclick'])document.addEventListener(event,e=>e.preventDefault(),{passive:false});document.addEventListener('contextmenu',e=>e.preventDefault());
 
-  for(const pose of PAPER_DOLL_POSES){pappaHammerSprites[pose].addEventListener('load',refreshPaperDoll);for(const slot of GEAR_SLOTS)paperDollMasks[pose][slot].addEventListener('load',refreshPaperDoll);for(const setId of Object.keys(paperDollSetSprites))paperDollSetSprites[setId][pose].addEventListener('load',refreshPaperDoll)}
+  pappaHammerImage.addEventListener('load',refreshPappaHammerAssetAtlases);for(const pose of PAPER_DOLL_POSES){pappaHammerMotionGuides[pose].addEventListener('load',refreshPappaHammerAssetAtlases);for(const slot of GEAR_SLOTS)paperDollMasks[pose][slot].addEventListener('load',refreshPaperDoll);for(const setId of Object.keys(paperDollSetSprites))paperDollSetSprites[setId][pose].addEventListener('load',refreshPaperDoll)}
   for(const atlas of Object.values(productionGearAtlases))atlas.image.addEventListener('load',refreshPaperDoll);
-  installInventoryV2Bridge();installPlaywrightBridge();bindContextHelp();syncRequestedQuality();resetXpPresentation();persist();refreshBase();updateCargoHud();syncSettings();setView('base');requestAnimationFrame(loop);
+  refreshPappaHammerAssetAtlases();installInventoryV2Bridge();installPlaywrightBridge();bindContextHelp();syncRequestedQuality();resetXpPresentation();persist();refreshBase();updateCargoHud();syncSettings();setView('base');requestAnimationFrame(loop);
 })();

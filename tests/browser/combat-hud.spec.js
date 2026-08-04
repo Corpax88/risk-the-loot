@@ -1,11 +1,11 @@
 const {test,expect}=require('@playwright/test');
 
-async function bootCombat(page,viewport,fullLava){
+async function bootCombat(page,viewport){
   await page.setViewportSize(viewport);
   await page.addInitScript(()=>localStorage.clear());
   await page.goto('/?playwright');
   await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest))).toBe(true);
-  await page.evaluate(options=>window.__riskTest.spawnHammerstormPack(18,options),fullLava?{fullLava:true,durable:true}:{durable:true});
+  await page.evaluate(()=>window.__riskTest.spawnHammerstormPack(18,{durable:true}));
   await expect(page.locator('#pappaCombatHud')).toBeVisible();
 }
 
@@ -20,9 +20,10 @@ async function hudGeometry(page){
 function overlaps(a,b){return a.x<b.right&&a.right>b.x&&a.y<b.bottom&&a.bottom>b.y}
 
 test('premium combat HUD stays readable and live on iPhone',async({page},testInfo)=>{
-  await bootCombat(page,{width:390,height:844},true);
-  await expect(page.locator('#combatSetName')).toHaveText('LAVA SET');
-  await expect(page.locator('#combatSetProgress')).toHaveText('5/5');
+  await bootCombat(page,{width:390,height:844});
+  await expect(page.locator('#combatSetName')).toHaveText('FIELD LOADOUT');
+  await expect(page.locator('#combatSetProgress')).toHaveText('0/10');
+  await expect.poll(()=>page.evaluate(()=>window.__riskTest.pappaV1Foundation().activeGear)).toBe(0);
   await expect.poll(()=>page.evaluate(()=>window.__riskTest.gearVisualState().usesModularLayers)).toBe(true);
   await expect(page.locator('#combatPortraitSprite')).toHaveCSS('background-image',/^(?!none)/);
   const geometry=await hudGeometry(page);
@@ -41,7 +42,7 @@ test('premium combat HUD stays readable and live on iPhone',async({page},testInf
 });
 
 test('premium combat HUD uses the desktop width without covering controls',async({page},testInfo)=>{
-  await bootCombat(page,{width:1440,height:900},false);
+  await bootCombat(page,{width:1440,height:900});
   await expect(page.locator('#combatSetName')).toHaveText('FIELD LOADOUT');
   const geometry=await hudGeometry(page);
   expect(geometry.hud.y).toBeGreaterThan(geometry.viewport.height*.78);
@@ -52,7 +53,7 @@ test('premium combat HUD uses the desktop width without covering controls',async
 });
 
 test('premium combat HUD stacks cleanly on tablet and mobile landscape',async({page},testInfo)=>{
-  await bootCombat(page,{width:820,height:1180},false);
+  await bootCombat(page,{width:820,height:1180});
   const layout=await page.evaluate(()=>{
     const hud=document.querySelector('#pappaCombatHud').getBoundingClientRect();
     const metrics=document.querySelector('.runMetrics').getBoundingClientRect();
@@ -67,7 +68,7 @@ test('premium combat HUD stacks cleanly on tablet and mobile landscape',async({p
 });
 
 test('floating joystick appears at first touch, follows the finger and releases cleanly',async({page},testInfo)=>{
-  await bootCombat(page,{width:390,height:844},false);
+  await bootCombat(page,{width:390,height:844});
   const canvas=page.locator('#world');
   await canvas.dispatchEvent('pointerdown',{pointerId:81,pointerType:'touch',isPrimary:true,button:0,buttons:1,clientX:82,clientY:410});
   await expect(page.locator('#touchControls')).toHaveClass(/active/);
@@ -88,7 +89,7 @@ test('floating joystick appears at first touch, follows the finger and releases 
 });
 
 test('combat edge UI remains separated in iPhone landscape',async({page},testInfo)=>{
-  await bootCombat(page,{width:844,height:390},false);
+  await bootCombat(page,{width:844,height:390});
   const geometry=await hudGeometry(page);
   expect(geometry.hud.x).toBeGreaterThanOrEqual(0);expect(geometry.hud.bottom).toBeLessThanOrEqual(390);
   expect(overlaps(geometry.hud,geometry.skills)).toBe(false);

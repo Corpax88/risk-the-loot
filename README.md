@@ -1,8 +1,14 @@
-# RISK THE LOOT! v0.71.0 - Modular Foundation
+# RISK THE LOOT! v0.72.0 - Pappa V1 Foundation
 
 A framework-free HTML5 extraction roguelite starring Pappa Hammer. Enter the adventure tower, find equipment, and decide when the gear in your bag is too valuable to risk.
 
-Modular Foundation v0.71.0 makes the corrected fixed-hands Pappa Hammer the permanent body source. Hat, scarf, cape, chest armor, boots and hammer now render as independent cached layers in the Armory, workshop and combat while preserving the existing gear data, saves and balance.
+Pappa V1 Foundation makes the approved barefoot, fixed-hands Pappa Hammer master the only active character base. The pre-V1 gear catalog is retired from loot, inventory and developer tools because those layers were authored for a different body. Bosses and the Grand Vault temporarily award forge materials until the first V1-aligned gear layers are ready.
+
+This development version intentionally resets saves from v0.71.0 and earlier. The previous production character is preserved under `art/archive/pre-v1-production/`, while the approved master remains in `art/masters/pappa_hammer_master_v1.png`.
+
+## Archived development history
+
+The notes below describe earlier playtest systems and pre-V1 equipment. They are retained as design history only. Pre-V1 gear, sets and their developer shortcuts are not part of the active v0.72.0 loot or rendering pipeline.
 
 Handlava awakens only when Pappa equips all five pieces of the Legendary Lava Set, unlocked at Level 55. The Living Lava Scarf grows two massive arms that favor enemies beyond hammer range, grab and swing them into other raiders, then throw them toward nearby packs and leave them within Hammerstorm reach. Six dedicated ability sheets and pooled heat, trail and impact effects keep the living-scarf silhouette readable on mobile without replacing the close-range Spin follow-up.
 

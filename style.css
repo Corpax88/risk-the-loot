@@ -3361,6 +3361,9 @@ button:focus-visible{outline-color:#f4ead6}
 
 .bossLootItem.receipt.kept:after{content:"KEPT";position:absolute;inset:auto 2px 13px;padding:2px;background:#10263bcc;color:#9bd2ff;font-size:5px;font-weight:900;text-align:center}
 
+/* Transitional rewards keep the complete run loop intact while V1 gear is authored. */
+.vaultRewardMain.foundationReward{--gear-color:#d6aa58;--gear-glow:#d6aa58;border-color:#78623c;background:#0d1218}.vaultRewardMain.foundationReward>div{font-size:48px;color:#e4bd68;background:#12171d}.foundationReceipt{display:grid!important;place-items:center;align-content:center;gap:5px;min-height:94px;border-color:#8f7240!important;color:#f0cf7a}.foundationReceipt>i{font-style:normal;font-size:28px}.foundationReceipt>b{font-size:20px}.bossLootItem.receipt.foundationReceipt:after{content:"RECOVERED";background:#2a2112cc;color:#f0cf7a}
+
 /* Inventory actions stay local, fast and readable without persistent non-Legendary VFX. */
 .gearDetailActions{grid-template-columns:minmax(0,1.1fr) minmax(68px,.8fr) minmax(78px,.9fr)}
 .gearDetailActions .salvageGear{border-color:#57866b;background:#13261d;color:#a9e8c2}

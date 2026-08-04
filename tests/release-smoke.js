@@ -1,144 +1,150 @@
 const fs=require('fs'),vm=require('vm'),assert=require('assert');
-class Classes{constructor(){this.s=new Set()}add(...n){n.forEach(x=>this.s.add(x))}remove(...n){n.forEach(x=>this.s.delete(x))}toggle(n,v){if(v===undefined)v=!this.s.has(n);v?this.s.add(n):this.s.delete(n);return v}contains(n){return this.s.has(n)}}
-class Element{constructor(id){this.id=id;this.classList=new Classes();this.style={setProperty(k,v){this[k]=v}};this.listeners={};this.children=[];this.dataset={};this.disabled=false;this.history=[];this.textContent='';this._html='';this.attributes={}}set textContent(v){this._text=String(v);if(this.history)this.history.push(this._text)}get textContent(){return this._text}set innerHTML(v){this._html=v;if(v==='')this.children=[]}get innerHTML(){return this._html}addEventListener(n,fn){(this.listeners[n]||(this.listeners[n]=[])).push(fn)}appendChild(e){this.children.push(e);return e}append(...e){e.forEach(x=>this.appendChild(x))}setAttribute(k,v){this.attributes[k]=v}querySelector(q){if(q==='b'||q==='span')return this['_'+q]||(this['_'+q]=new Element(q));return null}getBoundingClientRect(){return {left:0,top:0,width:960,height:540}}setPointerCapture(){}closest(){return null}click(){if(this.disabled)return;for(const fn of this.listeners.click||[])fn({preventDefault(){},stopPropagation(){},target:this})}getContext(){return context2d}}
-const gradient={addColorStop(){}};const context2d=new Proxy({createLinearGradient(){return gradient},createRadialGradient(){return gradient},setTransform(){}},{get(o,k){return k in o?o[k]:(()=>{})},set(o,k,v){o[k]=v;return true}});
-const html=fs.readFileSync('index.html','utf8'),elements={};for(const m of html.matchAll(/id="([^"]+)"/g))elements[m[1]]=new Element(m[1]);for(let i=0;i<5;i++)elements.routeTicks.appendChild(new Element('tick'+i));
+
+class Classes{
+  constructor(){this.s=new Set()}
+  add(...names){names.forEach(name=>this.s.add(name))}
+  remove(...names){names.forEach(name=>this.s.delete(name))}
+  toggle(name,value){if(value===undefined)value=!this.s.has(name);value?this.s.add(name):this.s.delete(name);return value}
+  contains(name){return this.s.has(name)}
+}
+
+class Element{
+  constructor(id){this.id=id;this.className='';this.classList=new Classes();this.style={setProperty(key,value){this[key]=value}};this.listeners={};this.children=[];this.dataset={};this.disabled=false;this.history=[];this.textContent='';this._html='';this.attributes={};this.isConnected=true;this.offsetWidth=116}
+  set textContent(value){this._text=String(value);if(this.history)this.history.push(this._text)}
+  get textContent(){return this._text}
+  set innerHTML(value){this._html=value;if(value==='')this.children=[]}
+  get innerHTML(){return this._html}
+  addEventListener(name,fn){(this.listeners[name]||(this.listeners[name]=[])).push(fn)}
+  appendChild(element){this.children.push(element);return element}
+  append(...elements){elements.forEach(element=>this.appendChild(element))}
+  setAttribute(key,value){this.attributes[key]=value}
+  removeAttribute(key){delete this.attributes[key]}
+  querySelector(selector){if(selector==='b'||selector==='span')return this['_'+selector]||(this['_'+selector]=new Element(selector));return null}
+  querySelectorAll(){return []}
+  getBoundingClientRect(){return {left:0,top:0,width:960,height:540}}
+  setPointerCapture(){}
+  hasPointerCapture(){return false}
+  releasePointerCapture(){}
+  closest(){return null}
+  contains(element){return this===element||this.children.includes(element)}
+  remove(){this.isConnected=false}
+  click(){if(this.disabled)return;for(const fn of this.listeners.click||[])fn({preventDefault(){},stopPropagation(){},target:this})}
+  getContext(){return context2d}
+}
+
+const gradient={addColorStop(){}};
+const context2d=new Proxy({createLinearGradient(){return gradient},createRadialGradient(){return gradient},setTransform(){}},{get(object,key){return key in object?object[key]:(()=>{})},set(object,key,value){object[key]=value;return true}});
+const html=fs.readFileSync('index.html','utf8'),elements={};
+for(const match of html.matchAll(/id="([^"]+)"/g))elements[match[1]]=new Element(match[1]);
+for(let index=0;index<5;index++)elements.routeTicks.appendChild(new Element('tick'+index));
+
 const scene=new Element('scene'),resultPanel=new Element('resultPanel'),settingsPanel=new Element('settingsPanel'),documentListeners={},windowListeners={},raf=[];
-const document={hidden:false,getElementById:id=>elements[id]||(elements[id]=new Element(id)),querySelector:q=>q==='.workshopScene'?scene:q==='.resultPanel'?resultPanel:q==='.settingsPanel'?settingsPanel:new Element(q),createElement:()=>new Element(),addEventListener:(n,fn)=>{(documentListeners[n]||(documentListeners[n]=[])).push(fn)}};
-const rigLevel=Number(process.env.SMOKE_LEVEL==null?30:process.env.SMOKE_LEVEL);let saved=JSON.stringify({version:13,scrap:999999,best:2,chassis:rigLevel,weapon:rigLevel,salvage:rigLevel,cores:2,lootFound:{bentCog:2},blueprints:{burst:2,burstRare:1,magnet:3,plating:2,overdrive:2,volatile:2}}),clock=0,seed=(Number(process.env.SMOKE_SEED)||1337)>>>0;
-const seededMath=Object.create(Math);seededMath.random=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
-const sandbox={console,document,location:{hostname:'localhost',search:'?playwright'},localStorage:{getItem:()=>saved,setItem:(k,v)=>{saved=v}},performance:{now:()=>clock},requestAnimationFrame:fn=>{raf.push(fn)},setTimeout:fn=>{fn();return 1},clearTimeout(){},Math:seededMath,Date,JSON,window:null,RiskLootProgression:require('../progression.js')};sandbox.window=sandbox;sandbox.window.devicePixelRatio=1;sandbox.window.addEventListener=(n,fn)=>{(windowListeners[n]||(windowListeners[n]=[])).push(fn)};
-const gameSource=fs.readFileSync('script.js','utf8').replace(/\}\)\(\);\s*$/,'window.__blueprintTest={starterPowerAt,starterEffect,platingProtection,burstVolleyBonus,thermalBlast,fuseRelic,gearStats,gearScore,activeSetBonuses,gearSignatureProfile,gearSignatureTier,gearSignatures:GEAR_SIGNATURES,bossGearOdds,rollBossGear,salvageReward,gearDefinition,levelXpNeeded,openBossLootChest,hasBossLootChest:()=>!!bossLootChest,debugRun:()=>({player,caches,mode,cargo}),saveRef:save,expeditionMaps:EXPEDITION_MAPS,mapIds:EXPEDITION_MAP_IDS.slice(),lootCatalogSize:LOOT_ITEMS.length,legacyItemCount:LEGACY_LOOT_ITEMS.length,setCount:SET_DEFINITIONS.length,setItemCount:SET_ITEMS.length,setItems:SET_ITEMS.slice(),gearSlots:GEAR_SLOTS.slice(),gearVisualKeys:LOOT_ITEMS.map(item=>item.visual.key),legendarySetVisualCount:SET_ITEMS.filter(item=>item.rarity===\"legendary\"&&((Number.isInteger(item.visual.legendaryRow)&&Number.isInteger(item.visual.legendaryColumn))||Number.isInteger(item.visual.blackHoleColumn)||Number.isInteger(item.visual.lavaColumn)||Number.isInteger(item.visual.natureColumn))).length,dedicatedLegendaryCount:LOOT_ITEMS.filter(item=>item.rarity===\"legendary\"&&((Number.isInteger(item.visual.legendaryRow)&&Number.isInteger(item.visual.legendaryColumn))||Number.isInteger(item.visual.blackHoleColumn)||Number.isInteger(item.visual.lavaColumn)||Number.isInteger(item.visual.natureColumn))).length,lootCounts:Object.fromEntries(Object.keys(LOOT_RARITIES).map(rarity=>[rarity,LOOT_BY_RARITY[rarity].length])),setRarityCounts:Object.fromEntries([\"rare\",\"epic\",\"legendary\"].map(rarity=>[rarity,SET_ITEMS.filter(item=>item.rarity===rarity).length]))};})();');vm.createContext(sandbox);vm.runInContext(gameSource,sandbox);
-let migrated=JSON.parse(saved);assert.equal(migrated.version,14,'current save schema was not persisted');assert.equal(migrated.materials,0,'save received unearned crafting materials');assert.equal(migrated.legendaryCores,0,'save received an unearned Legendary Core');assert.equal(migrated.blueprints.burst.copies,2,'blueprint copies were lost');assert.equal(migrated.blueprints.mark.copies,3,'Lucky Satchel progress did not convert to Champion\'s Mark');assert.equal(migrated.blueprints.magnet,undefined,'obsolete magnet blueprint survived normalization');assert.equal(migrated.cores,2,'boss cores were lost');assert.equal(migrated.level,1,'save received an incorrect Pappa level');assert.equal(migrated.xp,0,'save received unearned boss XP');assert.equal(migrated.schematics.aegis,0,'save received an unearned schematic');assert.equal(migrated.schematics.thermal,0,'save received unearned Tyrant tech');assert(migrated.playtest&&Array.isArray(migrated.playtest.runs),'playtest history was not initialized');assert.equal(Object.keys(migrated.lootFound).length,155,'expanded loot collection was not initialized');assert.equal(Object.values(migrated.lootFound).reduce((sum,count)=>sum+count,0),2,'loot collection was not preserved');assert.equal(migrated.gear.length,2,'legacy-format copies within the current schema were not converted into unique gear');assert.equal(new Set(migrated.gear.map(gear=>gear.uid)).size,2,'gear IDs are not unique');assert(migrated.gear.every(gear=>gear.itemId==='bentCog'),'item identity was lost');assert(migrated.gear.some(gear=>gear.uid===migrated.equipped.hat),'best gear was not equipped by unique ID');assert.equal(Object.keys(migrated.equipped).length,10,'loadout slots were not normalized');assert.equal(migrated.equipped.legs,null,'version 13 saves must migrate with an empty Legs slot');assert.equal(migrated.selectedMap,'guild','save did not receive the starter map');assert.deepEqual(Array.from(sandbox.__blueprintTest.mapIds),['guild','foundry','moonfall','skyglass','summit'],'map progression order is wrong');assert.deepEqual(Array.from(sandbox.__blueprintTest.mapIds).map(id=>sandbox.__blueprintTest.expeditionMaps[id].minLevel),[1,15,35,60,80],'map unlock levels are wrong');
-assert.equal(sandbox.__blueprintTest.lootCatalogSize,155,'combined catalog must contain 40 legacy items and 115 set items');assert.equal(sandbox.__blueprintTest.legacyItemCount,40,'legacy catalog size changed');assert.equal(sandbox.__blueprintTest.setCount,23,'set catalog must contain exactly 23 sets');assert.equal(sandbox.__blueprintTest.setItemCount,115,'set catalog must contain exactly 115 items');assert.equal(sandbox.__blueprintTest.setRarityCounts.rare,25,'rare set item count is wrong');assert.equal(sandbox.__blueprintTest.setRarityCounts.epic,20,'epic set item count is wrong');assert.equal(sandbox.__blueprintTest.setRarityCounts.legendary,70,'legendary set item count is wrong');assert.equal(sandbox.__blueprintTest.legendarySetVisualCount,35,'Nature Set pieces must extend the dedicated Legendary art catalog');assert.equal(sandbox.__blueprintTest.dedicatedLegendaryCount,37,'legacy Legendary gear, Lava Set and Nature Set must use premium art');assert.equal(sandbox.__blueprintTest.lootCounts.common,20,'legacy common count is wrong');assert.equal(sandbox.__blueprintTest.lootCounts.epic,25,'combined epic count is wrong');assert.equal(sandbox.__blueprintTest.lootCounts.legendary,75,'combined legendary count is wrong');assert.equal(new Set(Array.from(sandbox.__blueprintTest.gearVisualKeys)).size,155,'all gear items need distinct visual identities');
-const allSetIds=[...new Set(Array.from(sandbox.__blueprintTest.setItems).map(item=>item.setId))].sort();
-assert.deepEqual(Object.keys(sandbox.__blueprintTest.gearSignatures).sort(),allSetIds,'Gear 2.0 must give every set a signature');
-const stormcallerPieces=Array.from(sandbox.__blueprintTest.setItems).filter(item=>item.setId==='stormrunner');
-assert.equal(stormcallerPieces.length,5,'Stormcaller set is incomplete');
-assert(stormcallerPieces.every(item=>item.rarity==='legendary'&&item.dropBand==='epic'),'Stormcaller must display as Legendary without changing its drop band');
-const lavaPieces=Array.from(sandbox.__blueprintTest.setItems).filter(item=>item.setId==='lavaSet');
-assert.equal(lavaPieces.length,5,'Lava Set is incomplete');
-assert.deepEqual(lavaPieces.map(item=>item.id),['lavaSet-hat','lavaSet-scarf','lavaSet-coat','lavaSet-hammer','lavaSet-boots'],'Lava Set item IDs are wrong');
-assert.deepEqual(lavaPieces.map(item=>item.name),['Lava Hat','Living Lava Scarf','Lava Coat','Lava Hammer','Lava Boots'],'Lava Set item names are wrong');
-assert(lavaPieces.every(item=>item.rarity==='legendary'&&item.dropBand==='elevated'&&item.minLevel===55&&Number.isInteger(item.visual.lavaColumn)),'Lava Set rarity, Level 55 unlock, or dedicated art mapping is wrong');
-for(let pieces=0;pieces<5;pieces++)assert.equal(sandbox.__blueprintTest.gearSignatureTier('lavaSet',{lavaSet:pieces}),0,'Handlava awakened before the complete 5/5 Lava Set at '+pieces+' pieces');
-assert.equal(sandbox.__blueprintTest.gearSignatureTier('lavaSet',{lavaSet:5}),2,'Handlava did not master at the complete 5/5 Lava Set');
-assert.equal(sandbox.__blueprintTest.gearSignatures.lavaSet.name,'HANDLAVA','Lava Set signature name is wrong');
-const naturePieces=Array.from(sandbox.__blueprintTest.setItems).filter(item=>item.setId==='natureSet');
-assert.equal(naturePieces.length,5,'Nature Set is incomplete');
-assert.deepEqual(naturePieces.map(item=>item.name),['Wildwood Crown','Rootbound Mantle','Ancient Canopy','Rootwhip Hammer','Earthroot Boots'],'Nature Set item names are wrong');
-assert(naturePieces.every(item=>item.rarity==='legendary'&&item.dropBand==='elevated'&&item.minLevel===60&&Number.isInteger(item.visual.natureColumn)),'Nature Set rarity, Level 60 unlock, or dedicated art mapping is wrong');
-for(let pieces=0;pieces<5;pieces++)assert.equal(sandbox.__blueprintTest.gearSignatureTier('natureSet',{natureSet:pieces}),0,'Ancient Pact awakened before the complete 5/5 Nature Set at '+pieces+' pieces');
-assert.equal(sandbox.__blueprintTest.gearSignatureTier('natureSet',{natureSet:5}),2,'Ancient Pact did not master at the complete 5/5 Nature Set');
-assert.equal(sandbox.__blueprintTest.gearSignatures.natureSet.name,'ANCIENT PACT','Nature Set signature name is wrong');
-let lowBossGear=sandbox.__blueprintTest.rollBossGear(1,'rare'),highBossGear=sandbox.__blueprintTest.rollBossGear(100,'legendary');assert.equal(sandbox.__blueprintTest.gearDefinition(lowBossGear).rarity,'rare','low-level boss gear rarity is wrong');assert.equal(sandbox.__blueprintTest.gearDefinition(highBossGear).rarity,'legendary','level-100 legendary pool is not available');assert(highBossGear.level>=99&&highBossGear.level<=100,'level-100 boss drop range escaped its intended cap band');assert.notEqual(lowBossGear.uid,highBossGear.uid,'boss gear instances need unique IDs');assert(lowBossGear.quality>=.75&&lowBossGear.quality<=1.35,'boss gear quality roll is out of range');assert(Object.keys(lowBossGear.stats).length>0,'boss gear did not roll item stats');
-assert.deepEqual(sandbox.__blueprintTest.salvageReward({itemId:'stormrunner-hat'}),{materials:25,cores:1},'Stormcaller must use the Legendary salvage reward');
-assert.deepEqual(sandbox.__blueprintTest.salvageReward({itemId:'crimsonOath-hat'}),{materials:25,cores:1},'promoted Legendary gear must use the Legendary salvage reward');
-assert.deepEqual(sandbox.__blueprintTest.salvageReward({itemId:'riskreaver-hat'}),{materials:25,cores:1},'apex Legendary salvage balance changed');
-assert.deepEqual(sandbox.__blueprintTest.gearSlots,['hat','cape','chest','legs','boots','scarf','weapon','necklace','ring1','ring2'],'gear loadout slots are wrong');assert.equal(sandbox.__blueprintTest.gearStats().hp,5,'equipped legacy gear does not affect stats');
-let fusedRelic={id:'burst',power:1,recoveries:0,rareRecoveries:0};assert.equal(sandbox.__blueprintTest.fuseRelic(fusedRelic,{id:'burst',power:2,recoveries:1,rareRecoveries:1,rare:true}),true,'matching rare relic did not fuse');assert.equal(fusedRelic.power,3,'rare relic did not add two power');assert.equal(fusedRelic.recoveries,1,'fused relic recovery was not counted');sandbox.__blueprintTest.fuseRelic(fusedRelic,{id:'burst',power:2,recoveries:1,rareRecoveries:1,rare:true});assert.equal(fusedRelic.power,4,'relic fusion did not respect the power cap');
-assert.equal(sandbox.__blueprintTest.starterPowerAt(2,0),1.15,'MK II starter output is wrong');assert(sandbox.__blueprintTest.starterEffect('burst',1.15).includes('15% EXTRA ECHO'),'fractional Burst mastery has no visible effect');assert(sandbox.__blueprintTest.starterEffect('mark',2).includes('20% ELITE / BOSS DAMAGE')&&sandbox.__blueprintTest.starterEffect('mark',2).includes('14% EXTRA BOSS DROP'),"Champion's Mark effect is not explained");assert(Math.abs(sandbox.__blueprintTest.platingProtection(1.3).armor-.12)<.0001,'fractional Plating mastery has no armor effect');assert.deepEqual(sandbox.__blueprintTest.thermalBlast(3),{charges:2,damage:1.5},'Thermal Capacitor rank III is wrong');let echoRig={burstCharge:0},echoShots=0;for(let i=0;i<10;i++)echoShots+=sandbox.__blueprintTest.burstVolleyBonus(1.15,echoRig);assert.equal(echoShots,11,'Burst echo accumulator did not produce its mastery impact');
-elements.blueprintButton.click();assert(elements.blueprintOverlay.classList.contains('show'),'relic rack did not open');assert.equal(elements.wardenTechGrid.children.length,4,'boss trophy rack did not render');let burstEntry=elements.blueprintGrid.children[0],actions=burstEntry.children[0];assert(burstEntry.innerHTML.includes('LUCKY EFFECT')&&burstEntry.innerHTML.includes('2 / 3 RECOVERED'),'relic recovery and effect are not explained');assert(!burstEntry.innerHTML.includes('PICKS'),'internal pick telemetry leaked into the player-facing rack');actions.children[0].click();assert(elements.starterName.textContent.includes('HAMMER ECHO'),'lucky relic did not equip');let platingEntry=elements.blueprintGrid.children[2],platingActions=platingEntry.children[0];platingActions.children[1].click();assert(elements.blueprintGrid.children[2].innerHTML.includes('110% POWER')&&elements.blueprintGrid.children[2].innerHTML.includes('4% ARMOR'),'polish did not update the concrete Guard Charm effect');elements.closeBlueprints.click();
+const document={
+  hidden:false,
+  body:new Element('body'),
+  getElementById:id=>elements[id]||(elements[id]=new Element(id)),
+  querySelector:selector=>selector==='.workshopScene'?scene:selector==='.resultPanel'?resultPanel:selector==='.settingsPanel'?settingsPanel:new Element(selector),
+  querySelectorAll:()=>[],
+  createElement:tag=>new Element(tag),
+  elementFromPoint:()=>null,
+  addEventListener:(name,fn)=>{(documentListeners[name]||(documentListeners[name]=[])).push(fn)}
+};
+
+let saved=JSON.stringify({
+  version:14,
+  scrap:987654,
+  materials:88,
+  level:70,
+  xp:900,
+  gear:[{uid:'old-hat',itemId:'stormrunner-hat',level:70,quality:1,stats:{hp:99}}],
+  equipped:{hat:'old-hat'}
+});
+let clock=0,seed=1337;
+const seededMath=Object.create(Math);
+seededMath.random=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
+const sandbox={
+  console,
+  document,
+  location:{hostname:'localhost',search:'?playwright'},
+  localStorage:{getItem:()=>saved,setItem:(key,value)=>{saved=value}},
+  performance:{now:()=>clock},
+  requestAnimationFrame:fn=>{raf.push(fn)},
+  setTimeout:fn=>{fn();return 1},
+  clearTimeout(){},
+  Math:seededMath,
+  Date,
+  JSON,
+  window:null,
+  RiskLootProgression:require('../progression.js')
+};
+sandbox.window=sandbox;
+sandbox.window.devicePixelRatio=1;
+sandbox.window.addEventListener=(name,fn)=>{(windowListeners[name]||(windowListeners[name]=[])).push(fn)};
+
+const bridge=`window.__foundationSmoke={
+  saveRef:save,
+  saveVersion:SAVE_VERSION,
+  activeGear:LOOT_ITEMS.length,
+  activeSets:ACTIVE_SET_DEFINITIONS.length,
+  archivedGear:ARCHIVED_GEAR_ITEMS.length,
+  atlasCount:Object.keys(productionGearAtlases).length,
+  gearSlots:GEAR_SLOTS.slice(),
+  baseAsset:pappaHammerImage.src,
+  foundation:PAPPA_V1_FOUNDATION,
+  rollBossGear,
+  rollVaultGear,
+  renderDevGearOptions,
+  openGrandVault,
+  claimContract
+};})();`;
+const gameSource=fs.readFileSync('script.js','utf8').replace(/\}\)\(\);\s*$/,bridge);
+vm.createContext(sandbox);
+vm.runInContext(gameSource,sandbox);
+
+const test=sandbox.__foundationSmoke;
+let current=JSON.parse(saved);
+assert.equal(test.saveVersion,15,'Pappa V1 save schema is not active');
+assert.equal(current.version,15,'incompatible development save was not reset');
+assert.equal(current.scrap,0,'legacy currency survived the intentional reset');
+assert.equal(current.materials,0,'legacy materials survived the intentional reset');
+assert.equal(current.level,1,'legacy progression survived the intentional reset');
+assert.deepEqual(current.gear,[],'legacy gear survived the intentional reset');
+assert.equal(Object.keys(current.equipped).length,10,'canonical equipment slots were not initialized');
+assert(Object.values(current.equipped).every(value=>value===null),'fresh equipment is not empty');
+
+assert.equal(test.foundation.active,true,'Pappa V1 foundation flag is not active');
+assert.equal(test.activeGear,0,'legacy gear remains active in the loot catalog');
+assert.equal(test.activeSets,0,'legacy sets remain active');
+assert(test.archivedGear>0,'retired catalog was not retained as source history');
+assert.equal(test.atlasCount,0,'legacy production gear atlases still load at runtime');
+assert.equal(test.rollBossGear(1,'rare'),null,'bosses can still roll retired gear');
+assert.equal(test.rollVaultGear(),null,'Grand Vault can still roll retired gear');
+assert(test.baseAsset.includes('pappa-hammer-player.png?v=20260804-v1-foundation'),'approved V1 base is not the runtime source');
+assert.deepEqual(Array.from(test.gearSlots),['hat','cape','chest','legs','boots','scarf','weapon','necklace','ring1','ring2'],'equipment foundation slots changed');
+
 elements.gearLockerButton.click();
-assert(elements.gearOverlay.classList.contains('show'),'Gear Locker did not open');
-assert.equal(elements.gearLoadoutSlots.children.length,10,'Unified Equipment did not render all ten equipment slots');
-assert.equal(elements.gearRarityFilters.children.length,5,'rarity filters did not render');
-assert.equal(elements.gearRaritySummary.children.length,4,'Vault Bag rarity totals did not render');
-assert(elements.gearInventorySummary.textContent.includes('SHOWING 2 OF 2'),'inventory item count is wrong');
-assert(elements.gearLoadoutSlots.children[0].innerHTML.includes('gearArt'),'equipped atlas art is missing from the loadout slot');
-assert.equal(elements.gearGrid.children.length,2,'unique migrated copies did not render separately');
-assert(elements.gearGrid.children[0].innerHTML.includes('Guild Work Hat'),'gear slot did not explain the recovered item');
-assert.equal(elements.gearDetail.children.length,1,'selected gear comparison did not render');
-assert(elements.gearDetail.children[0].innerHTML.includes('Guild Work Hat'),'selected gear details are unclear');
-assert.equal(elements.gearSortLabel.textContent,'POWER','default bag sorting is wrong');
-elements.gearSortButton.click();assert.equal(elements.gearSortLabel.textContent,'RARITY','bag sorting did not cycle');
-assert.equal(elements.gearPappaLevel.textContent,'1','Pappa level is missing from the locker');
-elements.gearTurnRight.click();elements.gearTurnRight.click();assert(elements.gearTurnReadout.textContent.includes('RIGHT'),'360-degree turntable controls did not rotate the preview');
-elements.gearRarityFilters.children[2].click();assert.equal(elements.gearGrid.children.length,0,'rare filter showed common gear');
-elements.gearRarityFilters.children[0].click();assert.equal(elements.gearGrid.children.length,2,'all-rarity filter did not restore unique inventory');
-let coinsBeforeSale=JSON.parse(saved).scrap,equippedHat=JSON.parse(saved).equipped.hat;
-let sellCard=elements.gearGrid.children.find?elements.gearGrid.children.find(card=>!card.className.includes('equipped')):[...elements.gearGrid.children].find(card=>!card.className.includes('equipped'));sellCard.click();
-elements.sellFilteredGear.click();assert.equal(JSON.parse(saved).gear.length,2,'filtered sale skipped confirmation');
-elements.sellFilteredGear.click();assert.equal(JSON.parse(saved).gear.length,1,'filtered sale did not keep exactly the equipped item');
-assert.equal(JSON.parse(saved).equipped.hat,equippedHat,'filtered sale removed equipped gear');
-assert(JSON.parse(saved).scrap>coinsBeforeSale,'filtered sale did not bank coins');
-let firstGearActions=elements.gearDetail.children[0].children[0];
-assert(!elements.gearBulkActionBar.classList.contains('show')&&elements.sellFilteredGear.disabled,'equipped-only item was still selectable for sale');
-firstGearActions.children[0].click();assert.equal(JSON.parse(saved).equipped.hat,null,'gear could not be unequipped');
-firstGearActions=elements.gearDetail.children[0].children[0];
-firstGearActions.children[0].click();assert.equal(JSON.parse(saved).equipped.hat,equippedHat,'gear could not be re-equipped by unique ID');
+assert(elements.gearOverlay.classList.contains('show'),'Adventure Bag did not open');
+assert.equal(elements.gearGrid.children.length,0,'retired gear rendered in the inventory');
+assert(elements.gearEmpty.classList.contains('show'),'clean-foundation empty state is hidden');
+assert.equal(elements.gearLoadoutSlots.children.length,10,'empty loadout did not render all slots');
 elements.closeGear.click();
-elements.startButton.click();assert(elements.mapOverlay.classList.contains('show'),'Adventure Atlas did not open');assert.equal(elements.mapGrid.children.length,5,'Adventure Atlas did not render five destinations');assert(!elements.mapGrid.children[0].disabled&&elements.mapGrid.children.slice(1).every(card=>card.disabled),'level-one map locks are wrong');elements.mapGrid.children[0].click();assert(elements.briefingOverlay.classList.contains('show'),'first-run briefing did not open after map choice');elements.briefingStart.click();assert(elements.expeditionView.classList.contains('active'),'run view did not open');assert(elements.cargoSlots.children[0].textContent!=='\u00B7','starter module missing from cargo');
-const safeExtract=process.env.SAFE_EXTRACT==='1',furnaceRoute=process.env.FURNACE_ROUTE==='1',pushAfterBoss=process.env.PUSH_AFTER_BOSS==='1';let bossChoices=0,bossCachesOpened=0,safeExtractionStarted=false;function resolveOverlays(){if(elements.moduleOverlay.classList.contains('show'))elements.moduleChoices.children[0].click();if(elements.routeOverlay.classList.contains('show'))elements[furnaceRoute?'routeFurnace':'routeDynamo'].click();if(!safeExtract&&sandbox.__blueprintTest.hasBossLootChest()&&sandbox.__blueprintTest.openBossLootChest())bossCachesOpened++;if(safeExtract&&!safeExtractionStarted&&Number(elements.depthText.textContent)>=2){safeExtractionStarted=true;for(const fn of elements.extractButton.listeners.pointerdown||[])fn({preventDefault(){},stopPropagation(){},target:elements.extractButton})}if(elements.bossLootOverlay.classList.contains('show')){if(elements.bossLootDecision.attributes['aria-hidden']!=='true')elements.bossLootEquip.click();else{let push=pushAfterBoss&&bossChoices===0;bossChoices++;elements[push?'bossLootPush':'bossLootExtract'].click()}}}
-function frame(){clock+=16.666;let callbacks=raf.splice(0);callbacks.forEach(fn=>fn(clock));resolveOverlays()}
-let cacheCargoBefore=sandbox.__blueprintTest.debugRun().cargo.reduce((sum,module)=>sum+(module.power||1),0),cacheSlotsBefore=sandbox.__blueprintTest.debugRun().cargo.length;
-for(const code of ['KeyD','KeyS','KeyA','KeyW']){
-  (windowListeners.keydown||[]).forEach(fn=>fn({code,repeat:false,preventDefault(){}}));
-  for(let i=0;i<180&&elements.cargoSlots.children.filter(e=>e.textContent!=='\u00B7').length<2;i++)frame();
-  (windowListeners.keyup||[]).forEach(fn=>fn({code}));
-  if(elements.cargoSlots.children.filter(e=>e.textContent!=='\u00B7').length>=2)break
-}
-let cacheState=sandbox.__blueprintTest.debugRun(),cachePowerAfter=cacheState.cargo.reduce((sum,module)=>sum+(module.power||1),0);
-assert(cacheState.cargo.length>cacheSlotsBefore||cachePowerAfter>cacheCargoBefore,'field cache neither added nor fused a module: '+JSON.stringify(cacheState));
-let driveCode=null;function drive(i){
-  let phase=i%165,spinning=phase>=82&&phase<132;
-  if(phase===82){if(driveCode)(windowListeners.keyup||[]).forEach(fn=>fn({code:driveCode}));driveCode=null;(windowListeners.keydown||[]).forEach(fn=>fn({code:'KeyQ',repeat:false,preventDefault(){}}))}
-  if(phase===132)(windowListeners.keyup||[]).forEach(fn=>fn({code:'KeyQ'}));
-  if(!spinning){let code=['KeyD','KeyS','KeyA','KeyW'][Math.floor(i/150)%4];if(code!==driveCode){if(driveCode)(windowListeners.keyup||[]).forEach(fn=>fn({code:driveCode}));driveCode=code;(windowListeners.keydown||[]).forEach(fn=>fn({code,repeat:false,preventDefault(){}}))}}
-  if(i%105===0){(windowListeners.keydown||[]).forEach(fn=>fn({code:'Space',repeat:false,preventDefault(){}}));(windowListeners.keyup||[]).forEach(fn=>fn({code:'Space'}))}
-}
-for(let i=0;i<(pushAfterBoss?44000:28000)&&!elements.resultOverlay.classList.contains('show');i++){drive(i);frame()}if(driveCode)(windowListeners.keyup||[]).forEach(fn=>fn({code:driveCode}));(windowListeners.keyup||[]).forEach(fn=>fn({code:'KeyQ'}));assert(elements.resultOverlay.classList.contains('show'),'expedition did not reach a result (floor '+elements.depthText.textContent+', phase '+elements.bossPhaseText.textContent+', boss HP '+elements.bossHealthFill.style.width+')');assert.equal(elements.resultTitle.textContent,'LOOT SECURED','expedition did not secure its rewards (floor '+elements.resultDepth.textContent+', time '+elements.resultTime.textContent+', kills '+elements.resultKills.textContent+')');assert(Number(elements.resultDepth.textContent)>=(safeExtract?2:pushAfterBoss?10:5),safeExtract?'safe floor was not reached':pushAfterBoss?'second champion floor was not reached':'boss floor was not reached');assert(elements.baseView.classList.contains('active'),'workshop did not reopen');assert(Number(elements.resultKills.textContent)>0,'post-run kill count was not rendered');assert(Number(elements.resultScrap.textContent)>0,'recovered coins were not rendered');assert(Number(elements.resultEnemyXp.textContent)>0,'ordinary combat XP was not summarized');assert.equal(Number(elements.resultTotalXp.textContent),Number(elements.resultEnemyXp.textContent)+Number(elements.resultEliteXp.textContent)+Number(elements.resultBossXp.textContent)+Number(elements.resultCompletionXp.textContent),'XP report does not add up');assert.equal(Number(elements.resultItems.textContent)>0,!safeExtract,'boss-only item rule is wrong');assert.equal(elements.resultLoot.children.length>0,!safeExtract,'post-run boss gear groups are wrong');assert(elements.resultLootSummary.innerHTML.includes(safeExtract?'NO BOSS GEAR':'BOSS GEAR SECURED'),'loot report summary is unclear');if(!safeExtract){assert(bossCachesOpened>=(pushAfterBoss?2:1),'boss cache was not opened before the loot choice');assert(bossChoices>=(pushAfterBoss?2:1),'boss loot choice was not presented');assert(elements.bossLootCount.history.some(value=>value.includes('EQUIPPED')),'boss loot decisions were not completed')}
-migrated=JSON.parse(saved);
-assert(migrated.stats.runs>=1&&migrated.stats.extractions>=1,'career stats did not persist');
-assert(migrated.stats.totalTime>0&&migrated.stats.totalKills>0,'aggregate playtest stats did not persist');
-assert.equal(migrated.stats.itemsRecovered>0,!safeExtract,'boss-only recovered item count is wrong');
-assert(Array.isArray(migrated.gear)&&migrated.gear.length>=(safeExtract?1:3),'unique recovered gear did not persist in the inventory');
-assert.equal(migrated.playtest.runs.length,1,'run history was not recorded');
-assert.equal(migrated.playtest.runs[0].items>0,!safeExtract,'run history did not respect boss-only gear');
-assert(Object.values(migrated.blueprints).reduce((sum,v)=>sum+v.copies,0)>11,'recovered relics did not persist');
-if(safeExtract){
-  assert.equal(elements.resultDepth.textContent,'2','manual safe extraction did not finish on floor two');
-  assert(migrated.playtest.runs[0].time>=32,'safe path arrived before the intended pacing milestone');
-  assert.equal(migrated.cores,2,'safe extraction incorrectly granted a boss seal');
-  assert(migrated.level>1,'safe extraction lost XP already earned from normal enemies');
-  assert.equal(Number(elements.resultBossXp.textContent),0,'safe extraction incorrectly reported boss XP');
-  assert.equal(migrated.schematics.aegis,0,'safe extraction incorrectly granted a boss trophy');
-  elements.closeResult.click();
-}else{
-  let expectedRoute=furnaceRoute?'furnace':'dynamo',expectedReward=furnaceRoute?'thermal':'aegis';
-  assert(migrated.playtest.runs[0].time>=150,'boss path skipped the pacing curve');
-  assert(migrated.stats.bosses>=(pushAfterBoss?2:1),'boss victory did not persist');
-  assert(migrated.level>=2,'boss victory did not advance Pappa level');
-  assert(migrated.gear.some(gear=>gear.itemId!=='bentCog'),'boss victory did not secure boss gear');
-  assert.equal(migrated.cores,pushAfterBoss?4:3,'secured boss seal count is wrong');
-  assert.equal(migrated.schematics[expectedReward],1,'chosen boss trophy did not persist');
-  assert.equal(migrated.playtest.runs[0].warden,expectedReward,'boss reward choice was not recorded');
-  assert.equal(migrated.playtest.runs[0].route,expectedRoute,'path choice was not recorded');
-  assert.equal(migrated.playtest.runs[0].bosses,pushAfterBoss?2:1,'run history lost the champion chain');
-  assert(elements.resultModules.children.some(entry=>entry.textContent.includes('BOSS TROPHY')),'permanent boss trophy was not shown in the report');
-  assert.equal(migrated.contractComplete,true,'long-term contract was not completed');
-  if(pushAfterBoss){assert(Number(elements.resultDepth.textContent)>=10,'Go Deeper did not advance to the next ascent');assert(migrated.playtest.runs[0].risks>=4,'Go Deeper did not increase expedition risk');assert(elements.resultRecord.textContent.includes('2 BOSS SEALS'),'multi-boss extraction did not celebrate both seals')}
-  if(furnaceRoute){
-    assert(elements.zoneName.history.includes('RED BANNER YARD')&&elements.zoneName.history.includes('EMBER COURT')&&elements.zoneName.history.includes("CHAMPION'S HALL"),'Crimson Path zones did not render');
-    assert(elements.bossName.history.some(value=>value.includes('CRIMSON CHAMPION')),'Crimson Champion did not render');
-  }else{
-    assert(elements.zoneName.history.includes('LANTERN GALLERY')&&elements.zoneName.history.includes('MOON VAULT')&&elements.zoneName.history.includes("WARDEN'S KEEP"),'Moonlit Path zones did not render');
-    assert(elements.bossName.history.some(value=>value.includes('VAULT WARDEN')),'Vault Warden did not render');
-  }
-  assert(elements.bossPhaseText.history.some(v=>v.includes('PHASE II'))&&elements.bossPhaseText.history.some(v=>v.includes('PHASE III')),'boss phases did not trigger');
-  elements.closeResult.click();
-  elements.contractTracker.click();
-  assert(elements.contractOverlay.classList.contains('show'),'ready Grand Vault did not open when selected');
-  assert(elements.vaultReward.innerHTML.includes('vaultRewardMain'),'Grand Vault did not reveal gear');
-  let gearBeforeVault=JSON.parse(saved).gear.length;
-  elements.closeContract.click();
-  assert.equal(JSON.parse(saved).contractSeen,true,'Grand Vault reward was not claimed');
-  assert.equal(JSON.parse(saved).vaultCycle,1,'Grand Vault did not start its next cycle');
-  assert(JSON.parse(saved).gear.length>gearBeforeVault,'Grand Vault gear did not enter the Adventure Bag');
-  elements.blueprintButton.click();
-  assert(elements.wardenTechGrid.children[furnaceRoute?3:0].className.includes('recovered'),'secured trophy was not visible on the rack');
-  elements.closeBlueprints.click();
-  if(!furnaceRoute){elements.startButton.click();elements.mapGrid.children[0].click();assert(elements.healthText.textContent.includes('\u25C61'),'Guardian Crest did not grant its starting guard charge')}
-}
-let storm=sandbox.__riskTest;assert(storm,'local Stormcaller test bridge did not install');storm.spawnHammerstormPack(4,{fullLightning:true,durable:true});storm.setLightningTargets([{id:'a',x:90,y:0,hp:18},{id:'b',x:125,y:32,hp:18},{id:'c',x:155,y:-28,hp:18},{id:'d',x:188,y:20,hp:18}]);assert(storm.pressLightning().accepted,'Stormcaller rejected its opening tap');let stormState=storm.advanceLightning(.16);assert.equal(stormState.impacts,1,'Stormcaller opening tap did not land exactly once');assert.equal(stormState.chainHits,3,'Stormcaller opening tap did not branch through the pack');assert.equal(stormState.kills,4,'Stormcaller opening overcharge did not erase an early pack');assert(stormState.effects.includes('lightningChain')&&stormState.effects.includes('enemyLaunch'),'Stormcaller chain or launch feedback is missing');storm.spawnHammerstormPack(5,{fullLightning:true,durable:true});storm.setLightningTargets([{id:'a',x:100,y:0,hp:1e7},{id:'b',x:135,y:60,hp:1e7},{id:'c',x:170,y:-55,hp:1e7},{id:'d',x:210,y:25,hp:1e7},{id:'e',x:240,y:-70,hp:1e7}]);for(let tap=0;tap<5;tap++)assert(storm.pressLightning().accepted,'Stormcaller rapid input was rejected below its queue cap');stormState=storm.lightningDashState();assert.equal(stormState.attackRate,10,'Stormcaller rapid taps did not reach the achievable cap');let guarded=storm.damagePlayerForTest(40);assert.equal(guarded.guard,.35,'Stormcaller storm armor is missing');storm.unequipLightningPiece('hat');let unguarded=storm.damagePlayerForTest(40);assert(guarded.applied<unguarded.applied,'Stormcaller storm armor did not reduce incoming damage');
-elements.settingsButton.click();elements.devButton.click();assert(elements.devPanel.classList.contains('show'),'dev panel did not open');assert((elements.devGear.listeners.click||[]).length===1,'unified gear test tool was not wired');assert((elements.devGearEquip.listeners.click||[]).length===1,'unified set equip action was not wired');assert((elements.devWarden.listeners.click||[]).length===1,'Warden test shortcut was not wired');assert((elements.devTyrant.listeners.click||[]).length===1,'Tyrant test shortcut was not wired');elements.devGearSelect.value='set:hammerChoir';elements.devGearEquip.click();let setBonuses=Array.from(sandbox.__blueprintTest.activeSetBonuses());assert.deepEqual(setBonuses.map(bonus=>bonus.tier),[2,3,5],'full set did not activate fixed 2/3/5-piece bonuses');assert(setBonuses.every(bonus=>bonus.set.id==='hammerChoir'),'set bonuses mixed unrelated equipment');let signatureProfile=sandbox.__blueprintTest.gearSignatureProfile();assert.equal(signatureProfile.hammerWave,2,'Gear 2.0 dev set did not master Resonant Slam');elements.devGearSelect.value='set:blackHole';elements.devGearEquip.click();setBonuses=Array.from(sandbox.__blueprintTest.activeSetBonuses());assert.deepEqual(setBonuses.map(bonus=>bonus.tier),[2,3,5],'Black Hole set did not activate fixed 2/3/5-piece bonuses');assert(setBonuses.every(bonus=>bonus.set.id==='blackHole'),'Black Hole shortcut equipped mixed set pieces');signatureProfile=sandbox.__blueprintTest.gearSignatureProfile();assert.equal(signatureProfile.gravityWell,2,'Black Hole dev set did not master Gravity Well');elements.soundToggle.click();elements.closeSettings.click();assert.equal(JSON.parse(saved).settings.sound,false,'settings did not persist');console.log('Release smoke passed in '+(clock/1000).toFixed(1)+' simulated seconds: migration -> unique gear -> turntable -> relic fusion -> boss-only loot -> '+(safeExtract?'safe extraction':(furnaceRoute?'Furnace route -> Tyrant':'Dynamo route -> Warden')+' -> Pappa level')+' -> Gear 2.0 signatures -> settings');
+assert(!elements.gearOverlay.classList.contains('show'),'Adventure Bag did not close');
+
+test.renderDevGearOptions();
+assert(elements.devGearSpawn.disabled&&elements.devGearEquip.disabled,'retired gear can still be granted by dev tools');
+assert(elements.devGearSelect.innerHTML.includes('NO V1 GEAR'),'dev panel does not explain the clean foundation');
+
+test.saveRef.cores=3;
+Object.values(test.saveRef.blueprints)[0].copies=12;
+const materialsBefore=test.saveRef.materials;
+test.openGrandVault();
+assert(elements.contractOverlay.classList.contains('show'),'Grand Vault did not open');
+assert(elements.vaultReward.innerHTML.includes('FORGE MATERIAL'),'Grand Vault did not switch to the foundation material reward');
+test.claimContract();
+assert(test.saveRef.materials>materialsBefore,'Grand Vault material reward was not claimed');
+
+elements.startButton.click();
+assert(elements.mapOverlay.classList.contains('show'),'Adventure Atlas did not open');
+assert.equal(elements.mapGrid.children.length,5,'preserved map progression did not render');
+
+console.log('Release smoke passed: V1 reset -> approved base -> empty active gear -> material bridge -> playable map flow');

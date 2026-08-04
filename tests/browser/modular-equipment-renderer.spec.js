@@ -11,7 +11,7 @@ async function expectModularState(page){
   const state=await page.evaluate(()=>window.__riskTest.gearVisualState(true));
   expect(state.usesProductionSkin).toBe(false);
   expect(state.usesModularLayers).toBe(true);
-  expect(state.layers.map(layer=>layer.id)).toEqual(['cape','boots','chest','hat','scarf','hammer']);
+  expect(state.layers.map(layer=>layer.id)).toEqual(['cape','legs','boots','chest','scarf','hat','weapon']);
   expect(state.atlases.idle.corners.every(alpha=>alpha===0)).toBe(true);
   return state;
 }
@@ -24,7 +24,7 @@ test('base and every equipment channel remain independently addressable',async({
   let state=await expectModularState(page);
   expect(state.layers.every(layer=>!layer.visible)).toBe(true);
 
-  const visibility={1:['hat'],2:['hat','scarf'],3:['cape','chest','hat','scarf'],4:['cape','boots','chest','hat','scarf'],5:['cape','boots','chest','hat','scarf','hammer']};
+  const visibility={1:['hat'],2:['scarf','hat'],3:['chest','scarf','hat'],4:['boots','chest','scarf','hat'],5:['boots','chest','scarf','hat','weapon']};
   for(let count=1;count<=5;count++){
     await page.evaluate(value=>window.__riskTest.previewGearSetPieces('hammerChoir',value),count);
     state=await expectModularState(page);
@@ -42,13 +42,13 @@ test('mixed loadout, swap, unequip and refresh keep one live visual per slot',as
   await page.evaluate(()=>window.__riskTest.previewGearItems(['stormrunner-hat','lavaSet-scarf','grandVault-coat','blackHole-hammer','natureSet-boots']));
   let preview=await page.evaluate(()=>window.__riskTest.equipmentPreviewState());
   expect(preview.matches).toBe(true);
-  expect(Object.values(preview.visualChannels).filter(channel=>channel.visible)).toHaveLength(6);
+  expect(Object.values(preview.visualChannels).filter(channel=>channel.visible)).toHaveLength(5);
 
-  const replacement=await page.evaluate(()=>window.__riskTest.equipmentInventory().find(item=>item.slot==='hammer'&&!item.equipped));
+  const replacement=await page.evaluate(()=>window.__riskTest.equipmentInventory().find(item=>item.slot==='weapon'&&!item.equipped));
   await page.evaluate(uid=>window.RiskLootInventoryV2Bridge.equip(uid),replacement.uid);
-  await expect.poll(()=>page.evaluate(uid=>window.__riskTest.equipmentPreviewState().equipped.hammer.uid===uid,replacement.uid)).toBe(true);
-  await page.evaluate(()=>window.RiskLootInventoryV2Bridge.unequip('hammer'));
-  await expect.poll(()=>page.evaluate(()=>window.__riskTest.equipmentPreviewState().visualChannels.hammer.visible)).toBe(false);
+  await expect.poll(()=>page.evaluate(uid=>window.__riskTest.equipmentPreviewState().equipped.weapon.uid===uid,replacement.uid)).toBe(true);
+  await page.evaluate(()=>window.RiskLootInventoryV2Bridge.unequip('weapon'));
+  await expect.poll(()=>page.evaluate(()=>window.__riskTest.equipmentPreviewState().visualChannels.weapon.visible)).toBe(false);
   await expect(page.locator('.gearDragGhost')).toHaveCount(0);
 
   await page.evaluate(()=>window.__riskTest.persistNow());
@@ -56,8 +56,8 @@ test('mixed loadout, swap, unequip and refresh keep one live visual per slot',as
   await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest))).toBe(true);
   preview=await page.evaluate(()=>window.__riskTest.equipmentPreviewState());
   expect(preview.matches).toBe(true);
-  expect(preview.equipped.hammer).toBeNull();
-  expect(preview.visualChannels.hammer.visible).toBe(false);
+  expect(preview.equipped.weapon).toBeNull();
+  expect(preview.visualChannels.weapon.visible).toBe(false);
 });
 
 test('modular character stays framed on desktop and iPhone',async({browser})=>{

@@ -88,3 +88,31 @@
   .inventoryV2ItemActions .inventoryV2Equip{grid-column:1;grid-row:1;min-height:0;height:auto;font-size:7px}
   .inventoryV2Dispose{min-height:0;font-size:4.5px}
 }
+
+/* Nine first-class equipment slots remain reachable without growing the mobile hero section. */
+@media(max-width:720px){
+  .inventoryV2Slots{
+    grid-template-columns:none;
+    grid-auto-flow:column;
+    grid-auto-columns:44px;
+    gap:4px;
+    overflow-x:auto;
+    overflow-y:hidden;
+    overscroll-behavior-inline:contain;
+    scrollbar-width:none;
+    touch-action:pan-x;
+  }
+  .inventoryV2Slots::-webkit-scrollbar{display:none}
+  .inventoryV2Slot{
+    width:44px;
+    height:48px;
+    grid-template-columns:1fr;
+    grid-template-rows:30px 10px;
+    gap:1px;
+    padding:3px;
+    text-align:center;
+  }
+  .inventoryV2Slot>i{width:100%;height:30px}
+  .inventoryV2Slot span small{font-size:4px}
+  .inventoryV2Slot span b{display:none}
+}

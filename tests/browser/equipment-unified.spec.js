@@ -59,9 +59,9 @@ test('desktop unified equipment supports preview, comparison, sorting and every 
   await page.locator('#gearGrid [data-item="'+quick.uid+'"]').dblclick();
   await expect.poll(()=>page.evaluate(()=>window.__riskTest.equipmentState().equipped.boots)).toBe(quick.uid);
 
-  quick=await unequippedItem(page,'hammer');
+  quick=await unequippedItem(page,'weapon');
   await page.locator('#gearGrid [data-item="'+quick.uid+'"]').click({button:'right'});
-  await expect.poll(()=>page.evaluate(()=>window.__riskTest.equipmentState().equipped.hammer)).toBe(quick.uid);
+  await expect.poll(()=>page.evaluate(()=>window.__riskTest.equipmentState().equipped.weapon)).toBe(quick.uid);
 
   quick=await unequippedItem(page,'scarf');
   await page.locator('#gearGrid [data-item="'+quick.uid+'"]').dragTo(page.locator('#gearCharacterStage'));

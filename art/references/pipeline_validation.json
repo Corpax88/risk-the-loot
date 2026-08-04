@@ -1,0 +1,50 @@
+﻿{
+    "status":  "passed",
+    "kritaVersion":  "5.3.3",
+    "master":  {
+                   "path":  "art/masters/pappa_hammer_master.png",
+                   "width":  1402,
+                   "height":  1122,
+                   "sha256":  "C89B0CD2C7CD9F786813B06DB779F6A9EF1568AA369EC1A6F4619201F2072F17",
+                   "sourceCopyMatches":  true
+               },
+    "template":  "art/templates/pappa_hammer_equipment_template.kra",
+    "exampleWorkingFile":  "art/working/common/common_alignment_test_hat_01.kra",
+    "exampleExport":  "art/exports/hat/common_alignment_test_hat_01.png",
+    "reimportValidation":  "art/references/alignment_reimport_validation.kra",
+    "groupsTopToBottom":  [
+                              "09_Effects",
+                              "08_Weapon",
+                              "07_Hat",
+                              "06_Scarf",
+                              "05_Chest",
+                              "04_Boots",
+                              "03_Legs",
+                              "02_Base_Body_REFERENCE_LOCKED",
+                              "01_Cape"
+                          ],
+    "masterReferenceLocked":  true,
+    "exportHasBaseBody":  false,
+    "exportHasBackground":  false,
+    "exportPreservedCanvas":  true,
+    "reimportOrigin":  [
+                           0,
+                           0
+                       ],
+    "guides":  {
+                   "vertical":  {
+                                    "head_and_body_anchor":  594,
+                                    "canvas_center":  701,
+                                    "hands_and_weapon_grip":  835
+                                },
+                   "horizontal":  {
+                                      "head":  174,
+                                      "torso":  360,
+                                      "hands_and_weapon_grip":  455,
+                                      "waist":  548,
+                                      "knees":  748,
+                                      "feet":  1010,
+                                      "ground_line":  1072
+                                  }
+               }
+}

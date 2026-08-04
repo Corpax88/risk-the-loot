@@ -84,10 +84,10 @@ test('modular gear sets share one corrected workshop body foundation',async({pag
     const state=await page.evaluate(()=>window.__riskTest.gearVisualState());
     expect(state.usesProductionSkin).toBe(false);
     expect(state.usesModularLayers).toBe(true);
-    expect(state.layers.filter(layer=>layer.visible)).toHaveLength(6);
+    expect(state.layers.filter(layer=>layer.visible)).toHaveLength(5);
     const background=await page.locator('#pappaHammerBaseSprite').evaluate(element=>getComputedStyle(element).backgroundImage);
     expect(background).not.toBe('none');
-    expect(background.split('url(').length-1).toBe(7);
+    expect(background.split('url(').length-1).toBe(6);
   }
 
   await page.screenshot({path:testInfo.outputPath('black-hole-workshop-desktop.png'),fullPage:true});

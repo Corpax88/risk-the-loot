@@ -30,22 +30,22 @@ test('preview follows equip, unequip, swap, protected disposal and full-set brea
 
   let before=await page.evaluate(()=>window.__riskTest.equipmentPreviewState());
   expect(before.fullSetId).toBe('blackHole');
-  const blackHoleHammer=before.equipped.hammer.uid;
+  const blackHoleHammer=before.equipped.weapon.uid;
 
-  await page.evaluate(()=>window.RiskLootInventoryV2Bridge.unequip('hammer'));
+  await page.evaluate(()=>window.RiskLootInventoryV2Bridge.unequip('weapon'));
   let unequipped=await expectPreviewMatchesEquipment(page);
-  expect(unequipped.equipped.hammer).toBeNull();
+  expect(unequipped.equipped.weapon).toBeNull();
   expect(unequipped.fullSetId).toBeNull();
   expect(unequipped.loadoutKey).not.toBe(before.loadoutKey);
 
-  const replacement=await page.evaluate(()=>window.__riskTest.equipmentInventory().find(item=>item.slot==='hammer'&&!item.equipped&&item.uid!==window.__riskTest.equipmentPreviewState().equipped.hammer?.uid));
+  const replacement=await page.evaluate(()=>window.__riskTest.equipmentInventory().find(item=>item.slot==='weapon'&&!item.equipped&&item.uid!==window.__riskTest.equipmentPreviewState().equipped.weapon?.uid));
   await page.evaluate(uid=>window.RiskLootInventoryV2Bridge.equip(uid),replacement.uid);
   let swapped=await expectPreviewMatchesEquipment(page);
-  expect(swapped.equipped.hammer.uid).toBe(replacement.uid);
+  expect(swapped.equipped.weapon.uid).toBe(replacement.uid);
 
   await page.evaluate(uid=>window.RiskLootInventoryV2Bridge.equip(uid),blackHoleHammer);
   swapped=await expectPreviewMatchesEquipment(page);
-  expect(swapped.equipped.hammer.uid).toBe(blackHoleHammer);
+  expect(swapped.equipped.weapon.uid).toBe(blackHoleHammer);
   expect(swapped.fullSetId).toBe('blackHole');
 
   const sell=await page.evaluate(uid=>window.RiskLootInventoryV2Bridge.dispose(uid,'sell'),blackHoleHammer);
@@ -60,7 +60,7 @@ test('preview survives rapid swaps, inventory lifecycle, save and refresh',async
   test.setTimeout(90000);
   await boot(page);
   await prepareTwoSets(page);
-  const hammers=await page.evaluate(()=>window.__riskTest.equipmentInventory().filter(item=>item.slot==='hammer').slice(0,3).map(item=>item.uid));
+  const hammers=await page.evaluate(()=>window.__riskTest.equipmentInventory().filter(item=>item.slot==='weapon').slice(0,3).map(item=>item.uid));
   expect(hammers.length).toBeGreaterThanOrEqual(2);
 
   for(let index=0;index<20;index++){
@@ -83,7 +83,7 @@ test('preview survives rapid swaps, inventory lifecycle, save and refresh',async
   await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest&&window.RiskLootInventoryV2Bridge))).toBe(true);
   await expect.poll(()=>page.evaluate(expected=>JSON.stringify(window.__riskTest.equipmentState().equipped)===JSON.stringify(expected),saved)).toBe(true);
   const refreshed=await expectPreviewMatchesEquipment(page);
-  expect(refreshed.equipped.hammer&&refreshed.equipped.hammer.uid).toBe(saved.hammer)
+  expect(refreshed.equipped.weapon&&refreshed.equipped.weapon.uid).toBe(saved.weapon)
 });
 
 test('iPhone tap equipment updates slots and preview in the same interaction',async({browser})=>{

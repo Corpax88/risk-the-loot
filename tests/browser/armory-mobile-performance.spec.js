@@ -87,10 +87,10 @@ test('mobile Armory keeps Pappa and slots fixed while only inventory scrolls',as
   await expect(page.locator('#mobileGearSortLabel')).toHaveText('NEWEST');
 
   await page.locator('#mobileGearFilter').tap();
-  await page.locator('.gearSheetGroup').first().getByRole('button',{name:'HAMMERS'}).tap();
+  await page.locator('.gearSheetGroup').first().getByRole('button',{name:'WEAPON'}).tap();
   await page.locator('.raritySheetGroup').getByRole('button',{name:'EPIC'}).tap();
   await page.locator('.gearSheetActions .done').tap();
-  await expect(page.locator('#mobileGearFilterLabel')).toContainText('HAMMERS');
+  await expect(page.locator('#mobileGearFilterLabel')).toContainText('WEAPON');
   await expect(page.locator('#mobileGearFilterLabel')).toContainText('EPIC');
 
   await page.screenshot({
@@ -119,9 +119,13 @@ test('desktop keeps drag and drop while equip uses incremental rendering',async(
   const slotShape=await page.locator('.gearLoadoutSlot[data-display-slot="hat"]').evaluate(element=>({
     clipPath:getComputedStyle(element).clipPath,
     borderStyle:getComputedStyle(element).borderStyle,
-    borderRadius:getComputedStyle(element).borderRadius
+    borderRadius:getComputedStyle(element).borderRadius,
+    width:element.getBoundingClientRect().width,
+    height:element.getBoundingClientRect().height
   }));
-  expect(slotShape.clipPath!=='none'||parseFloat(slotShape.borderRadius)>=20).toBe(true);
+  expect(['none','']).toContain(slotShape.clipPath);
+  expect(parseFloat(slotShape.borderRadius)).toBeLessThanOrEqual(8);
+  expect(slotShape.height).toBeGreaterThan(slotShape.width);
   expect(slotShape.borderStyle).toBe('solid');
   await page.mouse.move(1400,930);
   await expect(page.locator('#gearHoverPreview')).not.toHaveClass(/show/);
@@ -152,6 +156,7 @@ test('mobile Dash remains bounded and controls preserve arena visibility',async(
   expect(control.innerBackground).toMatch(/rgba\(.+,\s*0\.[0-9]+\)/);
 
   const sample=await page.evaluate(async()=>{
+    for(let frame=0;frame<12;frame++)await new Promise(resolve=>requestAnimationFrame(resolve));
     window.__riskTest.triggerDash();
     const deltas=[];
     let previous=performance.now();

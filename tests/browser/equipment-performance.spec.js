@@ -79,7 +79,7 @@ test('desktop equip pipeline updates every visible surface in one responsive com
   await page.setViewportSize({width:1440,height:960});
   await openPerformanceArmory(page);
   const inventory=await page.evaluate(()=>window.__riskTest.equipmentInventory());
-  const candidate=inventory.find(item=>!item.equipped&&item.slot==='coat');
+  const candidate=inventory.find(item=>!item.equipped&&item.slot==='chest');
   const beforeVisualKey=await page.locator('.gearCharacterHero').getAttribute('data-gear-visual-key');
   const record=await equipDesktop(page,candidate,0);
   const afterVisualKey=await page.locator('.gearCharacterHero').getAttribute('data-gear-visual-key');
@@ -106,7 +106,7 @@ test('iPhone touch equip begins immediately and stays visually coherent',async({
   const page=await context.newPage();
   await openPerformanceArmory(page);
   const inventory=await page.evaluate(()=>window.__riskTest.equipmentInventory());
-  const candidate=inventory.find(item=>!item.equipped&&item.slot==='hammer');
+  const candidate=inventory.find(item=>!item.equipped&&item.slot==='weapon');
   const record=await equipMobile(page,candidate,0);
   const probe=await page.evaluate(()=>({layoutShift:window.__equipVisualProbe.layoutShift,emptyCharacterFrames:window.__equipVisualProbe.emptyCharacterFrames}));
   console.log('EQUIP_PERF_IPHONE',JSON.stringify(record));

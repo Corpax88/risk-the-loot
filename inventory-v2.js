@@ -143,7 +143,7 @@
   function renderStats(snapshot){
     let build=activeBuild(snapshot),set=build.set,setStatus=set?(set.count>=5?'FULL SET ACTIVE':nextBonusText(set.next)):'NO SET ACTIVE';
     ui.stats.style.setProperty('--set-color',set?set.color:'#d6aa58');
-    ui.stats.innerHTML='<span class="inventoryV2Power"><small>POWER</small><b>'+build.power+'</b></span><span class="inventoryV2BuildIdentity"><small>'+(set?'ACTIVE BUILD':'LOADOUT')+'</small><b>'+(set?set.name:'FIELD GEAR')+'</b><em>'+setStatus+'</em></span><span class="inventoryV2SetCount"><small>SET</small><b>'+(set?set.count+'/5':build.equipped+'/5')+'</b></span>'
+    ui.stats.innerHTML='<span class="inventoryV2Power"><small>POWER</small><b>'+build.power+'</b></span><span class="inventoryV2BuildIdentity"><small>'+(set?'ACTIVE BUILD':'LOADOUT')+'</small><b>'+(set?set.name:'FIELD GEAR')+'</b><em>'+setStatus+'</em></span><span class="inventoryV2SetCount"><small>'+(set?'SET':'SLOTS')+'</small><b>'+(set?set.count+'/5':build.equipped+'/'+state.snapshot.slots.length)+'</b></span>'
   }
 
   function renderGrid(snapshot,list){

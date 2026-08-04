@@ -23,6 +23,8 @@ async function desktopGeometry(page){
     const panel=document.querySelector('#gearPanel');
     const workspace=document.querySelector('.unifiedEquipmentWorkspace');
     const character=document.querySelector('.unifiedCharacterPanel');
+    const browser=document.querySelector('.unifiedGearBrowser');
+    const stage=document.querySelector('#gearCharacterStage');
     const inventory=document.querySelector('.gearInventoryPanel');
     const detail=document.querySelector('#gearDetail');
     const toolbar=document.querySelector('.gearToolbar');
@@ -33,9 +35,13 @@ async function desktopGeometry(page){
       const art=slot.querySelector('.gearArt');
       return{slot:box(slot),art:art?box(art):null};
     });
+    const loadoutSlots=[...document.querySelectorAll('#gearLoadoutSlots .gearLoadoutSlot')].map(slot=>({
+      name:slot.dataset.displaySlot,
+      box:box(slot)
+    }));
     return{
       viewport:{width:innerWidth,height:innerHeight},
-      panel:box(panel),workspace:box(workspace),character:box(character),inventory:box(inventory),detail:box(detail),toolbar:box(toolbar),grid:box(grid),bagBrowser:box(bagBrowser),
+      panel:box(panel),workspace:box(workspace),character:box(character),browser:box(browser),stage:box(stage),inventory:box(inventory),detail:box(detail),toolbar:box(toolbar),grid:box(grid),bagBrowser:box(bagBrowser),
       pageOverflow:document.documentElement.scrollWidth-document.documentElement.clientWidth,
       panelOverflowX:panel.scrollWidth-panel.clientWidth,
       panelOverflowY:panel.scrollHeight-panel.clientHeight,
@@ -43,7 +49,7 @@ async function desktopGeometry(page){
       gridOverflow:getComputedStyle(grid).overflowY,
       toolbarVisible:getComputedStyle(toolbar).display!=='none',
       filterButtons,
-      slots
+      slots,loadoutSlots
     };
   });
 }
@@ -57,7 +63,7 @@ for(const viewport of [
     await openArmory(page,viewport);
     const layout=await desktopGeometry(page);
     expect(layout.toolbarVisible).toBe(true);
-    expect(layout.filterButtons).toHaveLength(6);
+    expect(layout.filterButtons).toHaveLength(11);
     for(const button of layout.filterButtons){
       expect(button.left).toBeGreaterThanOrEqual(layout.toolbar.left);
       expect(button.right).toBeLessThanOrEqual(layout.toolbar.right+1);
@@ -67,8 +73,12 @@ for(const viewport of [
     expect(layout.panel.left).toBeGreaterThanOrEqual(0);
     expect(layout.panel.right).toBeLessThanOrEqual(viewport.width);
     expect(layout.panel.bottom).toBeLessThanOrEqual(viewport.height);
-    expect(layout.character.right).toBeLessThanOrEqual(layout.inventory.left+1);
-    expect(layout.inventory.right).toBeLessThanOrEqual(layout.detail.left+1);
+    expect(layout.character.right).toBeLessThanOrEqual(layout.browser.left+1);
+    expect(layout.detail.left).toBeGreaterThanOrEqual(layout.browser.left-1);
+    expect(layout.detail.right).toBeLessThanOrEqual(layout.browser.right+1);
+    expect(layout.inventory.left).toBeGreaterThanOrEqual(layout.browser.left-1);
+    expect(layout.inventory.right).toBeLessThanOrEqual(layout.browser.right+1);
+    expect(layout.detail.bottom).toBeLessThanOrEqual(layout.inventory.top+1);
     expect(layout.pageOverflow).toBeLessThanOrEqual(1);
     expect(layout.panelOverflowX).toBeLessThanOrEqual(1);
     expect(layout.panelOverflowY).toBeLessThanOrEqual(1);
@@ -82,6 +92,13 @@ for(const viewport of [
       expect(entry.art.top).toBeGreaterThanOrEqual(entry.slot.top-1);
       expect(entry.art.right).toBeLessThanOrEqual(entry.slot.right+1);
       expect(entry.art.bottom).toBeLessThanOrEqual(entry.slot.bottom+1);
+    }
+    expect(layout.loadoutSlots).toHaveLength(10);
+    for(const entry of layout.loadoutSlots){
+      expect(entry.box.left).toBeGreaterThanOrEqual(layout.stage.left-1);
+      expect(entry.box.right).toBeLessThanOrEqual(layout.stage.right+1);
+      expect(entry.box.top).toBeGreaterThanOrEqual(layout.stage.top-1);
+      expect(entry.box.bottom).toBeLessThanOrEqual(layout.stage.bottom+1);
     }
     if(process.env.CAPTURE_INVENTORY)await page.screenshot({
       path:path.join('test-results','inventory-layout',`${viewport.name}.png`),
@@ -153,6 +170,8 @@ test('tablet and iPhone keep their independent inventory scroller',async({browse
       const before=rect(stage);
       const hero=rect(document.querySelector('.gearCharacterHero'));
       const cards=[...grid.querySelectorAll('.gearBagSlot')].map(rect);
+      const loadout=[...document.querySelectorAll('#gearLoadoutSlots .gearLoadoutSlot')].map(slot=>({name:slot.dataset.displaySlot,box:rect(slot)}));
+      const close=rect(document.querySelector('#closeGear'));
       grid.scrollTop=60;
       const after=rect(stage);
       return{
@@ -162,7 +181,7 @@ test('tablet and iPhone keep their independent inventory scroller',async({browse
         inventoryRight:rect(inventory).right,
         viewport:innerWidth,
         hero,
-        cards,
+        cards,loadout,close,
         stageBefore:{top:before.top,bottom:before.bottom},
         stageAfter:{top:after.top,bottom:after.bottom}
       };
@@ -181,6 +200,15 @@ test('tablet and iPhone keep their independent inventory scroller',async({browse
         const overlaps=card.left<other.right-1&&card.right>other.left+1&&card.top<other.bottom-1&&card.bottom>other.top+1;
         expect(overlaps,JSON.stringify({index,otherIndex,card,other})).toBe(false);
       }
+    }
+    expect(state.loadout).toHaveLength(10);
+    for(const entry of state.loadout){
+      expect(entry.box.left).toBeGreaterThanOrEqual(0);
+      expect(entry.box.right).toBeLessThanOrEqual(state.viewport+1);
+      expect(entry.box.top).toBeGreaterThanOrEqual(state.stageBefore.top-1);
+      expect(entry.box.bottom).toBeLessThanOrEqual(state.stageBefore.bottom+1);
+      const overlapsClose=entry.box.left<state.close.right-1&&entry.box.right>state.close.left+1&&entry.box.top<state.close.bottom-1&&entry.box.bottom>state.close.top+1;
+      expect(overlapsClose,JSON.stringify({entry,close:state.close})).toBe(false);
     }
     expect(state.stageAfter).toEqual(state.stageBefore);
     if(process.env.CAPTURE_INVENTORY)await page.screenshot({

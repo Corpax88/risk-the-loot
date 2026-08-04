@@ -45,21 +45,22 @@ for(const setup of [
   {name:'desktop',context:{viewport:{width:1366,height:768}}},
   {name:'iphone',context:{...devices['iPhone 13']}}
 ]){
-  test(`${setup.name} Armory uses frameless gear and an isolated close control`,async({browser},testInfo)=>{
+  test(`${setup.name} Armory uses cohesive gear slots and an isolated close control`,async({browser},testInfo)=>{
     const context=await browser.newContext(setup.context);
     const page=await context.newPage();
     await openLavaArmory(page);
     const state=await presentationState(page);
-    expect(state.slots).toHaveLength(6);
+    expect(state.slots).toHaveLength(10);
     expect(state.cards.length).toBeGreaterThan(0);
     expect(state.closeOverlapsSlot).toBe(false);
     expect(state.closeOverlapsDetail).toBe(false);
     if(setup.name==='iphone')expect(state.closeStageOffset).toBeLessThanOrEqual(18);
     expect(state.overflow).toBeLessThanOrEqual(1);
     for(const slot of state.slots){
-      expect(slot.radius).toBe('50%');
+      expect(parseFloat(slot.radius)).toBeLessThanOrEqual(8);
       expect(['none','']).toContain(slot.clip);
-      expect(Math.abs(slot.box.width-slot.box.height)).toBeLessThanOrEqual(1);
+      expect(slot.box.height).toBeGreaterThanOrEqual(slot.box.width);
+      expect(slot.box.height-slot.box.width).toBeLessThanOrEqual(12);
     }
     for(const card of state.cards){
       expect(card.border).toBe('0px');

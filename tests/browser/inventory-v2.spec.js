@@ -70,7 +70,7 @@ test('selection, stable sorting and filtering never duplicate or strand cards',a
   }
 
   for(let index=0;index<8;index++)await page.locator('#inventoryV2Sort').click();
-  for(const slot of ['hat','coat','hammer','all','boots','all']){
+  for(const slot of ['hat','chest','weapon','all','boots','all']){
     await page.locator('#inventoryV2SlotFilter').selectOption(slot);
     const state=await diagnostics(page);
     expect(state.cards).toBe(state.uniqueCards);

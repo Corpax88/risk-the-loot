@@ -20,7 +20,7 @@ test('every current gear item has a Gear 2.0 visual profile',async({page})=>{
     usesPieceGeometry:false,
     usesStripePattern:false,
     usesLegacyGearOverlay:false,
-    modularChannels:['cape','boots','chest','hat','scarf','hammer']
+    modularChannels:['cape','legs','boots','chest','scarf','hat','weapon']
   });
   expect(coverage.assets).toHaveLength(155);
   expect(coverage.assets.every(item=>item.assetId&&item.path)).toBe(true);
@@ -39,8 +39,9 @@ test('mixed gear keeps one production asset per slot through rapid swaps and rel
     const ids=loadouts[pass%loadouts.length];
     const state=await page.evaluate(items=>window.__riskTest.previewGearItems(items),ids);
     expect(state.setId).toBe(null);
-    expect(Object.values(state.equippedAssets)).toHaveLength(5);
-    expect(Object.values(state.equippedAssets).every(asset=>asset&&asset.path&&!asset.path.includes('set-gear-atlas'))).toBe(true);
+    expect(Object.values(state.equippedAssets)).toHaveLength(10);
+    expect(Object.values(state.equippedAssets).filter(Boolean)).toHaveLength(5);
+    expect(Object.values(state.equippedAssets).filter(Boolean).every(asset=>asset.path&&!asset.path.includes('set-gear-atlas'))).toBe(true);
     expected=state.equippedAssets;
   }
   await page.evaluate(()=>window.__riskTest.persistNow());
@@ -69,14 +70,16 @@ test('all sets render every animation without clipping or edge artifacts',async(
     expect(state.usesProductionSkin).toBe(false);
     expect(state.usesModularLayers).toBe(true);
     expect(state.layers).toEqual([
-      {id:'cape',sourceSlot:'coat',region:'cape',layer:10,position:'back',anchor:{x:0,y:0,scale:1},visible:true},
+      {id:'cape',sourceSlot:'cape',region:'cape',layer:10,position:'back',anchor:{x:0,y:0,scale:1},visible:false},
+      {id:'legs',sourceSlot:'legs',region:'legs',layer:20,position:'front',anchor:{x:0,y:0,scale:1},visible:false},
       {id:'boots',sourceSlot:'boots',region:'boots',layer:30,position:'front',anchor:{x:0,y:0,scale:1},visible:true},
-      {id:'chest',sourceSlot:'coat',region:'chestArmor',layer:40,position:'front',anchor:{x:0,y:0,scale:1},visible:true},
-      {id:'hat',sourceSlot:'hat',region:'hat',layer:50,position:'front',anchor:{x:0,y:0,scale:1},visible:true},
-      {id:'scarf',sourceSlot:'scarf',region:'scarf',layer:60,position:'front',anchor:{x:0,y:0,scale:1},visible:true},
-      {id:'hammer',sourceSlot:'hammer',region:'hammer',layer:70,position:'front',anchor:{x:0,y:0,scale:1},visible:true}
+      {id:'chest',sourceSlot:'chest',region:'chestArmor',layer:40,position:'front',anchor:{x:0,y:0,scale:1},visible:true},
+      {id:'scarf',sourceSlot:'scarf',region:'scarf',layer:50,position:'front',anchor:{x:0,y:0,scale:1},visible:true},
+      {id:'hat',sourceSlot:'hat',region:'hat',layer:60,position:'front',anchor:{x:0,y:0,scale:1},visible:true},
+      {id:'weapon',sourceSlot:'weapon',region:'weapon',layer:70,position:'front',anchor:{x:0,y:0,scale:1},visible:true}
     ]);
-    expect(Object.values(state.equippedAssets).every(asset=>asset&&asset.path)).toBe(true);
+    expect(Object.values(state.equippedAssets).filter(Boolean)).toHaveLength(5);
+    expect(Object.values(state.equippedAssets).filter(Boolean).every(asset=>asset.path)).toBe(true);
 
     for(const pose of ['idle','run','attack']){
       const atlas=state.atlases[pose];

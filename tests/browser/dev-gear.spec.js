@@ -32,7 +32,8 @@ for(const [name,viewport] of [
     await page.locator('#devGearEquip').click();
     state=await page.evaluate(()=>window.__riskTest.devGearState());
     expect(state.equippedSet).toBe('blackHole');
-    expect(Object.values(state.equipped).every(Boolean)).toBe(true);
+    for(const slot of ['hat','scarf','chest','weapon','boots'])expect(state.equipped[slot]).toBeTruthy();
+    for(const slot of ['cape','necklace','ring1','ring2'])expect(state.equipped[slot]).toBeNull();
 
     const itemValue=await select.locator('optgroup[label="INDIVIDUAL ITEMS"] option').first().getAttribute('value');
     await select.selectOption(itemValue);

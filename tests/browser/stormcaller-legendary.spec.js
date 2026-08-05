@@ -7,7 +7,7 @@ async function openTestGame(page,width=1280,height=900){
   await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest))).toBe(true);
 }
 
-test('Stormcaller pieces use dedicated icons and the full set uses its production skin',async({page})=>{
+test('Stormcaller pieces use dedicated icons and the full set uses seven modular production layers',async({page})=>{
   test.setTimeout(60000);
   await openTestGame(page);
 
@@ -27,17 +27,25 @@ test('Stormcaller pieces use dedicated icons and the full set uses its productio
   const state=await page.evaluate(()=>window.__riskTest.gearVisualState());
   expect(state.setId).toBe('stormrunner');
   expect(state.usesProductionSkin).toBe(false);
+  expect(state.renderOrder).toEqual(['cape','baseBody','legs','boots','chest','scarf','hat','weapon','effects']);
+  expect(state.layers.filter(layer=>layer.visible).map(layer=>layer.id)).toEqual(['cape','legs','boots','chest','scarf','hat','weapon']);
+  const equippedAssets=Object.values(state.equippedAssets).filter(Boolean);
+  expect(equippedAssets).toHaveLength(7);
+  expect(equippedAssets.every(asset=>asset.mode==='aligned')).toBe(true);
+  expect(new Set(equippedAssets.map(asset=>asset.path)).size).toBe(7);
   await expect(page.locator('#gearCharacterStage')).toHaveAttribute('data-set-id','stormrunner');
-  const positions=await page.locator('#gearGrid .stormcallerSprite').evaluateAll(nodes=>
-    [...new Set(nodes.map(node=>getComputedStyle(node).backgroundPosition))]
+  await expect(page.locator('#gearGrid .stormcallerSprite')).toHaveCount(7);
+  const assets=await page.locator('#gearGrid .stormcallerSprite').evaluateAll(nodes=>
+    [...new Set(nodes.map(node=>node.dataset.gearAsset))]
   );
-  expect(positions).toHaveLength(5);
+  expect(assets).toHaveLength(7);
+  expect(assets.every(asset=>asset&&asset.includes('@stormcaller'))).toBe(true);
   await page.locator('#gearCharacterStage').screenshot({
     path:path.join('test-results','stormcaller','armory-desktop.png')
   });
 });
 
-test('equipping the final Stormcaller piece morphs naturally into its production skin',async({page})=>{
+test('equipping the final Stormcaller core piece activates the set without replacing modular layers',async({page})=>{
   await openTestGame(page);
   const setup=await page.evaluate(()=>window.__riskTest.previewGearSetPieces('stormrunner',4));
   const finalPiece=setup.inventory.find(item=>item.itemId.startsWith('stormrunner-')&&!item.equipped);

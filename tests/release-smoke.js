@@ -113,10 +113,10 @@ assert.equal(Object.keys(current.equipped).length,10,'canonical equipment slots 
 assert(Object.values(current.equipped).every(value=>value===null),'fresh equipment is not empty');
 
 assert.equal(test.foundation.active,true,'Pappa V1 foundation flag is not active');
-assert.equal(test.activeGear,0,'legacy gear remains active in the loot catalog');
-assert.equal(test.activeSets,0,'legacy sets remain active');
+assert.equal(test.activeGear,7,'Stormcaller proof does not expose all seven modular layers');
+assert.equal(test.activeSets,1,'Stormcaller proof set is not the only active set');
 assert(test.archivedGear>0,'retired catalog was not retained as source history');
-assert.equal(test.atlasCount,0,'legacy production gear atlases still load at runtime');
+assert.equal(test.atlasCount,7,'Stormcaller proof does not load exactly seven direct production layers');
 assert.equal(test.rollBossGear(1,'rare'),null,'bosses can still roll retired gear');
 assert.equal(test.rollVaultGear(),null,'Grand Vault can still roll retired gear');
 assert(test.baseAsset.includes('pappa-hammer-player.png?v=20260804-v1-foundation'),'approved V1 base is not the runtime source');
@@ -131,8 +131,8 @@ elements.closeGear.click();
 assert(!elements.gearOverlay.classList.contains('show'),'Adventure Bag did not close');
 
 test.renderDevGearOptions();
-assert(elements.devGearSpawn.disabled&&elements.devGearEquip.disabled,'retired gear can still be granted by dev tools');
-assert(elements.devGearSelect.innerHTML.includes('NO V1 GEAR'),'dev panel does not explain the clean foundation');
+assert(!elements.devGearSpawn.disabled&&!elements.devGearEquip.disabled,'Stormcaller proof cannot be granted by dev tools');
+assert(elements.devGearSelect.children.some(group=>group.children.some(option=>option.textContent.includes('STORMCALLER'))),'Stormcaller proof is missing from the dev gear selector');
 
 test.saveRef.cores=3;
 Object.values(test.saveRef.blueprints)[0].copies=12;
@@ -147,4 +147,4 @@ elements.startButton.click();
 assert(elements.mapOverlay.classList.contains('show'),'Adventure Atlas did not open');
 assert.equal(elements.mapGrid.children.length,5,'preserved map progression did not render');
 
-console.log('Release smoke passed: V1 reset -> approved base -> empty active gear -> material bridge -> playable map flow');
+console.log('Release smoke passed: V1 reset -> approved base -> Stormcaller proof -> material bridge -> playable map flow');

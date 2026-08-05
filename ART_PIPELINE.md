@@ -178,6 +178,26 @@ The cyan test marker is an alignment test, not production artwork.
 4. Never overwrite an archived file.
 5. Production promotion should copy an approved export; it must not move or delete the working source.
 
+## Stormcaller Proof Set
+
+Stormcaller is the first complete proof that the V1 master can wear independently authored production layers in both the Adventure Bag and gameplay.
+
+- Editable Krita source: `art/working/legendary/stormcaller/legendary_stormcaller_set_01.ora`
+- Composite review image: `art/working/legendary/stormcaller/legendary_stormcaller_set_01_preview.png`
+- Build/validation script: `art/tools/Build-StormcallerProof.ps1`
+- Runtime layers: `assets/equipment/stormcaller/`
+- Inventory icons: `assets/equipment/stormcaller/icons/`
+
+The `.ora` file is an editable OpenRaster document supported by Krita. It keeps the locked V1 master reference and all seven production groups separate. The runtime never loads the composite preview or a full-character Stormcaller image; it composes cape, legs, boots, chest, scarf, hat, and weapon over the approved V1 master in canonical order.
+
+Rebuild the aligned exports and verify their dimensions with:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\art\tools\Build-StormcallerProof.ps1 -SkipKrita
+```
+
+The source mockup is a visual reference only. The proof layers were isolated and reframed for the approved master, then exported as separate 1402 x 1122 RGBA PNGs with the original master origin and transparent padding preserved.
+
 ## Rebuilding the Template
 
 The checked-in template is ready to use. If it must be reproduced from the immutable master:
@@ -195,4 +215,3 @@ This command writes only inside `art/templates`, the example `art/working/common
 - Create inventory icons separately.
 - Archive superseded `.kra` files before major repainting.
 - Promote approved exports into production only through a separate, explicit game-asset task.
-

@@ -23,7 +23,7 @@ test('premium combat HUD stays readable and live on iPhone',async({page},testInf
   await bootCombat(page,{width:390,height:844});
   await expect(page.locator('#combatSetName')).toHaveText('FIELD LOADOUT');
   await expect(page.locator('#combatSetProgress')).toHaveText('0/10');
-  await expect.poll(()=>page.evaluate(()=>window.__riskTest.pappaV1Foundation().activeGear)).toBe(0);
+  await expect.poll(()=>page.evaluate(()=>window.__riskTest.pappaV1Foundation().activeGear)).toBe(7);
   await expect.poll(()=>page.evaluate(()=>window.__riskTest.gearVisualState().usesModularLayers)).toBe(true);
   await expect(page.locator('#combatPortraitSprite')).toHaveCSS('background-image',/^(?!none)/);
   const geometry=await hudGeometry(page);

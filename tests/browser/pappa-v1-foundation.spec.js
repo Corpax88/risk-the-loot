@@ -25,7 +25,7 @@ async function verifyFoundation(page,testInfo,label){
   await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest))).toBe(true);
 
   const foundation=await page.evaluate(()=>window.__riskTest.pappaV1Foundation());
-  expect(foundation).toMatchObject({active:true,saveVersion:15,activeGear:0,activeSets:0});
+  expect(foundation).toMatchObject({active:true,saveVersion:15,activeGear:7,activeSets:1});
   expect(foundation.archivedGear).toBeGreaterThan(0);
   expect(foundation.baseAsset).toContain('pappa-hammer-player.png?v=20260804-v1-foundation');
 

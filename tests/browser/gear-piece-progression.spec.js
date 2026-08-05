@@ -7,20 +7,20 @@ async function openGame(page,width=1280,height=900){
   await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest))).toBe(true);
 }
 
-test('each set piece visibly evolves the persistent modular Pappa foundation',async({page})=>{
+test('each Stormcaller piece visibly evolves the persistent modular Pappa foundation',async({page})=>{
   test.setTimeout(60000);
   await openGame(page);
   const stages=[];
 
   for(let count=0;count<=5;count++){
-    const result=await page.evaluate(value=>window.__riskTest.previewGearSetPieces('hammerChoir',value),count);
+    const result=await page.evaluate(value=>window.__riskTest.previewGearSetPieces('stormrunner',value),count);
     await expect.poll(()=>page.evaluate(()=>window.__riskTest.gearVisualState().atlases.idle!==null)).toBe(true);
     const state=await page.evaluate(()=>window.__riskTest.gearVisualState(true));
-    expect(result.inventory.filter(item=>item.equipped)).toHaveLength(count);
+    expect(result.inventory.filter(item=>item.equipped)).toHaveLength(count===5?7:count);
     expect(state.usesProductionSkin).toBe(false);
     expect(state.usesModularLayers).toBe(true);
-    expect(state.setId).toBe(count===5?'hammerChoir':null);
-    expect(state.layers).toHaveLength(6);
+    expect(state.setId).toBe(count===5?'stormrunner':null);
+    expect(state.layers).toHaveLength(7);
     stages.push({count,hash:state.atlases.idle.hash,image:state.atlases.idle.preview});
   }
 
@@ -33,14 +33,14 @@ test('each set piece visibly evolves the persistent modular Pappa foundation',as
     const root=document.querySelector('#progression');
     for(const card of cards){const article=document.createElement('article');article.className='stage';const image=document.createElement('img');image.src=card.image;const label=document.createElement('b');label.textContent=card.count+'/5';article.append(image,label);root.appendChild(article)}
   },stages);
-  await page.screenshot({path:path.join('test-results','gear-progression','hammer-choir-0-to-5.png'),fullPage:true});
+  await page.screenshot({path:path.join('test-results','gear-progression','stormcaller-0-to-5.png'),fullPage:true});
 });
 
-test('piece evolution remains readable on iPhone through Black Hole 5/5',async({page})=>{
+test('Stormcaller piece evolution remains readable on iPhone through 5/5',async({page})=>{
   await openGame(page,390,844);
   const hashes=[];
   for(const count of [1,2,3,4,5]){
-    await page.evaluate(value=>window.__riskTest.previewGearSetPieces('blackHole',value),count);
+    await page.evaluate(value=>window.__riskTest.previewGearSetPieces('stormrunner',value),count);
     const state=await page.evaluate(()=>window.__riskTest.gearVisualState(true));
     hashes.push(state.atlases.idle.hash);
     expect(state.usesProductionSkin).toBe(false);
@@ -48,5 +48,5 @@ test('piece evolution remains readable on iPhone through Black Hole 5/5',async({
   }
   expect(new Set(hashes).size).toBe(5);
   await expect(page.locator('#gearCharacterStage')).toBeVisible();
-  await page.locator('#gearCharacterStage').screenshot({path:path.join('test-results','gear-progression','black-hole-full-mobile.png')});
+  await page.locator('#gearCharacterStage').screenshot({path:path.join('test-results','gear-progression','stormcaller-full-mobile.png')});
 });

@@ -8,7 +8,7 @@
   function loadImage(src){let image=typeof Image==='function'?new Image():document.createElement('img');image.src=src;return image}
   const pappaHammerImage=loadImage('assets/pappa-hammer-player.png?v=20260804-v1-foundation');
   const pappaHammerSprites={idle:null,run:null,attack:null};
-  let pappaHammerAssetRevision=0,pappaHammerAssetBuildKey='';
+  let pappaHammerAssetRevision=0,pappaHammerAssetBuildKey='',pappaHammerSourceBounds=null;
   function imageAlphaBounds(image,sx,sy,sw,sh){
     let canvas=document.createElement('canvas'),layer=canvas.getContext('2d',{willReadFrequently:true});canvas.width=sw;canvas.height=sh;layer.drawImage(image,sx,sy,sw,sh,0,0,sw,sh);let pixels=layer.getImageData(0,0,sw,sh).data,minX=sw,minY=sh,maxX=-1,maxY=-1;
     for(let y=0;y<sh;y+=2)for(let x=0;x<sw;x+=2)if(pixels[(y*sw+x)*4+3]>10){if(x<minX)minX=x;if(y<minY)minY=y;if(x>maxX)maxX=x;if(y>maxY)maxY=y}
@@ -26,7 +26,7 @@
   function refreshPappaHammerAssetAtlases(){
     if(!imageReady(pappaHammerImage)||!PAPER_DOLL_POSES.every(pose=>ASSET_GEAR_SLOTS.every(slot=>imageReady(paperDollMasks[pose][slot]))))return false;let sourceBounds=imageAlphaBounds(pappaHammerImage,0,0,pappaHammerImage.naturalWidth,pappaHammerImage.naturalHeight);if(!sourceBounds)return false;
     let buildKey=pappaHammerImage.currentSrc+'|'+pappaHammerImage.naturalWidth+'x'+pappaHammerImage.naturalHeight+'|'+PAPER_DOLL_POSES.map(pose=>ASSET_GEAR_SLOTS.map(slot=>paperDollMasks[pose][slot].naturalWidth+'x'+paperDollMasks[pose][slot].naturalHeight).join(',')).join('|');if(buildKey===pappaHammerAssetBuildKey)return true;
-    for(const pose of Object.keys(pappaHammerSprites))pappaHammerSprites[pose]=buildPappaHammerAtlas(pose,sourceBounds);pappaHammerAssetBuildKey=buildKey;pappaHammerAssetRevision++;paperDollKey='';paperDollPreviewUrl='';paperDollAtlases={idle:null,run:null,attack:null};paperDollPreviewCache.clear();refreshPaperDoll();return true
+    pappaHammerSourceBounds=sourceBounds;for(const pose of Object.keys(pappaHammerSprites))pappaHammerSprites[pose]=buildPappaHammerAtlas(pose,sourceBounds);pappaHammerAssetBuildKey=buildKey;pappaHammerAssetRevision++;paperDollKey='';paperDollPreviewUrl='';paperDollAtlases={idle:null,run:null,attack:null};paperDollPreviewCache.clear();refreshPaperDoll();return true
   }
   const blackHoleVfxSprites={
     spawn:loadImage('assets/black-hole-vortex-spawn-v2.png'),
@@ -37,9 +37,17 @@
     collapse:loadImage('assets/black-hole-vortex-collapse-v2.png'),
     burst:loadImage('assets/black-hole-vortex-burst-v2.png')
   };
-  // V1 starts with a clean paper doll. New production gear atlases are registered here
-  // only after their layers have been authored against the approved master canvas.
-  const productionGearAtlases=Object.freeze({});
+  function alignedGearSource(path,theme){return Object.freeze({mode:'aligned',path,theme,image:loadImage(path),width:1402,height:1122,columns:1,rows:1})}
+  // Every Stormcaller source uses the approved 1402x1122 V1 master canvas and origin.
+  const productionGearAtlases=Object.freeze({
+    stormcallerCape:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_cape_01.png?v=20260804-proof','stormrunner'),
+    stormcallerLegs:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_legs_01.png?v=20260804-proof','stormrunner'),
+    stormcallerBoots:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_boots_01.png?v=20260804-proof','stormrunner'),
+    stormcallerChest:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_chest_01.png?v=20260804-proof','stormrunner'),
+    stormcallerScarf:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_scarf_01.png?v=20260804-proof','stormrunner'),
+    stormcallerHat:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_hat_01.png?v=20260804-proof','stormrunner'),
+    stormcallerWeapon:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_weapon_01.png?v=20260804-proof','stormrunner')
+  });
   const handlavaHitSplashSprite=loadImage('assets/handlava-hit-splash-v1.png');
   const ancientEntSprite=loadImage('assets/ancient-ent-v1.png');
   const natureRootTrapSprite=loadImage('assets/nature-root-trap-v1.png');
@@ -457,9 +465,7 @@
   // deliberately excluded from every active loot, inventory and developer path because
   // those images were not authored for the approved underwear-only V1 master.
   const ARCHIVED_GEAR_ITEMS=Object.freeze([...LEGACY_LOOT_ITEMS,...SET_ITEMS]);
-  const ACTIVE_SET_DEFINITIONS=Object.freeze([]),ACTIVE_SET_ITEMS=Object.freeze([]);
-  const LOOT_ITEMS=Object.freeze([]);
-  function productionAsset(atlasId,column,row,sourceId){let atlas=productionGearAtlases[atlasId];return atlas?Object.freeze({id:(sourceId||atlasId)+'@'+atlasId+':'+column+':'+row,atlasId,path:atlas.path,column,row,columns:atlas.columns,rows:atlas.rows,cell:atlas.cell,sourceId:sourceId||null}):null}
+  function productionAsset(atlasId,column,row,sourceId){let atlas=productionGearAtlases[atlasId];if(!atlas)return null;if(atlas.mode==='aligned')return Object.freeze({id:(sourceId||atlasId)+'@'+atlasId,atlasId,path:atlas.path,mode:'aligned',theme:atlas.theme,column:0,row:0,columns:1,rows:1,cell:0,sourceId:sourceId||null});return Object.freeze({id:(sourceId||atlasId)+'@'+atlasId+':'+column+':'+row,atlasId,path:atlas.path,mode:'atlas',column,row,columns:atlas.columns,rows:atlas.rows,cell:atlas.cell,sourceId:sourceId||null})}
   const gearVisualCounts={};
   for(const item of LEGACY_LOOT_ITEMS){
     let sourceSlot=assetSlot(item),variant=gearVisualCounts[sourceSlot]||0,legacyCell=LEGENDARY_LEGACY_CELL[item.id];gearVisualCounts[sourceSlot]=variant+1;item.visual.variant=variant;item.visual.atlasColumn=variant%GEAR_ATLAS_COLUMNS;item.visual.atlasRow=GEAR_ATLAS_ROW[sourceSlot];item.visual.mark=item.mark||GEAR_SLOT_META[item.slot].icon;item.visual.key=item.id;if(legacyCell){item.visual.legendaryRow=legacyCell.row;item.visual.legendaryColumn=legacyCell.column}item.visual.asset=legacyCell?productionAsset('legendary',legacyCell.column,legacyCell.row,item.id):productionAsset('field',item.visual.atlasColumn,item.visual.atlasRow,item.id)
@@ -472,6 +478,18 @@
     else if(sourceId&&legacyAssets[sourceId])item.visual.asset=Object.freeze(Object.assign({},legacyAssets[sourceId],{id:item.id+'@'+legacyAssets[sourceId].id,sourceId}));
     else item.visual.asset=null
   }
+  const stormcallerSet=Object.freeze(SET_DEFINITIONS.find(set=>set.id==='stormrunner'));
+  const STORMCALLER_SOURCE_BY_SLOT=Object.freeze({cape:'stormcallerCape',legs:'stormcallerLegs',boots:'stormcallerBoots',chest:'stormcallerChest',scarf:'stormcallerScarf',hat:'stormcallerHat',weapon:'stormcallerWeapon'});
+  function stormcallerIconPath(slot){return 'assets/equipment/stormcaller/icons/legendary_stormcaller_'+slot+'_icon_01.png?v=20260804-proof'}
+  function activateStormcallerItem(source){let slot=source.slot,visual=Object.freeze(Object.assign({},source.visual,{asset:productionAsset(STORMCALLER_SOURCE_BY_SLOT[slot],0,0,source.id),iconPath:stormcallerIconPath(slot),mark:stormcallerSet.mark,key:source.id}));return Object.freeze(Object.assign({},source,{assetSlot:slot,visual}))}
+  const stormcallerCoreItems=SET_ITEMS.filter(item=>item.setId==='stormrunner').map(activateStormcallerItem);
+  const stormcallerCosmeticItems=[
+    gearDef('stormrunner-cape','Stormwake Cape','cape','legendary',98,{},stormcallerSet.color,stormcallerSet.accent,0,{setId:'stormrunner',minLevel:stormcallerSet.minLevel,setPiece:true,cosmeticOnly:true,dropDisabled:true,mark:stormcallerSet.mark,dropBand:stormcallerSet.dropBand}),
+    gearDef('stormrunner-legs','Thunderstride Legguards','legs','legendary',102,{},stormcallerSet.color,stormcallerSet.accent,0,{setId:'stormrunner',minLevel:stormcallerSet.minLevel,setPiece:true,cosmeticOnly:true,dropDisabled:true,mark:stormcallerSet.mark,dropBand:stormcallerSet.dropBand})
+  ].map(activateStormcallerItem);
+  const ACTIVE_SET_DEFINITIONS=Object.freeze([stormcallerSet]);
+  const ACTIVE_SET_ITEMS=Object.freeze([...stormcallerCoreItems,...stormcallerCosmeticItems]);
+  const LOOT_ITEMS=ACTIVE_SET_ITEMS;
   const LOOT_BY_RARITY=Object.keys(LOOT_RARITIES).reduce((groups,rarity)=>{groups[rarity]=LOOT_ITEMS.filter(item=>item.rarity===rarity&&!item.dropDisabled);return groups},{}),LOOT_BY_ID=Object.fromEntries(LOOT_ITEMS.map(item=>[item.id,item])),RELIC_POWER_CAP=4;
   const SYNERGIES=[
     {id:'shrapnel',name:'GRAND SLAM',needs:['burst','volatile'],desc:'Every third strike detonates on impact.'},
@@ -612,7 +630,7 @@
     ring2:Object.freeze({padding:.16,anchorX:0,anchorY:0})
   });
   function gearAssetRef(item){
-    let asset=item&&item.visual&&item.visual.asset,atlas=asset&&productionGearAtlases[asset.atlasId],valid=!!(asset&&atlas&&asset.path===atlas.path&&Number.isInteger(asset.column)&&Number.isInteger(asset.row)&&asset.column>=0&&asset.column<atlas.columns&&asset.row>=0&&asset.row<atlas.rows);
+    let asset=item&&item.visual&&item.visual.asset,atlas=asset&&productionGearAtlases[asset.atlasId],aligned=!!(asset&&asset.mode==='aligned'),valid=!!(asset&&atlas&&asset.path===atlas.path&&(aligned?atlas.mode==='aligned':Number.isInteger(asset.column)&&Number.isInteger(asset.row)&&asset.column>=0&&asset.column<atlas.columns&&asset.row>=0&&asset.row<atlas.rows));
     if(!valid&&item&&!missingGearAssetWarnings.has(item.id)){missingGearAssetWarnings.add(item.id);console.warn('[Gear Asset] Missing or invalid equip asset for '+item.id+' ('+(asset&&asset.path||'no asset path')+'); neutral Pappa Hammer fallback retained.')}
     return valid?asset:null
   }
@@ -744,9 +762,9 @@
     layer.restore()
   }
   function gearAssetAlphaBounds(asset){
-    let key=asset.atlasId+':'+asset.column+':'+asset.row,cached=gearAssetBoundsCache.get(key);if(cached)return cached;
-    let atlas=productionGearAtlases[asset.atlasId],canvas=document.createElement('canvas'),layer=canvas.getContext('2d',{willReadFrequently:true});canvas.width=canvas.height=asset.cell;layer.clearRect(0,0,asset.cell,asset.cell);layer.drawImage(atlas.image,asset.column*asset.cell,asset.row*asset.cell,asset.cell,asset.cell,0,0,asset.cell,asset.cell);
-    let pixels=layer.getImageData(0,0,asset.cell,asset.cell).data,minX=asset.cell,minY=asset.cell,maxX=-1,maxY=-1;for(let y=0;y<asset.cell;y+=2)for(let x=0;x<asset.cell;x+=2)if(pixels[(y*asset.cell+x)*4+3]>8){if(x<minX)minX=x;if(y<minY)minY=y;if(x>maxX)maxX=x;if(y>maxY)maxY=y}
+    let key=asset.id,cached=gearAssetBoundsCache.get(key);if(cached)return cached;
+    let atlas=productionGearAtlases[asset.atlasId];if(!atlas||!imageReady(atlas.image))return null;let aligned=asset.mode==='aligned',sourceWidth=aligned?atlas.image.naturalWidth:asset.cell,sourceHeight=aligned?atlas.image.naturalHeight:asset.cell,canvas=document.createElement('canvas'),layer=canvas.getContext('2d',{willReadFrequently:true});canvas.width=sourceWidth;canvas.height=sourceHeight;layer.clearRect(0,0,sourceWidth,sourceHeight);if(aligned)layer.drawImage(atlas.image,0,0,sourceWidth,sourceHeight);else layer.drawImage(atlas.image,asset.column*asset.cell,asset.row*asset.cell,asset.cell,asset.cell,0,0,asset.cell,asset.cell);
+    let pixels=layer.getImageData(0,0,sourceWidth,sourceHeight).data,minX=sourceWidth,minY=sourceHeight,maxX=-1,maxY=-1;for(let y=0;y<sourceHeight;y+=2)for(let x=0;x<sourceWidth;x+=2)if(pixels[(y*sourceWidth+x)*4+3]>8){if(x<minX)minX=x;if(y<minY)minY=y;if(x>maxX)maxX=x;if(y>maxY)maxY=y}
     cached=maxX<0?null:{x:minX,y:minY,w:maxX-minX+2,h:maxY-minY+2};gearAssetBoundsCache.set(key,cached);return cached
   }
   function equippedGearPreviewTransform(asset,displaySlot){
@@ -760,7 +778,7 @@
     let atlas=productionGearAtlases[asset.atlasId],renderKey=gear.uid+'|'+asset.id+'|'+displaySlot;canvas.dataset.previewKey=renderKey;canvas.dataset.itemId=item.id;canvas.dataset.assetId=asset.id;canvas.dataset.previewSlot=displaySlot;
     if(!imageReady(atlas.image)){canvas.hidden=true;if(fallback)fallback.hidden=false;let retry=()=>{if(canvas.isConnected&&canvas.dataset.previewKey===renderKey)drawEquippedGearPreview(canvas,gear,displaySlot)};atlas.image.addEventListener('load',retry,{once:true});atlas.image.addEventListener('error',()=>{if(canvas.isConnected&&canvas.dataset.previewKey===renderKey){canvas.hidden=true;if(fallback)fallback.hidden=false}}, {once:true});return false}
     let transform=equippedGearPreviewTransform(asset,displaySlot),layer=canvas.getContext('2d');if(!transform||!layer){canvas.hidden=true;if(fallback)fallback.hidden=false;if(!missingGearAssetWarnings.has(item.id)){missingGearAssetWarnings.add(item.id);console.warn('[Gear Asset] Empty or unreadable equipped-slot asset for '+item.id+'; neutral fallback retained.')}return false}
-    canvas.width=canvas.height=EQUIPPED_GEAR_PREVIEW_SIZE;layer.clearRect(0,0,canvas.width,canvas.height);layer.save();layer.beginPath();layer.arc(canvas.width/2,canvas.height/2,transform.radius,0,Math.PI*2);layer.clip();layer.imageSmoothingEnabled=true;layer.imageSmoothingQuality='high';let source=transform.source;layer.drawImage(atlas.image,asset.column*asset.cell+source.x,asset.row*asset.cell+source.y,source.w,source.h,transform.x,transform.y,transform.width,transform.height);layer.restore();canvas.hidden=false;if(fallback)fallback.hidden=true;return true
+    canvas.width=canvas.height=EQUIPPED_GEAR_PREVIEW_SIZE;layer.clearRect(0,0,canvas.width,canvas.height);layer.save();layer.beginPath();layer.arc(canvas.width/2,canvas.height/2,transform.radius,0,Math.PI*2);layer.clip();layer.imageSmoothingEnabled=true;layer.imageSmoothingQuality='high';let source=transform.source,sourceX=(asset.mode==='aligned'?0:asset.column*asset.cell)+source.x,sourceY=(asset.mode==='aligned'?0:asset.row*asset.cell)+source.y;layer.drawImage(atlas.image,sourceX,sourceY,source.w,source.h,transform.x,transform.y,transform.width,transform.height);layer.restore();canvas.hidden=false;if(fallback)fallback.hidden=true;return true
   }
   function equippedGearPreviewMarkup(gear,displaySlot){
     let item=gearDefinition(gear),asset=gearAssetRef(item),fallback=gearArtMarkup(gear,'small');if(!item||!asset)return fallback;
@@ -768,7 +786,10 @@
   }
   function drawProductionGearAsset(layer,item,b,fitMode){
     let asset=gearAssetRef(item);if(!asset||!b)return false;let atlas=productionGearAtlases[asset.atlasId];if(!imageReady(atlas.image))return false;let source=gearAssetAlphaBounds(asset);if(!source)return false;
-    let scale=(fitMode==='contain'?Math.min:Math.max)(b.w/source.w,b.h/source.h),width=source.w*scale,height=source.h*scale,x=b.x+(b.w-width)/2,y=b.y+(b.h-height)/2;layer.drawImage(atlas.image,asset.column*asset.cell+source.x,asset.row*asset.cell+source.y,source.w,source.h,x,y,width,height);return true
+    let scale=(fitMode==='contain'?Math.min:Math.max)(b.w/source.w,b.h/source.h),width=source.w*scale,height=source.h*scale,x=b.x+(b.w-width)/2,y=b.y+(b.h-height)/2,sourceX=(asset.mode==='aligned'?0:asset.column*asset.cell)+source.x,sourceY=(asset.mode==='aligned'?0:asset.row*asset.cell)+source.y;layer.drawImage(atlas.image,sourceX,sourceY,source.w,source.h,x,y,width,height);return true
+  }
+  function drawAlignedProductionGearAsset(layer,asset,b){
+    let atlas=productionGearAtlases[asset.atlasId],sourceBounds=pappaHammerSourceBounds;if(!atlas||!imageReady(atlas.image)||!sourceBounds||!b)return false;let fit=Math.min(b.w/sourceBounds.w,b.h/sourceBounds.h),x=b.x+(b.w-sourceBounds.w*fit)/2-sourceBounds.x*fit,y=b.y+b.h-sourceBounds.h*fit-sourceBounds.y*fit;layer.drawImage(atlas.image,0,0,atlas.image.naturalWidth,atlas.image.naturalHeight,x,y,atlas.image.naturalWidth*fit,atlas.image.naturalHeight*fit);return true
   }
   function drawProductionHammerAsset(layer,item,b){
     let asset=gearAssetRef(item);if(!asset||!b)return false;let atlas=productionGearAtlases[asset.atlasId],source=gearAssetAlphaBounds(asset);if(!imageReady(atlas.image)||!source)return false;
@@ -779,9 +800,9 @@
     for(let index=0;index<2;index++){let sx=source.x+half*index,box=boxes[index],scale=Math.min(box.w/half,box.h/source.h),width=half*scale,height=source.h*scale;layer.drawImage(atlas.image,asset.column*asset.cell+sx,asset.row*asset.cell+source.y,half,source.h,box.x+(box.w-width)/2,box.y+box.h-height,width,height)}return true
   }
   function equipmentLayerTexture(pose,channel,item){
-    let asset=gearAssetRef(item);if(!asset||(channel.maskSlot&&!imageReady(paperDollMasks[pose][channel.maskSlot])))return null;let key=pose+'|'+channel.id+'|'+asset.id,cached=equipmentLayerTextureCache.get(key);if(cached)return cached;
+    let asset=gearAssetRef(item),aligned=!!(asset&&asset.mode==='aligned');if(!asset||(!aligned&&channel.maskSlot&&!imageReady(paperDollMasks[pose][channel.maskSlot])))return null;let key=pose+'|'+channel.id+'|'+asset.id,cached=equipmentLayerTextureCache.get(key);if(cached)return cached;
     let out=document.createElement('canvas'),scratch=document.createElement('canvas'),outCtx=out.getContext('2d'),layer=scratch.getContext('2d'),ratio=EQUIPMENT_LAYER_CELL/PAPER_DOLL_CELL;out.width=EQUIPMENT_LAYER_CELL*4;out.height=EQUIPMENT_LAYER_CELL*2;scratch.width=scratch.height=PAPER_DOLL_CELL;if(!outCtx||!layer)return null;outCtx.imageSmoothingEnabled=layer.imageSmoothingEnabled=true;outCtx.imageSmoothingQuality=layer.imageSmoothingQuality='high';
-    for(let frame=0;frame<8;frame++){let mask=equipmentChannelMaskFrame(pose,channel,frame);if(!mask.bounds)continue;let dx=frame%4*EQUIPMENT_LAYER_CELL,dy=Math.floor(frame/4)*EQUIPMENT_LAYER_CELL,anchor=channel.anchor,isWeapon=channel.id==='weapon',isBoots=channel.id==='boots',usesClip=!isWeapon&&!isBoots;layer.clearRect(0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);layer.globalCompositeOperation='source-over';layer.globalAlpha=1;let drawn=isWeapon?drawProductionHammerAsset(layer,item,mask.bounds):isBoots?drawProductionBootAsset(layer,item,equipmentBodyTargetBounds(pose,frame)):drawProductionGearAsset(layer,item,mask.bounds,channel.fit);if(!drawn)continue;if(usesClip){layer.globalCompositeOperation='destination-in';layer.drawImage(mask.canvas,0,0);layer.globalCompositeOperation='source-over'}outCtx.drawImage(scratch,0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL,dx+anchor.x*ratio,dy+anchor.y*ratio,EQUIPMENT_LAYER_CELL*anchor.scale,EQUIPMENT_LAYER_CELL*anchor.scale)}
+    for(let frame=0;frame<8;frame++){let mask=aligned?null:equipmentChannelMaskFrame(pose,channel,frame);if(!aligned&&!mask.bounds)continue;let dx=frame%4*EQUIPMENT_LAYER_CELL,dy=Math.floor(frame/4)*EQUIPMENT_LAYER_CELL,anchor=channel.anchor,isWeapon=channel.id==='weapon',isBoots=channel.id==='boots',usesClip=!aligned&&!isWeapon&&!isBoots;layer.clearRect(0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL);layer.globalCompositeOperation='source-over';layer.globalAlpha=1;let drawn=aligned?drawAlignedProductionGearAsset(layer,asset,equipmentBodyTargetBounds(pose,frame)):isWeapon?drawProductionHammerAsset(layer,item,mask.bounds):isBoots?drawProductionBootAsset(layer,item,equipmentBodyTargetBounds(pose,frame)):drawProductionGearAsset(layer,item,mask.bounds,channel.fit);if(!drawn)continue;if(usesClip){layer.globalCompositeOperation='destination-in';layer.drawImage(mask.canvas,0,0);layer.globalCompositeOperation='source-over'}outCtx.drawImage(scratch,0,0,PAPER_DOLL_CELL,PAPER_DOLL_CELL,dx+anchor.x*ratio,dy+anchor.y*ratio,EQUIPMENT_LAYER_CELL*anchor.scale,EQUIPMENT_LAYER_CELL*anchor.scale)}
     gearPerf.layerBuilds++;equipmentLayerTextureCache.set(key,out);while(equipmentLayerTextureCache.size>EQUIPMENT_LAYER_CACHE_LIMIT)equipmentLayerTextureCache.delete(equipmentLayerTextureCache.keys().next().value);return out
   }
   function equipmentTextureUrl(texture){
@@ -915,8 +936,8 @@
   function gearArtMarkup(gear,size){
     let item=gearDefinition(gear);if(!item)return '';
     let asset=gearAssetRef(item),visual=item.visual,rarity=LOOT_RARITIES[item.rarity],set=item.setId&&SET_BY_ID[item.setId],classes=['gearArt',item.slot,'productionGear'];
-    if(size)classes.push(size);if(item.setId)classes.push('setItem');if(item.rarity==='legendary')classes.push('legendarySprite','legendary-'+(item.setId||'legacy'));if(asset&&['blackHole','stormrunner','lavaSet','natureSet'].includes(asset.atlasId))classes.push(asset.atlasId==='stormrunner'?'stormcallerSprite':asset.atlasId==='lavaSet'?'lavaSprite':asset.atlasId==='natureSet'?'natureSprite':'blackHoleSprite');if(!asset)classes.push('neutralGearFallback');
-    let x=asset&&asset.columns>1?asset.column/(asset.columns-1)*100:0,y=asset&&asset.rows>1?asset.row/(asset.rows-1)*100:0,mark=String(item.mark||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;'),background=asset?'background-image:url(\''+asset.path+'\');background-size:'+(asset.columns*100)+'% '+(asset.rows*100)+'%;background-position:'+x.toFixed(3)+'% '+y.toFixed(3)+'%;':'';
+    if(size)classes.push(size);if(item.setId)classes.push('setItem');if(item.rarity==='legendary')classes.push('legendarySprite','legendary-'+(item.setId||'legacy'));let theme=asset&&asset.theme||asset&&asset.atlasId;if(theme&&['blackHole','stormrunner','lavaSet','natureSet'].includes(theme))classes.push(theme==='stormrunner'?'stormcallerSprite':theme==='lavaSet'?'lavaSprite':theme==='natureSet'?'natureSprite':'blackHoleSprite');if(!asset)classes.push('neutralGearFallback');
+    let x=asset&&asset.columns>1?asset.column/(asset.columns-1)*100:0,y=asset&&asset.rows>1?asset.row/(asset.rows-1)*100:0,mark=String(item.mark||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;'),iconPath=visual.iconPath||asset&&asset.path,background=asset&&asset.mode==='aligned'?'background-image:url(\''+iconPath+'\');background-size:contain;background-repeat:no-repeat;background-position:center;':asset?'background-image:url(\''+asset.path+'\');background-size:'+(asset.columns*100)+'% '+(asset.rows*100)+'%;background-position:'+x.toFixed(3)+'% '+y.toFixed(3)+'%;':'';
     return '<span class="'+classes.join(' ')+'" aria-hidden="true" data-gear-asset="'+(asset?asset.id:'missing')+'" data-mark="'+mark+'" style="'+background+'--gear-rarity:'+rarity.color+';--gear-item-color:'+(visual.color||rarity.color)+';--legendary-accent:'+(set?set.accent:rarity.glow)+'"></span>'
   }
   function formatGearStats(gear){let def=gearDefinition(gear),s=gear&&gear.stats||(def&&def.stats)||{},parts=[];if(s.hp)parts.push('+'+s.hp+' HP');if(s.damage)parts.push('+'+s.damage+' DMG');if(s.magnet)parts.push('+'+s.magnet+' REACH');if(s.speed)parts.push('+'+Math.round(s.speed*100)+'% MOVE');if(s.fire)parts.push('+'+Math.round(s.fire*100)+'% IMPACT');if(s.armor)parts.push('+'+Math.round(s.armor*100)+'% ARMOR');if(s.loot)parts.push('+'+Math.round(s.loot*100)+'% VALUE');if(s.dash)parts.push('-'+Math.round(s.dash*100)+'% DASH');if(s.crit)parts.push('+'+Math.round(s.crit*100)+'% CRIT');return parts}
@@ -2662,7 +2683,7 @@
   }
   function drawAdventureItemShape(item,r,rarity){item=Object.assign({},item,{slot:assetSlot(item)});let visual=item.visual,variant=visual.variant||0,detail=variant%4;ctx.fillStyle=visual.color;ctx.strokeStyle=visual.accent;ctx.lineWidth=2+rarity.rank*.28;ctx.lineJoin='round';if(item.slot==='hat'){let brim=r*(.82+(variant%3)*.1),crown=r*(.46+(variant%2)*.1),height=r*(.82+(variant%4)*.08);ctx.beginPath();ctx.ellipse(0,r*.25,brim,r*(.22+detail*.025),0,0,Math.PI*2);ctx.fill();ctx.stroke();roundedRect(-crown,-height,crown*2,height+r*.25,detail===2?r*.35:2);ctx.fill();ctx.stroke();ctx.strokeStyle=rarity.color;ctx.beginPath();ctx.moveTo(-crown,-r*.14);ctx.lineTo(crown,-r*.14);if(variant%2)ctx.moveTo(-crown*.7,-height*.72),ctx.lineTo(crown*.72,-height*.52);ctx.stroke()}else if(item.slot==='scarf'){let flip=variant%2?-1:1;ctx.beginPath();ctx.moveTo(-r*.92,-r*.62);ctx.lineTo(r*.55,-r*.34);ctx.lineTo(r*(.68+detail*.08)*flip,r*.82);ctx.lineTo(0,r*(.24+detail*.07));ctx.lineTo(-r*(.66+(3-detail)*.06)*flip,r*.76);ctx.closePath();ctx.fill();ctx.stroke();ctx.strokeStyle=rarity.color;ctx.beginPath();ctx.moveTo(-r*.62,-r*.28);ctx.lineTo(r*.43,r*.02);if(variant>=4)ctx.moveTo(-r*.35,r*.12),ctx.lineTo(r*.25,r*.4);ctx.stroke()}else if(item.slot==='coat'){let shoulder=r*(.82+detail*.05),hem=r*(.58+(variant%2)*.16);ctx.beginPath();ctx.moveTo(-r*.54,-r*.82);ctx.lineTo(-shoulder,-r*.22);ctx.lineTo(-hem,r*.92);ctx.lineTo(0,r*(.52+(variant%3)*.08));ctx.lineTo(hem,r*.92);ctx.lineTo(shoulder,-r*.22);ctx.lineTo(r*.54,-r*.82);ctx.lineTo(0,-r*(.38+(variant%2)*.12));ctx.closePath();ctx.fill();ctx.stroke();ctx.strokeStyle=rarity.color;ctx.beginPath();ctx.moveTo(0,-r*.4);ctx.lineTo(0,r*.58);ctx.moveTo(-r*.45,-r*.42);ctx.lineTo(0,-r*.08);ctx.lineTo(r*.45,-r*.42);if(variant>=4)ctx.moveTo(-hem*.75,r*.48),ctx.lineTo(hem*.75,r*.48);ctx.stroke()}else if(item.slot==='hammer'){let width=r*(1.55+detail*.13),height=r*(.65+(variant%2)*.12);ctx.fillStyle='#5e3d2c';ctx.strokeStyle='#2a1710';ctx.lineWidth=1.5;roundedRect(-r*.13,-r*.1,r*.26,r*1.5,r*.08);ctx.fill();ctx.stroke();ctx.fillStyle=visual.color;ctx.strokeStyle=visual.accent;ctx.lineWidth=2+rarity.rank*.28;roundedRect(-width/2,-r*.82,width,height,variant%3===2?r*.3:2);ctx.fill();ctx.stroke();ctx.strokeStyle=rarity.color;ctx.strokeRect(-width*.28,-r*.69,width*.56,height*.56);if(variant%2){ctx.beginPath();ctx.moveTo(-width*.42,-r*.5);ctx.lineTo(width*.42,-r*.5);ctx.stroke()}}else{let bootHeight=r*(1.05+detail*.08),toe=r*(.38+(variant%3)*.06);for(const x of [-r*.48,r*.45]){ctx.save();ctx.translate(x,0);ctx.rotate(x<0?-.14:.14);roundedRect(-r*.34,-bootHeight*.62,r*.68,bootHeight,variant%2?4:2);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(-r*.34,bootHeight*.25);ctx.lineTo(toe,bootHeight*.25);ctx.lineTo(toe,bootHeight*.48);ctx.lineTo(-r*.18,bootHeight*.48);ctx.closePath();ctx.fill();ctx.stroke();ctx.strokeStyle=rarity.color;ctx.beginPath();ctx.moveTo(-r*.23,-r*.12);ctx.lineTo(r*.24,-r*.12);if(variant>=4)ctx.moveTo(-r*.2,r*.08),ctx.lineTo(r*.26,r*.08);ctx.stroke();ctx.restore()}}let markY=item.slot==='hat'?-r*.43:item.slot==='hammer'?-r*.49:item.slot==='boots'?r*.02:0;ctx.fillStyle=visual.accent;ctx.strokeStyle='rgba(3,7,14,.6)';ctx.lineWidth=2;ctx.font='900 '+Math.max(7,r*.72)+'px Georgia';ctx.textAlign='center';ctx.textBaseline='middle';ctx.strokeText(visual.mark,0,markY);ctx.fillText(visual.mark,0,markY)}
   function drawAdventureLootSprite(item,r){
-    let asset=gearAssetRef(item);if(!asset)return false;let atlas=productionGearAtlases[asset.atlasId];if(!imageReady(atlas.image))return false;let bounds=gearAssetAlphaBounds(asset);if(!bounds)return false;let size=r*(item.rarity==='legendary'?4.35:3.8),scale=Math.min(size/bounds.w,size/bounds.h),width=bounds.w*scale,height=bounds.h*scale;ctx.drawImage(atlas.image,asset.column*asset.cell+bounds.x,asset.row*asset.cell+bounds.y,bounds.w,bounds.h,-width/2,-height/2,width,height);return true
+    let asset=gearAssetRef(item);if(!asset)return false;let atlas=productionGearAtlases[asset.atlasId];if(!imageReady(atlas.image))return false;let bounds=gearAssetAlphaBounds(asset);if(!bounds)return false;let size=r*(item.rarity==='legendary'?4.35:3.8),scale=Math.min(size/bounds.w,size/bounds.h),width=bounds.w*scale,height=bounds.h*scale,sourceX=(asset.mode==='aligned'?0:asset.column*asset.cell)+bounds.x,sourceY=(asset.mode==='aligned'?0:asset.row*asset.cell)+bounds.y;ctx.drawImage(atlas.image,sourceX,sourceY,bounds.w,bounds.h,-width/2,-height/2,width,height);return true
   }
   function drawAdventureLoot(drop,cam){let item=drop.item,rarity=LOOT_RARITIES[item.rarity],rank=rarity.rank,p=worldToScreen(drop.x,drop.y,cam),bob=Math.sin(performance.now()/210+drop.spin)*2.2,r=drop.r;ctx.save();ctx.translate(p.x,p.y+bob);if(rank===4){ctx.globalAlpha=.24;let beam=ctx.createLinearGradient(0,-76,0,20);beam.addColorStop(0,'#f2c14f00');beam.addColorStop(.7,'#f2c14f99');beam.addColorStop(1,'#f2c14f00');ctx.fillStyle=beam;ctx.fillRect(-7,-76,14,96);ctx.globalAlpha=1}ctx.fillStyle='rgba(3,7,14,.32)';ctx.beginPath();ctx.ellipse(0,r*1.18,r*1.15,r*.32,0,0,Math.PI*2);ctx.fill();ctx.rotate(Math.sin(drop.spin)*.08+(item.visual.variant-3)*.01);ctx.shadowColor=rarity.glow;ctx.shadowBlur=rank*3*qualityProfile().shadowBlur;if(!drawAdventureLootSprite(item,r))drawAdventureItemShape(item,r,rarity);ctx.shadowBlur=0;if(rank>=2){ctx.strokeStyle=rarity.color;ctx.globalAlpha=.72;ctx.lineWidth=1.4;ctx.beginPath();ctx.arc(0,0,r*1.52,-drop.spin,Math.PI-drop.spin);ctx.stroke()}if(rank===4){ctx.globalAlpha=1;ctx.fillStyle='#fff5d6';ctx.font='900 7px Georgia';ctx.textAlign='center';for(let i=0;i<4;i++){let a=drop.spin*.25+i*Math.PI/2;ctx.fillText('\u2726',Math.cos(a)*r*1.78,Math.sin(a)*r*1.64)}}ctx.restore()}
   function drawTankTelegraph(e,p){
@@ -3303,7 +3324,7 @@
         player.x=WORLD.w/2;player.y=WORLD.h/2;player.hp=options.hurt?player.maxHp*.5:player.maxHp;player.inv=99;player.fire=99;player.spinCd=0;player.spinTime=0;player.spinLeap=0;player.spinAutoRemaining=0;player.spinAutoDuration=0;player.spinManual=false;player.spinFinishing=false;player.spinFinishingUntil=0;player.spinHits=0;player.spinKills=0;player.spinCoins=0;player.spinHeal=0;player.spinLifeTargets=new Set();player.lightningPhase='idle';player.lightningTime=0;player.lightningRate=0;player.lightningQueue=0;player.lightningTarget=null;player.lightningHistoryTargets=Array(LIGHTNING_DASH.targetHistorySize).fill(null);player.lightningHistoryTimes=Array(LIGHTNING_DASH.targetHistorySize).fill(0);player.lightningHistoryCursor=0;player.lightningBossSide=1;player.lightningImpacts=0;player.lightningPresses=0;player.lightningChainHits=0;player.lightningKills=0;player.lightningTempo=0;player.lightningLastTap=-99;player.stormAwakening=0;player.handlava=createHandlavaState();player.natureAlly=createNatureAllyState();player.natureFocusUntil=0;spinHeld=false;spinInputState.activeInstances=0;
         if(options.fullRiskreaver||options.fullBlackHole||options.fullLightning||options.fullLava||options.fullNature){
           let set=SET_BY_ID[options.fullBlackHole?'blackHole':options.fullLightning?'stormrunner':options.fullLava?'lavaSet':options.fullNature?'natureSet':'riskreaver'];
-          for(const slot of GEAR_SLOTS)save.equipped[slot]=null;for(const slot of SET_GEAR_SLOTS){let item=SET_ITEMS.find(entry=>entry.setId===set.id&&entry.slot===slot),gear=rollGearInstance(item,Math.max(set.minLevel,save.level),1.08);save.gear.push(gear);save.equipped[slot]=gear.uid}
+          let fullSetItems=options.fullLightning?ACTIVE_SET_ITEMS.filter(entry=>entry.setId===set.id):SET_GEAR_SLOTS.map(slot=>SET_ITEMS.find(entry=>entry.setId===set.id&&entry.slot===slot)).filter(Boolean);for(const slot of GEAR_SLOTS)save.equipped[slot]=null;for(const item of fullSetItems){let gear=rollGearInstance(item,Math.max(set.minLevel,save.level),1.08);save.gear.push(gear);save.equipped[item.slot]=gear.uid}
           if(options.fullLightning)player.stormAwakening=LIGHTNING_DASH.overchargeDuration
         }
         let amount=Math.max(1,Math.min(HORDE.maxPopulation,Math.floor(count||18))),centerX=player.x+150,centerY=player.y;
@@ -3426,9 +3447,9 @@
       },
       previewGearSet(setId){
         let set=ACTIVE_SET_DEFINITIONS.find(entry=>entry.id===setId);if(!set)return null;
-        batchEquipmentChanges(()=>{for(const slot of GEAR_SLOTS)save.equipped[slot]=null;for(const slot of SET_GEAR_SLOTS){
-          let item=ACTIVE_SET_ITEMS.find(entry=>entry.setId===setId&&entry.slot===slot),gear=rollGearInstance(item,Math.max(set.minLevel,save.level),1.08);
-          save.gear.push(gear);save.equipped[slot]=gear.uid
+        batchEquipmentChanges(()=>{for(const slot of GEAR_SLOTS)save.equipped[slot]=null;for(const item of ACTIVE_SET_ITEMS.filter(entry=>entry.setId===setId)){
+          let gear=rollGearInstance(item,Math.max(set.minLevel,save.level),1.08);
+          save.gear.push(gear);save.equipped[item.slot]=gear.uid
         }});
         refreshBase();openGearLocker();setGearView('loadout');renderGearLocker();
         return this.gearVisualState()
@@ -3444,6 +3465,7 @@
             let slot=progressionSlots[index],item=ACTIVE_SET_ITEMS.find(entry=>entry.setId===setId&&entry.slot===slot),gear=rollGearInstance(item,Math.max(set.minLevel,save.level),1.08);
             save.gear.push(gear);if(index<count)save.equipped[slot]=gear.uid
           }
+          if(count===SET_GEAR_SLOTS.length)for(const item of ACTIVE_SET_ITEMS.filter(entry=>entry.setId===setId&&entry.cosmeticOnly)){let gear=rollGearInstance(item,Math.max(set.minLevel,save.level),1.08);save.gear.push(gear);save.equipped[item.slot]=gear.uid}
         });
         refreshBase();openGearLocker();renderGearLocker();
         return{visual:this.gearVisualState(),inventory:this.equipmentInventory()}

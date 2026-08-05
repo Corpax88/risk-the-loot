@@ -72,27 +72,24 @@ test('workshop Pappa respects reduced motion',async({page})=>{
   await expect(page.locator('#pappaHammerBaseSprite')).toHaveCSS('animation-name','none');
 });
 
-test('modular gear sets share one corrected workshop body foundation',async({page},testInfo)=>{
+test('Stormcaller shares the corrected workshop body foundation with its seven modular layers',async({page},testInfo)=>{
   await page.setViewportSize({width:1280,height:720});
   await page.goto('/?playwright');
   await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest))).toBe(true);
 
-  const productionSets=['hammerChoir','blackHole','stormrunner','lavaSet'];
-  for(const setId of productionSets){
-    await page.evaluate(id=>window.__riskTest.previewGearSet(id),setId);
-    await page.locator('#closeGear').click();
-    const state=await page.evaluate(()=>window.__riskTest.gearVisualState());
-    expect(state.usesProductionSkin).toBe(false);
-    expect(state.usesModularLayers).toBe(true);
-    expect(state.layers.filter(layer=>layer.visible)).toHaveLength(5);
-    const background=await page.locator('#pappaHammerBaseSprite').evaluate(element=>getComputedStyle(element).backgroundImage);
-    expect(background).not.toBe('none');
-    expect(background.split('url(').length-1).toBe(6);
-  }
+  await page.evaluate(()=>window.__riskTest.previewGearSet('stormrunner'));
+  await page.locator('#closeGear').click();
+  const state=await page.evaluate(()=>window.__riskTest.gearVisualState());
+  expect(state.usesProductionSkin).toBe(false);
+  expect(state.usesModularLayers).toBe(true);
+  expect(state.layers.filter(layer=>layer.visible)).toHaveLength(7);
+  const background=await page.locator('#pappaHammerBaseSprite').evaluate(element=>getComputedStyle(element).backgroundImage);
+  expect(background).not.toBe('none');
+  expect(background.split('url(').length-1).toBe(8);
 
-  await page.screenshot({path:testInfo.outputPath('black-hole-workshop-desktop.png'),fullPage:true});
+  await page.screenshot({path:testInfo.outputPath('stormcaller-workshop-desktop.png'),fullPage:true});
   await page.setViewportSize({width:390,height:844});
   await expect(page.locator('.pappaHammerBase')).toBeVisible();
   await expect(page.locator('.pappaHammerBase')).toHaveCSS('background-image','none');
-  await page.screenshot({path:testInfo.outputPath('black-hole-workshop-mobile.png'),fullPage:true});
+  await page.screenshot({path:testInfo.outputPath('stormcaller-workshop-mobile.png'),fullPage:true});
 });

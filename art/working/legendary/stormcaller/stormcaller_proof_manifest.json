@@ -1,0 +1,102 @@
+﻿{
+    "master":  "art/masters/pappa_hammer_master_v1.png",
+    "canvas":  [
+                   1402,
+                   1122
+               ],
+    "workingFile":  "art/working/legendary/stormcaller/legendary_stormcaller_set_01.ora",
+    "preview":  "art/working/legendary/stormcaller/legendary_stormcaller_set_01_preview.png",
+    "transforms":  {
+                       "cape":  {
+                                    "group":  "01_Cape",
+                                    "scale":  0.73,
+                                    "rotation":  0,
+                                    "pivotX":  0,
+                                    "pivotY":  0,
+                                    "targetX":  0,
+                                    "targetY":  0,
+                                    "offsetX":  71,
+                                    "offsetY":  145
+                                },
+                       "legs":  {
+                                    "group":  "03_Legs",
+                                    "scale":  0.86,
+                                    "rotation":  0,
+                                    "pivotX":  0,
+                                    "pivotY":  0,
+                                    "targetX":  0,
+                                    "targetY":  0,
+                                    "offsetX":  -12,
+                                    "offsetY":  315,
+                                    "clearRects":  [
+                                                       {
+                                                           "x":  0,
+                                                           "y":  1032,
+                                                           "width":  520,
+                                                           "height":  90
+                                                       },
+                                                       {
+                                                           "x":  520,
+                                                           "y":  986,
+                                                           "width":  882,
+                                                           "height":  136
+                                                       }
+                                                   ]
+                                },
+                       "boots":  {
+                                     "group":  "04_Boots",
+                                     "scale":  0.75,
+                                     "rotation":  0,
+                                     "pivotX":  0,
+                                     "pivotY":  0,
+                                     "targetX":  0,
+                                     "targetY":  0,
+                                     "offsetX":  70,
+                                     "offsetY":  280
+                                 },
+                       "chest":  {
+                                     "group":  "05_Chest",
+                                     "scale":  0.75,
+                                     "rotation":  0,
+                                     "pivotX":  0,
+                                     "pivotY":  0,
+                                     "targetX":  0,
+                                     "targetY":  0,
+                                     "offsetX":  107,
+                                     "offsetY":  10
+                                 },
+                       "scarf":  {
+                                     "group":  "06_Scarf",
+                                     "scale":  0.45,
+                                     "rotation":  0,
+                                     "pivotX":  0,
+                                     "pivotY":  0,
+                                     "targetX":  0,
+                                     "targetY":  0,
+                                     "offsetX":  200,
+                                     "offsetY":  50
+                                 },
+                       "hat":  {
+                                   "group":  "07_Hat",
+                                   "scale":  0.58,
+                                   "rotation":  0,
+                                   "pivotX":  0,
+                                   "pivotY":  0,
+                                   "targetX":  0,
+                                   "targetY":  0,
+                                   "offsetX":  198,
+                                   "offsetY":  2
+                               },
+                       "weapon":  {
+                                      "group":  "08_Weapon",
+                                      "scale":  0.65,
+                                      "rotation":  38,
+                                      "pivotX":  720,
+                                      "pivotY":  600,
+                                      "targetX":  820,
+                                      "targetY":  455,
+                                      "offsetX":  0,
+                                      "offsetY":  0
+                                  }
+                   }
+}

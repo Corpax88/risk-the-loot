@@ -45,13 +45,13 @@
   function alignedGearSource(path,theme){return Object.freeze({mode:'aligned',path,theme,image:loadImage(path),width:1402,height:1122,columns:1,rows:1})}
   // Every Stormcaller source uses the approved 1402x1122 V1 master canvas and origin.
   const productionGearAtlases=Object.freeze({
-    stormcallerCape:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_cape_01.png?v=20260805-krita-fit','stormrunner'),
-    stormcallerLegs:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_legs_01.png?v=20260805-krita-fit','stormrunner'),
-    stormcallerBoots:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_boots_01.png?v=20260805-krita-fit','stormrunner'),
-    stormcallerChest:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_chest_01.png?v=20260805-krita-fit','stormrunner'),
-    stormcallerScarf:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_scarf_01.png?v=20260805-krita-fit','stormrunner'),
-    stormcallerHat:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_hat_01.png?v=20260805-krita-fit','stormrunner'),
-    stormcallerWeapon:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_weapon_01.png?v=20260805-krita-fit','stormrunner')
+    stormcallerCape:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_cape_01.png?v=20260806-anatomy-v4','stormrunner'),
+    stormcallerLegs:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_legs_01.png?v=20260806-anatomy-v4','stormrunner'),
+    stormcallerBoots:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_boots_01.png?v=20260806-anatomy-v4','stormrunner'),
+    stormcallerChest:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_chest_01.png?v=20260806-anatomy-v4','stormrunner'),
+    stormcallerScarf:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_scarf_01.png?v=20260806-anatomy-v4','stormrunner'),
+    stormcallerHat:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_hat_01.png?v=20260806-anatomy-v4','stormrunner'),
+    stormcallerWeapon:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_weapon_01.png?v=20260806-anatomy-v4','stormrunner')
   });
   let handlavaHitSplashSprite=null,ancientEntSprite=null,natureRootTrapSprite=null,handlavaSprites=null;
   function ensureHandlavaSprites(){

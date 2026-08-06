@@ -8,7 +8,7 @@ async function openArmory(page,viewport){
   await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest))).toBe(true);
   await page.evaluate(()=>window.__riskTest.previewGearSetPieces('stormrunner',5));
   await expect(page.locator('#gearOverlay')).toHaveClass(/show/);
-  await expect(page.locator('#gearCharacterStage .gearCharacterHero')).toHaveClass(/staticInventoryFigure/,{timeout:10000});
+  await expect(page.locator('#gearCharacterStage .gearCharacterHero')).toHaveClass(/domLayeredFigure/,{timeout:10000});
   await page.waitForTimeout(1200);
 }
 

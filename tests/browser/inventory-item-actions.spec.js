@@ -10,7 +10,7 @@ async function boot(page){
     try{Object.defineProperty(navigator,'vibrate',{configurable:true,value:pattern=>{window.__gearHaptics.push(pattern);return true}})}catch(error){}
   });
   await page.goto('/?playwright');
-  await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest&&window.RiskLootInventoryV2Bridge))).toBe(true)
+  await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest&&window.RiskLootEquipmentBridge))).toBe(true)
 }
 
 async function seedDuplicateStormcaller(page){
@@ -162,7 +162,7 @@ test('duplicate disposal removes one copy and closing the Armory clears stale co
   await expect(page.locator('#salvageSelectedLabel')).toContainText('CONFIRM');
   await page.locator('#closeGear').click();
   await expect(page.locator('#gearOverlay')).not.toHaveClass(/show/);
-  await page.evaluate(()=>window.RiskLootInventoryV2Bridge.openLegacy());
+  await page.evaluate(()=>window.RiskLootEquipmentBridge.open());
   await selectGear(page,next.uid);
   await expect(page.locator('#salvageSelectedLabel')).not.toContainText('CONFIRM')
 });

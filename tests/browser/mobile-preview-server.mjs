@@ -9,12 +9,10 @@ const port=Number(process.env.MOBILE_PREVIEW_PORT)||4175;
 const publicFiles=new Set([
   'index.html',
   'style.css',
-  'inventory-v2.css',
   'guild-terrain.js',
   'infinite-world.js',
   'progression.js',
   'script.js',
-  'inventory-v2.js'
 ]);
 const mime={
   '.css':'text/css; charset=utf-8',

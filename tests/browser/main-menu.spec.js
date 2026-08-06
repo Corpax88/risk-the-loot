@@ -37,7 +37,6 @@ test('workshop Pappa uses restrained layered motion on desktop and mobile',async
   }));
   expect(animationNames.motion).toContain('pappaMenuWeightShift');
   expect(animationNames.visual).toContain('pappaMenuBreath');
-  expect(animationNames.sprite).toContain('pappaHammerFrames');
   expect(animationNames.sprite).toContain('pappaMenuFollowThrough');
 
   await page.waitForTimeout(700);
@@ -83,9 +82,17 @@ test('Stormcaller shares the corrected workshop body foundation with its seven m
   expect(state.usesProductionSkin).toBe(false);
   expect(state.usesModularLayers).toBe(true);
   expect(state.layers.filter(layer=>layer.visible)).toHaveLength(7);
-  const background=await page.locator('#pappaHammerBaseSprite').evaluate(element=>getComputedStyle(element).backgroundImage);
-  expect(background).not.toBe('none');
-  expect(background.split('url(').length-1).toBe(8);
+  const layers=await page.locator('#pappaHammerBaseSprite [data-base-character-layer]').evaluateAll(nodes=>nodes.map(node=>({
+    id:node.dataset.baseCharacterLayer,
+    hidden:node.hidden,
+    image:node.style.backgroundImage,
+    kind:node.dataset.kind
+  })));
+  expect(layers).toHaveLength(8);
+  expect(layers.every(layer=>!layer.hidden&&layer.kind==='aligned')).toBe(true);
+  expect(layers.find(layer=>layer.id==='baseBody').image).toContain('pappa-hammer-player.png');
+  expect(layers.filter(layer=>layer.id!=='baseBody').every(layer=>layer.image.includes(`legendary_stormcaller_${layer.id}_01.png`))).toBe(true);
+  expect(layers.every(layer=>!layer.image.includes('data:image/png'))).toBe(true);
 
   await page.screenshot({path:testInfo.outputPath('stormcaller-workshop-desktop.png'),fullPage:true});
   await page.setViewportSize({width:390,height:844});

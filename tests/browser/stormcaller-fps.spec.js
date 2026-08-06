@@ -20,7 +20,7 @@ async function installPerformanceProbe(page){
 
 async function openGame(page){
   await page.goto('/?playwright');
-  await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest&&window.RiskLootInventoryV2Bridge))).toBe(true);
+  await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest&&window.RiskLootEquipmentBridge))).toBe(true);
 }
 
 async function waitForCanvasQuiescence(page){
@@ -103,11 +103,11 @@ async function measureInventory(page){
     return{syncMs,totalMs:performance.now()-started,setup,before,after:{toDataUrls:probe.toDataUrls,canvasCreates:probe.canvasCreates,drawImages:probe.drawImages}}
   });
   await expect(page.locator('#gearOverlay')).toHaveClass(/show/);
-  await expect.poll(()=>page.evaluate(()=>window.__riskTest.gearVisualState().inventoryFigureVariant)).toBe('full');
+  await expect.poll(()=>page.evaluate(()=>window.__riskTest.gearVisualState().inventoryFigureVariant)).toBe('modular');
   await waitForCanvasQuiescence(page);
   const idle=await measureFrames(page,SAMPLE_MS,false);
   const swaps=await page.evaluate(async()=>{
-    const bridge=window.RiskLootInventoryV2Bridge,inventory=window.__riskTest.equipmentInventory(),weapon=inventory.find(item=>item.slot==='weapon'&&item.equipped),durations=[];
+    const bridge=window.RiskLootEquipmentBridge,inventory=window.__riskTest.equipmentInventory(),weapon=inventory.find(item=>item.slot==='weapon'&&item.equipped),durations=[];
     if(!weapon)return{durations,missing:true};
     for(let index=0;index<20;index++){
       let started=performance.now();bridge.unequip('weapon');bridge.equip(weapon.uid);await new Promise(resolve=>requestAnimationFrame(resolve));durations.push(performance.now()-started)

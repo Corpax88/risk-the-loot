@@ -35,20 +35,27 @@ test('iPhone HUD, minimap markers, and result action remain readable',async({pag
 
 test('inventory tap selection slides up one action flow and protects equipped items',async({page},testInfo)=>{
   await boot(page);
-  await page.evaluate(()=>window.__riskTest.previewGearSetPieces('hammerChoir',0));
+  await page.evaluate(()=>{
+    window.__riskTest.previewGearSet('stormrunner');
+    window.__riskTest.previewGearSet('stormrunner');
+  });
   await expect(page.locator('#gearOverlay')).toHaveClass(/show/);
   const initial=await page.evaluate(()=>window.__riskTest.equipmentInventory().length);
   await expect(page.locator('#selectGearItems')).toHaveCount(0);
   const cards=page.locator('#gearGrid .gearBagSlot:not(.equipped)');
-  await expect(cards).toHaveCount(5);
+  await expect(cards).toHaveCount(7);
   await cards.nth(0).click();
   await expect(page.locator('#gearBulkActionBar')).toHaveClass(/show/);
   await expect(cards.nth(0)).toHaveClass(/bulkSelected/);
   await cards.nth(1).click();
   await expect(page.locator('#gearBulkCount')).toContainText('2 SELECTED');
   await page.screenshot({path:testInfo.outputPath('inventory-selection-actions.png'),fullPage:true});
+  // Keep this multi-select test outside the separate double-tap equip gesture.
+  await page.waitForTimeout(760);
   await cards.nth(1).click();
   await expect(page.locator('#gearBulkCount')).toContainText('1 SELECTED');
+  // Separate this tap from the intentional mobile double-tap equip gesture.
+  await page.waitForTimeout(760);
   await cards.nth(1).click();
   await expect(page.locator('#gearBulkCount')).toContainText('2 SELECTED');
   await page.locator('#cancelGearSelection').click();

@@ -35,17 +35,18 @@ test('Stormcaller pieces use dedicated icons and the full set uses seven modular
   expect(new Set(equippedAssets.map(asset=>asset.path)).size).toBe(7);
   await expect(page.locator('#gearCharacterStage')).toHaveAttribute('data-set-id','stormrunner');
   const hero=page.locator('#gearCharacterStage .gearCharacterHero');
-  const fullFigure=hero.locator('[data-character-layer="fullFigure"]');
-  await expect(hero).toHaveClass(/staticInventoryFigure/,{timeout:10000});
-  await expect(fullFigure).toBeVisible();
-  const fullFigureStyle=await fullFigure.evaluate(element=>({
-    image:getComputedStyle(element).backgroundImage,
-    size:getComputedStyle(element).backgroundSize,
-    repeat:getComputedStyle(element).backgroundRepeat
-  }));
-  expect(fullFigureStyle.image).toContain('legendary_stormcaller_full_figure_01.png');
-  expect(fullFigureStyle.size).toBe('contain');
-  expect(fullFigureStyle.repeat).toBe('no-repeat');
+  await expect(hero).toHaveClass(/domLayeredFigure/);
+  await expect(hero.locator('[data-character-layer]')).toHaveCount(8);
+  const rendered=await hero.locator('[data-character-layer]').evaluateAll(layers=>layers.map(layer=>({
+    id:layer.dataset.characterLayer,
+    hidden:layer.hidden,
+    image:layer.style.backgroundImage,
+    kind:layer.dataset.kind
+  })));
+  expect(rendered.every(layer=>!layer.hidden&&layer.kind==='aligned')).toBe(true);
+  expect(rendered.find(layer=>layer.id==='baseBody').image).toContain('pappa-hammer-player.png');
+  expect(rendered.filter(layer=>layer.id!=='baseBody').every(layer=>layer.image.includes(`legendary_stormcaller_${layer.id}_01.png`))).toBe(true);
+  expect(rendered.every(layer=>!layer.image.includes('data:image/png'))).toBe(true);
   await expect(page.locator('#gearGrid .stormcallerSprite')).toHaveCount(7);
   const assets=await page.locator('#gearGrid .stormcallerSprite').evaluateAll(nodes=>
     [...new Set(nodes.map(node=>node.dataset.gearAsset))]
@@ -104,17 +105,16 @@ test('Stormcaller comparison never previews candidate gear and weapon removal ke
   const setup=await page.evaluate(()=>window.__riskTest.previewGearSetPieces('stormrunner',5));
   const weapon=setup.inventory.find(item=>item.slot==='weapon'&&item.equipped);
   expect(weapon).toBeTruthy();
-  await expect.poll(()=>page.evaluate(()=>window.__riskTest.gearVisualState().inventoryFigureVariant)).toBe('full');
-  const fullImage=await hero.locator('[data-character-layer="fullFigure"]').evaluate(element=>element.style.backgroundImage);
+  await expect.poll(()=>page.evaluate(()=>window.__riskTest.gearVisualState().inventoryFigureVariant)).toBe('modular');
+  const baseImage=await hero.locator('[data-character-layer="baseBody"]').evaluate(element=>element.style.backgroundImage);
 
   await page.mouse.move(2,2);
-  await page.evaluate(()=>window.RiskLootInventoryV2Bridge.unequip('weapon'));
+  await page.evaluate(()=>window.RiskLootEquipmentBridge.unequip('weapon'));
   await expect.poll(()=>page.evaluate(()=>window.__riskTest.gearVisualState().inventoryFigureVariant)).toBe('modular');
-  await expect(hero.locator('[data-character-layer="fullFigure"]')).toBeHidden();
   await expect(hero.locator('[data-character-layer="baseBody"]')).toBeVisible();
   await expect(hero.locator('[data-character-layer="weapon"]')).toBeHidden();
   const modularImages=await hero.locator('[data-character-layer]').evaluateAll(layers=>layers.map(layer=>layer.style.backgroundImage).join('|'));
-  expect(modularImages).not.toBe(fullImage);
+  expect(await hero.locator('[data-character-layer="baseBody"]').evaluate(element=>element.style.backgroundImage)).toBe(baseImage);
   expect(modularImages).not.toContain('legendary_stormcaller_weaponless_figure_01.png');
   expect(modularImages).not.toContain('legendary_stormcaller_full_figure_01.png');
   await page.locator('#gearCharacterStage').screenshot({

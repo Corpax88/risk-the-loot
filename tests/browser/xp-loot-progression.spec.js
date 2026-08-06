@@ -33,7 +33,7 @@ test('highest reached stage gates rarity even for a Level 100 farmer',async({pag
   expect(stageOne.odds.epic).toBe(0);
   expect(stageOne.odds.legendary).toBe(0);
   const samples=await page.evaluate(()=>window.__riskTest.sampleBossLoot(100,5,300));
-  expect(samples.every(rarity=>rarity==='common'||rarity==='rare')).toBe(true);
+  expect(samples.every(rarity=>rarity==='materials')).toBe(true);
 
   const stageFour=await page.evaluate(()=>window.__riskTest.lootProgression(50,20));
   expect(stageFour.context).toMatchObject({stage:4,effectiveLevel:50,stageCap:100});

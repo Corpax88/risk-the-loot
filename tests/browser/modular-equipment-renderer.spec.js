@@ -44,9 +44,9 @@ test('mixed loadout, swap, unequip and refresh keep one live visual per slot',as
   expect(Object.values(preview.visualChannels).filter(channel=>channel.visible)).toHaveLength(7);
 
   const replacement=await page.evaluate(()=>window.__riskTest.equipmentInventory().find(item=>item.slot==='weapon'&&!item.equipped));
-  await page.evaluate(uid=>window.RiskLootInventoryV2Bridge.equip(uid),replacement.uid);
+  await page.evaluate(uid=>window.RiskLootEquipmentBridge.equip(uid),replacement.uid);
   await expect.poll(()=>page.evaluate(uid=>window.__riskTest.equipmentPreviewState().equipped.weapon.uid===uid,replacement.uid)).toBe(true);
-  await page.evaluate(()=>window.RiskLootInventoryV2Bridge.unequip('weapon'));
+  await page.evaluate(()=>window.RiskLootEquipmentBridge.unequip('weapon'));
   await expect.poll(()=>page.evaluate(()=>window.__riskTest.equipmentPreviewState().visualChannels.weapon.visible)).toBe(false);
   await expect(page.locator('.gearDragGhost')).toHaveCount(0);
 

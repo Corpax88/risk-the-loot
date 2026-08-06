@@ -44,7 +44,9 @@ async function verifyFoundation(page,testInfo,label){
   });
   expect(image).toEqual({width:1402,height:1122});
   await expect(page.locator('#pappaHammerBaseSprite')).toBeVisible();
-  await expect(page.locator('#pappaHammerBaseSprite')).not.toHaveCSS('background-image','none');
+  const baseBodyLayer=page.locator('#pappaHammerBaseSprite [data-base-character-layer="baseBody"]');
+  await expect(baseBodyLayer).toBeVisible();
+  await expect(baseBodyLayer).not.toHaveCSS('background-image','none');
 
   const resources=await page.evaluate(()=>performance.getEntriesByType('resource').map(entry=>entry.name));
   expect(resources.some(url=>url.includes('pappa-hammer-player.png?v=20260804-v1-foundation'))).toBe(true);

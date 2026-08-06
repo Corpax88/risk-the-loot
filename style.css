@@ -161,14 +161,43 @@ html,body{background:#080c14;font-family:Trebuchet MS,Segoe UI,Arial,sans-serif}
 }
 .pappaHammerBaseSprite{
   background-image:none;
-  background-size:400% 200%;
-  background-position:0 0;
-  background-repeat:no-repeat;
   image-rendering:auto;
   filter:none;
   transform-origin:52% 80%;
-  will-change:transform,background-position;
-  animation:pappaHammerFrames 2.35s step-end infinite,pappaMenuFollowThrough 7.2s cubic-bezier(.42,0,.22,1) infinite;
+  will-change:transform;
+  animation:pappaMenuFollowThrough 7.2s cubic-bezier(.42,0,.22,1) infinite;
+}
+.pappaHammerBaseSprite.domLayeredBaseFigure{
+  isolation:isolate;
+  overflow:visible;
+}
+.baseCharacterLayer{
+  position:absolute;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+  margin:0;
+  pointer-events:none;
+  background-position:center bottom;
+  background-repeat:no-repeat;
+  background-size:contain;
+  image-rendering:auto;
+  transform:translateZ(0);
+}
+.baseCharacterLayer[hidden]{display:none!important}
+.baseCapeLayer{z-index:1}
+.baseBodyLayer{z-index:2}
+.baseLegsLayer{z-index:3}
+.baseBootsLayer{z-index:4}
+.baseChestLayer{z-index:5}
+.baseScarfLayer{z-index:6}
+.baseHatLayer{z-index:7}
+.baseWeaponLayer{z-index:8}
+.baseCharacterLayer[data-kind="atlas"]{
+  background-position:0 0;
+  background-size:400% 200%;
+  animation:pappaHammerFrames 1.65s step-end infinite;
 }
 .baseView:not(.active) .pappaHammerBaseMotion,.baseView:not(.active) .pappaHammerBaseVisual,.baseView:not(.active) .pappaHammerBaseSprite,.baseView:not(.active) .pappaHammerBase:after{animation-play-state:paused}
 .workshopMilestone{
@@ -3410,17 +3439,6 @@ button:focus-visible{outline-color:#f4ead6}
   #gearPanel .gearCharacterCamera{--inventory-camera-zoom:1.12;--inventory-camera-x:-.5%;--inventory-camera-y:0%;transform-origin:50% 100%}
   #gearPanel .gearCharacterCamera .gearCharacterHero{bottom:0}
 }
-.gearCharacterStage[data-set-id="stormrunner"] .gearCharacterHero.staticInventoryFigure{
-  background-size:contain;
-  background-position:center bottom;
-  background-repeat:no-repeat;
-  animation:none;
-  will-change:auto;
-  filter:drop-shadow(0 10px 10px #000c);
-}
-.gearCharacterStage[data-set-id="stormrunner"].staticInventoryFigureMode .gearCharacterHalo:before,
-.gearCharacterStage[data-set-id="stormrunner"].staticInventoryFigureMode .gearCharacterHalo:after{animation:none;box-shadow:none}
-.gearCharacterStage.staticInventoryFigureMode.loadoutLegendarySet:after{animation:none}
 .gearPanelOpen .workshopScene .pappaHammerBase,
 .gearPanelOpen .workshopScene .pappaHammerBase:before,
 .gearPanelOpen .workshopScene .pappaHammerBase:after,
@@ -3438,14 +3456,6 @@ button:focus-visible{outline-color:#f4ead6}
 #gearPanel .gearBagSlot.rarity4.selected .gearArt.legendarySprite{animation:legendaryArtBreath 3.4s ease-in-out infinite}
 #gearPanel .gearDetailCard.rarity4 .gearDetailArt:before,
 #gearPanel .gearDetailCard.rarity4 .gearDetailArt .gearArt.legendarySprite{animation:none}
-.gearCharacterStage.equipBurst .gearCharacterHero.staticInventoryFigure,
-.gearCharacterStage.equipLegendary.equipBurst .gearCharacterHero.staticInventoryFigure,
-.gearCharacterStage.fullSetMorph .gearCharacterHero.staticInventoryFigure,
-.gearCharacterStage.signatureAwaken .gearCharacterHero.staticInventoryFigure,
-.gearCharacterStage.stormcallerAwaken .gearCharacterHero.staticInventoryFigure{
-  animation:none;
-}
-
 /* Canonical ten-slot equipment orbit. Visual slots frame Pappa; stat-only jewelry sits below. */
 #gearPanel .equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="hat"]{left:12px;right:auto;top:30px;bottom:auto;transform:none}
 #gearPanel .equipmentOrbitSlots .gearLoadoutSlot[data-display-slot="scarf"]{left:12px;right:auto;top:44%;bottom:auto;transform:translateY(-50%)}
@@ -3965,7 +3975,6 @@ button:focus-visible{outline-color:#f4ead6}
 #gearPanel.premiumArmory .armoryScarfLayer{z-index:6}
 #gearPanel.premiumArmory .armoryHatLayer{z-index:7}
 #gearPanel.premiumArmory .armoryWeaponLayer{z-index:8}
-#gearPanel.premiumArmory .armoryFullFigureLayer{z-index:9}
 #gearPanel.premiumArmory .armoryCharacterLayer[data-kind="atlas"]{
   background-position:0 0;
   background-size:400% 200%;
@@ -4191,7 +4200,6 @@ button:focus-visible{outline-color:#f4ead6}
     height:min(292px,76vw)!important;
     bottom:0!important;
   }
-  #gearPanel.premiumArmory .gearCharacterHero:not(.staticInventoryFigure){bottom:-10px!important}
   #gearPanel.premiumArmory .gearCharacterHalo{inset:9% 16% 4%;opacity:.3}
   #gearPanel.premiumArmory .gearBuildIdentity{
     grid-row:2!important;
@@ -4324,11 +4332,6 @@ button:focus-visible{outline-color:#f4ead6}
 @media(max-width:390px){
   #gearPanel.premiumArmory .unifiedEquipmentWorkspace{grid-template-rows:minmax(270px,41%) minmax(0,59%)!important}
   #gearPanel.premiumArmory .gearCharacterHero{width:min(272px,74vw)!important;height:min(272px,74vw)!important}
-  #gearPanel.premiumArmory .gearCharacterHero:not(.staticInventoryFigure){
-    width:min(236px,62vw)!important;
-    height:min(236px,62vw)!important;
-    bottom:0!important;
-  }
   #gearPanel.premiumArmory .unifiedGearBrowser .gearInventoryPanel{grid-template-rows:96px 38px minmax(0,1fr) 0!important}
   #gearPanel.premiumArmory.bulkSelectionActive .unifiedGearBrowser .gearInventoryPanel{grid-template-rows:96px 38px minmax(0,1fr) 56px!important}
   #gearPanel.premiumArmory .mobileGearSelection{height:96px;grid-template-columns:58px minmax(0,1fr) 70px;grid-template-rows:28px 40px 18px;gap:0 5px;padding:5px 6px}
@@ -4352,4 +4355,29 @@ button:focus-visible{outline-color:#f4ead6}
   #gearPanel.premiumArmory.bulkSelectionActive .unifiedGearBrowser .gearInventoryPanel{grid-template-rows:92px 36px minmax(0,1fr) 56px!important}
   #gearPanel.premiumArmory .mobileGearSelection{height:92px;grid-template-columns:54px minmax(0,1fr) 68px;grid-template-rows:27px 38px 17px;padding:4px 6px}
   #gearPanel.premiumArmory .mobileGearSelectionArt{width:52px;height:52px}
+}
+
+/* Native paper-doll layers stay crisp without forcing a full Armory repaint. */
+#gearPanel.premiumArmory .gearCharacterHero.domLayeredFigure{will-change:auto}
+#gearPanel.premiumArmory .gearCharacterStage.loadoutLegendarySet:after,
+#gearPanel.premiumArmory .gearCharacterStage.loadoutRarity4 .gearCharacterHalo:before,
+#gearPanel.premiumArmory .gearCharacterStage.loadoutRarity4 .gearCharacterHalo:after,
+#gearPanel.premiumArmory .gearCharacterStage[data-set-id="stormrunner"] .gearCharacterHalo:before,
+#gearPanel.premiumArmory .gearCharacterStage[data-set-id="stormrunner"] .gearCharacterHalo:after{
+  animation:none!important;
+}
+#gearPanel.premiumArmory .gearCharacterStage.equipBurst .gearCharacterHero.domLayeredFigure{
+  animation:equipHeroSettle .52s cubic-bezier(.18,.8,.2,1)!important;
+}
+#gearPanel.premiumArmory .gearCharacterStage.equipLegendary.equipBurst .gearCharacterHero.domLayeredFigure{
+  animation:equipHeroPulse .52s cubic-bezier(.18,.8,.2,1)!important;
+}
+#gearPanel.premiumArmory .gearCharacterStage.fullSetMorph .gearCharacterHero.domLayeredFigure{
+  animation:fullSetMorph .38s cubic-bezier(.2,.72,.25,1)!important;
+}
+#gearPanel.premiumArmory .gearCharacterStage.signatureAwaken .gearCharacterHero.domLayeredFigure{
+  animation:signatureHeroAwaken 1.05s cubic-bezier(.16,.8,.22,1)!important;
+}
+#gearPanel.premiumArmory .gearCharacterStage.stormcallerAwaken .gearCharacterHero.domLayeredFigure{
+  animation:stormcallerHeroAwaken 1.05s cubic-bezier(.16,.8,.22,1)!important;
 }

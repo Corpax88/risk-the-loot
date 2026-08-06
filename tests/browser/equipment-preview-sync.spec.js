@@ -2,7 +2,7 @@ const {test,expect,devices}=require('@playwright/test');
 
 async function boot(page){
   await page.goto('/?playwright');
-  await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest&&window.RiskLootInventoryV2Bridge))).toBe(true)
+  await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest&&window.RiskLootEquipmentBridge))).toBe(true)
 }
 
 async function expectPreviewMatchesEquipment(page){
@@ -33,7 +33,7 @@ test('preview follows equip, unequip, swap and protected disposal',async({page})
   expect(before.fullSetId).toBe('stormrunner');
   const equippedWeapon=before.equipped.weapon.uid;
 
-  await page.evaluate(()=>window.RiskLootInventoryV2Bridge.unequip('weapon'));
+  await page.evaluate(()=>window.RiskLootEquipmentBridge.unequip('weapon'));
   let unequipped=await expectPreviewMatchesEquipment(page);
   expect(unequipped.equipped.weapon).toBeNull();
   expect(unequipped.fullSetId).toBeNull();
@@ -41,18 +41,18 @@ test('preview follows equip, unequip, swap and protected disposal',async({page})
 
   const replacement=await page.evaluate(()=>window.__riskTest.equipmentInventory().find(item=>item.slot==='weapon'&&!item.equipped));
   expect(replacement).toBeTruthy();
-  await page.evaluate(uid=>window.RiskLootInventoryV2Bridge.equip(uid),replacement.uid);
+  await page.evaluate(uid=>window.RiskLootEquipmentBridge.equip(uid),replacement.uid);
   let swapped=await expectPreviewMatchesEquipment(page);
   expect(swapped.equipped.weapon.uid).toBe(replacement.uid);
   expect(swapped.fullSetId).toBe('stormrunner');
 
-  await page.evaluate(uid=>window.RiskLootInventoryV2Bridge.equip(uid),equippedWeapon);
+  await page.evaluate(uid=>window.RiskLootEquipmentBridge.equip(uid),equippedWeapon);
   swapped=await expectPreviewMatchesEquipment(page);
   expect(swapped.equipped.weapon.uid).toBe(equippedWeapon);
 
-  const sell=await page.evaluate(uid=>window.RiskLootInventoryV2Bridge.dispose(uid,'sell'),equippedWeapon);
+  const sell=await page.evaluate(uid=>window.RiskLootEquipmentBridge.dispose(uid,'sell'),equippedWeapon);
   expect(sell.reason).toBe('equipped');
-  const salvage=await page.evaluate(uid=>window.RiskLootInventoryV2Bridge.dispose(uid,'salvage'),equippedWeapon);
+  const salvage=await page.evaluate(uid=>window.RiskLootEquipmentBridge.dispose(uid,'salvage'),equippedWeapon);
   expect(salvage.reason).toBe('equipped');
   await expectPreviewMatchesEquipment(page);
   await expect(page.locator('.gearCharacterHero')).toHaveCount(1)
@@ -66,7 +66,7 @@ test('preview survives rapid swaps, inventory lifecycle, save and refresh',async
   expect(weapons.length).toBeGreaterThanOrEqual(2);
 
   for(let index=0;index<20;index++){
-    await page.evaluate(uid=>window.RiskLootInventoryV2Bridge.equip(uid),weapons[index%weapons.length]);
+    await page.evaluate(uid=>window.RiskLootEquipmentBridge.equip(uid),weapons[index%weapons.length]);
     await expectPreviewMatchesEquipment(page)
   }
 
@@ -77,10 +77,10 @@ test('preview survives rapid swaps, inventory lifecycle, save and refresh',async
   await expect(page.locator('#gearOverlay')).toHaveClass(/show/);
   await expectPreviewMatchesEquipment(page);
 
-  await page.evaluate(()=>window.RiskLootInventoryV2Bridge.flush());
+  await page.evaluate(()=>window.RiskLootEquipmentBridge.flush());
   const saved=await page.evaluate(()=>window.__riskTest.equipmentState().equipped);
   await page.reload();
-  await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest&&window.RiskLootInventoryV2Bridge))).toBe(true);
+  await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest&&window.RiskLootEquipmentBridge))).toBe(true);
   await expect.poll(()=>page.evaluate(expected=>JSON.stringify(window.__riskTest.equipmentState().equipped)===JSON.stringify(expected),saved)).toBe(true);
   const refreshed=await expectPreviewMatchesEquipment(page);
   expect(refreshed.equipped.weapon&&refreshed.equipped.weapon.uid).toBe(saved.weapon)

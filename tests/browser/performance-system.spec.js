@@ -39,6 +39,7 @@ test('auto quality uses hysteresis to reduce and restore only visual work',async
     window.__riskTest.setVisualQuality('auto');
     window.__riskTest.setVisualQuality('high');
     window.__riskTest.setVisualQuality('auto');
+    window.__riskTest.floodVisuals(1);
     return window.__riskTest.simulateFramePerformance(70,500);
   });
   expect(state.requested).toBe('auto');

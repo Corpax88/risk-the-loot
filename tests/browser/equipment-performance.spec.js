@@ -169,7 +169,7 @@ test('repeated Armory open and close leaves no blocked input or duplicated UI',a
   expect(Math.max(...openTimings.map(sample=>sample.total))).toBeLessThan(200);
   await expect(page.locator('#gearPanel')).toHaveCount(1);
   await expect(page.locator('#gearGrid')).toHaveCount(1);
-  await expect(page.locator('[data-character-layer]')).toHaveCount(9);
+  await expect(page.locator('[data-character-layer]')).toHaveCount(8);
   await expect(page.locator('.gearDragGhost')).toHaveCount(0);
   await expect(page.locator('#gearGrid .gearBagSlot').first()).toBeEnabled();
 });

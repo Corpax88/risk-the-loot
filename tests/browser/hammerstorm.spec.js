@@ -6,7 +6,7 @@ async function openPlaytest(page){
   await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest))).toBe(true);
 }
 
-test('Hammerstorm dives into a pack, launches enemies and rewards the full surround set',async({page})=>{
+test('Hammerstorm dives into a pack without inheriting retired-set lifesteal',async({page})=>{
   const pageErrors=[];
   page.on('pageerror',error=>pageErrors.push(error.message));
   await page.setViewportSize({width:1280,height:800});
@@ -32,15 +32,13 @@ test('Hammerstorm dives into a pack, launches enemies and rewards the full surro
   expect(state.playerProjectiles).toBe(0);
   expect((await page.evaluate(()=>window.__riskTest.triggerHammerstorm())).started).toBe(true);
 
-  state=await page.evaluate(()=>window.__riskTest.spawnHammerstormPack(24,{durable:true,hurt:true,fullRiskreaver:true}));
+  state=await page.evaluate(()=>window.__riskTest.spawnHammerstormPack(24,{durable:true,hurt:true}));
   const woundedHp=state.player.hp;
-  const maxHeal=state.player.maxHp*.12;
   expect((await page.evaluate(()=>window.__riskTest.triggerHammerstorm())).started).toBe(true);
   state=await page.evaluate(()=>window.__riskTest.advanceHammerstorm(1.6));
   expect(state.spin.hits).toBeGreaterThan(24);
-  expect(state.spin.heal).toBeGreaterThan(0);
-  expect(state.spin.heal).toBeLessThanOrEqual(maxHeal+.01);
-  expect(state.player.hp).toBeGreaterThan(woundedHp);
+  expect(state.spin.heal).toBe(0);
+  expect(state.player.hp).toBeLessThanOrEqual(woundedHp);
   expect(state.player.hp).toBeLessThanOrEqual(state.player.maxHp);
   await page.evaluate(()=>window.__riskTest.releaseHammerstorm());
   expect(pageErrors).toEqual([]);

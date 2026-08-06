@@ -92,7 +92,7 @@ test('rapid replacement and reload leave one current preview per equipped displa
   });
   for(let pass=0;pass<20;pass++){
     const expected=loadouts[pass%2];
-    await page.evaluate(items=>items.forEach(uid=>window.RiskLootInventoryV2Bridge.equip(uid)),expected);
+    await page.evaluate(items=>items.forEach(uid=>window.RiskLootEquipmentBridge.equip(uid)),expected);
     const slots=page.locator('#gearLoadoutSlots .gearLoadoutSlot.filled');
     await expect(slots).toHaveCount(7);
     await expect(page.locator('#gearLoadoutSlots .equippedGearPreview')).toHaveCount(7);

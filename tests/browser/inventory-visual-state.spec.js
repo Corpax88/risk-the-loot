@@ -12,45 +12,52 @@ async function openStormcallerArmory(page){
   return equippedBySlot;
 }
 
-async function expectFullSetFigure(page){
-  const hero=page.locator('#gearCharacterStage .gearCharacterHero');
-  const full=hero.locator('[data-character-layer="fullFigure"]');
-  await expect(hero).toHaveCount(1);
-  await expect(hero).toHaveClass(/staticInventoryFigure/,{timeout:10000});
-  await expect(page.locator('#gearBuildProgress')).toHaveText('5 / 5');
-  await expect(full).toBeVisible();
-  await expect.poll(()=>full.evaluate(element=>element.style.backgroundImage)).toContain('legendary_stormcaller_full_figure_01.png');
-  // Equipment warmup used to overwrite this still with the complete 4x2 atlas.
-  await page.waitForTimeout(1250);
-  const visual=await full.evaluate(element=>({
-    image:element.style.backgroundImage,
-    size:getComputedStyle(element).backgroundSize,
-    repeat:getComputedStyle(element).backgroundRepeat
-  }));
-  expect(visual.image).toContain('legendary_stormcaller_full_figure_01.png');
-  expect(visual.image).not.toContain('data:image/png');
-  expect(visual.size).toBe('contain');
-  expect(visual.repeat).toBe('no-repeat');
+const VISUAL_LAYERS=['cape','baseBody','legs','boots','chest','scarf','hat','weapon'];
+
+async function characterLayers(page){
+  return page.locator('#gearCharacterStage .gearCharacterHero [data-character-layer]').evaluateAll(layers=>Object.fromEntries(layers.map(layer=>[
+    layer.dataset.characterLayer,
+    {
+      hidden:layer.hidden,
+      image:layer.style.backgroundImage,
+      size:getComputedStyle(layer).backgroundSize,
+      repeat:getComputedStyle(layer).backgroundRepeat,
+      kind:layer.dataset.kind||''
+    }
+  ])));
 }
 
-async function expectFullSetFigureReady(page){
+async function expectFullSetFigure(page){
   const hero=page.locator('#gearCharacterStage .gearCharacterHero');
-  const full=hero.locator('[data-character-layer="fullFigure"]');
-  await expect(hero).toHaveClass(/staticInventoryFigure/,{timeout:10000});
+  await expect(hero).toHaveCount(1);
+  await expect(hero).toHaveClass(/domLayeredFigure/);
   await expect(page.locator('#gearBuildProgress')).toHaveText('5 / 5');
-  await expect(full).toBeVisible();
-  await expect.poll(()=>full.evaluate(element=>element.style.backgroundImage)).toContain('legendary_stormcaller_full_figure_01.png');
+  await expect(hero.locator('[data-character-layer]')).toHaveCount(8);
+  for(const layer of VISUAL_LAYERS)await expect(hero.locator(`[data-character-layer="${layer}"]`)).toBeVisible();
+  await page.waitForTimeout(1250);
+  const visual=await characterLayers(page);
+  expect(visual.baseBody.image).toContain('pappa-hammer-player.png');
+  for(const layer of VISUAL_LAYERS){
+    expect(visual[layer].hidden).toBe(false);
+    expect(visual[layer].image).not.toContain('data:image/png');
+    expect(visual[layer].size).toBe('contain');
+    expect(visual[layer].repeat).toBe('no-repeat');
+    expect(visual[layer].kind).toBe('aligned');
+  }
+  for(const layer of VISUAL_LAYERS.filter(layer=>layer!=='baseBody')){
+    expect(visual[layer].image).toContain(`legendary_stormcaller_${layer}_01.png`);
+  }
 }
+
+const expectFullSetFigureReady=expectFullSetFigure;
 
 async function expectModularFigure(page,missingSlot='weapon'){
   const hero=page.locator('#gearCharacterStage .gearCharacterHero');
   const base=hero.locator('[data-character-layer="baseBody"]');
-  const full=hero.locator('[data-character-layer="fullFigure"]');
   await expect(hero).toHaveCount(1);
-  await expect(hero).not.toHaveClass(/staticInventoryFigure/);
+  await expect(hero).toHaveClass(/domLayeredFigure/);
   await expect(page.locator('#gearBuildProgress')).toHaveText('4 / 5');
   await expect(base).toBeVisible();
-  await expect(full).toBeHidden();
   await expect(hero.locator(`[data-character-layer="${missingSlot}"]`)).toBeHidden();
   await page.waitForTimeout(350);
   const visual=await hero.locator('[data-character-layer]').evaluateAll(layers=>layers.map(layer=>layer.style.backgroundImage).join('|'));
@@ -105,7 +112,7 @@ for(const profile of [
       animations:'disabled'
     });
 
-    await page.evaluate(()=>window.RiskLootInventoryV2Bridge.unequip('weapon'));
+    await page.evaluate(()=>window.RiskLootEquipmentBridge.unequip('weapon'));
     await expectModularFigure(page);
     await assertCleanArmory(page);
     await page.locator('#gearCharacterStage').screenshot({
@@ -113,24 +120,24 @@ for(const profile of [
       animations:'disabled'
     });
 
-    await page.evaluate(uid=>window.RiskLootInventoryV2Bridge.equip(uid),weaponUid);
+    await page.evaluate(uid=>window.RiskLootEquipmentBridge.equip(uid),weaponUid);
     await expectFullSetFigure(page);
     await assertCleanArmory(page);
 
     for(let cycle=0;cycle<20;cycle++){
-      await page.evaluate(()=>window.RiskLootInventoryV2Bridge.unequip('weapon'));
-      await expect(page.locator('#gearCharacterStage .gearCharacterHero')).not.toHaveClass(/staticInventoryFigure/);
-      await page.evaluate(uid=>window.RiskLootInventoryV2Bridge.equip(uid),weaponUid);
-      await expect(page.locator('#gearCharacterStage .gearCharacterHero')).toHaveClass(/staticInventoryFigure/);
+      await page.evaluate(()=>window.RiskLootEquipmentBridge.unequip('weapon'));
+      await expect(page.locator('[data-character-layer="weapon"]')).toBeHidden();
+      await page.evaluate(uid=>window.RiskLootEquipmentBridge.equip(uid),weaponUid);
+      await expect(page.locator('[data-character-layer="weapon"]')).toBeVisible();
     }
     await expectFullSetFigure(page);
     await assertCleanArmory(page);
 
     for(const slot of ['hat','scarf','chest','boots','weapon']){
-      await page.evaluate(slotId=>window.RiskLootInventoryV2Bridge.unequip(slotId),slot);
+      await page.evaluate(slotId=>window.RiskLootEquipmentBridge.unequip(slotId),slot);
       await expectModularFigure(page,slot);
       await assertCleanArmory(page);
-      await page.evaluate(uid=>window.RiskLootInventoryV2Bridge.equip(uid),equippedBySlot[slot]);
+      await page.evaluate(uid=>window.RiskLootEquipmentBridge.equip(uid),equippedBySlot[slot]);
       await expectFullSetFigureReady(page);
     }
 

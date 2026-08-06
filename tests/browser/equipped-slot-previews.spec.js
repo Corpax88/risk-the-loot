@@ -35,7 +35,7 @@ async function previewMetrics(page){
 }
 
 function expectFilledAndCentered(metrics){
-  expect(metrics).toHaveLength(5);
+  expect(metrics).toHaveLength(7);
   for(const preview of metrics){
     expect(preview.missing,`${preview.slot} should use its production preview`).toBe(false);
     expect(preview.assetId,`${preview.slot} should expose its source asset`).toBeTruthy();
@@ -52,12 +52,12 @@ test('every production set fills and centers equipped slot previews',async({page
   const catalog=await page.evaluate(()=>window.__riskTest.gearSetCatalog());
   for(const set of catalog){
     await page.evaluate(setId=>window.__riskTest.previewGearSet(setId),set.id);
-    await expect.poll(()=>page.locator('#gearLoadoutSlots .equippedGearPreview:not([hidden])').count()).toBe(5);
+    await expect.poll(()=>page.locator('#gearLoadoutSlots .equippedGearPreview:not([hidden])').count()).toBe(7);
     expectFilledAndCentered(await previewMetrics(page));
   }
 });
 
-test('Lava chest and boots remain large, clipped and sharp on desktop and iPhone',async({browser})=>{
+test('Stormcaller chest, cape and boots remain large, clipped and sharp on desktop and iPhone',async({browser})=>{
   for(const setup of [
     {name:'desktop',viewport:{width:1280,height:900}},
     {name:'iphone',viewport:{width:390,height:844},isMobile:true,hasTouch:true}
@@ -65,13 +65,13 @@ test('Lava chest and boots remain large, clipped and sharp on desktop and iPhone
     const context=await browser.newContext(setup);
     const page=await context.newPage();
     await openArmory(page,setup.viewport);
-    await page.evaluate(()=>window.__riskTest.previewGearSet('lavaSet'));
-    await expect.poll(()=>page.locator('#gearLoadoutSlots .equippedGearPreview:not([hidden])').count()).toBe(5);
+    await page.evaluate(()=>window.__riskTest.previewGearSet('stormrunner'));
+    await expect.poll(()=>page.locator('#gearLoadoutSlots .equippedGearPreview:not([hidden])').count()).toBe(7);
     const metrics=await previewMetrics(page);
     expectFilledAndCentered(metrics);
-    for(const slot of ['chest','boots'])expect(metrics.find(entry=>entry.slot===slot).maxRatio).toBeGreaterThan(.6);
+    for(const slot of ['cape','chest','boots'])expect(metrics.find(entry=>entry.slot===slot).maxRatio).toBeGreaterThan(.6);
     await page.locator('#gearCharacterStage').screenshot({
-      path:path.join('test-results','equipped-slot-previews',`lava-${setup.name}.png`),
+      path:path.join('test-results','equipped-slot-previews',`stormcaller-${setup.name}.png`),
       animations:'disabled'
     });
     await context.close();
@@ -79,17 +79,23 @@ test('Lava chest and boots remain large, clipped and sharp on desktop and iPhone
 });
 
 test('rapid replacement and reload leave one current preview per equipped display slot',async({page})=>{
+  test.setTimeout(60000);
   await openArmory(page,{width:390,height:844});
-  const loadouts=[
-    ['lavaSet-hat','lavaSet-scarf','lavaSet-coat','lavaSet-hammer','lavaSet-boots'],
-    ['natureSet-hat','blackHole-scarf','stormrunner-coat','hammerChoir-hammer','fatebound-boots']
-  ];
+  await page.evaluate(()=>{
+    window.__riskTest.previewGearSet('stormrunner');
+    window.__riskTest.previewGearSet('stormrunner')
+  });
+  const loadouts=await page.evaluate(()=>{
+    const bySlot={};
+    for(const item of window.__riskTest.equipmentInventory())(bySlot[item.slot]||(bySlot[item.slot]=[])).push(item.uid);
+    return [0,1].map(index=>Object.values(bySlot).map(items=>items[index]).filter(Boolean))
+  });
   for(let pass=0;pass<20;pass++){
     const expected=loadouts[pass%2];
-    await page.evaluate(items=>window.__riskTest.previewGearItems(items),expected);
+    await page.evaluate(items=>items.forEach(uid=>window.RiskLootInventoryV2Bridge.equip(uid)),expected);
     const slots=page.locator('#gearLoadoutSlots .gearLoadoutSlot.filled');
-    await expect(slots).toHaveCount(5);
-    await expect(page.locator('#gearLoadoutSlots .equippedGearPreview')).toHaveCount(5);
+    await expect(slots).toHaveCount(7);
+    await expect(page.locator('#gearLoadoutSlots .equippedGearPreview')).toHaveCount(7);
     await expect(page.locator('#gearLoadoutSlots .equippedGearPreviewFallback:not([hidden])')).toHaveCount(0);
     expectFilledAndCentered(await previewMetrics(page));
   }
@@ -97,7 +103,7 @@ test('rapid replacement and reload leave one current preview per equipped displa
   await page.reload();
   await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest))).toBe(true);
   await page.locator('#gearLockerButton').click();
-  await expect(page.locator('#gearLoadoutSlots .equippedGearPreview')).toHaveCount(5);
+  await expect(page.locator('#gearLoadoutSlots .equippedGearPreview')).toHaveCount(7);
   await expect(page.locator('#gearLoadoutSlots .equippedGearPreviewFallback:not([hidden])')).toHaveCount(0);
   expectFilledAndCentered(await previewMetrics(page));
 });

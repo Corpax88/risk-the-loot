@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="description" content="Risk everything, recover equippable gear and build Pappa Hammer in this compact extraction roguelite.">
   <title>RISK THE LOOT!</title>
-  <link rel="stylesheet" href="style.css?v=0.73.1">
+  <link rel="stylesheet" href="style.css?v=0.74.0">
   <link rel="stylesheet" href="inventory-v2.css?v=0.3.0">
 </head>
 <body>
@@ -16,7 +16,7 @@
     <header class="topbar">
       <div class="brand" tabindex="0" data-help-title="Risk the Loot" data-help="Enter the tower, defeat champions and decide when the gear you carry is valuable enough to extract.">
         <span class="brandMark">R</span>
-        <div><strong>RISK THE LOOT!</strong><small>STORMCALLER PERFORMANCE v0.73.1</small></div>
+        <div><strong>RISK THE LOOT!</strong><small>PREMIUM ARMORY v0.74.0</small></div>
       </div>
       <div class="resources">
         <div class="resource level" data-help-title="Pappa Level" data-help="Boss victories grant XP. Higher levels unlock stronger gear and tougher champions."><i>LV</i><div><b id="pappaLevel">1</b><span>PAPPA</span></div></div>
@@ -71,14 +71,24 @@
       <div id="baseNotice" class="baseNotice" role="status"></div>
 
       <div id="gearOverlay" class="menuOverlay" role="dialog" aria-modal="true" aria-label="Pappa Hammer equipment">
-        <div id="gearPanel" class="menuPanel gearPanel adventureBagPanel">
+        <div id="gearPanel" class="menuPanel gearPanel adventureBagPanel premiumArmory">
           <button id="closeGear" class="panelClose" aria-label="Close Adventure Bag">&#215;</button>
           <div class="gearWorkspace unifiedEquipmentWorkspace">
             <aside class="gearCharacterPanel unifiedCharacterPanel">
               <div id="gearCharacterStage" class="gearCharacterStage equipmentDropStage" aria-label="Pappa Hammer equipped loadout. Drop compatible gear here to equip it." data-help-title="Equipped Loadout" data-help="Pappa Hammer always shows the gear he is currently wearing. Drop compatible gear here to equip it. Drag left or right on empty space to rotate him.">
                 <div class="gearCharacterHalo"></div>
                 <div class="gearCharacterCamera" aria-hidden="true">
-                  <div class="gearCharacterHero"></div>
+                  <div class="gearCharacterHero domLayeredFigure">
+                    <i class="armoryCharacterLayer armoryCapeLayer" data-character-layer="cape"></i>
+                    <i class="armoryCharacterLayer armoryBaseLayer" data-character-layer="baseBody"></i>
+                    <i class="armoryCharacterLayer armoryLegsLayer" data-character-layer="legs"></i>
+                    <i class="armoryCharacterLayer armoryBootsLayer" data-character-layer="boots"></i>
+                    <i class="armoryCharacterLayer armoryChestLayer" data-character-layer="chest"></i>
+                    <i class="armoryCharacterLayer armoryScarfLayer" data-character-layer="scarf"></i>
+                    <i class="armoryCharacterLayer armoryHatLayer" data-character-layer="hat"></i>
+                    <i class="armoryCharacterLayer armoryWeaponLayer" data-character-layer="weapon"></i>
+                    <i class="armoryCharacterLayer armoryFullFigureLayer" data-character-layer="fullFigure"></i>
+                  </div>
                 </div>
                 <div id="gearLoadoutSlots" class="gearLoadoutSlots equipmentOrbitSlots" aria-label="Equipped gear slots"></div>
                 <span id="gearPreviewName" class="gearPreviewName">FIELD LOADOUT</span>
@@ -146,15 +156,15 @@
                     </div>
                   </div>
                 </div>
+                <div id="gearBulkActionBar" class="gearBulkActionBar" aria-hidden="true" aria-live="polite">
+                  <output id="gearBulkCount">0 SELECTED</output>
+                  <button id="sellFilteredGear" class="gearBulkAction sell" title="Sell selected items. Equipped and locked gear are protected."><span id="sellFilteredLabel">SELL</span><b id="sellFilteredSummary">$0</b></button>
+                  <button id="salvageSelectedGear" class="gearBulkAction salvage" title="Salvage selected items into permanent crafting materials."><span id="salvageSelectedLabel">SALVAGE</span><b id="salvageSelectedSummary">0 MATERIALS</b></button>
+                  <button id="cancelGearSelection" class="gearBulkAction cancel" title="Clear selected items."><span>CANCEL</span><b>CLEAR ALL</b></button>
+                </div>
               </section>
               <aside id="gearDetail" class="gearDetail" aria-live="polite"></aside>
             </section>
-          </div>
-          <div id="gearBulkActionBar" class="gearBulkActionBar" aria-hidden="true" aria-live="polite">
-            <output id="gearBulkCount">0 SELECTED</output>
-            <button id="sellFilteredGear" class="gearBulkAction sell" title="Sell selected items. Equipped and locked gear are protected."><span id="sellFilteredLabel">SELL</span><b id="sellFilteredSummary">$0</b></button>
-            <button id="salvageSelectedGear" class="gearBulkAction salvage" title="Salvage selected items into permanent crafting materials."><span id="salvageSelectedLabel">SALVAGE</span><b id="salvageSelectedSummary">0 MATERIALS</b></button>
-            <button id="cancelGearSelection" class="gearBulkAction cancel" title="Clear selected items."><span>CANCEL</span><b>CLEAR ALL</b></button>
           </div>
           <div id="gearMobileSheet" class="gearMobileSheet" role="dialog" aria-modal="true" aria-labelledby="gearMobileSheetTitle" aria-hidden="true">
             <button id="gearMobileSheetShade" class="gearMobileSheetShade" aria-label="Close inventory options"></button>
@@ -419,7 +429,7 @@
         </div>
         <button id="resumeButton" class="primaryButton settingsResume"><span>RESUME</span><i>&#8250;</i></button>
         <button id="abandonButton" class="dangerButton">ABANDON EXPEDITION</button>
-        <p class="buildStamp">v0.73.1 STORMCALLER PERFORMANCE</p>
+        <p class="buildStamp">v0.74.0 PREMIUM ARMORY</p>
       </div>
     </div>
     <aside id="helpTooltip" class="helpTooltip" role="tooltip" aria-hidden="true"><strong id="helpTooltipTitle"></strong><span id="helpTooltipText"></span></aside>
@@ -428,10 +438,10 @@
       <source src="assets/audio/sky-menu-drift-loop.m4a" type="audio/mp4">
     </audio>
   </main>
-  <script src="guild-terrain.js?v=0.73.1"></script>
-  <script src="infinite-world.js?v=0.73.1"></script>
-  <script src="progression.js?v=0.73.1"></script>
-  <script src="script.js?v=0.73.1"></script>
+  <script src="guild-terrain.js?v=0.74.0"></script>
+  <script src="infinite-world.js?v=0.74.0"></script>
+  <script src="progression.js?v=0.74.0"></script>
+  <script src="script.js?v=0.74.0"></script>
   <script src="inventory-v2.js?v=0.3.0"></script>
 </body>
 </html>

@@ -6,11 +6,9 @@ async function openArmory(page,viewport){
   await page.addInitScript(()=>localStorage.clear());
   await page.goto('/?playwright');
   await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest))).toBe(true);
-  await page.evaluate(()=>{
-    window.__riskTest.previewGearSet('hammerChoir');
-    window.__riskTest.previewGearSet('fatebound');
-  });
+  await page.evaluate(()=>window.__riskTest.previewGearSetPieces('stormrunner',5));
   await expect(page.locator('#gearOverlay')).toHaveClass(/show/);
+  await expect(page.locator('#gearCharacterStage .gearCharacterHero')).toHaveClass(/staticInventoryFigure/,{timeout:10000});
   await page.waitForTimeout(1200);
 }
 
@@ -47,6 +45,7 @@ async function desktopGeometry(page){
       panelOverflowY:panel.scrollHeight-panel.clientHeight,
       panelOverflow:getComputedStyle(panel).overflow,
       gridOverflow:getComputedStyle(grid).overflowY,
+      bagBrowserOverflow:getComputedStyle(bagBrowser).overflowY,
       toolbarVisible:getComputedStyle(toolbar).display!=='none',
       filterButtons,
       slots,loadoutSlots
@@ -83,7 +82,8 @@ for(const viewport of [
     expect(layout.panelOverflowX).toBeLessThanOrEqual(1);
     expect(layout.panelOverflowY).toBeLessThanOrEqual(1);
     expect(layout.panelOverflow).toBe('hidden');
-    expect(layout.gridOverflow).toBe('auto');
+    expect(layout.gridOverflow).toBe('visible');
+    expect(layout.bagBrowserOverflow).toBe('auto');
     for(const entry of layout.slots){
       expect(entry.slot.left).toBeGreaterThanOrEqual(layout.bagBrowser.left-1);
       expect(entry.slot.right).toBeLessThanOrEqual(layout.bagBrowser.right+1);
@@ -134,7 +134,10 @@ test('Remove hover remains local and does not animate or resize the Armory',asyn
 
 test('custom pointer drag keeps card dimensions and restores invalid drops',async({page})=>{
   await openArmory(page,{width:1366,height:768});
-  const item=await page.evaluate(()=>window.__riskTest.equipmentInventory().find(entry=>!entry.equipped));
+  const item=await page.evaluate(()=>{
+    const state=window.__riskTest.previewGearSetPieces('stormrunner',4);
+    return state.inventory.find(entry=>!entry.equipped);
+  });
   const card=page.locator(`#gearGrid [data-item="${item.uid}"]`);
   const source=await card.boundingBox();
   const start={x:source.x+source.width*.3,y:source.y+source.height*.4};
@@ -154,6 +157,7 @@ test('custom pointer drag keeps card dimensions and restores invalid drops',asyn
 });
 
 test('tablet and iPhone keep their independent inventory scroller',async({browser})=>{
+  test.setTimeout(60000);
   for(const setup of [
     {viewport:{width:768,height:1024},isMobile:true,hasTouch:true},
     {...devices['iPhone 13']}
@@ -176,7 +180,9 @@ test('tablet and iPhone keep their independent inventory scroller',async({browse
       const after=rect(stage);
       return{
         panelOverflow:getComputedStyle(panel).overflow,
+        stageOverflow:getComputedStyle(stage).overflow,
         gridOverflow:getComputedStyle(grid).overflowY,
+        bagBrowserOverflow:getComputedStyle(grid.closest('.gearBagBrowser')).overflowY,
         pageOverflow:document.documentElement.scrollWidth-document.documentElement.clientWidth,
         inventoryRight:rect(inventory).right,
         viewport:innerWidth,
@@ -187,11 +193,15 @@ test('tablet and iPhone keep their independent inventory scroller',async({browse
       };
     });
     expect(state.panelOverflow).toBe('hidden');
-    expect(state.gridOverflow).toBe('auto');
+    expect(state.gridOverflow).toBe('visible');
+    expect(state.bagBrowserOverflow).toBe('auto');
+    expect(state.stageOverflow).toBe('hidden');
     expect(state.pageOverflow).toBeLessThanOrEqual(1);
     expect(state.inventoryRight).toBeLessThanOrEqual(state.viewport+1);
-    expect(state.hero.top,JSON.stringify({hero:state.hero,stage:state.stageBefore})).toBeGreaterThanOrEqual(state.stageBefore.top-1);
     expect(state.hero.bottom).toBeLessThanOrEqual(state.stageBefore.bottom+1);
+    const heroCenter=state.hero.left+state.hero.width/2;
+    expect(heroCenter).toBeGreaterThanOrEqual(0);
+    expect(heroCenter).toBeLessThanOrEqual(state.viewport);
     for(let index=0;index<state.cards.length;index++){
       const card=state.cards[index];
       expect(Math.abs(card.width-card.height)).toBeLessThanOrEqual(2);

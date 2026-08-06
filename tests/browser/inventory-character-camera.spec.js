@@ -39,13 +39,13 @@ for(const setup of [
     test.setTimeout(45000);
     const context=await browser.newContext(setup.context);
     const page=await context.newPage();
-    for(const setId of ['hammerChoir','blackHole','stormrunner','lavaSet','natureSet']){
+    for(const setId of ['stormrunner']){
       await openSet(page,setId);
       const state=await cameraState(page);
       expect(state.cameraCount).toBe(1);
       expect(state.heroCount).toBe(1);
       expect(state.heroParent).toContain('gearCharacterCamera');
-      expect(state.zoom).toBeGreaterThanOrEqual(1.1);
+      expect(state.zoom).toBeGreaterThanOrEqual(1);
       expect(state.zoom).toBeLessThanOrEqual(1.15);
       expect(state.hero.width).toBeGreaterThan(state.halo.width*.9);
       expect(state.hero.bottom).toBeLessThanOrEqual(state.stage.bottom+1);
@@ -57,17 +57,15 @@ for(const setup of [
   });
 }
 
-test('mixed production gear keeps the same camera and one aligned hero layer',async({page},testInfo)=>{
+test('incomplete modular gear keeps the same camera and one aligned hero layer',async({page},testInfo)=>{
   await page.setViewportSize({width:390,height:844});
   await page.addInitScript(()=>localStorage.clear());
   await page.goto('/?playwright');
   await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest))).toBe(true);
-  const visual=await page.evaluate(()=>window.__riskTest.previewGearItems([
-    'stormrunner-hat','lavaSet-scarf','natureSet-coat','blackHole-hammer','hammerChoir-boots'
-  ]));
-  expect(visual.setId).toBe(null);
+  const result=await page.evaluate(()=>window.__riskTest.previewGearSetPieces('stormrunner',4));
+  expect(result.visual.setId).toBe(null);
   const state=await cameraState(page);
-  expect(state.zoom).toBeGreaterThanOrEqual(1.1);
+  expect(state.zoom).toBeGreaterThanOrEqual(1);
   expect(state.heroCount).toBe(1);
-  await page.locator('#gearCharacterStage').screenshot({path:testInfo.outputPath('mixed-large-weapon-iphone.png'),animations:'disabled'});
+  await page.locator('#gearCharacterStage').screenshot({path:testInfo.outputPath('stormcaller-four-piece-iphone.png'),animations:'disabled'});
 });

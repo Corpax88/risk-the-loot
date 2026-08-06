@@ -49,8 +49,8 @@
     stormcallerWeapon:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_weapon_01.png?v=20260805-krita-fit','stormrunner')
   });
   const stormcallerFullFigure=loadImage('assets/equipment/stormcaller/legendary_stormcaller_full_figure_01.png?v=20260805-anatomy-v2');
-  const stormcallerWeaponlessFigure=loadImage('assets/equipment/stormcaller/legendary_stormcaller_weaponless_figure_01.png?v=20260805-anatomy-v2');
   const stormcallerFigurePreviewUrls=new Map();
+  let stormcallerFigureRefreshPending=false;
   const handlavaHitSplashSprite=loadImage('assets/handlava-hit-splash-v1.png');
   const ancientEntSprite=loadImage('assets/ancient-ent-v1.png');
   const natureRootTrapSprite=loadImage('assets/nature-root-trap-v1.png');
@@ -134,6 +134,7 @@
   };
   const gearHoverPreview=ui.gearHoverPreview;
   const routeTickNodes=Array.from(ui.routeTicks.children);
+  const armoryCharacterLayers=Object.fromEntries(Array.from(document.querySelectorAll('[data-character-layer]')).map(layer=>[layer.dataset.characterLayer,layer]));
 
   const progression=window.RiskLootProgression;
   if(!progression)throw new Error('Risk Loot progression module failed to load');
@@ -522,16 +523,16 @@
   let moduleDecision=false,moduleStage='offer',moduleOffer=[],pendingModule=null,activeCache=null,pendingWardenReward=null,bossActive=false,bossDefeated=false,bossEntity=null,bossLootChest=null,runStats=null,expeditionCycle=0,bossRunClears=0,postBossDecision=false,postBossIntent=null,bossLootRewards=[],bossLootSelected=0,bossLootResolved=[],bossLootPhase='idle',bossLootMaterialReward=0,bossExtraction=false,runGearEquipBackups={},gearView='unified',gearFilter='all',gearRarityFilter='all',gearSort='power',selectedGearUid=null,hoverGearUid=null,sellFilterArmedKey='',sellFilterArmedUntil=0,gearBulkSelection=new Set(),gearBulkConfirmAction='',gearBulkConfirmUntil=0,gearActionConfirmUid='',gearActionConfirmType='',gearActionConfirmUntil=0,vaultRewards=[],vaultMaterialReward=0,vaultOpening=false;
   let paperDollAtlases={idle:null,run:null,attack:null},paperDollKey='',paperDollCurrentUrl='';
   let gearDragState=null,gearPointerType='mouse',gearTapUid=null,gearTapAt=0,gearQuickActionUntil=0,suppressGearClickUntil=0,gearMobileSheetMode=null;
-  const EQUIPMENT_LAYER_CELL=256,EQUIPMENT_LAYER_CACHE_LIMIT=36,INVENTORY_PAPER_DOLL_CELL=1024;
+  const EQUIPMENT_LAYER_CELL=256,EQUIPMENT_LAYER_CACHE_LIMIT=36;
   const equipmentLayerTextureCache=new Map(),equipmentLayerUrlCache=new WeakMap();
   let equipmentPrewarmGeneration=0,equipmentPrewarmHandle=0,equipmentPrewarmDelayHandle=0,equipmentPrewarmPending=0;
-  const gearItemNodes=new Map(),gearPerf={fullRenders:0,gridRenders:0,slotRenders:0,incrementalRenders:0,baseRenders:0,detailRenders:0,mobileDetailRenders:0,inventoryStateUpdates:0,setRenders:0,rarityRenders:0,paperDollBuilds:0,layerBuilds:0,persistWrites:0};
+  const gearItemNodes=new Map(),equipmentCssBackgroundCache=new Map(),gearPerf={fullRenders:0,gridRenders:0,slotRenders:0,incrementalRenders:0,baseRenders:0,detailRenders:0,mobileDetailRenders:0,inventoryStateUpdates:0,setRenders:0,rarityRenders:0,paperDollBuilds:0,layerBuilds:0,persistWrites:0};
   const equipPerf={sequence:0,records:[]};
   let equipPersistTimer=0,equipPersistRecords=[];
   function equipPerfMark(record,name){if(!record)return performance.now();let now=performance.now();record.marks[name]=Math.round((now-record.started)*100)/100;if(typeof performance.mark==='function')performance.mark(record.key+':'+name);return now}
   function equipPerfStep(record,name,work){if(!record)return work();let started=performance.now(),result=work();record.steps[name]=Math.round((performance.now()-started)*100)/100;return result}
   function beginEquipPerf(gear,item,equipping){let id=++equipPerf.sequence,record={id,key:'rtl-equip-'+id,uid:gear.uid,itemId:item.id,slot:item.slot,action:equipping?'equip':'remove',started:performance.now(),marks:{input:0},steps:{},rendersBefore:Object.assign({},gearPerf),renders:{}};if(typeof performance.mark==='function')performance.mark(record.key+':input');equipPerf.records.push(record);if(equipPerf.records.length>60)equipPerf.records.shift();return record}
-  function finishEquipPerf(record){record.syncTotal=Math.round((performance.now()-record.started)*100)/100;for(const key of Object.keys(gearPerf))record.renders[key]=gearPerf[key]-(record.rendersBefore[key]||0);let entries=Object.entries(record.steps);record.slowestStep=entries.length?entries.sort((a,b)=>b[1]-a[1])[0][0]:null;if(typeof performance.measure==='function')try{performance.measure(record.key+':input-to-visual',record.key+':input',record.key+':comparison')}catch(error){}let firstFrame=()=>{equipPerfMark(record,'firstFrame');requestAnimationFrame(()=>{equipPerfMark(record,'complete');record.total=Math.round((performance.now()-record.started)*100)/100;if(typeof performance.measure==='function')try{performance.measure(record.key+':input-to-complete',record.key+':input',record.key+':complete')}catch(error){}})};if(typeof requestAnimationFrame==='function')requestAnimationFrame(firstFrame);else{record.marks.firstFrame=record.syncTotal;record.marks.complete=record.syncTotal;record.total=record.syncTotal}}
+  function finishEquipPerf(record){record.syncTotal=Math.round((performance.now()-record.started)*100)/100;for(const key of Object.keys(gearPerf))record.renders[key]=gearPerf[key]-(record.rendersBefore[key]||0);let entries=Object.entries(record.steps);record.slowestStep=entries.length?entries.sort((a,b)=>b[1]-a[1])[0][0]:null;if(typeof performance.measure==='function')try{performance.measure(record.key+':input-to-visual',record.key+':input',record.key+':comparison')}catch(error){}let firstFrame=()=>{equipPerfMark(record,'firstFrame');equipPerfMark(record,'complete');record.total=Math.round((performance.now()-record.started)*100)/100;if(typeof performance.measure==='function')try{performance.measure(record.key+':input-to-complete',record.key+':input',record.key+':complete')}catch(error){}requestAnimationFrame(()=>equipPerfMark(record,'settledFrame'))};if(typeof requestAnimationFrame==='function')requestAnimationFrame(firstFrame);else{record.marks.firstFrame=record.syncTotal;record.marks.complete=record.syncTotal;record.marks.settledFrame=record.syncTotal;record.total=record.syncTotal}}
   function flushEquipPersist(){if(equipPersistTimer){clearTimeout(equipPersistTimer);equipPersistTimer=0}if(!equipPersistRecords.length)return;let records=equipPersistRecords.splice(0),started=performance.now();persist();let duration=Math.round((performance.now()-started)*100)/100;for(const record of records){record.steps.saveWrite=duration;equipPerfMark(record,'saveComplete')}}
   function scheduleEquipPersist(record){equipPersistRecords.push(record);if(equipPersistTimer)clearTimeout(equipPersistTimer);equipPersistTimer=setTimeout(flushEquipPersist,160)}
   const particlePool=[],lightningEffectPool=[],effectPool=[],projectilePool=[];
@@ -828,7 +829,8 @@
       while(tasks.length&&completed<limit&&(completed===0||deadline.didTimeout||deadline.timeRemaining()>5)){let task=tasks.shift();try{task()}catch(error){console.warn('[Gear Warmup] '+error.message)}completed++}
       equipmentPrewarmPending=tasks.length;
       if(tasks.length){queueNext(run);return}
-      if(generation!==equipmentPrewarmGeneration)return;paperDollKey='';if(mode!=='run'||ui.gearOverlay.classList.contains('show'))refreshPaperDoll()
+      if(generation!==equipmentPrewarmGeneration)return;
+      if(mode!=='run'||ui.gearOverlay.classList.contains('show')){paperDollKey='';refreshPaperDoll()}
     };
     queueNext(run)
   }
@@ -838,32 +840,12 @@
   function equipmentVisualSources(pose,resolveItem){
     let resolver=resolveItem||equippedItem,back=[],front=[];for(const channel of EQUIPMENT_VISUAL_CHANNELS){let item=resolver(channel.sourceSlot);if(!item)continue;let texture=equipmentLayerTexture(pose,channel,item);if(!texture)continue;(channel.position==='back'?back:front).push({channel,texture})}return{back,base:pappaHammerSprites[pose],front}
   }
-  function scaledPaperDollBounds(bounds,scale){return bounds?{x:bounds.x*scale,y:bounds.y*scale,w:bounds.w*scale,h:bounds.h*scale}:null}
-  function drawHighResolutionBase(layer,target){
-    if(!imageReady(pappaHammerImage)||!pappaHammerSourceBounds||!target)return false;let source=pappaHammerSourceBounds,fit=Math.min(target.w/source.w,target.h/source.h),width=source.w*fit,height=source.h*fit,x=target.x+(target.w-width)/2,y=target.y+target.h-height;layer.drawImage(pappaHammerImage,source.x,source.y,source.w,source.h,x,y,width,height);return true
-  }
-  function drawHighResolutionEquipmentLayer(layer,pose,channel,item,frame,target,cellX,cellY){
-    let asset=gearAssetRef(item);if(!asset)return false;let atlas=productionGearAtlases[asset.atlasId];layer.save();layer.translate(cellX,cellY);
-    if(asset.mode==='aligned'&&atlas&&imageReady(atlas.image)){let drawn=drawAlignedProductionGearAsset(layer,asset,target);layer.restore();return drawn}
-    layer.restore();let texture=equipmentLayerTexture(pose,channel,item);if(!texture)return false;let sx=frame%4*EQUIPMENT_LAYER_CELL,sy=Math.floor(frame/4)*EQUIPMENT_LAYER_CELL;layer.drawImage(texture,sx,sy,EQUIPMENT_LAYER_CELL,EQUIPMENT_LAYER_CELL,cellX,cellY,INVENTORY_PAPER_DOLL_CELL,INVENTORY_PAPER_DOLL_CELL);return true
-  }
-  function highResolutionInventoryPaperDoll(resolveItem){
-    let stormcallerFigure=stormcallerInventoryFigure(resolveItem);
-    if(stormcallerFigure){
-      let full=highResolutionStormcallerFigure(stormcallerFigure);
-      if(full)return full
-    }
-    let resolver=resolveItem||equippedItem,pose='idle',scale=INVENTORY_PAPER_DOLL_CELL/PAPER_DOLL_CELL,out=document.createElement('canvas'),layer=out.getContext('2d');out.width=INVENTORY_PAPER_DOLL_CELL*4;out.height=INVENTORY_PAPER_DOLL_CELL*2;if(!layer)return'';layer.imageSmoothingEnabled=true;layer.imageSmoothingQuality='high';
-    let back=EQUIPMENT_VISUAL_CHANNELS.filter(channel=>channel.position==='back'),front=EQUIPMENT_VISUAL_CHANNELS.filter(channel=>channel.position!=='back').sort((a,b)=>a.layer-b.layer);
-    for(let frame=0;frame<8;frame++){let cellX=frame%4*INVENTORY_PAPER_DOLL_CELL,cellY=Math.floor(frame/4)*INVENTORY_PAPER_DOLL_CELL,target=scaledPaperDollBounds(equipmentBodyTargetBounds(pose,frame),scale);for(const channel of back){let item=resolver(channel.sourceSlot);if(item)drawHighResolutionEquipmentLayer(layer,pose,channel,item,frame,target,cellX,cellY)}layer.save();layer.translate(cellX,cellY);drawHighResolutionBase(layer,target);layer.restore();for(const channel of front){let item=resolver(channel.sourceSlot);if(item)drawHighResolutionEquipmentLayer(layer,pose,channel,item,frame,target,cellX,cellY)}}
-    return 'url("'+out.toDataURL('image/png')+'")'
-  }
   function stormcallerInventoryFigure(resolveItem){
-    let resolver=resolveItem||equippedItem,core=['hat','scarf','chest','boots'],coreReady=core.every(slot=>{let item=resolver(slot);return item&&item.setId==='stormrunner'});if(!coreReady)return null;
-    let weapon=resolver('weapon');if(weapon&&weapon.setId==='stormrunner')return stormcallerFullFigure;if(!weapon)return stormcallerWeaponlessFigure;return null
+    let resolver=resolveItem||equippedItem,complete=SET_GEAR_SLOTS.every(slot=>{let item=resolver(slot);return item&&item.setId==='stormrunner'});
+    return complete?stormcallerFullFigure:null
   }
   function stormcallerInventoryFigureVariant(resolveItem){
-    let figure=stormcallerInventoryFigure(resolveItem);return figure===stormcallerFullFigure?'full':figure===stormcallerWeaponlessFigure?'weaponless':'modular'
+    return stormcallerInventoryFigure(resolveItem)===stormcallerFullFigure?'full':'modular'
   }
   function highResolutionStormcallerFigure(figure){
     let cached=stormcallerFigurePreviewUrls.get(figure);if(cached)return cached;
@@ -874,11 +856,33 @@
     // CSS supplies the same inventory framing without allocating a throwaway atlas.
     cached='url("'+figure.src+'")';stormcallerFigurePreviewUrls.set(figure,cached);return cached
   }
-  function safeHighResolutionInventoryPaperDoll(resolveItem){
-    try{return highResolutionInventoryPaperDoll(resolveItem)}catch(error){return''}
+  function setArmoryCharacterLayer(layer,key,background,visible,kind){
+    if(!layer)return;
+    background=visible&&background?background:'none';
+    if(layer.dataset.assetKey!==key||layer.style.backgroundImage!==background){layer.dataset.assetKey=key;if(layer.style.backgroundImage!==background)layer.style.backgroundImage=background}
+    layer.dataset.kind=kind||'aligned';layer.hidden=!visible
+  }
+  function refreshArmoryCharacterLayers(){
+    if(!ui.gearCharacterHero)return false;
+    let visualKey=paperDollLoadoutKey(),fullFigure=stormcallerInventoryFigure(),fullReady=!!(fullFigure&&imageReady(fullFigure)),baseReady=imageReady(pappaHammerImage),usesStaticFigure=fullReady;
+    ui.gearCharacterHero.classList.add('domLayeredFigure');
+    ui.gearCharacterHero.classList.toggle('staticInventoryFigure',usesStaticFigure);
+    ui.gearCharacterStage.classList.toggle('staticInventoryFigureMode',usesStaticFigure);
+    ui.gearCharacterHero.style.backgroundImage='none';
+    setArmoryCharacterLayer(armoryCharacterLayers.fullFigure,usesStaticFigure?fullFigure.src:'','url("'+(usesStaticFigure?fullFigure.src:'')+'")',usesStaticFigure,'full');
+    setArmoryCharacterLayer(armoryCharacterLayers.baseBody,pappaHammerImage.src,'url("'+pappaHammerImage.src+'")',!usesStaticFigure&&baseReady,'aligned');
+    for(const channel of EQUIPMENT_VISUAL_CHANNELS){
+      let layer=armoryCharacterLayers[channel.id],item=equippedItem(channel.sourceSlot),asset=gearAssetRef(item),atlas=asset&&productionGearAtlases[asset.atlasId],ready=!!(!usesStaticFigure&&asset&&atlas&&imageReady(atlas.image));
+      if(ready&&asset.mode==='aligned')setArmoryCharacterLayer(layer,asset.id,'url("'+asset.path+'")',true,'aligned');
+      else if(ready){let texture=equipmentLayerTexture('idle',channel,item),background=equipmentTextureUrl(texture);setArmoryCharacterLayer(layer,asset.id,background,!!background,'atlas')}
+      else setArmoryCharacterLayer(layer,'','none',false,'aligned')
+    }
+    ui.gearCharacterHero.dataset.gearVisualKey=visualKey;
+    return usesStaticFigure
   }
   function equipmentCssBackground(pose,resolveItem){
-    let sources=equipmentVisualSources(pose,resolveItem),ordered=[...sources.front].sort((a,b)=>b.channel.layer-a.channel.layer).map(entry=>entry.texture),base=sources.base;if(base)ordered.push(base);ordered.push(...sources.back.sort((a,b)=>b.channel.layer-a.channel.layer).map(entry=>entry.texture));return ordered.map(equipmentTextureUrl).filter(Boolean).join(',')
+    let resolver=resolveItem||equippedItem,cacheKey=pose+'|'+EQUIPMENT_VISUAL_CHANNELS.map(channel=>{let item=resolver(channel.sourceSlot),asset=gearAssetRef(item);return asset?asset.id:'-'}).join('|'),cached=equipmentCssBackgroundCache.get(cacheKey);if(cached)return cached;
+    let sources=equipmentVisualSources(pose,resolver),ordered=[...sources.front].sort((a,b)=>b.channel.layer-a.channel.layer).map(entry=>entry.texture),base=sources.base;if(base)ordered.push(base);ordered.push(...sources.back.sort((a,b)=>b.channel.layer-a.channel.layer).map(entry=>entry.texture));let background=ordered.map(equipmentTextureUrl).filter(Boolean).join(',');if(background){equipmentCssBackgroundCache.set(cacheKey,background);while(equipmentCssBackgroundCache.size>18)equipmentCssBackgroundCache.delete(equipmentCssBackgroundCache.keys().next().value)}return background
   }
   function drawEquipmentCharacterFrame(pose,frame,size){
     let sources=equipmentVisualSources(pose),draw=source=>{if(imageReady(source))drawAtlasCell(source,frame%4,Math.floor(frame/4),4,2,size,size,false,false)};for(const entry of sources.back.sort((a,b)=>a.channel.layer-b.channel.layer))draw(entry.texture);draw(sources.base);for(const entry of sources.front.sort((a,b)=>a.channel.layer-b.channel.layer))draw(entry.texture)
@@ -888,7 +892,11 @@
     let sources=equipmentVisualSources(pose,resolveItem),out=document.createElement('canvas'),outCtx=out.getContext('2d');out.width=PAPER_DOLL_CELL*4;out.height=PAPER_DOLL_CELL*2;if(!outCtx)return sources.base;let ordered=[...sources.back.sort((a,b)=>a.channel.layer-b.channel.layer).map(entry=>entry.texture),sources.base,...sources.front.sort((a,b)=>a.channel.layer-b.channel.layer).map(entry=>entry.texture)].filter(Boolean);for(const source of ordered)outCtx.drawImage(source,0,0,source.width||source.naturalWidth,source.height||source.naturalHeight,0,0,out.width,out.height);return out
   }
   function applyPaperDollLayers(key,background){
-    paperDollAtlases=Object.assign({},pappaHammerSprites);paperDollKey=key;paperDollCurrentUrl=background;let visualKey=paperDollLoadoutKey();ui.pappaHammerBaseSprite.style.backgroundImage=background;ui.gearCharacterHero.style.backgroundImage=background;ui.gearCharacterHero.dataset.gearVisualKey=visualKey;if(ui.combatPortraitSprite)ui.combatPortraitSprite.style.backgroundImage=background
+    paperDollAtlases=Object.assign({},pappaHammerSprites);paperDollKey=key;paperDollCurrentUrl=background;let visualKey=paperDollLoadoutKey();if(ui.pappaHammerBaseSprite.style.backgroundImage!==background)ui.pappaHammerBaseSprite.style.backgroundImage=background;
+    // The inventory can display a dedicated full-set still. Background warmup runs
+    // asynchronously, so it must never replace that still with the 4x2 gameplay atlas.
+    if(!ui.gearCharacterHero.classList.contains('domLayeredFigure')&&!ui.gearCharacterHero.classList.contains('staticInventoryFigure')&&ui.gearCharacterHero.style.backgroundImage!==background)ui.gearCharacterHero.style.backgroundImage=background;
+    ui.gearCharacterHero.dataset.gearVisualKey=visualKey;if(ui.combatPortraitSprite&&ui.combatPortraitSprite.style.backgroundImage!==background)ui.combatPortraitSprite.style.backgroundImage=background
   }
   function refreshPaperDoll(){
     let key='modular:'+pappaHammerAssetRevision+':'+paperDollLoadoutKey();if(key===paperDollKey&&paperDollAtlases.idle)return;if(!paperDollAssetsReady())return;applyPaperDollLayers(key,equipmentCssBackground('idle'))
@@ -901,18 +909,25 @@
       deleteProperty(target,slot){if(!Object.prototype.hasOwnProperty.call(target,slot))return true;delete target[slot];markEquipmentChanged(slot);return true}
     })
   }
-  function markEquipmentChanged(slot){equipmentMutationDirty=true;if(GEAR_SLOTS.includes(slot))equipmentChangedSlots.add(slot);if(!equipmentMutationDepth)synchronizeEquipmentPreview()}
+  function requestEquipmentPreviewSync(){
+    // Gameplay is hidden behind the Armory. Its renderer is flushed when the
+    // Armory closes, avoiding invisible composition work during rapid swaps.
+    if(ui.gearOverlay&&ui.gearOverlay.classList.contains('show'))return;
+    synchronizeEquipmentPreview()
+  }
+  function flushEquipmentPreviewSync(){synchronizeEquipmentPreview()}
+  function markEquipmentChanged(slot){equipmentMutationDirty=true;if(GEAR_SLOTS.includes(slot))equipmentChangedSlots.add(slot);if(!equipmentMutationDepth)requestEquipmentPreviewSync()}
   function batchEquipmentChanges(work){
-    equipmentMutationDepth++;try{return work()}finally{equipmentMutationDepth--;if(!equipmentMutationDepth&&equipmentMutationDirty)synchronizeEquipmentPreview()}
+    equipmentMutationDepth++;try{return work()}finally{equipmentMutationDepth--;if(!equipmentMutationDepth&&equipmentMutationDirty)requestEquipmentPreviewSync()}
   }
   function synchronizeEquipmentPreview(){
     if(!equipmentMutationDirty)return;equipmentMutationDirty=false;equipmentRevision++;paperDollKey='';paperDollCurrentUrl='';paperDollAtlases={idle:null,run:null,attack:null};perfState.gearKey='';perfState.gearValue=null;cargoStaticKey='';cargoStaticValue=null;hoverGearUid=null;
     refreshPaperDoll();
-    if(!paperDollCurrentUrl){let fallback=pappaHammerSprites.idle&&pappaHammerSprites.idle.src?'url("'+pappaHammerSprites.idle.src+'")':'';paperDollCurrentUrl=fallback;if(fallback){ui.pappaHammerBaseSprite.style.backgroundImage=fallback;ui.gearCharacterHero.style.backgroundImage=fallback;if(ui.combatPortraitSprite)ui.combatPortraitSprite.style.backgroundImage=fallback}}
+    if(!paperDollCurrentUrl){let fallback=pappaHammerSprites.idle&&pappaHammerSprites.idle.src?'url("'+pappaHammerSprites.idle.src+'")':'';paperDollCurrentUrl=fallback;if(fallback){ui.pappaHammerBaseSprite.style.backgroundImage=fallback;if(!ui.gearCharacterHero.classList.contains('domLayeredFigure'))ui.gearCharacterHero.style.backgroundImage=fallback;if(ui.combatPortraitSprite)ui.combatPortraitSprite.style.backgroundImage=fallback}}
     ui.gearCharacterHero.dataset.gearVisualKey=paperDollLoadoutKey();equipmentChangedSlots.clear();scheduleEquipmentPrewarm(ui.gearOverlay.classList.contains('show')?220:0)
   }
   function applyEquippedPaperDoll(){
-    if(!ui.gearCharacterHero)return;if(paperDollCurrentUrl&&ui.gearCharacterHero.style.backgroundImage!==paperDollCurrentUrl)ui.gearCharacterHero.style.backgroundImage=paperDollCurrentUrl;applyInventoryBackdrop(ui.gearCharacterStage,inventoryBackdropSetId())
+    if(!ui.gearCharacterHero)return;if(!ui.gearCharacterHero.classList.contains('domLayeredFigure')&&paperDollCurrentUrl&&ui.gearCharacterHero.style.backgroundImage!==paperDollCurrentUrl)ui.gearCharacterHero.style.backgroundImage=paperDollCurrentUrl;applyInventoryBackdrop(ui.gearCharacterStage,inventoryBackdropSetId())
   }
   function paperDollAtlasReport(pose,includePreview,reportAtlas){
     let atlas=reportAtlas||paperDollAtlases[pose];if(!imageReady(atlas))return null;let width=atlas.naturalWidth||atlas.width,height=atlas.naturalHeight||atlas.height,probe=document.createElement('canvas'),probeCtx=probe.getContext('2d');probe.width=128;probe.height=64;probeCtx.drawImage(atlas,0,0,width,height,0,0,probe.width,probe.height);let pixels=probeCtx.getImageData(0,0,probe.width,probe.height).data,hash=2166136261,opaque=0;
@@ -1114,7 +1129,7 @@
     resumeButton:['Resume','Close settings and continue.'],
     abandonButton:['Abandon Expedition','Return immediately and lose all unsecured expedition cargo.']
   };
-  let helpAnchor=null,helpTimer=0,helpHoverTimer=0,touchHelpPress=null,suppressedHelpTarget=null,suppressedHelpUntil=0;
+  let helpAnchor=null,helpTimer=0,helpHoverTimer=0,touchHelpPress=null,suppressedHelpTarget=null,suppressedHelpUntil=0,helpFocusFromKeyboard=false;
   function cleanHelpText(value){return String(value||'').replace(/\s+/g,' ').trim()}
   function helpTarget(node){
     if(!node||!node.closest)return null;
@@ -1179,9 +1194,16 @@
     clearTimeout(helpHoverTimer);helpHoverTimer=setTimeout(()=>{if(target&&target.isConnected!==false)showHelp(target,false)},140)
   }
   function bindContextHelp(){
+    document.addEventListener('keydown',event=>{
+      if(event.key==='Tab'||event.key.startsWith('Arrow'))helpFocusFromKeyboard=true
+    },true);
+    document.addEventListener('pointerdown',()=>{
+      helpFocusFromKeyboard=false;
+      if(helpAnchor)hideHelp()
+    },true);
     document.addEventListener('pointerover',event=>{if(event.pointerType==='touch')return;let target=helpTarget(event.target);if(target&&target!==helpAnchor)queueHelp(target)});
     document.addEventListener('pointerout',event=>{if(event.pointerType==='touch')return;clearTimeout(helpHoverTimer);if(!helpAnchor)return;let next=event.relatedTarget;if(next&&helpAnchor.contains&&helpAnchor.contains(next))return;hideHelp()});
-    document.addEventListener('focusin',event=>{let target=helpTarget(event.target);if(target)showHelp(target,false)});
+    document.addEventListener('focusin',event=>{if(!helpFocusFromKeyboard)return;let target=helpTarget(event.target);if(target)showHelp(target,false)});
     document.addEventListener('focusout',event=>{if(helpAnchor)hideHelp()});
     document.addEventListener('pointerdown',beginTouchHelp,true);
     document.addEventListener('pointermove',moveTouchHelp,true);
@@ -1349,12 +1371,18 @@
   function salvageSelectedGear(){executeBulkGearAction('salvage')}
   function formatSetBonus(stats){return formatGearStats({stats}).join(' \u00B7 ')}
   function renderSetSummary(){gearPerf.setRenders++;let counts=equippedSetCounts(),sets=SET_DEFINITIONS.filter(set=>counts[set.id]);ui.gearSetSummary.innerHTML='';if(!sets.length){ui.gearSetSummary.innerHTML='<div class="setEmpty" data-help-title="Set Bonuses" data-help="Equip matching pieces to awaken fixed set bonuses. Every complete set masters a combat-changing signature."><b>SET BONUSES</b><span>Matching gear awakens build-defining effects.</span></div>';return}for(const set of sets.sort((a,b)=>counts[b.id]-counts[a.id])){let count=counts[set.id],signature=GEAR_SIGNATURES[set.id],bonusTiers=setBonusTiers(set),awakens=setSignaturePieces(set),card=document.createElement('article');card.className='setProgress rarity'+LOOT_RARITIES[set.rarity].rank+(signature?' featured':'');card.style.setProperty('--set-color',signature?signature.color:set.accent);card.tabIndex=0;card.setAttribute('data-help-title',set.name+' Set');card.setAttribute('data-help','You wear '+count+' of 5 pieces. Bonuses awaken at '+bonusTiers.join(', ')+' pieces.'+(signature?' '+signature.name+' awakens at '+awakens+' pieces and masters at 5.':''));let tiers=bonusTiers.map(tier=>'<span class="'+(count>=tier?'active':'locked')+'"><i>'+tier+'</i><b>'+formatSetBonus(set.bonus[tier])+'</b></span>').join('');card.innerHTML='<header><strong>'+set.mark+' '+set.name+'</strong><em>'+count+' / 5</em></header><div>'+tiers+'</div>'+(signature?gearSignatureMarkup(set,count):'');ui.gearSetSummary.appendChild(card)}}
-  function renderBaseGear(){gearPerf.baseRenders++;let equipped=[];ui.baseLoadout.innerHTML='';for(const slot of GEAR_SLOTS){let gear=equippedGear(slot),item=gearDefinition(gear),meta=GEAR_SLOT_META[slot],rarity=item&&LOOT_RARITIES[item.rarity],cell=document.createElement('i');cell.className='baseGearSlot'+(item?' filled rarity'+rarity.rank:'');cell.title=item?meta.name+': '+item.name+' \u00B7 Level '+gear.level:meta.name+': Empty';if(item){equipped.push(gear);cell.style.setProperty('--gear-color',rarity.color);cell.innerHTML=gearArtMarkup(gear,'micro');cell.tabIndex=0;bindGearHover(cell,gear)}else cell.textContent='\u00B7';ui.baseLoadout.appendChild(cell)}let highest=equipped.slice().sort(compareGearPriority)[0],highestDef=gearDefinition(highest),sets=equippedSetCounts(),bestSet=Object.keys(sets).sort((a,b)=>sets[b]-sets[a])[0],fullSetId=equippedFullSetId(),profile=equippedRarityProfile();applyLoadoutRarity(ui.gearCharacterStage,profile);applyLoadoutRarity(ui.pappaHammerBase,profile);applyLoadoutSetVisual(ui.gearCharacterStage,fullSetId);applyLoadoutSetVisual(ui.pappaHammerBase,fullSetId);applyInventoryBackdrop(ui.gearCharacterStage,inventoryBackdropSetId());ui.gearLoadoutName.textContent=equipped.length+'/'+GEAR_SLOTS.length+' EQUIPPED'+(bestSet&&sets[bestSet]>=2?' \u00B7 '+SET_BY_ID[bestSet].name:highestDef?' \u00B7 '+LOOT_RARITIES[highestDef.rarity].name:'');ui.gearEquippedCount.textContent=equipped.length+' / '+GEAR_SLOTS.length;ui.gearPreviewName.textContent=highestDef?highestDef.name.toUpperCase():'FIELD LOADOUT';ui.gearPreviewName.style.setProperty('--loadout-color',profile.color);let stats=gearStats();ui.baseGearStats.innerHTML='<span tabindex="0" data-help-title="Health" data-help="Maximum damage Pappa can survive before an expedition ends."><b>'+maxHp()+'</b> HP</span><span tabindex="0" data-help-title="Hammer Damage" data-help="Base damage dealt by close-range hammer impacts before critical hits and relic bonuses."><b>'+shotDamage()+'</b> DMG</span><span tabindex="0" data-help-title="Pickup Reach" data-help="Distance from which nearby coins, caches and pickups are drawn toward Pappa."><b>'+magnetRange()+'</b> REACH</span><span tabindex="0" data-help-title="Critical Chance" data-help="Chance for a melee impact to deal amplified critical damage."><b>'+Math.round(stats.crit*100)+'%</b> CRIT</span>';refreshPaperDoll()}
+  function renderBaseGear(){gearPerf.baseRenders++;let equipped=[];ui.baseLoadout.innerHTML='';for(const slot of GEAR_SLOTS){let gear=equippedGear(slot),item=gearDefinition(gear),meta=GEAR_SLOT_META[slot],rarity=item&&LOOT_RARITIES[item.rarity],cell=document.createElement('i');cell.className='baseGearSlot'+(item?' filled rarity'+rarity.rank:'');cell.title=item?meta.name+': '+item.name+' \u00B7 Level '+gear.level:meta.name+': Empty';if(item){equipped.push(gear);cell.style.setProperty('--gear-color',rarity.color);cell.innerHTML=gearArtMarkup(gear,'micro');cell.tabIndex=0;bindGearHover(cell,gear)}else cell.textContent='\u00B7';ui.baseLoadout.appendChild(cell)}let highest=equipped.slice().sort(compareGearPriority)[0],highestDef=gearDefinition(highest),sets=equippedSetCounts(),bestSet=Object.keys(sets).sort((a,b)=>sets[b]-sets[a])[0],fullSetId=equippedFullSetId(),profile=equippedRarityProfile();applyLoadoutRarity(ui.gearCharacterStage,profile);applyLoadoutRarity(ui.pappaHammerBase,profile);applyLoadoutSetVisual(ui.gearCharacterStage,fullSetId);applyLoadoutSetVisual(ui.pappaHammerBase,fullSetId);applyInventoryBackdrop(ui.gearCharacterStage,inventoryBackdropSetId());ui.gearLoadoutName.textContent=equipped.length+'/'+GEAR_SLOTS.length+' EQUIPPED'+(bestSet&&sets[bestSet]>=2?' \u00B7 '+SET_BY_ID[bestSet].name:highestDef?' \u00B7 '+LOOT_RARITIES[highestDef.rarity].name:'');ui.gearEquippedCount.textContent=equipped.length+' / '+GEAR_SLOTS.length;ui.gearPreviewName.textContent=highestDef?highestDef.name.toUpperCase():'FIELD LOADOUT';ui.gearPreviewName.style.setProperty('--loadout-color',profile.color);let stats=gearStats();ui.baseGearStats.innerHTML='<span tabindex="0" data-help-title="Health" data-help="Maximum damage Pappa can survive before an expedition ends."><b>'+maxHp()+'</b> HP</span><span tabindex="0" data-help-title="Hammer Damage" data-help="Base damage dealt by close-range hammer impacts before critical hits and relic bonuses."><b>'+shotDamage()+'</b> DMG</span><span tabindex="0" data-help-title="Pickup Reach" data-help="Distance from which nearby coins, caches and pickups are drawn toward Pappa."><b>'+magnetRange()+'</b> REACH</span><span tabindex="0" data-help-title="Critical Chance" data-help="Chance for a melee impact to deal amplified critical damage."><b>'+Math.round(stats.crit*100)+'%</b> CRIT</span>';if(!ui.gearOverlay.classList.contains('show'))refreshPaperDoll()}
   function renderGearFilters(){ui.gearFilters.innerHTML='';for(const slot of ['all',...GEAR_SLOTS]){let button=document.createElement('button'),meta=slot==='all'?{name:'ALL GEAR',icon:'\u2606'}:GEAR_SLOT_META[slot],count=slot==='all'?inventoryCount():save.gear.filter(gear=>gearDefinition(gear).slot===slot).length;button.className=gearFilter===slot?'active':'';button.setAttribute('aria-pressed',gearFilter===slot?'true':'false');button.setAttribute('data-help-title',meta.name);button.setAttribute('data-help','Show '+(slot==='all'?'every secured item':meta.name.toLowerCase()+' items')+' in the bag. '+count+' currently match.');button.innerHTML='<i>'+meta.icon+'</i><span>'+meta.name+'</span><small>'+count+'</small>';button.addEventListener('click',()=>setGearFilter(slot));ui.gearFilters.appendChild(button)}ui.gearRarityFilters.innerHTML='';for(const rarity of ['all',...Object.keys(LOOT_RARITIES)]){let button=document.createElement('button'),count=rarity==='all'?inventoryCount():save.gear.filter(gear=>gearDefinition(gear).rarity===rarity).length,label=rarity==='all'?'ALL':LOOT_RARITIES[rarity].name;button.className=gearRarityFilter===rarity?'active':'';button.textContent=label+'  '+count;button.setAttribute('aria-pressed',gearRarityFilter===rarity?'true':'false');button.setAttribute('data-help-title',label+' Rarity');button.setAttribute('data-help','Filter the bag to '+(rarity==='all'?'all rarity grades.':'only '+label+' gear. '+count+' secured item'+(count===1?' matches.':'s match.')));if(rarity!=='all')button.style.setProperty('--filter-color',LOOT_RARITIES[rarity].color);button.addEventListener('click',()=>setGearRarityFilter(rarity));ui.gearRarityFilters.appendChild(button)}}
   function renderGearRaritySummary(){gearPerf.rarityRenders++;ui.gearRaritySummary.innerHTML='';for(const id of Object.keys(LOOT_RARITIES)){let rarity=LOOT_RARITIES[id],count=save.gear.filter(gear=>gearDefinition(gear).rarity===id).length,button=document.createElement('button');button.className='rarityCount rarity'+rarity.rank+(gearRarityFilter===id?' active':'');button.style.setProperty('--rarity-color',rarity.color);button.innerHTML='<i></i><span><b>'+count+'</b><small>'+rarity.name+'</small></span>';button.setAttribute('data-help-title',rarity.name+' Gear');button.setAttribute('data-help',count+' '+rarity.name+' item'+(count===1?' is':'s are')+' secured. Select to toggle this rarity filter.');button.addEventListener('click',()=>setGearRarityFilter(gearRarityFilter===id?'all':id));ui.gearRaritySummary.appendChild(button)}}
   function refreshArmoryCharacter(){
     gearPerf.baseRenders++;let equipped=GEAR_SLOTS.map(equippedGear).filter(Boolean),highest=equipped.slice().sort(compareGearPriority)[0],highestDef=gearDefinition(highest),sets=equippedSetCounts(),bestSet=Object.keys(sets).sort((a,b)=>sets[b]-sets[a])[0],fullSetId=equippedFullSetId(),profile=equippedRarityProfile();
-    refreshPaperDoll();let stormcallerFigure=stormcallerInventoryFigure(),inventoryFigure=safeHighResolutionInventoryPaperDoll(),usesStaticFigure=!!(stormcallerFigure&&inventoryFigure);paperDollCurrentUrl=inventoryFigure||paperDollCurrentUrl;ui.gearCharacterHero.classList.toggle('staticInventoryFigure',usesStaticFigure);ui.gearCharacterStage.classList.toggle('staticInventoryFigureMode',usesStaticFigure);applyEquippedPaperDoll();applyLoadoutRarity(ui.gearCharacterStage,profile);applyLoadoutSetVisual(ui.gearCharacterStage,fullSetId);applyInventoryBackdrop(ui.gearCharacterStage,inventoryBackdropSetId());ui.gearLoadoutName.textContent=equipped.length+'/'+GEAR_SLOTS.length+' EQUIPPED'+(bestSet&&sets[bestSet]>=2?' \u00B7 '+SET_BY_ID[bestSet].name:highestDef?' \u00B7 '+LOOT_RARITIES[highestDef.rarity].name:'');ui.gearEquippedCount.textContent=equipped.length+' / '+GEAR_SLOTS.length;ui.gearPreviewName.textContent=highestDef?highestDef.name.toUpperCase():'FIELD LOADOUT';ui.gearPreviewName.style.setProperty('--loadout-color',profile.color);if(paperDollCurrentUrl)ui.gearCharacterHero.style.backgroundImage=paperDollCurrentUrl;ui.gearCharacterHero.dataset.gearVisualKey=paperDollLoadoutKey()
+    if(!ui.gearOverlay.classList.contains('show'))refreshPaperDoll();let stormcallerFigure=stormcallerInventoryFigure(),staticFigureReady=!!(stormcallerFigure&&imageReady(stormcallerFigure));
+    if(stormcallerFigure&&!staticFigureReady&&!stormcallerFigureRefreshPending){
+      stormcallerFigureRefreshPending=true;
+      let finish=()=>{stormcallerFigureRefreshPending=false;if(ui.gearOverlay.classList.contains('show'))refreshArmoryCharacter()};
+      stormcallerFigure.addEventListener('load',finish,{once:true});stormcallerFigure.addEventListener('error',finish,{once:true})
+    }
+    refreshArmoryCharacterLayers();applyEquippedPaperDoll();applyLoadoutRarity(ui.gearCharacterStage,profile);applyLoadoutSetVisual(ui.gearCharacterStage,fullSetId);applyInventoryBackdrop(ui.gearCharacterStage,inventoryBackdropSetId());ui.gearLoadoutName.textContent=equipped.length+'/'+GEAR_SLOTS.length+' EQUIPPED'+(bestSet&&sets[bestSet]>=2?' \u00B7 '+SET_BY_ID[bestSet].name:highestDef?' \u00B7 '+LOOT_RARITIES[highestDef.rarity].name:'');ui.gearEquippedCount.textContent=equipped.length+' / '+GEAR_SLOTS.length;ui.gearPreviewName.textContent=highestDef?highestDef.name.toUpperCase():'FIELD LOADOUT';ui.gearPreviewName.style.setProperty('--loadout-color',profile.color)
   }
   function renderGearDetail(gear,copies){
     gearPerf.detailRenders++;ui.gearDetail.innerHTML='';let item=gearDefinition(gear);
@@ -1368,7 +1396,7 @@
   function turnGear(delta){gearTurnAngle+=delta;updateGearTurntable()}
   function activateGearEntry(event,gear){
     if(!gear||performance.now()<suppressGearClickUntil)return;
-    let now=performance.now(),touch=gearPointerType==='touch'||mobileArmory(),doubleTap=touch&&gearTapUid===gear.uid&&now-gearTapAt<=520&&now>=gearQuickActionUntil;
+    let now=performance.now(),touch=gearPointerType==='touch'||mobileArmory(),doubleTap=touch&&gearTapUid===gear.uid&&now-gearTapAt<=720&&now>=gearQuickActionUntil;
     if(doubleTap){event.preventDefault();event.stopPropagation();gearTapUid=null;gearTapAt=0;gearQuickActionUntil=now+360;gearBulkSelection.delete(gear.uid);renderGearBulkActions();let item=gearDefinition(gear);if(!item||!GEAR_SLOTS.includes(item.slot))return;if(save.equipped[item.slot]===gear.uid)unequipGearSlot(item.slot);else equipGear(gear.uid);return}
     clearGearActionConfirm();selectedGearUid=gear.uid;gearTapUid=touch?gear.uid:null;gearTapAt=touch?now:0;toggleBulkGear(gear.uid)
   }
@@ -1427,14 +1455,14 @@
   function renderGearLocker(){
     gearPerf.fullRenders++;renderBaseGear();refreshArmoryCharacter();updateGearTurntable();renderGearProgressAndStats();renderGearLoadoutSlots();renderSetSummary();renderGearFilters();renderGearRaritySummary();renderGearInventoryArea()
   }
-  function openGearLocker(slot){clearGearDropState();clearGearBulkSelection();gearFilter=slot||'all';gearRarityFilter='all';selectedGearUid=(GEAR_SLOTS.map(equippedGear).filter(Boolean).sort((a,b)=>gearScore(b)-gearScore(a))[0]||save.gear[0]||{}).uid||null;resetFilteredSaleArm();setGearView();renderGearLocker();ui.gearOverlay.classList.add('show');if(document.documentElement)document.documentElement.classList.add('gearPanelOpen');scheduleEquipmentPrewarm();if(save.settings.sound)setTimeout(ensureAudio,0)}
+  function openGearLocker(slot){hideHelp();cancelEquipmentPrewarm();clearGearDropState();clearGearBulkSelection();gearFilter=slot||'all';gearRarityFilter='all';selectedGearUid=(GEAR_SLOTS.map(equippedGear).filter(Boolean).sort((a,b)=>gearScore(b)-gearScore(a))[0]||save.gear[0]||{}).uid||null;resetFilteredSaleArm();setGearView();ui.gearOverlay.classList.add('show');if(document.documentElement)document.documentElement.classList.add('gearPanelOpen');renderGearLocker();if(save.settings.sound)setTimeout(ensureAudio,0)}
   function closeGearMobileSheet(){gearMobileSheetMode=null;ui.gearMobileSheet.classList.remove('show');ui.gearMobileSheet.setAttribute('aria-hidden','true')}
   function renderGearMobileSheet(){
     ui.gearMobileSheetOptions.innerHTML='';if(gearMobileSheetMode==='sort'){ui.gearMobileSheetTitle.textContent='SORT GEAR';for(const sort of GEAR_SORTS){let button=document.createElement('button');button.className=gearSort===sort.id?'active':'';button.innerHTML='<span>'+sort.name+'</span><i>'+(gearSort===sort.id?'CHECK':'')+'</i>';button.addEventListener('click',()=>{setGearSort(sort.id);closeGearMobileSheet()});ui.gearMobileSheetOptions.appendChild(button)}let reset=document.createElement('button');reset.className='reset';reset.innerHTML='<span>RESET TO POWER</span>';reset.addEventListener('click',()=>{setGearSort('power');closeGearMobileSheet()});ui.gearMobileSheetOptions.appendChild(reset);return}
     ui.gearMobileSheetTitle.textContent='FILTER GEAR';let slotGroup=document.createElement('div');slotGroup.className='gearSheetGroup';slotGroup.innerHTML='<small>GEAR TYPE</small>';for(const slot of ['all',...GEAR_SLOTS]){let button=document.createElement('button');button.className=gearFilter===slot?'active':'';button.textContent=slot==='all'?'ALL GEAR':GEAR_SLOT_META[slot].name;button.addEventListener('click',()=>{setGearFilter(slot);renderGearMobileSheet()});slotGroup.appendChild(button)}let rarityGroup=document.createElement('div');rarityGroup.className='gearSheetGroup raritySheetGroup';rarityGroup.innerHTML='<small>RARITY</small>';for(const rarityId of ['all',...Object.keys(LOOT_RARITIES)]){let button=document.createElement('button'),rarity=LOOT_RARITIES[rarityId];button.className=gearRarityFilter===rarityId?'active':'';button.textContent=rarityId==='all'?'ALL RARITIES':rarity.name;if(rarity)button.style.setProperty('--sheet-color',rarity.color);button.addEventListener('click',()=>{setGearRarityFilter(rarityId);renderGearMobileSheet()});rarityGroup.appendChild(button)}let actions=document.createElement('div');actions.className='gearSheetActions';let reset=document.createElement('button');reset.className='reset';reset.textContent='RESET';reset.addEventListener('click',()=>{gearFilter='all';gearRarityFilter='all';renderGearFilters();renderGearRaritySummary();renderGearInventoryArea();renderGearMobileSheet()});let done=document.createElement('button');done.className='done';done.textContent='DONE';done.addEventListener('click',closeGearMobileSheet);actions.append(reset,done);ui.gearMobileSheetOptions.append(slotGroup,rarityGroup,actions)
   }
   function openGearMobileSheet(mode){gearMobileSheetMode=mode;renderGearMobileSheet();ui.gearMobileSheet.classList.add('show');ui.gearMobileSheet.setAttribute('aria-hidden','false')}
-  function closeGearLocker(){flushEquipPersist();clearGearDropState();clearGearBulkSelection();hideGearHover();closeGearMobileSheet();ui.gearOverlay.classList.remove('show');if(document.documentElement)document.documentElement.classList.remove('gearPanelOpen');paperDollCurrentUrl=equipmentCssBackground('idle');ui.gearCharacterHero.classList.remove('staticInventoryFigure');ui.gearCharacterStage.classList.remove('staticInventoryFigureMode');ui.gearCharacterHero.style.backgroundImage=paperDollCurrentUrl;refreshBase()}
+  function closeGearLocker(){flushEquipPersist();flushEquipmentPreviewSync();clearGearDropState();clearGearBulkSelection();hideGearHover();hideHelp();closeGearMobileSheet();ui.gearOverlay.classList.remove('show');if(document.documentElement)document.documentElement.classList.remove('gearPanelOpen');paperDollCurrentUrl=equipmentCssBackground('idle');ui.gearCharacterHero.classList.remove('staticInventoryFigure');ui.gearCharacterStage.classList.remove('staticInventoryFigureMode');refreshBase()}
   function refreshResourceCounters(){ui.bank.textContent=Math.floor(save.scrap);ui.materials.textContent=save.materials;ui.legendaryCores.textContent=save.legendaryCores+' CORE'+(save.legendaryCores===1?'':'S');ui.cores.textContent=save.cores;ui.best.textContent=save.best;ui.pappaLevel.textContent=save.level}
   function refreshBase(){
     refreshResourceCounters();let secured=MODULE_IDS.reduce((sum,id)=>sum+save.blueprints[id].copies,0),gearCount=inventoryCount();ui.scene.classList.toggle('evolved1',gearCount>=1||secured>=1);ui.scene.classList.toggle('evolved2',gearCount>=5||secured>=4);ui.scene.classList.toggle('evolved3',gearCount>=12||secured>=9);renderBaseGear();
@@ -2026,7 +2054,7 @@
   function salvageReward(gear){let item=gearDefinition(gear);return item&&(SALVAGE_REWARDS[item.rarity]||SALVAGE_REWARDS[item.dropBand])||SALVAGE_REWARDS.common}
   function salvageRewardText(gear){let reward=salvageReward(gear);return '+'+reward.materials+' Material'+(reward.materials===1?'':'s')+(reward.cores?'  +  '+reward.cores+' Legendary Core':'')}
   function bossLootCharacterImage(){
-    let current=safeHighResolutionInventoryPaperDoll();if(current)return current;let atlas=paperDollAtlases.idle||pappaHammerSprites.idle;return atlas?(typeof atlas.toDataURL==='function'?'url("'+atlas.toDataURL('image/png')+'")':'url("'+atlas.src+'")'):''
+    let full=stormcallerInventoryFigure();if(full&&imageReady(full))return highResolutionStormcallerFigure(full);let current=equipmentCssBackground('idle');if(current)return current;let atlas=paperDollAtlases.idle||pappaHammerSprites.idle;return atlas&&atlas.src?'url("'+atlas.src+'")':''
   }
   function renderBossLootDecision(){
     let gear=bossLootRewards[bossLootSelected],item=gearDefinition(gear);if(!gear||!item){showBossLootPath();return}let rarity=LOOT_RARITIES[item.rarity],set=item.setId&&SET_BY_ID[item.setId],score=Math.round(gearScore(gear)*10)/10;
@@ -3384,11 +3412,12 @@
         player.x=WORLD.w/2;player.y=WORLD.h/2;player.hp=options.hurt?player.maxHp*.5:player.maxHp;player.inv=99;player.fire=99;player.spinCd=0;player.spinTime=0;player.spinLeap=0;player.spinAutoRemaining=0;player.spinAutoDuration=0;player.spinManual=false;player.spinFinishing=false;player.spinFinishingUntil=0;player.spinHits=0;player.spinKills=0;player.spinCoins=0;player.spinHeal=0;player.spinLifeTargets=new Set();player.lightningPhase='idle';player.lightningTime=0;player.lightningRate=0;player.lightningQueue=0;player.lightningTarget=null;player.lightningHistoryTargets=Array(LIGHTNING_DASH.targetHistorySize).fill(null);player.lightningHistoryTimes=Array(LIGHTNING_DASH.targetHistorySize).fill(0);player.lightningHistoryCursor=0;player.lightningBossSide=1;player.lightningImpacts=0;player.lightningPresses=0;player.lightningChainHits=0;player.lightningKills=0;player.lightningTempo=0;player.lightningLastTap=-99;player.stormAwakening=0;player.handlava=createHandlavaState();player.natureAlly=createNatureAllyState();player.natureFocusUntil=0;spinHeld=false;spinInputState.activeInstances=0;
         if(options.fullRiskreaver||options.fullBlackHole||options.fullLightning||options.fullLava||options.fullNature){
           let set=SET_BY_ID[options.fullBlackHole?'blackHole':options.fullLightning?'stormrunner':options.fullLava?'lavaSet':options.fullNature?'natureSet':'riskreaver'];
-          let fullSetItems=options.fullLightning?ACTIVE_SET_ITEMS.filter(entry=>entry.setId===set.id):SET_GEAR_SLOTS.map(slot=>SET_ITEMS.find(entry=>entry.setId===set.id&&entry.slot===slot)).filter(Boolean);for(const slot of GEAR_SLOTS)save.equipped[slot]=null;for(const item of fullSetItems){let gear=rollGearInstance(item,Math.max(set.minLevel,save.level),1.08);save.gear.push(gear);save.equipped[item.slot]=gear.uid}
+          let fullSetItems=options.fullLightning?ACTIVE_SET_ITEMS.filter(entry=>entry.setId===set.id):SET_GEAR_SLOTS.map(slot=>SET_ITEMS.find(entry=>entry.setId===set.id&&entry.slot===slot)).filter(Boolean);
+          batchEquipmentChanges(()=>{for(const slot of GEAR_SLOTS)save.equipped[slot]=null;for(const item of fullSetItems){let gear=rollGearInstance(item,Math.max(set.minLevel,save.level),1.08);save.gear.push(gear);save.equipped[item.slot]=gear.uid}});
           if(options.fullLightning)player.stormAwakening=LIGHTNING_DASH.overchargeDuration
         }
         let amount=Math.max(1,Math.min(HORDE.maxPopulation,Math.floor(count||18))),centerX=player.x+150,centerY=player.y;
-        paperDollKey='';waveDirector={number:1,phase:'active',timer:999,spawnClock:0,queue:[],anchors:[],packId:1,kills:0,startCount:amount,targetPopulation:amount,clearRewarded:false};
+        waveDirector={number:1,phase:'active',timer:999,spawnClock:0,queue:[],anchors:[],packId:1,kills:0,startCount:amount,targetPopulation:amount,clearRewarded:false};
         for(let i=0;i<amount;i++){let angle=i/amount*Math.PI*2,radius=30+(i%4)*20,position={x:centerX+Math.cos(angle)*radius,y:centerY+Math.sin(angle)*radius},enemy=spawnEnemy(false,['rusher','rusher','lancer','brute'][i%4],{position,packId:1,packX:centerX,packY:centerY});enemy.spawnGrace=99;enemy.attack=99;enemy.fire=99;if(options.eliteEvery&&i%Math.max(1,options.eliteEvery)===0)enemy.elite=true;if(options.immuneBoss&&i===0){enemy.boss=true;enemy.bossStage=1;enemy.speed=0}if(options.fragile)enemy.hp=1;else if(options.vortexTest)enemy.hp=enemy.max=1e9;else if(options.durable)enemy.hp=enemy.max*12}
         return this.hammerstormState()
       },
@@ -3567,8 +3596,8 @@
         return{slots:GEAR_SLOTS.slice(),visualSlots:VISUAL_GEAR_SLOTS.slice(),setSlots:SET_GEAR_SLOTS.slice(),anchors:Object.fromEntries(Object.entries(EQUIPMENT_SLOT_ANCHORS).map(([slot,anchor])=>[slot,Object.assign({},anchor)])),equipped:Object.assign({},save.equipped),selectedGearUid,gearFilter,gearRarityFilter,gearSort,previewing:false,unified:ui.gearPanel.classList.contains('adventureBagPanel')&&!ui.gearPanel.classList.contains('loadoutMode')}
       },
       equipmentPreviewState(){
-        let loadoutKey=paperDollLoadoutKey(),renderKey=paperDollKey,domKey=ui.gearCharacterHero.dataset.gearVisualKey||'',atlas=paperDollAtlases.idle;
-        return{revision:equipmentRevision,loadoutKey,renderKey,domKey,matches:!!atlas&&renderKey.endsWith(loadoutKey)&&domKey===loadoutKey,fullSetId:equippedFullSetId(),equipped:Object.fromEntries(GEAR_SLOTS.map(slot=>{let gear=equippedGear(slot),item=gearDefinition(gear);return[slot,gear&&item?{uid:gear.uid,itemId:item.id,assetId:(gearAssetRef(item)||{}).id||null}:null]})),visualChannels:Object.fromEntries(EQUIPMENT_VISUAL_CHANNELS.map(channel=>[channel.id,{sourceSlot:channel.sourceSlot,visible:!!equippedItem(channel.sourceSlot),layer:channel.layer,position:channel.position}])),atlas:atlas?{width:atlas.naturalWidth||atlas.width,height:atlas.naturalHeight||atlas.height}:null}
+        let loadoutKey=paperDollLoadoutKey(),renderKey=paperDollKey,domKey=ui.gearCharacterHero.dataset.gearVisualKey||'',runtimeAtlas=paperDollAtlases.idle,visibleAtlas=runtimeAtlas||pappaHammerSprites.idle,inventoryMatches=domKey===loadoutKey,runtimeMatches=!!runtimeAtlas&&renderKey.endsWith(loadoutKey),armoryOpen=ui.gearOverlay.classList.contains('show');
+        return{revision:equipmentRevision,loadoutKey,renderKey,domKey,matches:armoryOpen?inventoryMatches:runtimeMatches,inventoryMatches,runtimeMatches,armoryOpen,fullSetId:equippedFullSetId(),equipped:Object.fromEntries(GEAR_SLOTS.map(slot=>{let gear=equippedGear(slot),item=gearDefinition(gear);return[slot,gear&&item?{uid:gear.uid,itemId:item.id,assetId:(gearAssetRef(item)||{}).id||null}:null]})),visualChannels:Object.fromEntries(EQUIPMENT_VISUAL_CHANNELS.map(channel=>[channel.id,{sourceSlot:channel.sourceSlot,visible:!!equippedItem(channel.sourceSlot),layer:channel.layer,position:channel.position}])),atlas:visibleAtlas?{width:visibleAtlas.naturalWidth||visibleAtlas.width,height:visibleAtlas.naturalHeight||visibleAtlas.height}:null}
       },
       equipmentRenderMetrics(){
         return Object.assign({},gearPerf)

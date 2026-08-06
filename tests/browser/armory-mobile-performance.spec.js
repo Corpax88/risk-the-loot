@@ -27,7 +27,7 @@ test('mobile Armory keeps Pappa and slots fixed while only inventory scrolls',as
   await openPopulatedArmory(page);
 
   const stage=page.locator('#gearCharacterStage');
-  const browserPanel=page.locator('#gearGrid');
+  const browserPanel=page.locator('#gearGrid').locator('xpath=..');
   const before=await stage.boundingBox();
   expect(before).toBeTruthy();
   const scroll=await browserPanel.evaluate(element=>{
@@ -40,13 +40,15 @@ test('mobile Armory keeps Pappa and slots fixed while only inventory scrolls',as
       panelTop:panel.scrollTop,
       panelStart:startPanel,
       gridOverflow:getComputedStyle(document.querySelector('#gearGrid')).overflowY,
+      browserOverflow:getComputedStyle(element).overflowY,
       panelOverflow:getComputedStyle(panel).overflowY
     };
   });
   expect(scroll.inventoryRange).toBeGreaterThan(0);
   expect(scroll.inventoryTop).toBeGreaterThan(0);
   expect(scroll.panelTop).toBe(scroll.panelStart);
-  expect(scroll.gridOverflow).toBe('auto');
+  expect(scroll.gridOverflow).toBe('visible');
+  expect(scroll.browserOverflow).toBe('auto');
   expect(scroll.panelOverflow).toBe('hidden');
   const after=await stage.boundingBox();
   expect(Math.abs(after.y-before.y)).toBeLessThanOrEqual(1);
@@ -124,8 +126,8 @@ test('desktop keeps drag and drop while equip uses incremental rendering',async(
     height:element.getBoundingClientRect().height
   }));
   expect(['none','']).toContain(slotShape.clipPath);
-  expect(parseFloat(slotShape.borderRadius)).toBeLessThanOrEqual(8);
-  expect(slotShape.height).toBeGreaterThan(slotShape.width);
+  expect(parseFloat(slotShape.borderRadius)).toBeGreaterThanOrEqual(slotShape.width*.45);
+  expect(Math.abs(slotShape.height-slotShape.width)).toBeLessThanOrEqual(2);
   expect(slotShape.borderStyle).toBe('solid');
   await page.mouse.move(1400,930);
   await expect(page.locator('#gearHoverPreview')).not.toHaveClass(/show/);

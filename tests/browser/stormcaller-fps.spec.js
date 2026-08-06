@@ -24,7 +24,17 @@ async function openGame(page){
 }
 
 async function waitForCanvasQuiescence(page){
-  await expect.poll(()=>page.evaluate(()=>window.__riskTest.equipmentPrewarmState()),{timeout:15000}).toMatchObject({ready:true,pending:0,missing:0,active:false});
+  await expect.poll(()=>page.evaluate(()=>{
+    const prewarm=window.__riskTest.equipmentPrewarmState(),preview=window.__riskTest.equipmentPreviewState();
+    return{
+      ready:prewarm.ready,
+      idle:prewarm.pending===0&&!prewarm.active,
+      previewMatches:preview.matches,
+      runtimeWarm:preview.armoryOpen||prewarm.missing===0
+    }
+  }),{timeout:15000}).toEqual({ready:true,idle:true,previewMatches:true,runtimeWarm:true});
+  // The Armory deliberately defers hidden gameplay-atlas prewarming. Once it
+  // closes, all runtime layers must be warm before combat FPS is sampled.
   await page.waitForFunction(async()=>{
     const probe=window.__stormcallerPerfProbe;
     if(!probe)return false;

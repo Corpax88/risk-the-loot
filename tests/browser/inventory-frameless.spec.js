@@ -1,12 +1,12 @@
 const {test,expect,devices}=require('@playwright/test');
 
-async function openLavaArmory(page){
+async function openStormcallerArmory(page){
   await page.addInitScript(()=>localStorage.clear());
   await page.goto('/?playwright');
   await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest))).toBe(true);
-  await page.evaluate(()=>window.__riskTest.previewGearSet('lavaSet'));
+  await page.evaluate(()=>window.__riskTest.previewGearSet('stormrunner'));
   await expect(page.locator('#gearOverlay')).toHaveClass(/show/);
-  await expect(page.locator('#gearCharacterStage')).toHaveAttribute('data-inventory-backdrop','lavaSet');
+  await expect(page.locator('#gearCharacterStage')).toHaveAttribute('data-inventory-backdrop','stormrunner');
   await page.waitForTimeout(250);
 }
 
@@ -48,7 +48,7 @@ for(const setup of [
   test(`${setup.name} Armory uses cohesive gear slots and an isolated close control`,async({browser},testInfo)=>{
     const context=await browser.newContext(setup.context);
     const page=await context.newPage();
-    await openLavaArmory(page);
+    await openStormcallerArmory(page);
     const state=await presentationState(page);
     expect(state.slots).toHaveLength(10);
     expect(state.cards.length).toBeGreaterThan(0);
@@ -57,15 +57,13 @@ for(const setup of [
     if(setup.name==='iphone')expect(state.closeStageOffset).toBeLessThanOrEqual(18);
     expect(state.overflow).toBeLessThanOrEqual(1);
     for(const slot of state.slots){
-      expect(parseFloat(slot.radius)).toBeLessThanOrEqual(8);
+      expect(parseFloat(slot.radius)).toBeGreaterThanOrEqual(slot.box.width*.45);
       expect(['none','']).toContain(slot.clip);
-      expect(slot.box.height).toBeGreaterThanOrEqual(slot.box.width);
-      expect(slot.box.height-slot.box.width).toBeLessThanOrEqual(12);
+      expect(Math.abs(slot.box.height-slot.box.width)).toBeLessThanOrEqual(2);
     }
     for(const card of state.cards){
-      expect(card.border).toBe('0px');
-      expect(card.background).toBe('none');
-      expect(card.color).toBe('rgba(0, 0, 0, 0)');
+      expect(parseFloat(card.border)).toBeLessThanOrEqual(1);
+      expect(card.color).not.toBe('rgba(255, 255, 255, 1)');
     }
     await page.screenshot({path:testInfo.outputPath(`frameless-${setup.name}.png`),animations:'disabled'});
     setup.name==='iphone'?await page.locator('#closeGear').tap():await page.locator('#closeGear').click();

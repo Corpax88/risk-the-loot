@@ -19,7 +19,8 @@ async function openPerformanceArmory(page){
     const observer=new MutationObserver(records=>{
       window.__equipVisualProbe.mutations+=records.length;
       const hero=document.querySelector('.gearCharacterHero');
-      if(hero&&getComputedStyle(hero).backgroundImage==='none')window.__equipVisualProbe.emptyCharacterFrames++
+      const visibleLayer=hero&&[...hero.querySelectorAll('[data-character-layer]')].some(layer=>!layer.hidden&&getComputedStyle(layer).backgroundImage!=='none');
+      if(hero&&!visibleLayer)window.__equipVisualProbe.emptyCharacterFrames++
     });
     observer.observe(document.querySelector('#gearPanel'),{subtree:true,attributes:true,childList:true,attributeFilter:['class','style','data-item']});
     window.__equipVisualProbe.mutationObserver=observer
@@ -150,14 +151,25 @@ test('repeated Armory open and close leaves no blocked input or duplicated UI',a
   test.skip(testInfo.config.workers>1,'Performance benchmarks run in isolation via npm run test:equip-performance');
   await page.setViewportSize({width:1440,height:960});
   await openPerformanceArmory(page);
+  const openTimings=[];
   for(let index=0;index<8;index++){
     await page.locator('#closeGear').click();
     await expect(page.locator('#gearOverlay')).not.toHaveClass(/show/);
-    await page.locator('#gearLockerButton').click();
+    openTimings.push(await page.evaluate(async()=>{
+      const started=performance.now();
+      document.querySelector('#gearLockerButton').click();
+      const sync=performance.now()-started;
+      await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+      return{sync,total:performance.now()-started}
+    }));
     await expect(page.locator('#gearOverlay')).toHaveClass(/show/)
   }
+  console.log('ARMORY_OPEN_PERF',JSON.stringify(openTimings));
+  expect(Math.max(...openTimings.map(sample=>sample.sync))).toBeLessThan(100);
+  expect(Math.max(...openTimings.map(sample=>sample.total))).toBeLessThan(200);
   await expect(page.locator('#gearPanel')).toHaveCount(1);
   await expect(page.locator('#gearGrid')).toHaveCount(1);
+  await expect(page.locator('[data-character-layer]')).toHaveCount(9);
   await expect(page.locator('.gearDragGhost')).toHaveCount(0);
   await expect(page.locator('#gearGrid .gearBagSlot').first()).toBeEnabled();
 });

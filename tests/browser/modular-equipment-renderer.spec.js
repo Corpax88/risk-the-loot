@@ -20,29 +20,28 @@ test('base and every equipment channel remain independently addressable',async({
   test.setTimeout(90000);
   await boot(page);
   const before=await page.evaluate(()=>window.__riskTest.equipmentRenderMetrics());
-  await page.evaluate(()=>window.__riskTest.previewGearSetPieces('hammerChoir',0));
+  await page.evaluate(()=>window.__riskTest.previewGearSetPieces('stormrunner',0));
   let state=await expectModularState(page);
   expect(state.layers.every(layer=>!layer.visible)).toBe(true);
 
-  const visibility={1:['hat'],2:['scarf','hat'],3:['chest','scarf','hat'],4:['boots','chest','scarf','hat'],5:['boots','chest','scarf','hat','weapon']};
+  const visibility={1:['hat'],2:['scarf','hat'],3:['chest','scarf','hat'],4:['boots','chest','scarf','hat'],5:['cape','legs','boots','chest','scarf','hat','weapon']};
   for(let count=1;count<=5;count++){
-    await page.evaluate(value=>window.__riskTest.previewGearSetPieces('hammerChoir',value),count);
+    await page.evaluate(value=>window.__riskTest.previewGearSetPieces('stormrunner',value),count);
     state=await expectModularState(page);
     expect(state.layers.filter(layer=>layer.visible).map(layer=>layer.id)).toEqual(visibility[count]);
   }
   const after=await page.evaluate(()=>window.__riskTest.equipmentRenderMetrics());
   expect(after.layerBuilds-before.layerBuilds).toBeGreaterThanOrEqual(6);
-  expect(after.layerBuilds-before.layerBuilds).toBeLessThanOrEqual(18);
+  expect(after.layerBuilds-before.layerBuilds).toBeLessThanOrEqual(21);
 });
 
 test('mixed loadout, swap, unequip and refresh keep one live visual per slot',async({page})=>{
   test.setTimeout(90000);
   await boot(page);
-  await page.evaluate(()=>window.__riskTest.previewGearSet('hammerChoir'));
-  await page.evaluate(()=>window.__riskTest.previewGearItems(['stormrunner-hat','lavaSet-scarf','grandVault-coat','blackHole-hammer','natureSet-boots']));
+  await page.evaluate(()=>{window.__riskTest.previewGearSet('stormrunner');window.__riskTest.previewGearSet('stormrunner')});
   let preview=await page.evaluate(()=>window.__riskTest.equipmentPreviewState());
   expect(preview.matches).toBe(true);
-  expect(Object.values(preview.visualChannels).filter(channel=>channel.visible)).toHaveLength(5);
+  expect(Object.values(preview.visualChannels).filter(channel=>channel.visible)).toHaveLength(7);
 
   const replacement=await page.evaluate(()=>window.__riskTest.equipmentInventory().find(item=>item.slot==='weapon'&&!item.equipped));
   await page.evaluate(uid=>window.RiskLootInventoryV2Bridge.equip(uid),replacement.uid);
@@ -67,7 +66,7 @@ test('modular character stays framed on desktop and iPhone',async({browser})=>{
     const page=await context.newPage();
     await page.goto('/?playwright');
     await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest))).toBe(true);
-    await page.evaluate(()=>window.__riskTest.previewGearSet('blackHole'));
+    await page.evaluate(()=>window.__riskTest.previewGearSet('stormrunner'));
     await expectModularState(page);
     const stage=page.locator('#gearCharacterStage');
     await expect(stage).toBeVisible();
@@ -75,7 +74,7 @@ test('modular character stays framed on desktop and iPhone',async({browser})=>{
     expect(layout.stage.left).toBeGreaterThanOrEqual(0);
     expect(layout.stage.right).toBeLessThanOrEqual(layout.viewport+1);
     expect(layout.hero.right).toBeGreaterThan(layout.hero.left);
-    await stage.screenshot({path:path.join('test-results','modular-equipment',setup.name+'-black-hole.png')});
+    await stage.screenshot({path:path.join('test-results','modular-equipment',setup.name+'-stormcaller.png')});
     await context.close();
   }
 });

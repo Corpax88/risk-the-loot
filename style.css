@@ -662,8 +662,6 @@ button:focus-visible{outline-color:#f4ead6}
 .gearSlotParticles{position:absolute;z-index:20;inset:50% auto auto 50%;pointer-events:none}
 .gearSlotParticles i{position:absolute;width:5px;height:5px;border-radius:50%;background:var(--gear-color,#d6aa58);box-shadow:0 0 9px var(--gear-color,#d6aa58);animation:gearParticle .55s ease-out forwards}
 @keyframes gearParticle{from{transform:translate(0,0) scale(1)}to{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0}}
-.gearPreviewing.gearLegendaryPreview .gearCharacterHero{filter:drop-shadow(0 0 12px var(--preview-color,#d6aa58))}
-
 @media(max-width:1180px){
   .unifiedEquipmentWorkspace{grid-template-columns:minmax(320px,.8fr) minmax(500px,1.2fr)!important}
   .unifiedGearBrowser{grid-template-columns:104px minmax(0,1fr)}
@@ -2955,10 +2953,6 @@ button:focus-visible{outline-color:#f4ead6}
 #gearPanel .equipmentOrbitSlots .gearLoadoutSlot:not(.rarity4):hover,#gearPanel .equipmentOrbitSlots .gearLoadoutSlot:not(.rarity4):focus-visible,#gearPanel .equipmentOrbitSlots .gearLoadoutSlot:not(.rarity4).selected{
   box-shadow:0 5px 10px #000a!important;
 }
-#gearPanel .gearPreviewing.gearLegendaryPreview .gearCharacterHero{
-  filter:drop-shadow(0 17px 14px #000c) drop-shadow(0 0 12px var(--preview-color,#d6aa58));
-}
-
 /* Set-specific Armory stages. The supplied art stays behind the paper doll and UI. */
 [data-inventory-backdrop="blackHole"]{
   --inventory-set-backdrop:url("assets/inventory/set-backdrops/black-hole.png");
@@ -3415,6 +3409,41 @@ button:focus-visible{outline-color:#f4ead6}
 @media(max-width:900px){
   #gearPanel .gearCharacterCamera{--inventory-camera-zoom:1.12;--inventory-camera-x:-.5%;--inventory-camera-y:0%;transform-origin:50% 100%}
   #gearPanel .gearCharacterCamera .gearCharacterHero{bottom:0}
+}
+.gearCharacterStage[data-set-id="stormrunner"] .gearCharacterHero.staticInventoryFigure{
+  background-size:contain;
+  background-position:center bottom;
+  background-repeat:no-repeat;
+  animation:none;
+  will-change:auto;
+  filter:drop-shadow(0 10px 10px #000c);
+}
+.gearCharacterStage[data-set-id="stormrunner"].staticInventoryFigureMode .gearCharacterHalo:before,
+.gearCharacterStage[data-set-id="stormrunner"].staticInventoryFigureMode .gearCharacterHalo:after{animation:none;box-shadow:none}
+.gearCharacterStage.staticInventoryFigureMode.loadoutLegendarySet:after{animation:none}
+.gearPanelOpen .workshopScene .pappaHammerBase,
+.gearPanelOpen .workshopScene .pappaHammerBase:before,
+.gearPanelOpen .workshopScene .pappaHammerBase:after,
+.gearPanelOpen .workshopScene .pappaHammerBaseMotion,
+.gearPanelOpen .workshopScene .pappaHammerBaseVisual,
+.gearPanelOpen .workshopScene .pappaHammerBaseVisual:after,
+.gearPanelOpen .workshopScene .pappaHammerBaseSprite{animation-play-state:paused!important}
+#gearPanel .gearBagSlot.rarity4:after,
+#gearPanel .gearBagSlot.rarity4 .gearArt.legendarySprite{animation:none}
+#gearPanel .gearBagSlot.rarity4:hover:after,
+#gearPanel .gearBagSlot.rarity4:focus-visible:after,
+#gearPanel .gearBagSlot.rarity4.selected:after{animation:gearSheen 4.8s ease-in-out infinite}
+#gearPanel .gearBagSlot.rarity4:hover .gearArt.legendarySprite,
+#gearPanel .gearBagSlot.rarity4:focus-visible .gearArt.legendarySprite,
+#gearPanel .gearBagSlot.rarity4.selected .gearArt.legendarySprite{animation:legendaryArtBreath 3.4s ease-in-out infinite}
+#gearPanel .gearDetailCard.rarity4 .gearDetailArt:before,
+#gearPanel .gearDetailCard.rarity4 .gearDetailArt .gearArt.legendarySprite{animation:none}
+.gearCharacterStage.equipBurst .gearCharacterHero.staticInventoryFigure,
+.gearCharacterStage.equipLegendary.equipBurst .gearCharacterHero.staticInventoryFigure,
+.gearCharacterStage.fullSetMorph .gearCharacterHero.staticInventoryFigure,
+.gearCharacterStage.signatureAwaken .gearCharacterHero.staticInventoryFigure,
+.gearCharacterStage.stormcallerAwaken .gearCharacterHero.staticInventoryFigure{
+  animation:none;
 }
 
 /* Canonical ten-slot equipment orbit. Visual slots frame Pappa; stat-only jewelry sits below. */

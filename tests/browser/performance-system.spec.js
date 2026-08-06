@@ -8,9 +8,11 @@ async function ready(page){
 test('visual quality budgets cap pooled effects without changing gameplay state',async({page})=>{
   await ready(page);
   const before=await page.evaluate(()=>window.__riskTest.state());
-  const low=await page.evaluate(()=>{
+  const low=await page.evaluate(async()=>{
     window.__riskTest.setVisualQuality('low');
-    return window.__riskTest.floodVisuals(900);
+    window.__riskTest.floodVisuals(900);
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    return window.__riskTest.performanceState();
   });
   expect(low.active).toBe('low');
   expect(low.particles).toBeLessThanOrEqual(low.profile.particles);
@@ -57,9 +59,9 @@ test('iPhone can lock low quality and keeps readable effect budgets',async({brow
     return window.__riskTest.performanceState();
   });
   expect(state.active).toBe('low');
-  expect(state.particles).toBeLessThanOrEqual(120);
-  expect(state.effects).toBeLessThanOrEqual(70);
-  expect(state.lightning).toBeLessThanOrEqual(26);
+  expect(state.particles).toBeLessThanOrEqual(110);
+  expect(state.effects).toBeLessThanOrEqual(64);
+  expect(state.lightning).toBeLessThanOrEqual(20);
   await expect(page.locator('#spinButton')).toBeVisible();
   await context.close();
 });

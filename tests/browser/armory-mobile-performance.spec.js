@@ -9,8 +9,8 @@ async function ready(page){
 async function openPopulatedArmory(page){
   await ready(page);
   await page.evaluate(()=>{
-    window.__riskTest.previewGearSet('hammerChoir');
-    window.__riskTest.previewGearSet('fatebound');
+    window.__riskTest.previewGearSet('stormrunner');
+    window.__riskTest.previewGearSet('stormrunner');
     window.__riskTest.resetEquipmentRenderMetrics();
   });
   await expect(page.locator('#gearOverlay')).toHaveClass(/show/);

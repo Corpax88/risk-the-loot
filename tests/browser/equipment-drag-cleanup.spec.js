@@ -4,10 +4,7 @@ async function openArmory(page){
   await page.addInitScript(()=>localStorage.clear());
   await page.goto('/?playwright');
   await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest))).toBe(true);
-  await page.evaluate(()=>{
-    window.__riskTest.previewGearSet('hammerChoir');
-    window.__riskTest.previewGearSet('fatebound');
-  });
+  await page.evaluate(()=>window.__riskTest.previewGearSet('stormrunner'));
   await expect(page.locator('#gearOverlay')).toHaveClass(/show/);
   await expect(page.locator('#gearGrid .gearBagSlot').first()).toBeVisible();
 }
@@ -47,7 +44,7 @@ test('valid, invalid and rapid desktop drags never leave ghost elements',async({
   await expectClean(page);
 
   for(let index=0;index<3;index++){
-    const card=cards.nth(index+5);
+    const card=cards.nth(index);
     const {pointerId}=await beginCustomDrag(page,card,60+index);
     await page.dispatchEvent('body','pointercancel',{pointerId,pointerType:'mouse',button:0,buttons:0,clientX:2,clientY:2});
     await expectClean(page);

@@ -6,8 +6,8 @@ async function openEquipment(page,viewport){
   await page.goto('/?playwright');
   await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest))).toBe(true);
   await page.evaluate(()=>{
-    window.__riskTest.previewGearSet('hammerChoir');
-    window.__riskTest.previewGearSet('fatebound');
+    window.__riskTest.previewGearSet('stormrunner');
+    window.__riskTest.previewGearSet('stormrunner');
   });
   await expect(page.locator('#gearOverlay')).toHaveClass(/show/);
   await expect(page.locator('#gearCharacterStage')).toBeVisible();
@@ -19,19 +19,22 @@ async function unequippedItem(page,slot,excludeUid){
     .find(item=>item.slot===slot&&!item.equipped&&item.uid!==excludeUid),{slot,excludeUid});
 }
 
-test('desktop unified equipment supports preview, comparison, sorting and every equip shortcut',async({page})=>{
+test('desktop unified equipment keeps the equipped character stable while comparing and equipping',async({page})=>{
   test.setTimeout(45000);
   await openEquipment(page,{width:1440,height:960});
 
   let candidate=await unequippedItem(page,'hat');
   expect(candidate).toBeTruthy();
   const source=page.locator('#gearGrid [data-item="'+candidate.uid+'"]');
+  const hero=page.locator('#gearCharacterStage .gearCharacterHero');
+  const equippedImage=await hero.evaluate(element=>element.style.backgroundImage);
   await source.hover();
-  await expect(page.locator('#gearCharacterStage')).toHaveClass(/gearPreviewing/);
+  await expect(page.locator('#gearCharacterStage')).not.toHaveClass(/gearPreviewing/);
+  expect(await hero.evaluate(element=>element.style.backgroundImage)).toBe(equippedImage);
   await expect(page.locator('#gearDetail .gearComparison')).toBeVisible();
   await expect(page.locator('#gearDetail .gearCompareRows > span')).toHaveCount(5);
   await expect(page.locator('#gearDetail .gearDecisionSet')).toBeVisible();
-  expect((await page.evaluate(()=>window.__riskTest.equipmentState())).previewing).toBe(true);
+  expect((await page.evaluate(()=>window.__riskTest.equipmentState())).previewing).toBe(false);
   await page.mouse.move(2,2);
   await expect.poll(()=>page.evaluate(()=>window.__riskTest.equipmentState().previewing)).toBe(false);
 

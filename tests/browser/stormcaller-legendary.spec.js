@@ -64,6 +64,38 @@ test('equipping the final Stormcaller core piece activates the set without repla
   await expect(stage).not.toHaveClass(/fullSetMorph/,{timeout:1200});
 });
 
+test('Stormcaller comparison never previews candidate gear and weapon removal keeps one identity',async({page})=>{
+  await openTestGame(page);
+  const comparisonSetup=await page.evaluate(()=>window.__riskTest.previewGearSetPieces('stormrunner',4));
+  const candidateWeapon=comparisonSetup.inventory.find(item=>item.slot==='weapon'&&!item.equipped);
+  expect(candidateWeapon).toBeTruthy();
+
+  const hero=page.locator('#gearCharacterStage .gearCharacterHero');
+  const equippedImage=await hero.evaluate(element=>element.style.backgroundImage);
+  const candidateCard=page.locator(`#gearGrid [data-item="${candidateWeapon.uid}"]`);
+  await candidateCard.hover();
+  await expect(page.locator('#gearCharacterStage')).not.toHaveClass(/gearPreviewing/);
+  expect(await hero.evaluate(element=>element.style.backgroundImage)).toBe(equippedImage);
+  await candidateCard.click();
+  expect(await hero.evaluate(element=>element.style.backgroundImage)).toBe(equippedImage);
+
+  const setup=await page.evaluate(()=>window.__riskTest.previewGearSetPieces('stormrunner',5));
+  const weapon=setup.inventory.find(item=>item.slot==='weapon'&&item.equipped);
+  expect(weapon).toBeTruthy();
+  await expect.poll(()=>page.evaluate(()=>window.__riskTest.gearVisualState().inventoryFigureVariant)).toBe('full');
+  const fullImage=await hero.evaluate(element=>element.style.backgroundImage);
+
+  await page.mouse.move(2,2);
+  await page.evaluate(()=>window.RiskLootInventoryV2Bridge.unequip('weapon'));
+  await expect.poll(()=>page.evaluate(()=>window.__riskTest.gearVisualState().inventoryFigureVariant)).toBe('weaponless');
+  const weaponlessImage=await hero.evaluate(element=>element.style.backgroundImage);
+  expect(weaponlessImage).not.toBe(fullImage);
+  expect(weaponlessImage).toContain('legendary_stormcaller_weaponless_figure_01.png');
+  await page.locator('#gearCharacterStage').screenshot({
+    path:path.join('test-results','stormcaller','weaponless-same-character.png')
+  });
+});
+
 test('Stormcaller chain VFX communicate departure, travel, impact and kills',async({page})=>{
   await openTestGame(page,1280,800);
   await page.evaluate(()=>window.__riskTest.spawnHammerstormPack(36,{fullLightning:true,durable:true}));

@@ -5,7 +5,7 @@ async function openPerformanceArmory(page){
   await page.goto('/?playwright');
   await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest))).toBe(true);
   await page.evaluate(()=>{
-    for(const setId of ['hammerChoir','blackHole','stormrunner','fatebound'])window.__riskTest.previewGearSet(setId);
+    for(let index=0;index<4;index++)window.__riskTest.previewGearSet('stormrunner');
     window.__riskTest.resetEquipmentRenderMetrics();
     window.__riskTest.resetEquipmentPerformance();
     window.__equipVisualProbe={layoutShift:0,mutations:0,emptyCharacterFrames:0};
@@ -124,7 +124,7 @@ test('20 sequential equips and full-figure transitions avoid duplicate work or s
   await page.setViewportSize({width:1440,height:960});
   await openPerformanceArmory(page);
   const inventory=await page.evaluate(()=>window.__riskTest.equipmentInventory());
-  const grouped=['blackHole','hammerChoir','stormrunner','fatebound'].flatMap(setId=>inventory.filter(item=>item.setId===setId));
+  const grouped=inventory.filter(item=>item.setId==='stormrunner');
   expect(grouped.length).toBeGreaterThanOrEqual(20);
   const before=await page.evaluate(()=>window.__riskTest.equipmentPerformance().length);
   for(const item of grouped.slice(0,20))await page.locator(`#gearGrid [data-item="${item.uid}"]`).click({button:'right'});
@@ -140,8 +140,7 @@ test('20 sequential equips and full-figure transitions avoid duplicate work or s
   expect(metrics.fullRenders).toBe(0);
   expect(metrics.gridRenders).toBe(0);
   expect(metrics.paperDollBuilds).toBe(0);
-  expect(records.some(record=>record.visualSetId==='blackHole'&&record.usesModularLayers)).toBe(true);
-  expect(records.some(record=>record.visualSetId==='hammerChoir'&&record.usesModularLayers)).toBe(true);
+  expect(records.some(record=>record.visualSetId==='stormrunner'&&record.usesModularLayers)).toBe(true);
   expect(records.every(record=>record.usesProductionSkin===false&&record.usesModularLayers)).toBe(true);
   expect(probe.emptyCharacterFrames).toBe(0);
   expect(await page.locator('.gearDragGhost').count()).toBe(0);

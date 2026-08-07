@@ -103,8 +103,8 @@ vm.runInContext(gameSource,sandbox);
 
 const test=sandbox.__foundationSmoke;
 let current=JSON.parse(saved);
-assert.equal(test.saveVersion,15,'Pappa V1 save schema is not active');
-assert.equal(current.version,15,'incompatible development save was not reset');
+assert.equal(test.saveVersion,16,'mobile master save schema is not active');
+assert.equal(current.version,16,'incompatible development save was not reset');
 assert.equal(current.scrap,0,'legacy currency survived the intentional reset');
 assert.equal(current.materials,0,'legacy materials survived the intentional reset');
 assert.equal(current.level,1,'legacy progression survived the intentional reset');
@@ -119,7 +119,7 @@ assert(test.archivedGear>0,'retired catalog was not retained as source history')
 assert.equal(test.atlasCount,7,'Stormcaller proof does not load exactly seven direct production layers');
 assert.equal(test.rollBossGear(1,'rare'),null,'bosses can still roll retired gear');
 assert.equal(test.rollVaultGear(),null,'Grand Vault can still roll retired gear');
-assert(test.baseAsset.includes('pappa-hammer-player.png?v=20260804-v1-foundation'),'approved V1 base is not the runtime source');
+assert(test.baseAsset.includes('pappa-hammer-player-mobile-v1.png?v=20260807-mobile-master-v1'),'approved mobile master is not the runtime source');
 assert.deepEqual(Array.from(test.gearSlots),['hat','cape','chest','legs','boots','scarf','weapon','necklace','ring1','ring2'],'equipment foundation slots changed');
 
 elements.gearLockerButton.click();

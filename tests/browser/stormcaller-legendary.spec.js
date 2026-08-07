@@ -44,7 +44,7 @@ test('Stormcaller pieces use dedicated icons and the full set uses seven modular
     kind:layer.dataset.kind
   })));
   expect(rendered.every(layer=>!layer.hidden&&layer.kind==='aligned')).toBe(true);
-  expect(rendered.find(layer=>layer.id==='baseBody').image).toContain('pappa-hammer-player.png');
+  expect(rendered.find(layer=>layer.id==='baseBody').image).toContain('pappa-hammer-player-mobile-v1.png');
   expect(rendered.filter(layer=>layer.id!=='baseBody').every(layer=>layer.image.includes(`legendary_stormcaller_${layer.id}_01.png`))).toBe(true);
   expect(rendered.every(layer=>!layer.image.includes('data:image/png'))).toBe(true);
   await expect(page.locator('#gearGrid .stormcallerSprite')).toHaveCount(7);

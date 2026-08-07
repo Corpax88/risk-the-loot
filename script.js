@@ -6,7 +6,8 @@
   function syncStyle(element,property,value){let style=element.style,current=typeof style.getPropertyValue==='function'?style.getPropertyValue(property):style[property];if(current===value)return;if(typeof style.setProperty==='function')style.setProperty(property,value);else style[property]=value}
   function mixHexColor(from,to,amount){let parse=value=>{let hex=String(value||'#000000').replace('#','');if(hex.length===3)hex=hex.split('').map(part=>part+part).join('');let number=parseInt(hex.slice(0,6),16);return Number.isFinite(number)?[(number>>16)&255,(number>>8)&255,number&255]:[0,0,0]},a=parse(from),b=parse(to),t=Math.max(0,Math.min(1,Number(amount)||0));return '#'+a.map((value,index)=>Math.round(value+(b[index]-value)*t).toString(16).padStart(2,'0')).join('')}
   function loadImage(src){let image=typeof Image==='function'?new Image():document.createElement('img');image.src=src;return image}
-  const pappaHammerImage=loadImage('assets/pappa-hammer-player.png?v=20260804-v1-foundation');
+  const PAPPA_MASTER_ASSET='assets/pappa-hammer-player-mobile-v1.png?v=20260807-mobile-master-v1';
+  const pappaHammerImage=loadImage(PAPPA_MASTER_ASSET);
   const pappaHammerSprites={idle:null,run:null,attack:null};
   let pappaHammerAssetRevision=0,pappaHammerAssetBuildKey='',pappaHammerSourceBounds=null;
   function imageAlphaBounds(image,sx,sy,sw,sh){
@@ -42,16 +43,16 @@
     };
     return blackHoleVfxSprites
   }
-  function alignedGearSource(path,theme){return Object.freeze({mode:'aligned',path,theme,image:loadImage(path),width:1402,height:1122,columns:1,rows:1})}
-  // Every Stormcaller source uses the approved 1402x1122 V1 master canvas and origin.
+  function alignedGearSource(path,theme){return Object.freeze({mode:'aligned',path,theme,image:loadImage(path),width:768,height:768,columns:1,rows:1})}
+  // Every Stormcaller source uses the approved 768x768 mobile master canvas and origin.
   const productionGearAtlases=Object.freeze({
-    stormcallerCape:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_cape_01.png?v=20260806-anatomy-v4','stormrunner'),
-    stormcallerLegs:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_legs_01.png?v=20260806-anatomy-v4','stormrunner'),
-    stormcallerBoots:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_boots_01.png?v=20260806-anatomy-v4','stormrunner'),
-    stormcallerChest:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_chest_01.png?v=20260806-anatomy-v4','stormrunner'),
-    stormcallerScarf:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_scarf_01.png?v=20260806-anatomy-v4','stormrunner'),
-    stormcallerHat:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_hat_01.png?v=20260806-anatomy-v4','stormrunner'),
-    stormcallerWeapon:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_weapon_01.png?v=20260806-anatomy-v4','stormrunner')
+    stormcallerCape:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_cape_01.png?v=20260807-mobile-v1','stormrunner'),
+    stormcallerLegs:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_legs_01.png?v=20260807-mobile-v1','stormrunner'),
+    stormcallerBoots:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_boots_01.png?v=20260807-mobile-v1','stormrunner'),
+    stormcallerChest:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_chest_01.png?v=20260807-mobile-v1','stormrunner'),
+    stormcallerScarf:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_scarf_01.png?v=20260807-mobile-v1','stormrunner'),
+    stormcallerHat:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_hat_01.png?v=20260807-mobile-v1','stormrunner'),
+    stormcallerWeapon:alignedGearSource('assets/equipment/stormcaller/legendary_stormcaller_weapon_01.png?v=20260807-mobile-v1','stormrunner')
   });
   let handlavaHitSplashSprite=null,ancientEntSprite=null,natureRootTrapSprite=null,handlavaSprites=null;
   function ensureHandlavaSprites(){
@@ -145,8 +146,8 @@
   const progression=window.RiskLootProgression;
   if(!progression)throw new Error('Risk Loot progression module failed to load');
   const {MAX_PLAYER_LEVEL,TOTAL_XP_TO_MAX,MAP_UNLOCK_LEVELS,LOOT_UNLOCK_LEVELS,LOOT_RARITY_RANGES,LOOT_STAGE_LEVEL_CAPS,SET_UNLOCK_LEVELS,xpRequiredForNextLevel:levelXpNeeded,totalXpForLevel,applyXp,sanitizeProgress,xpProgress,xpProgressFromTotal,playerStatsForLevel,enemyScaleForLevel,bossScaleForLevel,gearScaleForLevel,gearValueScaleForLevel,getEnemyXpReward,lootProgressionContext,lootRarityEligible,eligibleLootRarities}=progression;
-  const SAVE_KEY='scrapbound_prototype_v1',SAVE_VERSION=15,WORLD={w:2400,h:1600},DEPTH_THRESHOLDS=[0,32,68,108,150],CAMERA_ZOOM={mobile:.72,desktop:.8};
-  const PAPPA_V1_FOUNDATION=Object.freeze({active:true,bossMaterialBase:12,vaultMaterialBase:30});
+  const SAVE_KEY='scrapbound_prototype_v1',SAVE_VERSION=16,WORLD={w:2400,h:1600},DEPTH_THRESHOLDS=[0,32,68,108,150],CAMERA_ZOOM={mobile:.72,desktop:.8};
+  const PAPPA_V1_FOUNDATION=Object.freeze({active:true,masterRevision:'mobile-v1',bossMaterialBase:12,vaultMaterialBase:30});
   const VAULT_SEALS=3,VAULT_RELICS=12;
   const SALVAGE_REWARDS={common:{materials:1,cores:0},uncommon:{materials:2,cores:0},rare:{materials:5,cores:0},epic:{materials:15,cores:0},elevated:{materials:15,cores:0},apex:{materials:25,cores:1},legendary:{materials:25,cores:1}};
   const LIMITS={enemies:112,enemyBullets:260,loot:180,particles:420};
@@ -2648,7 +2649,7 @@
     ctx.fillStyle='rgba(0,0,0,.34)';ctx.beginPath();ctx.ellipse(-1,40,22,6,0,0,Math.PI*2);ctx.fill();
     if(imageReady(paperDollAtlases[pose]))drawAtlasCell(paperDollAtlases[pose],frame%4,Math.floor(frame/4),4,2,96,96,false,false);
     else if(imageReady(pappaHammerSprites[pose]))drawEquipmentCharacterFrame(pose,frame,96);
-    else if(imageReady(pappaHammerImage))ctx.drawImage(pappaHammerImage,243,127,941,833,-27,-37,82,73);
+    else if(imageReady(pappaHammerImage)){let width=pappaHammerImage.naturalWidth||pappaHammerImage.width,height=pappaHammerImage.naturalHeight||pappaHammerImage.height;ctx.drawImage(pappaHammerImage,0,0,width,height,-48,-48,96,96)}
     else{ctx.fillStyle='#101317';roundedRect(-16,-13,31,34,9);ctx.fill();ctx.fillStyle='#172b4b';roundedRect(-13,-9,27,28,8);ctx.fill();ctx.fillStyle='#b52d31';ctx.beginPath();ctx.moveTo(-13,-7);ctx.lineTo(10,-10);ctx.lineTo(4,2);ctx.closePath();ctx.fill();ctx.fillStyle='#080a0d';ctx.fillRect(-18,-20,36,7);roundedRect(-12,-29,24,12,4);ctx.fill();ctx.strokeStyle='#e8dfce';ctx.lineWidth=2;ctx.strokeRect(-8,-15,7,6);ctx.strokeRect(1,-15,7,6);ctx.fillStyle='#d0a35a';ctx.fillRect(13,-3,30,6);roundedRect(38,-12,19,24,4);ctx.fill()}
     ctx.restore()
   }
@@ -3421,7 +3422,7 @@
       devGearState(){
         return{sets:ACTIVE_SET_DEFINITIONS.length,items:LOOT_ITEMS.length,options:ui.devGearSelect.options.length,selected:ui.devGearSelect.value,gearCount:save.gear.length,equippedSet:equippedFullSetId(),equipped:Object.fromEntries(GEAR_SLOTS.map(slot=>[slot,equippedItem(slot)&&equippedItem(slot).id||null]))}
       },
-      pappaV1Foundation(){return{active:PAPPA_V1_FOUNDATION.active,saveVersion:SAVE_VERSION,activeGear:LOOT_ITEMS.length,activeSets:ACTIVE_SET_DEFINITIONS.length,archivedGear:ARCHIVED_GEAR_ITEMS.length,baseAsset:pappaHammerImage.getAttribute?pappaHammerImage.getAttribute('src'):pappaHammerImage.src,materials:save.materials}},
+      pappaV1Foundation(){return{active:PAPPA_V1_FOUNDATION.active,masterRevision:PAPPA_V1_FOUNDATION.masterRevision,saveVersion:SAVE_VERSION,activeGear:LOOT_ITEMS.length,activeSets:ACTIVE_SET_DEFINITIONS.length,archivedGear:ARCHIVED_GEAR_ITEMS.length,baseAsset:pappaHammerImage.getAttribute?pappaHammerImage.getAttribute('src'):pappaHammerImage.src,baseWidth:pappaHammerImage.naturalWidth||0,baseHeight:pappaHammerImage.naturalHeight||0,materials:save.materials}},
       gearSignatureTier(setId,count){
         return gearSignatureProfileFromCounts({[setId]:count})[setId]||0
       },

@@ -36,7 +36,7 @@ async function expectFullSetFigure(page){
   for(const layer of VISUAL_LAYERS)await expect(hero.locator(`[data-character-layer="${layer}"]`)).toBeVisible();
   await page.waitForTimeout(1250);
   const visual=await characterLayers(page);
-  expect(visual.baseBody.image).toContain('pappa-hammer-player.png');
+  expect(visual.baseBody.image).toContain('pappa-hammer-player-mobile-v1.png');
   for(const layer of VISUAL_LAYERS){
     expect(visual[layer].hidden).toBe(false);
     expect(visual[layer].image).not.toContain('data:image/png');

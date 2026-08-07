@@ -166,6 +166,6 @@ test('incompatible development saves reset cleanly with every slot initialized',
   const state=await page.evaluate(()=>({equipment:window.__riskTest.equipmentState(),progress:window.__riskTest.progressionState(),resources:window.__riskTest.inventoryResources()}));
   expect(Object.keys(state.equipment.equipped)).toEqual(slots);
   expect(Object.values(state.equipment.equipped).every(value=>value===null)).toBe(true);
-  expect(state.progress.saveVersion).toBe(15);
+  expect(state.progress.saveVersion).toBe(16);
   expect(state.resources.scrap).toBe(0);
 });

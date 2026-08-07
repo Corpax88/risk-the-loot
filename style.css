@@ -4196,8 +4196,8 @@ button:focus-visible{outline-color:#f4ead6}
   #gearPanel.premiumArmory .gearCharacterStage{grid-row:1!important}
   #gearPanel.premiumArmory .gearCharacterCamera{inset:0 48px 0!important}
   #gearPanel.premiumArmory .gearCharacterHero{
-    width:min(292px,76vw)!important;
-    height:min(292px,76vw)!important;
+    width:min(232px,60vw)!important;
+    height:min(232px,60vw)!important;
     bottom:0!important;
   }
   #gearPanel.premiumArmory .gearCharacterHalo{inset:9% 16% 4%;opacity:.3}
@@ -4331,7 +4331,7 @@ button:focus-visible{outline-color:#f4ead6}
 
 @media(max-width:390px){
   #gearPanel.premiumArmory .unifiedEquipmentWorkspace{grid-template-rows:minmax(270px,41%) minmax(0,59%)!important}
-  #gearPanel.premiumArmory .gearCharacterHero{width:min(272px,74vw)!important;height:min(272px,74vw)!important}
+  #gearPanel.premiumArmory .gearCharacterHero{width:min(224px,58vw)!important;height:min(224px,58vw)!important}
   #gearPanel.premiumArmory .unifiedGearBrowser .gearInventoryPanel{grid-template-rows:96px 38px minmax(0,1fr) 0!important}
   #gearPanel.premiumArmory.bulkSelectionActive .unifiedGearBrowser .gearInventoryPanel{grid-template-rows:96px 38px minmax(0,1fr) 56px!important}
   #gearPanel.premiumArmory .mobileGearSelection{height:96px;grid-template-columns:58px minmax(0,1fr) 70px;grid-template-rows:28px 40px 18px;gap:0 5px;padding:5px 6px}
@@ -4350,7 +4350,7 @@ button:focus-visible{outline-color:#f4ead6}
 
 @media(max-height:720px) and (max-width:900px){
   #gearPanel.premiumArmory .unifiedEquipmentWorkspace{grid-template-rows:minmax(254px,40%) minmax(0,60%)!important}
-  #gearPanel.premiumArmory .gearCharacterHero{width:min(252px,68vw)!important;height:min(252px,68vw)!important}
+  #gearPanel.premiumArmory .gearCharacterHero{width:min(208px,56vw)!important;height:min(208px,56vw)!important}
   #gearPanel.premiumArmory .unifiedGearBrowser .gearInventoryPanel{grid-template-rows:92px 36px minmax(0,1fr) 0!important}
   #gearPanel.premiumArmory.bulkSelectionActive .unifiedGearBrowser .gearInventoryPanel{grid-template-rows:92px 36px minmax(0,1fr) 56px!important}
   #gearPanel.premiumArmory .mobileGearSelection{height:92px;grid-template-columns:54px minmax(0,1fr) 68px;grid-template-rows:27px 38px 17px;padding:4px 6px}

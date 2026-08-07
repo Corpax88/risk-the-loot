@@ -13,10 +13,10 @@ test('fresh and old-schema saves start cleanly at Level 1',async({page})=>{
     localStorage.setItem('scrapbound_prototype_v1',JSON.stringify({version:11,level:88,xp:999999,scrap:12345}))
   });
   const state=await page.evaluate(()=>window.__riskTest.progressionState());
-  expect(state).toMatchObject({maxLevel:100,totalXpToMax:173388,saveVersion:15,progress:{level:1,current:0,required:120,capped:false}});
+  expect(state).toMatchObject({maxLevel:100,totalXpToMax:173388,saveVersion:16,progress:{level:1,current:0,required:120,capped:false}});
   await expect(page.locator('#pappaLevel')).toHaveText('1');
   const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('scrapbound_prototype_v1')));
-  expect(saved.version).toBe(15);
+  expect(saved.version).toBe(16);
   expect(saved.level).toBe(1)
 });
 

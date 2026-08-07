@@ -90,7 +90,7 @@ test('Stormcaller shares the corrected workshop body foundation with its seven m
   })));
   expect(layers).toHaveLength(8);
   expect(layers.every(layer=>!layer.hidden&&layer.kind==='aligned')).toBe(true);
-  expect(layers.find(layer=>layer.id==='baseBody').image).toContain('pappa-hammer-player.png');
+  expect(layers.find(layer=>layer.id==='baseBody').image).toContain('pappa-hammer-player-mobile-v1.png');
   expect(layers.filter(layer=>layer.id!=='baseBody').every(layer=>layer.image.includes(`legendary_stormcaller_${layer.id}_01.png`))).toBe(true);
   expect(layers.every(layer=>!layer.image.includes('data:image/png'))).toBe(true);
 

@@ -14,7 +14,7 @@ async function verifyFoundation(page,testInfo,label){
   page.on('pageerror',error=>pageErrors.push(error.message));
   await page.addInitScript(()=>{
     localStorage.setItem('scrapbound_prototype_v1',JSON.stringify({
-      version:14,
+      version:15,
       level:70,
       scrap:99999,
       gear:[{uid:'retired',itemId:'stormrunner-hat',level:70}],
@@ -25,12 +25,12 @@ async function verifyFoundation(page,testInfo,label){
   await expect.poll(()=>page.evaluate(()=>Boolean(window.__riskTest))).toBe(true);
 
   const foundation=await page.evaluate(()=>window.__riskTest.pappaV1Foundation());
-  expect(foundation).toMatchObject({active:true,saveVersion:15,activeGear:7,activeSets:1});
+  expect(foundation).toMatchObject({active:true,masterRevision:'mobile-v1',saveVersion:16,activeGear:7,activeSets:1,baseWidth:768,baseHeight:768});
   expect(foundation.archivedGear).toBeGreaterThan(0);
-  expect(foundation.baseAsset).toContain('pappa-hammer-player.png?v=20260804-v1-foundation');
+  expect(foundation.baseAsset).toContain('pappa-hammer-player-mobile-v1.png?v=20260807-mobile-master-v1');
 
   const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('scrapbound_prototype_v1')));
-  expect(saved.version).toBe(15);
+  expect(saved.version).toBe(16);
   expect(saved.level).toBe(1);
   expect(saved.scrap).toBe(0);
   expect(saved.gear).toEqual([]);
@@ -38,22 +38,31 @@ async function verifyFoundation(page,testInfo,label){
 
   const image=await page.evaluate(async()=>{
     const asset=new Image();
-    asset.src='assets/pappa-hammer-player.png?v=20260804-v1-foundation';
+    asset.src='assets/pappa-hammer-player-mobile-v1.png?v=20260807-mobile-master-v1';
     await asset.decode();
     return{width:asset.naturalWidth,height:asset.naturalHeight};
   });
-  expect(image).toEqual({width:1402,height:1122});
+  expect(image).toEqual({width:768,height:768});
   await expect(page.locator('#pappaHammerBaseSprite')).toBeVisible();
   const baseBodyLayer=page.locator('#pappaHammerBaseSprite [data-base-character-layer="baseBody"]');
   await expect(baseBodyLayer).toBeVisible();
   await expect(baseBodyLayer).not.toHaveCSS('background-image','none');
 
   const resources=await page.evaluate(()=>performance.getEntriesByType('resource').map(entry=>entry.name));
-  expect(resources.some(url=>url.includes('pappa-hammer-player.png?v=20260804-v1-foundation'))).toBe(true);
+  expect(resources.some(url=>url.includes('pappa-hammer-player-mobile-v1.png?v=20260807-mobile-master-v1'))).toBe(true);
   for(const retired of retiredAtlasNames)expect(resources.some(url=>url.includes(retired))).toBe(false);
 
   await page.locator('#gearLockerButton').click();
   await expect(page.locator('#gearOverlay')).toHaveClass(/show/);
+  const framing=await page.evaluate(()=>{
+    const stage=document.querySelector('#gearCharacterStage').getBoundingClientRect();
+    const hero=document.querySelector('#gearCharacterStage .gearCharacterHero').getBoundingClientRect();
+    return{stage:{top:stage.top,bottom:stage.bottom},hero:{top:hero.top,bottom:hero.bottom}};
+  });
+  // The hero wrapper can ease a few pixels beyond the stage; the master itself
+  // retains transparent headroom so the painted silhouette remains unclipped.
+  expect(framing.hero.top).toBeGreaterThanOrEqual(framing.stage.top-4);
+  expect(framing.hero.bottom).toBeLessThanOrEqual(framing.stage.bottom+1);
   await expect(page.locator('#gearEmpty')).toBeVisible();
   await expect(page.locator('#gearEmpty')).toContainText('NEW PAPPA HAMMER GEAR IS BEING FORGED');
   await expect(page.locator('#gearGrid .gearBagSlot')).toHaveCount(0);
